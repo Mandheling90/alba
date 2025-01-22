@@ -1,0 +1,133 @@
+import { RangeSelectorButtonTypeValue } from 'src/enum/statisticsEnum'
+
+export interface MKioskData {
+  kioskId: number
+  kioskName: string
+  statsId: number
+  statsName: string
+}
+
+export interface MGroupList {
+  id: number
+  name: string
+  data: MKioskData[]
+}
+
+export interface MCommonInfo {
+  statsId: number
+  statsName: string
+}
+
+export interface MCommonList {
+  kioskId: number
+  kioskName: string
+  info: MCommonInfo[]
+}
+
+export interface MGroupSettingList {
+  kioskId: number
+  kioskName: string
+  kioskLocation: string
+  statsId: number
+  statsName: string
+}
+
+export interface IChartProps {
+  rangeSelectorIndex: number
+  time: RangeSelectorButtonTypeValue
+  startDate: string
+  endDate: string
+  isChartSetting: boolean
+  isGroup: boolean
+}
+
+export interface MRealtimeDetailParam {
+  item: number
+  cameraIds: number[]
+  startDate: string
+  endDate: string
+}
+
+export interface MGroupReq {
+  type: string
+}
+
+export interface MGroupUpSetReq {
+  id?: number
+  name: string
+  modelTypeIdList: number[]
+}
+
+export interface ICheckedList {
+  statsIdList: number[]
+  groupIdList: number[]
+}
+
+export interface MChartReq {
+  startDate: string
+  endDate: string
+  statsIdList?: number[]
+  groupIdList?: number[]
+  time: string
+}
+
+export interface MChartNavReq {
+  startDateTime: string
+  endDateTime: string
+  startDate?: string
+  endDate?: string
+  statsIdList?: number[]
+  groupIdList?: number[]
+  time: string
+}
+
+export interface MLineChart {
+  id: number
+  label: string
+  statsData: [number, number][]
+
+  color?: string
+}
+
+export interface MBarChart {
+  id: number
+  name: string
+  y: number
+
+  color?: string
+  checked?: boolean
+}
+
+export interface MPieChart {
+  id: number
+  name: string
+  count: number
+  y: number
+
+  z?: number
+  color?: string
+  checked?: boolean
+}
+
+export interface MTable {
+  kioskId: number
+  kioskName: string
+  kioskLocation: string
+  date: string
+  time: string
+
+  lineName?: string
+  count?: number
+
+  areaName?: string
+  smokerCount?: number
+  peopleCount?: number
+
+  display?: boolean
+  id?: number
+}
+
+export interface ISelectedColorList {
+  id: number
+  color: string
+}
