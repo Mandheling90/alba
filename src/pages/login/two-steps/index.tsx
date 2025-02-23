@@ -8,7 +8,6 @@ import Link from 'next/link'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import MuiCard, { CardProps } from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 import FormHelperText from '@mui/material/FormHelperText'
 import { styled, useTheme } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
@@ -33,6 +32,7 @@ import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 // ** Styles
 import 'cleave.js/dist/addons/cleave-phone.us'
 import { useRouter } from 'next/router'
+import LoginTemplate from 'src/@core/components/molecule/LoginTemplate'
 import { EResultCode } from 'src/enum/commonEnum'
 import { useAuth } from 'src/hooks/useAuth'
 import { useVerifyCode } from 'src/service/commonService'
@@ -190,7 +190,7 @@ const TwoSteps = () => {
   return (
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
-        <CardContent sx={{ p: theme => `${theme.spacing(12, 9, 7)} !important` }}>
+        <LoginTemplate>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ mb: 2 }}>
               이중 인증 💬
@@ -235,7 +235,7 @@ const TwoSteps = () => {
               다시보내기
             </LinkStyled>
           </Box>
-        </CardContent>
+        </LoginTemplate>
       </Card>
     </Box>
   )
