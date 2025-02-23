@@ -48,8 +48,13 @@ export enum ROLE {
 
 export const EComponentList = [
   {
-    title: '홍보물 관리',
-    path: '/contents',
+    title: '대쉬보드',
+    path: '/dashboard',
+    icon: 'dashboard'
+  },
+  {
+    title: '고객사 관리',
+    path: '/clients',
     icon: 'contents'
   },
   {
@@ -90,5 +95,15 @@ export const EComponentList = [
     title: '모니터링',
     path: '/monitoring',
     icon: 'monitoring'
+  },
+  {
+    title: '카메라 관리',
+    path: '/cameras',
+    icon: 'cameras'
+  },
+  {
+    title: '스케쥴 관리',
+    path: '/schedules',
+    icon: 'contents'
   }
 ]

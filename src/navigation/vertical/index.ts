@@ -5,7 +5,7 @@ import { IComponents } from 'src/model/commonModel'
 const navigation = (componentListInfo?: IComponents[]): VerticalNavItemsType => {
   return [
     {
-      title: '홍보물 관리',
+      title: '고객사 관리',
       path: '/contents',
       icon: 'contents'
     },

@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useState } from 'react'
 
 // ** MUI Imports
 import { Theme } from '@mui/material/styles'
@@ -55,12 +55,13 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
   const user = useAuth().user
   const [componentList, setComponentList] = useState(EComponentList)
 
-  useEffect(() => {
-    const componentListFilter = componentList.filter(data => {
-      return user?.viewNamesWithY && user?.viewNamesWithY.includes(data.title)
-    })
-    setComponentList(componentListFilter)
-  }, [user?.viewNamesWithY])
+  // 권한에 따른 메뉴 필터링
+  // useEffect(() => {
+  //   const componentListFilter = componentList.filter(data => {
+  //     return user?.viewNamesWithY && user?.viewNamesWithY.includes(data.title)
+  //   })
+  //   setComponentList(componentListFilter)
+  // }, [user?.viewNamesWithY])
 
   return (
     <Layout

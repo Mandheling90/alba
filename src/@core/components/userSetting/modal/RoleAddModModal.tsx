@@ -30,7 +30,7 @@ export const defaultValue = {
   users: 0,
   roleList: [
     {
-      viewName: '홍보물 관리',
+      viewName: '고객사 관리',
       fullAccess: YN.N,
       createYn: YN.N,
       updateYn: YN.N,

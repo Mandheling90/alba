@@ -318,9 +318,6 @@ const ContentsList: FC<IUserList> = ({ data, refetch }) => {
 
   return (
     <>
-      <Typography variant='subtitle1' sx={{ fontWeight: 500, fontSize: '24px' }} mt={2} mb={2}>
-        홍보물 목록: 총{contentData.length}개
-      </Typography>
       <SimpleDialogModal
         open={isOpen}
         onClose={() => {
@@ -341,7 +338,7 @@ const ContentsList: FC<IUserList> = ({ data, refetch }) => {
         />
       )}
 
-      <Grid container spacing={6}>
+      <Grid container>
         <Grid item xs={12}>
           <Card>
             <TableHeader

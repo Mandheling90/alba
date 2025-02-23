@@ -98,9 +98,9 @@ const VerticalNavHeader = (props: Props) => {
       ) : (
         <LinkStyled href='/' sx={{ width: '100%', display: 'flex', ml: 0 }}>
           {navCollapsed && !navHover ? (
-            <img className='headerImg' src={'/images/logo/logo_small.png'} height={25} width={auto} alt={'로고'} />
+            <img className='headerImg' src={'/images/logo/DSInsight.svg'} height={25} width={auto} alt={'로고'} />
           ) : (
-            <img className='headerImg' src={'/images/logo/logo.png'} height={55} width={auto} alt={'로고'} />
+            <img className='headerImg' src={'/images/logo/DSInsight.svg'} height={55} width={auto} alt={'로고'} />
           )}
 
           <HeaderTitle sx={{ ...menuCollapsedStyles, ...(navCollapsed && !navHover ? {} : { ml: 3 }) }}>
