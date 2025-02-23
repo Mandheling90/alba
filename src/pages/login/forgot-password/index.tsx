@@ -8,7 +8,7 @@ import Link from 'next/link'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import MuiCard, { CardProps } from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
+
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
@@ -23,6 +23,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import { useRouter } from 'next/router'
+import LoginTemplate from 'src/@core/components/molecule/LoginTemplate'
 import { useAuth } from 'src/hooks/useAuth'
 
 // ** Styled Components
@@ -72,7 +73,7 @@ const ForgotPassword = () => {
   return (
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
-        <CardContent sx={{ p: theme => `${theme.spacing(12, 9, 7)} !important` }}>
+        <LoginTemplate>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, mb: 1.5 }}>
               비밀번호 재설정 🔒
@@ -107,7 +108,7 @@ const ForgotPassword = () => {
               </LinkStyled>
             </Typography>
           </form>
-        </CardContent>
+        </LoginTemplate>
       </Card>
     </Box>
   )

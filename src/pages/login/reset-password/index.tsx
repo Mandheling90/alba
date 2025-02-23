@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import MuiCard, { CardProps } from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 import FormControl from '@mui/material/FormControl'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -13,6 +12,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ChangeEvent, ReactNode, useState } from 'react'
 import Icon from 'src/@core/components/icon'
+import LoginTemplate from 'src/@core/components/molecule/LoginTemplate'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 import { EErrorMessage, EResultCode } from 'src/enum/commonEnum'
 import { useAuth } from 'src/hooks/useAuth'
@@ -105,7 +105,7 @@ const ResetPassword = () => {
   return (
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
-        <CardContent sx={{ p: theme => `${theme.spacing(12, 9, 7)} !important` }}>
+        <LoginTemplate>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, mb: 1.5 }}>
               비밀번호 재설정 🔒
@@ -181,7 +181,7 @@ const ResetPassword = () => {
               </LinkStyled>
             </Typography>
           </form>
-        </CardContent>
+        </LoginTemplate>
       </Card>
     </Box>
   )

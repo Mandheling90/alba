@@ -5,7 +5,7 @@ import { ChangeEvent, ReactNode, useState } from 'react'
 import Link from 'next/link'
 
 // ** MUI Components
-import { CardContent, Checkbox } from '@mui/material'
+import { Checkbox } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import MuiCard, { CardProps } from '@mui/material/Card'
@@ -29,6 +29,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
+import LoginTemplate from 'src/@core/components/molecule/LoginTemplate'
 import { ELocalStorageKey } from 'src/enum/commonEnum'
 
 const LinkStyled = styled(Link)(({ theme }) => ({
@@ -94,7 +95,7 @@ const LoginPage = () => {
   return (
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
-        <CardContent sx={{ p: theme => `${theme.spacing(12, 9, 7)} !important` }}>
+        <LoginTemplate>
           <Box sx={{ mb: 6 }}>
             <Typography variant='h5' sx={{ fontWeight: 600, mb: 1.5 }}>
               로그인
@@ -168,7 +169,7 @@ const LoginPage = () => {
               </Button>
             </ThemeProvider>
           </form>
-        </CardContent>
+        </LoginTemplate>
       </Card>
     </Box>
   )

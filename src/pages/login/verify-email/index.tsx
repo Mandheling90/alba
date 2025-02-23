@@ -8,7 +8,6 @@ import Link from 'next/link'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import MuiCard, { CardProps } from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
 import { styled } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 
@@ -19,6 +18,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import { useRouter } from 'next/router'
+import LoginTemplate from 'src/@core/components/molecule/LoginTemplate'
 import { useAuth } from 'src/hooks/useAuth'
 
 // ** Styled Components
@@ -69,7 +69,7 @@ const VerifyEmail = () => {
   return (
     <Box className='content-center'>
       <Card sx={{ zIndex: 1 }}>
-        <CardContent sx={{ p: theme => `${theme.spacing(12, 9, 7)} !important` }}>
+        <LoginTemplate>
           <Box sx={{ mb: 8 }}>
             <Typography variant='h5' sx={{ mb: 2 }}>
               이메일을 인증해 주세요 ✉️
@@ -104,7 +104,7 @@ const VerifyEmail = () => {
               다시보내기
             </TypographyStyled>
           </Box>
-        </CardContent>
+        </LoginTemplate>
       </Card>
     </Box>
   )
