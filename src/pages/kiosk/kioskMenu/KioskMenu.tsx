@@ -46,7 +46,7 @@ const KioskMenu: FC<IKioskMenu> = ({ refetch }) => {
         <IconButton
           onClick={() => {
             if (kiosk.kioskViewType === 'card') {
-              kiosk.setKioskSort({ field : 'name', sort: sort === 'asc' ? 'desc' : 'asc' })
+              kiosk.setKioskSort({ field: 'name', sort: sort === 'asc' ? 'desc' : 'asc' })
             }
             kiosk.setKioskViewType('card')
           }}

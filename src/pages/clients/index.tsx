@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import Contents from './Contents'
+import Clients from './Clients'
 
 const Index: FC = ({}): React.ReactElement => {
-  return <Contents />
+  return <Clients />
 }
 
 export default Index

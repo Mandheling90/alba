@@ -13,6 +13,7 @@ import { KioskProvider } from './KioskContext'
 import { KioskManagerProvider } from './KioskManagerContext'
 import { MonitoringProvider } from './MonitoringContext'
 
+import { ClientsProvider } from './ClientsContext'
 import { SocketDataProvider } from './SocketDataContext'
 import { StatisticsProvider } from './StatisticsContext'
 
@@ -28,17 +29,19 @@ const ContextProviders = ({ children, emotionCache, settingsProps }: ProvidersPr
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <ContentsProvider>
-            <KioskProvider>
-              <KioskManagerProvider>
-                <StatisticsProvider>
-                  <MonitoringProvider>
-                    <SocketDataProvider>
-                      <SettingsProvider {...settingsProps}>{children}</SettingsProvider>
-                    </SocketDataProvider>
-                  </MonitoringProvider>
-                </StatisticsProvider>
-              </KioskManagerProvider>
-            </KioskProvider>
+            <ClientsProvider>
+              <KioskProvider>
+                <KioskManagerProvider>
+                  <StatisticsProvider>
+                    <MonitoringProvider>
+                      <SocketDataProvider>
+                        <SettingsProvider {...settingsProps}>{children}</SettingsProvider>
+                      </SocketDataProvider>
+                    </MonitoringProvider>
+                  </StatisticsProvider>
+                </KioskManagerProvider>
+              </KioskProvider>
+            </ClientsProvider>
           </ContentsProvider>
         </AuthProvider>
       </QueryClientProvider>

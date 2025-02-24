@@ -6,7 +6,8 @@ import DividerBar from 'src/@core/components/atom/DividerBar'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import { useContents } from 'src/hooks/useContents'
 import { useContentsList } from 'src/service/contents/contentsService'
-import KioskMenu from '../kiosk/kioskMenu/KioskMenu'
+
+import ClientsMenu from './menu/ClientsMenu'
 import Table from './table/Table'
 
 const Contents: FC = (): React.ReactElement => {
@@ -23,7 +24,7 @@ const Contents: FC = (): React.ReactElement => {
       <Box pt={8}>
         <Grid container spacing={1} sx={{ mb: 5 }}>
           <Grid item sm={12} xs={12}>
-            <KioskMenu
+            <ClientsMenu
               refetch={() => {
                 console.log('1')
               }}
@@ -50,26 +51,6 @@ const Contents: FC = (): React.ReactElement => {
           />
         </Box>
       </Box>
-
-      {/* <ContentsManagerModal
-        isOpen={contents.isContentsManagerModalOpen}
-        onClose={() => {
-          contents.setSelectedContent({})
-          contents.setIsContentsManagerModalOpen(false)
-        }}
-        refetch={userRefetch}
-      />
-
-      <Grid container spacing={1} sx={{ mb: 5 }}>
-        <Grid item sm={12} xs={12} mt={8}>
-          <Table
-            data={data.data ?? []}
-            refetch={() => {
-              userRefetch()
-            }}
-          />
-        </Grid>
-      </Grid> */}
     </StandardTemplate>
   )
 }

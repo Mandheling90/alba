@@ -17,7 +17,6 @@ import IconCustom from 'src/layouts/components/IconCustom'
 import { MContent } from 'src/model/contents/contentsModel'
 import { extractFileName } from 'src/utils/CommonUtil'
 import ContentsDeleteModal from '../modal/ContentsDeleteModal'
-import TableHeader from './TableHeader'
 
 interface IUserList {
   data: MContent[]
@@ -341,19 +340,6 @@ const ContentsList: FC<IUserList> = ({ data, refetch }) => {
       <Grid container>
         <Grid item xs={12}>
           <Card>
-            <TableHeader
-              plan={plan}
-              value={value}
-              handleFilter={handleFilter}
-              handlePlanChange={handlePlanChange}
-              refetch={refetch}
-              onDelete={() => {
-                if (checkedId.length > 0) {
-                  contents.setSelectedContentIds(checkedId)
-                  setIsDeleteModalOpen(true)
-                }
-              }}
-            />
             <DataGrid
               autoHeight
               rows={contentData}
