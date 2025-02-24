@@ -29,6 +29,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
+import FileDownLoadForm from 'src/@core/components/molecule/FileDownLoadForm'
 import LoginTemplate from 'src/@core/components/molecule/LoginTemplate'
 import { ELocalStorageKey } from 'src/enum/commonEnum'
 
@@ -169,6 +170,7 @@ const LoginPage = () => {
               </Button>
             </ThemeProvider>
           </form>
+          <FileDownLoadForm label='시스템 사용 매뉴얼 다운로드' />
         </LoginTemplate>
       </Card>
     </Box>
