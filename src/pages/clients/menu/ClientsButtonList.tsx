@@ -1,6 +1,7 @@
 import { Box, Button } from '@mui/material'
+import { useRouter } from 'next/router'
 import { FC } from 'react'
-import { useKiosk } from 'src/hooks/useKiosk'
+import { useClients } from 'src/hooks/useClients'
 import IconCustom from 'src/layouts/components/IconCustom'
 
 interface IKioskButtonList {
@@ -8,7 +9,8 @@ interface IKioskButtonList {
 }
 
 const ClientsButtonList: FC<IKioskButtonList> = ({ refetch }) => {
-  const kiosk = useKiosk()
+  const clients = useClients()
+  const router = useRouter()
 
   return (
     <Box>
@@ -17,7 +19,9 @@ const ClientsButtonList: FC<IKioskButtonList> = ({ refetch }) => {
         sx={{ ml: 3 }}
         startIcon={<IconCustom isCommon path='clients' icon='userAdd' />}
         onClick={() => {
-          kiosk.setIsKioskManagerModalOpen(true)
+          router.push({
+            pathname: 'clients/clientsAdd'
+          })
         }}
       >
         고객사 추가
@@ -28,10 +32,10 @@ const ClientsButtonList: FC<IKioskButtonList> = ({ refetch }) => {
         sx={{ ml: 3 }}
         startIcon={<IconCustom isCommon path='clients' icon='userDelete' />}
         onClick={async () => {
-          await kiosk.kioskDelete(kiosk.checkedKioskIds, undefined, errorCallback => {
-            alert(errorCallback.message)
-          })
-          refetch()
+          // await kiosk.kioskDelete(kiosk.checkedKioskIds, undefined, errorCallback => {
+          //   alert(errorCallback.message)
+          // })
+          // refetch()
         }}
       >
         고객사 삭제

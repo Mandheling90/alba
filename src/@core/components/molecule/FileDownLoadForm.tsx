@@ -1,5 +1,5 @@
-import { Box } from '@mui/material'
-import React from 'react'
+import { Box, CircularProgress } from '@mui/material'
+import React, { useState } from 'react'
 import IconCustom from 'src/layouts/components/IconCustom'
 
 interface ILoginTemplate {
@@ -7,14 +7,54 @@ interface ILoginTemplate {
 }
 
 const FileDownLoadForm: React.FC<ILoginTemplate> = ({ label }) => {
-  const handleManualDownload = () => {
-    const fileUrl = `${process.env.NEXT_PUBLIC_IMAGE_PATH}images/common/login/DSInsightHeader.svg`
-    const link = document.createElement('a')
-    link.href = fileUrl
-    link.download = 'DSInsightHeader.svg' // 다운로드될 파일명
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleManualDownload = async () => {
+    try {
+      setIsLoading(true)
+      const fileUrl = `http://210.216.236.181:12705/Dains_Manual.pdf`
+
+      const response = await fetch(fileUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/pdf'
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error('파일 다운로드에 실패했습니다.')
+      }
+
+      // Content-Disposition 헤더에서 파일명 추출 시도
+      const contentDisposition = response.headers.get('content-disposition')
+      let filename = 'Dains_Manual.pdf'
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '')
+        }
+      }
+
+      const blob = await response.blob()
+      const downloadUrl = window.URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+      link.style.display = 'none'
+      link.href = downloadUrl
+      link.download = filename
+
+      document.body.appendChild(link)
+      link.click()
+
+      // 클린업
+      window.URL.revokeObjectURL(downloadUrl)
+      document.body.removeChild(link)
+    } catch (error) {
+      console.error('다운로드 에러:', error)
+      alert('파일 다운로드 중 오류가 발생했습니다. 다시 시도해주세요.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -23,15 +63,15 @@ const FileDownLoadForm: React.FC<ILoginTemplate> = ({ label }) => {
         display: 'flex',
         alignItems: 'center',
         gap: 2,
-        cursor: 'pointer', // 커서 스타일 추가
+        cursor: isLoading ? 'wait' : 'pointer',
         '&:hover': {
-          // 호버 효과 추가
           opacity: 0.8
         }
       }}
-      onClick={handleManualDownload}
+      onClick={!isLoading ? handleManualDownload : undefined}
     >
-      <IconCustom isCommon icon='downLoad' /> {label}
+      {isLoading ? <CircularProgress size={24} /> : <IconCustom isCommon icon='downLoad' />}
+      {label}
     </Box>
   )
 }
