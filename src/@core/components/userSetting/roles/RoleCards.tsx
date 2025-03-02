@@ -9,6 +9,7 @@ import { FC, useState } from 'react'
 import { MUserGroup } from 'src/model/userSetting/userSettingModel'
 import KioskComponent from 'src/pages/kiosk/kiosk-manager/kioskComponent/KioskComponent'
 import RoleAddModModal from '../modal/RoleAddModModal'
+import RenderAddCards from './RenderAddCards'
 import RenderCards from './RenderCards'
 
 const rolesArr: string[] = [
@@ -40,6 +41,8 @@ const RolesCards: FC<IRolesCards> = ({ data, refetch }) => {
         }}
         height='360px'
       >
+        <RenderAddCards refetch={refetch} />
+
         {data.map(item => (
           <RenderCards data={item} key={item.id} refetch={refetch} />
         ))}

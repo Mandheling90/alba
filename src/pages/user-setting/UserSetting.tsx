@@ -3,12 +3,13 @@ import { Grid, Typography } from '@mui/material'
 import { FC, useEffect } from 'react'
 
 import PageHeader from 'src/@core/components/page-header'
-import RoleCards from 'src/@core/components/userSetting/roles/RoleCards'
 
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
+import RoleCards from 'src/@core/components/userSetting/roles/RoleCards'
 import Table from 'src/@core/components/userSetting/table/Table'
 import { useUserAll, useUserGroupList } from 'src/service/setting/userSetting'
 import { useUserSettingStore } from '.'
+import ClientListGrid from './ClientListGrid'
 
 const UserSetting: FC = (): React.ReactElement => {
   const { data: userGroup, refetch: userGroupRefetch } = useUserGroupList()
@@ -28,25 +29,41 @@ const UserSetting: FC = (): React.ReactElement => {
 
   return (
     <StandardTemplate title={'사용자관리'}>
-      <Grid item xs={12} sx={{ mb: 4 }}>
-        <RoleCards data={userGroup?.data} refetch={userGroupRefetch}></RoleCards>
-      </Grid>
+      <Grid container spacing={2}>
+        <Grid item xs={4} sx={{ height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+          <ClientListGrid
+            data={user.data}
+            refetch={() => {
+              userRefetch()
+              userGroupRefetch()
+            }}
+          />
+        </Grid>
 
-      <PageHeader
-        title={
-          <Typography variant='h5' sx={{ fontSize: 24, fontWeight: 500, mb: 5 }}>
-            시스템 사용자 목록
-          </Typography>
-        }
-      />
-      <Grid item xs={12}>
-        <Table
-          data={user.data}
-          refetch={() => {
-            userRefetch()
-            userGroupRefetch()
-          }}
-        />
+        <Grid item xs={8}>
+          <Grid container>
+            <Grid item xs={12}>
+              <PageHeader
+                title={
+                  <Typography variant='h5' sx={{ fontSize: 24, fontWeight: 500, mb: 5 }}>
+                    시스템 사용자 목록
+                  </Typography>
+                }
+              />
+              <Table
+                data={user.data}
+                refetch={() => {
+                  userRefetch()
+                  userGroupRefetch()
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sx={{ mb: 4 }}>
+              <RoleCards data={userGroup?.data} refetch={userGroupRefetch}></RoleCards>
+            </Grid>
+          </Grid>
+        </Grid>
       </Grid>
     </StandardTemplate>
   )
