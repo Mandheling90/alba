@@ -5,15 +5,15 @@ import { FC } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import { useContents } from 'src/hooks/useContents'
-import { useContentsList } from 'src/service/contents/contentsService'
 
+import { useClientList } from 'src/service/client/clientService'
 import ClientsMenu from './menu/ClientsMenu'
-import Table from './table/Table'
+import ClientList from './table/ClientList'
 
 const Contents: FC = (): React.ReactElement => {
   const contents = useContents()
 
-  const { data, refetch: userRefetch } = useContentsList(contents.contentListReqPram)
+  const { data, refetch } = useClientList(contents.contentListReqPram)
 
   if (!data) {
     return <></>
@@ -43,10 +43,10 @@ const Contents: FC = (): React.ReactElement => {
           </Grid>
         </Grid>
         <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-          <Table
+          <ClientList
             data={data.data ?? []}
             refetch={() => {
-              userRefetch()
+              refetch()
             }}
           />
         </Box>
