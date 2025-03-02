@@ -1,9 +1,13 @@
 import { Tooltip, tooltipClasses, TooltipProps } from '@mui/material'
 import { styled } from '@mui/material/styles'
 
+interface CustomTooltipProps extends Omit<TooltipProps, 'classes'> {
+  placement?: TooltipProps['placement']
+}
+
 // Tooltip을 위한 독립적인 컴포넌트 정의
-const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} arrow />
+const CustomTooltip = styled(({ className, placement = 'bottom', ...props }: CustomTooltipProps) => (
+  <Tooltip {...props} placement={placement} classes={{ popper: className }} arrow />
 ))(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: 'rgba(231, 231, 231, 1)', // 배경색
