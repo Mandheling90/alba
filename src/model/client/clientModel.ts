@@ -6,6 +6,13 @@ export enum SERVICE_TYPE {
   MONITORING = 'MONITORING'
 }
 
+export const SERVICE_TYPE_LABELS: Record<SERVICE_TYPE, string> = {
+  [SERVICE_TYPE.COUNTING]: '카운팅',
+  [SERVICE_TYPE.CAR_COUNT]: '차량카운트',
+  [SERVICE_TYPE.FEATURE_ANALYSIS]: '특성분석',
+  [SERVICE_TYPE.MONITORING]: '모니터링'
+} as const
+
 // 솔루션 분석 enum
 export enum SOLUTION_TYPE {
   CVEDIA = 'CVEDIA',
@@ -24,4 +31,9 @@ export interface IClient {
   reportGeneration: boolean
   reportEmail: string
   accountStatus: boolean
+  businessNumber: string
+  businessStatus: string
+  contractPeriod: string
+  reportReceiver: string
+  clientAccount: string
 }

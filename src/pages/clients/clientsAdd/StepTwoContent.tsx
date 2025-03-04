@@ -3,11 +3,17 @@ import { FC } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 import IconCustom from 'src/layouts/components/IconCustom'
+import { IClient } from 'src/model/client/clientModel'
 import SolutionList from './SolutionList'
 import SolutionSelect from './SolutionSelect'
 
+interface IStepTwoContent {
+  initialData: IClient | null
+  isEditMode: boolean
+}
+
 // 첫 번째 스텝 컴포넌트
-const StepTwoContent: FC = () => {
+const StepTwoContent: FC<IStepTwoContent> = ({ initialData, isEditMode }) => {
   return (
     <Grid item xs={10}>
       <Box mb={5}>

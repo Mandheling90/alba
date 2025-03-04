@@ -13,7 +13,7 @@ import SimpleDialogModal from 'src/@core/components/molecule/SimpleDialogModal'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { useContents } from 'src/hooks/useContents'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { IClient } from 'src/model/client/clientModel'
+import { IClient, SERVICE_TYPE, SERVICE_TYPE_LABELS } from 'src/model/client/clientModel'
 import { MContent } from 'src/model/contents/contentsModel'
 import styled from 'styled-components'
 import ContentsDeleteModal from '../modal/ContentsDeleteModal'
@@ -139,16 +139,23 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
               width: '100%'
             }}
           >
-            {row.serviceTypes.map((serviceType: string) =>
+            {row.serviceTypes.map((serviceType: string, index: number) =>
               row.serviceTypes.length <= 1 ? (
-                <>
+                <Box
+                  key={`single-${row.clientId}-${serviceType}-${index}`}
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                >
                   <IconCustom isCommon path='clients' icon={serviceType} />
-                  <Typography key={serviceType} variant='inherit' noWrap>
-                    {serviceType}
+                  <Typography component='span' variant='inherit' noWrap>
+                    {SERVICE_TYPE_LABELS[serviceType as SERVICE_TYPE]}
                   </Typography>
-                </>
+                </Box>
               ) : (
-                <CustomTooltip title={serviceType} key={serviceType} placement='top'>
+                <CustomTooltip
+                  title={SERVICE_TYPE_LABELS[serviceType as SERVICE_TYPE]}
+                  key={`multi-${row.clientId}-${serviceType}-${index}`}
+                  placement='top'
+                >
                   <Box
                     sx={{
                       display: 'flex',
@@ -257,8 +264,14 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
           <>
             <IconButton
               sx={{ color: 'text.secondary' }}
-              onClick={e => {
-                console.log(e)
+              onClick={() => {
+                router.push({
+                  pathname: '/clients/clientsAdd',
+                  query: {
+                    mode: 'edit',
+                    clientData: JSON.stringify(row)
+                  }
+                })
               }}
             >
               <IconCustom isCommon icon='Edit' />

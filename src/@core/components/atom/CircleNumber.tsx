@@ -10,18 +10,19 @@ interface CircleNumberProps {
 const CircleNumber: React.FC<CircleNumberProps> = ({ text, background = '#ff0000 ', color = '#fff' }) => {
   return (
     <Box
+      component='span'
       sx={{
         mx: 2,
         width: 15, // 원의 너비
         height: 15, // 원의 높이
         borderRadius: '50%', // 원형 모양
         background: background,
-        display: 'flex',
+        display: 'inline-flex',
         alignItems: 'center',
         justifyContent: 'center'
       }}
     >
-      <Typography color={color} fontSize={10}>
+      <Typography component='span' color={color} fontSize={10}>
         {text}
       </Typography>
     </Box>

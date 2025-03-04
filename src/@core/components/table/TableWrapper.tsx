@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from '@mui/material'
 import { FC, ReactNode, useState } from 'react'
-import PageSizeSelect from './pageSizeSelect'
+import PageSizeSelect from './PageSizeSelect'
 
 interface TableWrapperProps {
   children: ReactNode

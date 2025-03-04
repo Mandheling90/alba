@@ -2,12 +2,16 @@ import { Box, Button, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import { FC, useState } from 'react'
 import styled from 'styled-components'
-import PageSizeSelect from './pageSizeSelect'
+import PageSizeSelect from './PageSizeSelect'
 
 interface IPageSizeSelect {
   showMoreButton: boolean
   rows: any[]
   columns: any[]
+}
+
+interface TableWrapperProps {
+  $showMoreButton: boolean
 }
 
 const CustomTable: FC<IPageSizeSelect> = ({ showMoreButton, rows, columns }) => {
@@ -17,7 +21,7 @@ const CustomTable: FC<IPageSizeSelect> = ({ showMoreButton, rows, columns }) => 
 
   return (
     <>
-      <TableWrapper showMoreButton={showMoreButton}>
+      <TableWrapper $showMoreButton={showMoreButton}>
         <DataGrid
           autoHeight
           rows={rows}
@@ -30,11 +34,10 @@ const CustomTable: FC<IPageSizeSelect> = ({ showMoreButton, rows, columns }) => 
           getRowId={row => row.clientId}
           onRowSelectionModelChange={e => {
             console.log(e)
-
-            // setCheckedId(e as number[])
           }}
         />
       </TableWrapper>
+
       {showMoreButton && (
         <Box sx={{ display: 'flex', alignItems: 'center', position: 'relative' }} mt={3} mb={3}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, width: '100%', justifyContent: 'center' }}>
@@ -67,12 +70,12 @@ const CustomTable: FC<IPageSizeSelect> = ({ showMoreButton, rows, columns }) => 
   )
 }
 
-const TableWrapper = styled.div<{ showMoreButton: boolean }>`
+const TableWrapper = styled.div<TableWrapperProps>`
   .MuiTablePagination-root {
-    display: ${props => (props.showMoreButton ? 'none' : 'block')};
+    display: ${({ $showMoreButton }) => ($showMoreButton ? 'none' : 'block')};
   }
   .MuiDataGrid-footerContainer {
-    display: ${props => (props.showMoreButton ? 'none' : 'block')};
+    display: ${({ $showMoreButton }) => ($showMoreButton ? 'none' : 'block')};
   }
 `
 
