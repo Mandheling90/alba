@@ -27,7 +27,9 @@ const PickersRange = ({
   selectedEndDate = '',
   isDisabled = false,
   placeholder,
-  placeholderColor
+  placeholderColor,
+  inputStyle,
+  useNotDefaultStyle = false
 }: {
   popperPlacement: ReactDatePickerProps['popperPlacement']
   label?: string
@@ -41,6 +43,8 @@ const PickersRange = ({
   isDisabled?: boolean
   placeholder?: string
   placeholderColor?: string
+  inputStyle?: React.CSSProperties
+  useNotDefaultStyle?: boolean
 }) => {
   const [startDate, setStartDate] = useState<DateType>()
   const [endDate, setEndDate] = useState<DateType>()
@@ -85,7 +89,26 @@ const PickersRange = ({
         '& .react-datepicker-wrapper': { width: width ? `${width}px` : '100%' },
         '& .MuiFormControl-root': { width: width ? `${width}px` : '100%' },
         display: useFrontIcon ? 'flex' : '',
-        alignItems: 'center'
+        alignItems: 'center',
+        '& .MuiInputBase-root': {
+          ...inputStyle,
+          ...(useNotDefaultStyle
+            ? {
+                '&:before, &:after': {
+                  display: 'none !important'
+                },
+                '& fieldset': {
+                  border: 'none !important'
+                },
+                '&:hover fieldset': {
+                  border: 'none !important'
+                },
+                '&.Mui-focused fieldset': {
+                  border: 'none !important'
+                }
+              }
+            : {})
+        }
       }}
     >
       {useFrontIcon && (

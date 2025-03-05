@@ -1,10 +1,12 @@
-import { Box, Button, Grid, SelectChangeEvent, TextField, Typography } from '@mui/material'
+import { Box, Button, Grid, SelectChangeEvent, TextField, Typography, useTheme } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
+import { ReactDatePickerProps } from 'react-datepicker'
+import PickersRange from 'src/@core/components/atom/PickersRange'
 import SwitchCustom from 'src/@core/components/atom/SwitchCustom'
+import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
-import { requiredTextFieldStyle } from 'src/@core/styles/TextFieldStyle'
+import { grayTextBackground, grayTextFieldStyle, requiredTextFieldStyle } from 'src/@core/styles/TextFieldStyle'
 import { IClient, SERVICE_TYPE, SOLUTION_TYPE } from 'src/model/client/clientModel'
-import ClientsStateSelect from './ClientsStateSelect'
 
 interface IStepOneContentProps {
   clientData: IClient | null
@@ -98,6 +100,10 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
     })
   }
 
+  const theme = useTheme()
+  const { direction } = theme
+  const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
+
   return (
     <Grid item xs={8}>
       <Box>
@@ -113,7 +119,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                   value={formData.clientId}
                   onChange={handleChange('clientId')}
                   placeholder='필수입력'
-                  sx={requiredTextFieldStyle}
+                  sx={{ ...requiredTextFieldStyle, ...grayTextFieldStyle }}
                 />
                 <Button size='medium' variant='contained'>
                   중복확인
@@ -128,7 +134,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 </Typography>
                 <TextField
                   size='small'
-                  sx={{ width: '100%', ...requiredTextFieldStyle }}
+                  sx={{ width: '100%', ...requiredTextFieldStyle, ...grayTextFieldStyle }}
                   value={formData.clientName}
                   onChange={handleChange('clientName')}
                   placeholder='필수입력'
@@ -143,7 +149,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 </Typography>
                 <TextField
                   size='small'
-                  sx={{ width: '100%' }}
+                  sx={{ width: '100%', ...grayTextFieldStyle }}
                   value={formData.address}
                   onChange={handleChange('address')}
                   placeholder='선택입력'
@@ -158,7 +164,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 </Typography>
                 <TextField
                   size='small'
-                  sx={{ width: '100%' }}
+                  sx={{ width: '100%', ...grayTextFieldStyle }}
                   value={formData.businessNumber}
                   onChange={handleChange('businessNumber')}
                   placeholder='선택입력'
@@ -171,9 +177,19 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '160px' }}>
                   사업자 현재 상태
                 </Typography>
-                <ClientsStateSelect
-                  value={formData.businessStatus ?? '1'}
+                <CustomSelectBox
+                  value={formData.businessStatus}
                   onChange={handleSelectChange('businessStatus')}
+                  options={[
+                    { key: '1', value: '1', label: '계속사업자' },
+                    { key: '2', value: '2', label: '휴업' },
+                    { key: '3', value: '3', label: '폐업' },
+                    { key: '4', value: '4', label: '말소' },
+                    { key: '5', value: '5', label: '간주폐업' }
+                  ]}
+                  backgroundColor={grayTextBackground}
+                  placeholder='상태를 선택하세요'
+                  border={false}
                 />
               </Box>
             </Grid>
@@ -183,13 +199,19 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '160px' }}>
                   계약기간설정
                 </Typography>
-                <TextField
-                  size='small'
-                  sx={{ width: '100%' }}
-                  value={formData.contractPeriod}
-                  onChange={handleChange('contractPeriod')}
-                  placeholder='선택입력'
-                />
+                <Box sx={{ width: '100%' }}>
+                  <PickersRange
+                    useIcon={true}
+                    label={'게시일'}
+                    popperPlacement={popperPlacement}
+                    returnFormat='yyyy-MM-dd'
+                    onChange={(start, end) => {
+                      setFormData({ ...formData, contractPeriod: `${start} ~ ${end}` })
+                    }}
+                    inputStyle={{ backgroundColor: grayTextBackground, border: 'none' }}
+                    useNotDefaultStyle
+                  />
+                </Box>
               </Box>
             </Grid>
 
@@ -215,7 +237,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 </Typography>
                 <TextField
                   size='small'
-                  sx={{ width: '100%', ...requiredTextFieldStyle }}
+                  sx={{ width: '100%', ...requiredTextFieldStyle, ...grayTextFieldStyle }}
                   value={formData.reportReceiver}
                   onChange={handleChange('reportReceiver')}
                   placeholder='이메일 주소입력 필수'

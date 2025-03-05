@@ -75,17 +75,17 @@ const Container = styled('div')<{
   position: 'relative',
   cursor: 'pointer',
   border: `1px solid ${borderColor}`,
-
   padding: '3px',
   minWidth: `${isWidth}px`,
   width: `${isWidth}px`,
+  backgroundColor: '#f5f5f5',
 
   ...(isSuperChange
     ? {
-        backgroundColor: isSuperToggled ? 'rgba(253, 95, 85, 1)' : '#fff',
+        backgroundColor: isSuperToggled ? 'rgba(253, 95, 85, 1)' : '#f5f5f5',
         transition: 'background-color 0.2s ease-in-out'
       }
-    : { background: '#fff' })
+    : {})
 }))
 
 const AnimatedBackground = styled('div')<{ isToggled: boolean; activeColor: string[] }>(
@@ -111,7 +111,9 @@ const Side = styled('div')<{
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-
+  height: '100%',
+  lineHeight: '1',
+  padding: '5px 0',
   color: isToggled ? '#fff' : isSuperChange ? (isSuperToggled ? '#fff' : grey[700]) : grey[700],
   fontSize: '12px',
   zIndex: 1
