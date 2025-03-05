@@ -4,6 +4,10 @@ import { FC, useState } from 'react'
 import styled from 'styled-components'
 import PageSizeSelect from './PageSizeSelect'
 
+interface IRowSelect {
+  selectRowEvent: (row: any) => void
+}
+
 interface IPageSizeSelect {
   showMoreButton: boolean
   rows: any[]
@@ -14,7 +18,7 @@ interface TableWrapperProps {
   $showMoreButton: boolean
 }
 
-const CustomTable: FC<IPageSizeSelect> = ({ showMoreButton, rows, columns }) => {
+const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect>> = ({ showMoreButton, rows, columns, selectRowEvent }) => {
   const pageSizeOptions = [25, 50, 100]
   const [pageSize, setPageSize] = useState(25)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: pageSize })
@@ -32,6 +36,7 @@ const CustomTable: FC<IPageSizeSelect> = ({ showMoreButton, rows, columns }) => 
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           getRowId={row => row.clientId}
+          onRowClick={row => selectRowEvent && selectRowEvent(row.row)}
           onRowSelectionModelChange={e => {
             console.log(e)
           }}
