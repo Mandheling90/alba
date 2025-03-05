@@ -16,7 +16,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ onNext, onBack, activeStep, index }
 
   return (
     <div className='button-wrapper'>
-      <Button size='medium' variant='contained' onClick={onNext} sx={{ mr: 4 }}>
+      <Button size='medium' variant='contained' onClick={onNext} sx={{ mr: 4 }} disabled={isDisabled}>
         등록
       </Button>
 

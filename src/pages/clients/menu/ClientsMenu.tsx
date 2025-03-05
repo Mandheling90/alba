@@ -3,11 +3,11 @@ import { useTheme } from '@mui/material/styles'
 import { FC, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
+import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import { KIOSK_STATUS } from 'src/enum/kisokEnum'
 import { useClients } from 'src/hooks/useClients'
 import { excludeId } from 'src/utils/CommonUtil'
 import ClientsButtonList from './ClientsButtonList'
-import ClientsSelect from './ClientsSelect'
 
 interface IKioskMenu {
   refetch: () => void
@@ -41,7 +41,8 @@ const ClientsMenu: FC<IKioskMenu> = ({ refetch }) => {
 
   return (
     <ClientsMenuList>
-      <ClientsSelect
+      <CustomSelectBox
+        value={'1'}
         onChange={event => {
           handleClear()
           clients.setKioskListReq(
@@ -52,6 +53,12 @@ const ClientsMenu: FC<IKioskMenu> = ({ refetch }) => {
             )
           )
         }}
+        options={[
+          { key: '1', value: '1', label: '전체' },
+          { key: '2', value: '2', label: '고객사명' },
+          { key: '3', value: '3', label: '고객사주소' },
+          { key: '4', value: '4', label: '고객사상태' }
+        ]}
       />
 
       <TextField

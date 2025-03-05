@@ -83,7 +83,7 @@ const Index: FC = () => {
             return (
               <Step key={index} className={clsx({ active: activeStep === index })} expanded={true}>
                 <StepLabel StepIconComponent={StepperCustomDot}>
-                  <div className='step-label'>
+                  <div className='step-label' style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <Typography className='step-number'>{`0${index + 1}`}</Typography>
                     <div>
                       <Typography fontWeight={500} fontSize={30}>
