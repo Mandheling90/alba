@@ -42,6 +42,7 @@ const ClientsMenu: FC<IKioskMenu> = ({ refetch }) => {
   return (
     <ClientsMenuList>
       <CustomSelectBox
+        width='185px'
         value={'1'}
         onChange={event => {
           handleClear()
