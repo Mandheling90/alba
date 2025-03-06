@@ -1,12 +1,12 @@
-import { Box, Grid, Step, StepContent, StepLabel, Stepper, Typography, styled } from '@mui/material'
+import { Box, Grid, IconButton, Step, StepContent, StepLabel, Stepper, Typography, styled } from '@mui/material'
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
 import StepperCustomDot from 'src/@core/components/atom/StepperCustomDot'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import StepperWrapper from 'src/@core/styles/mui/stepper'
+import IconCustom from 'src/layouts/components/IconCustom'
 import { IClient } from 'src/model/client/clientModel'
-import ButtonGroup from './ButtonGroup'
 import StepOneContent from './StepOneContent'
 import StepTwoContent from './StepTwoContent'
 
@@ -44,6 +44,7 @@ const Index: FC = () => {
   const [clientData, setClientData] = useState<IClient | null>(null)
   const [isEditMode, setIsEditMode] = useState(false)
   const [stepOneData, setStepOneData] = useState<Partial<IClient>>({})
+  const [expandedSteps, setExpandedSteps] = useState<boolean[]>([true, true])
 
   useEffect(() => {
     if (router.query.mode === 'edit' && router.query.clientData) {
@@ -60,20 +61,41 @@ const Index: FC = () => {
 
   console.log(clientData)
 
+  const handleNext = () => setActiveStep(prev => prev + 1)
+  const handleBack = () => setActiveStep(prev => prev - 1)
+  const handleReset = () => setActiveStep(0)
+
+  const toggleStep = (index: number) => {
+    setExpandedSteps(prev => {
+      const newState = [...prev]
+      newState[index] = !newState[index]
+
+      return newState
+    })
+  }
+
   const steps = [
     {
       title: '고객사 정보등록',
-      content: <StepOneContent clientData={clientData} isEditMode={isEditMode} onDataChange={handleStepOneDataChange} />
+      content: (
+        <StepOneContent
+          clientData={clientData}
+          isEditMode={isEditMode}
+          onDataChange={handleStepOneDataChange}
+          onNext={() => {
+            activeStep === 0 && handleNext()
+          }}
+          onBack={() => {
+            activeStep > 0 && handleBack()
+          }}
+        />
+      )
     },
     {
       title: '분석 솔루션 및 카메라 정보 등록',
       content: <StepTwoContent initialData={clientData} isEditMode={isEditMode} />
     }
   ]
-
-  const handleNext = () => setActiveStep(prev => prev + 1)
-  const handleBack = () => setActiveStep(prev => prev - 1)
-  const handleReset = () => setActiveStep(0)
 
   return (
     <StandardTemplate title={'고객사 관리'}>
@@ -85,20 +107,23 @@ const Index: FC = () => {
                 <StepLabel StepIconComponent={StepperCustomDot}>
                   <div className='step-label' style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <Typography className='step-number'>{`0${index + 1}`}</Typography>
-                    <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                       <Typography fontWeight={500} fontSize={30}>
                         {step.title}
                       </Typography>
+                      <IconButton onClick={() => toggleStep(index)}>
+                        <IconCustom isCommon icon={expandedSteps[index] ? 'arrow-up' : 'arrow-down'} />
+                      </IconButton>
                     </div>
                   </div>
                 </StepLabel>
                 <CustomStepContent stepindex={index} activestep={activeStep}>
-                  <Box sx={{ py: 3 }}>
+                  <Box sx={{ py: 3, display: expandedSteps[index] ? 'block' : 'none' }}>
                     <Grid container spacing={1}>
-                      {step.content}
+                      <Grid item xs={7}>
+                        {step.content}
+                      </Grid>
                     </Grid>
-
-                    <ButtonGroup onNext={handleNext} onBack={handleBack} activeStep={activeStep} index={index} />
                   </Box>
                 </CustomStepContent>
               </Step>

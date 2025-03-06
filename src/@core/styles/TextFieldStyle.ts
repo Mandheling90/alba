@@ -17,3 +17,11 @@ export const grayTextFieldStyle = {
     border: 'none'
   }
 }
+
+export const requiredCenterPlaceholderStyle = {
+  '& .MuiInputBase-input::placeholder': {
+    textAlign: 'center',
+    color: '#FA7878',
+    opacity: 1
+  }
+}

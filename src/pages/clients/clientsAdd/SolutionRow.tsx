@@ -1,88 +1,67 @@
-import { Box, IconButton, SelectChangeEvent, TextField } from '@mui/material'
+import { Box, IconButton, TextField } from '@mui/material'
 import { FC } from 'react'
+import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
+import { grayTextFieldStyle, requiredCenterPlaceholderStyle } from 'src/@core/styles/TextFieldStyle'
 import IconCustom from 'src/layouts/components/IconCustom'
-import SolutionSelect from './SolutionSelect'
+import { IService, SERVICE_TYPE_LABELS } from 'src/model/client/clientModel'
 
 interface ISolutionRow {
-  onDelete: (event: SelectChangeEvent) => void
+  service: IService
+  onDelete: (serviceId: string) => void
+  onTypeChange: (serviceId: string, newType: string) => void
+  onUpdate: (serviceId: string, field: string, value: string) => void
 }
 
-const SolutionRow: FC<ISolutionRow> = ({ onDelete }) => {
+const serviceOptions = Object.entries(SERVICE_TYPE_LABELS).map(([value, label], index) => ({
+  key: String(index + 1),
+  value: String(index + 1),
+  label: label
+}))
+
+const SolutionRow: FC<ISolutionRow> = ({ service, onDelete, onTypeChange, onUpdate }) => {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-      <SolutionSelect
-        onChange={() => {
-          console.log('1')
-        }}
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+      <CustomSelectBox
+        value={service.serviceType}
+        onChange={e => onTypeChange(service.id, e.target.value)}
+        options={serviceOptions}
+        width='300px'
+        placeholder='분석 서비스 선택'
       />
 
       <TextField
         size='small'
-        sx={{
-          width: '325px',
-          '& .MuiInputBase-input::placeholder': {
-            color: 'red'
-          },
-          '& .MuiInputBase-input': {
-            textAlign: 'center'
-          }
-        }}
+        value={service.name}
+        onChange={e => onUpdate(service.id, 'name', e.target.value)}
         placeholder='분석카메라 이름'
-        onChange={e => {
-          console.log('')
-        }}
+        sx={{ ...requiredCenterPlaceholderStyle, ...grayTextFieldStyle }}
       />
 
       <TextField
         size='small'
-        sx={{
-          width: '325px',
-          '& .MuiInputBase-input::placeholder': {
-            color: 'red'
-          },
-          '& .MuiInputBase-input': {
-            textAlign: 'center'
-          }
-        }}
+        value={service.address || ''}
+        onChange={e => onUpdate(service.id, 'address', e.target.value)}
         placeholder='분석카메라 주소'
-        onChange={e => {
-          console.log('')
-        }}
+        sx={{ ...requiredCenterPlaceholderStyle, ...grayTextFieldStyle }}
       />
 
       <TextField
         size='small'
-        sx={{
-          width: '325px',
-          '& .MuiInputBase-input': {
-            textAlign: 'center'
-          }
-        }}
+        value={service.rtsAddress || ''}
+        onChange={e => onUpdate(service.id, 'rtsAddress', e.target.value)}
         placeholder='분석카메라 RTS 주소'
-        onChange={e => {
-          console.log('')
-        }}
+        sx={{ ...grayTextFieldStyle }}
       />
 
       <TextField
         size='small'
-        sx={{
-          width: '325px',
-          '& .MuiInputBase-input': {
-            textAlign: 'center'
-          }
-        }}
+        value={service.description || ''}
+        onChange={e => onUpdate(service.id, 'description', e.target.value)}
         placeholder='카메라 설명'
-        onChange={e => {
-          console.log('')
-        }}
+        sx={{ ...grayTextFieldStyle }}
       />
 
-      <IconButton
-        onClick={() => {
-          console.log('delete')
-        }}
-      >
+      <IconButton onClick={() => onDelete(service.id)}>
         <IconCustom isCommon icon={'DeleteOutline'} />
       </IconButton>
     </Box>

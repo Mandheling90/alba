@@ -12,7 +12,7 @@ const FileDownLoadForm: React.FC<ILoginTemplate> = ({ label }) => {
   const handleManualDownload = async () => {
     try {
       setIsLoading(true)
-      const fileUrl = `http://210.216.236.181:12705/Dains_Manual.pdf`
+      const fileUrl = `http://210.216.236.181:12702/file/download/manual`
 
       const response = await fetch(fileUrl, {
         method: 'GET',

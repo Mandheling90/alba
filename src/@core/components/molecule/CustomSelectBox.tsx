@@ -14,6 +14,7 @@ interface ICustomSelectBox {
   placeholder?: string
   backgroundColor?: string
   border?: boolean
+  width?: string
 }
 
 const CustomSelectBox: FC<ICustomSelectBox> = ({
@@ -22,12 +23,13 @@ const CustomSelectBox: FC<ICustomSelectBox> = ({
   options,
   placeholder,
   backgroundColor,
-  border = true
+  border = true,
+  width
 }) => {
   return (
     <Select
       sx={{
-        minWidth: '185px',
+        width: width || '100%',
         height: '40px',
         textAlign: 'center',
         backgroundColor: backgroundColor || 'transparent',

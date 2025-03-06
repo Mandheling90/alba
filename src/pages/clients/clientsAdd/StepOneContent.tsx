@@ -7,11 +7,14 @@ import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 import { grayTextBackground, grayTextFieldStyle, requiredTextFieldStyle } from 'src/@core/styles/TextFieldStyle'
 import { IClient, SERVICE_TYPE, SOLUTION_TYPE } from 'src/model/client/clientModel'
+import ButtonGroup from './ButtonGroup'
 
 interface IStepOneContentProps {
   clientData: IClient | null
   isEditMode: boolean
   onDataChange: (data: Partial<IClient>) => void
+  onNext: () => void
+  onBack: () => void
 }
 
 interface IFormData {
@@ -32,7 +35,7 @@ interface IFormData {
 }
 
 // 첫 번째 스텝 컴포넌트
-const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDataChange }) => {
+const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDataChange, onNext, onBack }) => {
   const [formData, setFormData] = useState<IFormData>({
     clientId: '',
     clientName: '',
@@ -105,7 +108,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
   const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
 
   return (
-    <Grid item xs={8}>
+    <>
       <Box>
         <WindowCard title='고객사 정보'>
           <Grid container spacing={1}>
@@ -262,7 +265,11 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
           </Grid>
         </WindowCard>
       </Box>
-    </Grid>
+
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <ButtonGroup onNext={onNext} onBack={onBack} />
+      </Box>
+    </>
   )
 }
 

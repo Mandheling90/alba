@@ -4,15 +4,22 @@ import { FC } from 'react'
 interface ButtonGroupProps {
   onNext: () => void
   onBack: () => void
-  activeStep: number
-  index: number
+
+  // activeStep?: number
+  // index?: number
 }
 
-const ButtonGroup: FC<ButtonGroupProps> = ({ onNext, onBack, activeStep, index }) => {
-  console.log(activeStep)
+const ButtonGroup: FC<ButtonGroupProps> = ({
+  onNext,
+  onBack
+
+  // activeStep, index
+}) => {
+  // console.log(activeStep)
 
   // 현재 스텝이 아니거나 activeStep이 1일 때 disabled
-  const isDisabled = activeStep !== index
+  // const isDisabled = activeStep !== index
+  const isDisabled = false
 
   return (
     <div className='button-wrapper'>

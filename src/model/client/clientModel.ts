@@ -37,3 +37,18 @@ export interface IClient {
   reportReceiver: string
   clientAccount: string
 }
+
+export interface IService {
+  id: string
+  name: string
+  serviceType: string
+  address?: string
+  rtsAddress?: string
+  description?: string
+}
+
+export interface ISolutionCard {
+  id: number
+  selectedSolution: string
+  services: IService[]
+}
