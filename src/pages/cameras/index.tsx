@@ -1,7 +1,8 @@
 import { FC } from 'react'
+import Cameras from './Cameras'
 
 const Index: FC = ({}): React.ReactElement => {
-  return <>카메라 세팅</>
+  return <Cameras />
 }
 
 export default Index
