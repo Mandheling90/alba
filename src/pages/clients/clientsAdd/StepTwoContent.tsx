@@ -1,21 +1,31 @@
 import { Box, Button, IconButton, SelectChangeEvent, Typography } from '@mui/material'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { IClient, ISolutionCard } from 'src/model/client/clientModel'
+import { IClientDetail, ISolutionCard } from 'src/model/client/clientModel'
 import ButtonGroup from './ButtonGroup'
 import SolutionList from './SolutionList'
 
 interface IStepTwoContent {
-  initialData: IClient | null
-  isEditMode: boolean
+  clientData: IClientDetail | null
+  onDataChange: (data: Partial<IClientDetail>) => void
 }
 
 // 첫 번째 스텝 컴포넌트
-const StepTwoContent: FC<IStepTwoContent> = ({ initialData, isEditMode }) => {
-  const [solutionCards, setSolutionCards] = useState<ISolutionCard[]>([])
+const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange }) => {
+  const [solutionCards, setSolutionCards] = useState<ISolutionCard[]>(clientData?.solutions || [])
+
+  useEffect(() => {
+    if (clientData?.solutions) {
+      setSolutionCards(clientData.solutions)
+    }
+  }, [clientData])
+
+  useEffect(() => {
+    onDataChange({ solutions: solutionCards })
+  }, [solutionCards])
 
   const handleAddSolution = () => {
     setSolutionCards(prev => [
@@ -42,7 +52,11 @@ const StepTwoContent: FC<IStepTwoContent> = ({ initialData, isEditMode }) => {
     <>
       <Box mb={5}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography>총 {solutionCards.length}개의 분석 솔루션과 2개의 서비스가 등록되어 있습니다.</Typography>
+          <Typography>
+            총 {clientData?.solutions?.length || 0}개의 분석 솔루션과
+            {clientData?.solutions?.reduce((acc, sol) => acc + sol.services.length, 0) || 0}개의 서비스가 등록되어
+            있습니다.
+          </Typography>
           <Button variant='contained' startIcon={<IconCustom isCommon icon='plus' />} onClick={handleAddSolution}>
             분석솔루션 추가
           </Button>

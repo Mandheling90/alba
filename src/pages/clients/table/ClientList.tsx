@@ -269,7 +269,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
                   pathname: '/clients/clientsAdd',
                   query: {
                     mode: 'edit',
-                    clientData: JSON.stringify(row)
+                    id: row.clientId
                   }
                 })
               }}
@@ -316,42 +316,6 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
         <Grid item xs={12}>
           <Card>
             <CustomTable showMoreButton={true} rows={clientData} columns={columns} />
-
-            {/* <TableWrapper>
-              <DataGrid
-                autoHeight
-                rows={clientData}
-                columns={columns}
-                checkboxSelection
-                disableRowSelectionOnClick
-                pageSizeOptions={[10, 25, 50]}
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                getRowId={row => row.clientId}
-                onRowSelectionModelChange={e => {
-                  console.log(e)
-                  setCheckedId(e as number[])
-                }}
-              />
-            </TableWrapper> */}
-
-            {/* <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }} mt={3} mb={3} gap={3}>
-              <Button
-                variant='contained'
-                onClick={() => {
-                  setPaginationModel({ page: 0, pageSize: Math.min(paginationModel.pageSize + 50, clientData.length) })
-                }}
-                disabled={paginationModel.pageSize >= clientData.length}
-              >
-                더보기
-              </Button>
-              <Typography>
-                {paginationModel.pageSize > clientData.length ? clientData.length : paginationModel.pageSize} of{' '}
-                {clientData.length}
-              </Typography>
-
-              <PageSizeSelect pageSize={paginationModel.pageSize} onChange={handlePageSizeChange} />
-            </Box> */}
           </Card>
         </Grid>
       </Grid>

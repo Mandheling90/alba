@@ -1,106 +1,38 @@
 import { Box, Button, Grid, SelectChangeEvent, TextField, Typography, useTheme } from '@mui/material'
-import { FC, useEffect, useState } from 'react'
+import { FC } from 'react'
 import { ReactDatePickerProps } from 'react-datepicker'
 import PickersRange from 'src/@core/components/atom/PickersRange'
 import SwitchCustom from 'src/@core/components/atom/SwitchCustom'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 import { grayTextBackground, grayTextFieldStyle, requiredTextFieldStyle } from 'src/@core/styles/TextFieldStyle'
-import { IClient, SERVICE_TYPE, SOLUTION_TYPE } from 'src/model/client/clientModel'
+import { IClient, IClientDetail } from 'src/model/client/clientModel'
 import ButtonGroup from './ButtonGroup'
 
 interface IStepOneContentProps {
-  clientData: IClient | null
-  isEditMode: boolean
+  clientData: IClientDetail | null
+
   onDataChange: (data: Partial<IClient>) => void
   onNext: () => void
   onBack: () => void
 }
 
-interface IFormData {
-  clientId: string
-  clientName: string
-  address: string
-  businessNumber: string
-  businessStatus: string
-  contractPeriod: string
-  reportGeneration: boolean
-  reportReceiver: string
-  clientAccount: string
-  serviceTypes: SERVICE_TYPE[]
-  solutionTypes: SOLUTION_TYPE[]
-  analysisChannels: number
-  reportEmail: string
-  accountStatus: boolean
-}
-
 // 첫 번째 스텝 컴포넌트
-const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDataChange, onNext, onBack }) => {
-  const [formData, setFormData] = useState<IFormData>({
-    clientId: '',
-    clientName: '',
-    address: '',
-    businessNumber: '',
-    businessStatus: '',
-    contractPeriod: '',
-    reportGeneration: false,
-    reportReceiver: '',
-    clientAccount: '',
-    serviceTypes: [],
-    solutionTypes: [],
-    analysisChannels: 0,
-    reportEmail: '',
-    accountStatus: false
-  })
-
-  useEffect(() => {
-    if (clientData && isEditMode) {
-      setFormData({
-        clientId: clientData.clientId || '',
-        clientName: clientData.clientName || '',
-        address: clientData.address || '',
-        businessNumber: clientData.businessNumber || '',
-        businessStatus: clientData.businessStatus || '1',
-        contractPeriod: clientData.contractPeriod || '',
-        reportGeneration: clientData.reportGeneration || false,
-        reportReceiver: clientData.reportReceiver || '',
-        clientAccount: clientData.clientAccount || '',
-        serviceTypes: clientData.serviceTypes || [],
-        solutionTypes: clientData.solutionTypes || [],
-        analysisChannels: clientData.analysisChannels || 0,
-        reportEmail: clientData.reportEmail || '',
-        accountStatus: clientData.accountStatus || false
-      })
-    }
-  }, [clientData, isEditMode])
-
-  const handleChange = (field: keyof IFormData) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.value
-    setFormData(prev => {
-      const newData = { ...prev, [field]: newValue }
-      onDataChange(newData)
-
-      return newData
-    })
+const StepOneContent: FC<IStepOneContentProps> = ({ clientData, onDataChange, onNext, onBack }) => {
+  const handleChange = (field: keyof IClientDetail) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    onDataChange({ [field]: event.target.value })
   }
 
-  const handleSelectChange = (field: keyof IFormData) => (event: SelectChangeEvent) => {
-    const newValue = event.target.value
-    setFormData(prev => {
-      const newData = { ...prev, [field]: newValue }
-      onDataChange(newData)
-
-      return newData
-    })
+  const handleSelectChange = (field: keyof IClientDetail) => (event: SelectChangeEvent) => {
+    onDataChange({ [field]: event.target.value })
   }
 
-  const handleSwitchChange = (field: keyof IFormData) => (selected: boolean) => {
-    setFormData(prev => {
-      const newData = { ...prev, [field]: selected }
-      onDataChange(newData)
+  const handleSwitchChange = (field: keyof IClientDetail) => (selected: boolean) => {
+    onDataChange({ [field]: selected })
+  }
 
-      return newData
-    })
+  const handleDateChange = (start: string, end: string) => {
+    onDataChange({ contractPeriod: `${start} ~ ${end}` })
   }
 
   const theme = useTheme()
@@ -119,7 +51,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 </Typography>
                 <TextField
                   size='small'
-                  value={formData.clientId}
+                  value={clientData?.clientId || ''}
                   onChange={handleChange('clientId')}
                   placeholder='필수입력'
                   sx={{ ...requiredTextFieldStyle, ...grayTextFieldStyle }}
@@ -138,7 +70,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 <TextField
                   size='small'
                   sx={{ width: '100%', ...requiredTextFieldStyle, ...grayTextFieldStyle }}
-                  value={formData.clientName}
+                  value={clientData?.clientName || ''}
                   onChange={handleChange('clientName')}
                   placeholder='필수입력'
                 />
@@ -153,7 +85,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 <TextField
                   size='small'
                   sx={{ width: '100%', ...grayTextFieldStyle }}
-                  value={formData.address}
+                  value={clientData?.address || ''}
                   onChange={handleChange('address')}
                   placeholder='선택입력'
                 />
@@ -168,7 +100,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 <TextField
                   size='small'
                   sx={{ width: '100%', ...grayTextFieldStyle }}
-                  value={formData.businessNumber}
+                  value={clientData?.businessNumber || ''}
                   onChange={handleChange('businessNumber')}
                   placeholder='선택입력'
                 />
@@ -181,7 +113,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                   사업자 현재 상태
                 </Typography>
                 <CustomSelectBox
-                  value={formData.businessStatus}
+                  value={clientData?.businessStatus || ''}
                   onChange={handleSelectChange('businessStatus')}
                   options={[
                     { key: '1', value: '1', label: '계속사업자' },
@@ -208,9 +140,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                     label={'게시일'}
                     popperPlacement={popperPlacement}
                     returnFormat='yyyy-MM-dd'
-                    onChange={(start, end) => {
-                      setFormData({ ...formData, contractPeriod: `${start} ~ ${end}` })
-                    }}
+                    onChange={handleDateChange}
                     inputStyle={{ backgroundColor: grayTextBackground, border: 'none' }}
                     useNotDefaultStyle
                   />
@@ -226,7 +156,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 <SwitchCustom
                   width={100}
                   switchName={['사용', '미사용']}
-                  selected={formData.reportGeneration}
+                  selected={clientData?.reportGeneration || false}
                   onChange={handleSwitchChange('reportGeneration')}
                   activeColor={['#9155FD', '#696969']}
                 />
@@ -241,7 +171,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 <TextField
                   size='small'
                   sx={{ width: '100%', ...requiredTextFieldStyle, ...grayTextFieldStyle }}
-                  value={formData.reportReceiver}
+                  value={clientData?.reportReceiver || ''}
                   onChange={handleChange('reportReceiver')}
                   placeholder='이메일 주소입력 필수'
                 />
@@ -256,7 +186,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, isEditMode, onDa
                 <SwitchCustom
                   width={100}
                   switchName={['활성', '비활성']}
-                  selected={formData.accountStatus}
+                  selected={clientData?.accountStatus || false}
                   onChange={handleSwitchChange('accountStatus')}
                   activeColor={['#9155FD', '#F57A52']}
                 />

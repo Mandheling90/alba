@@ -2,9 +2,8 @@
 import { Grid, Typography } from '@mui/material'
 import { FC, useEffect } from 'react'
 
-import PageHeader from 'src/@core/components/page-header'
-
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
+import PageHeader from 'src/@core/components/page-header'
 import RoleCards from 'src/@core/components/userSetting/roles/RoleCards'
 import Table from 'src/@core/components/userSetting/table/Table'
 import { useUserAll, useUserGroupList } from 'src/service/setting/userSetting'
@@ -30,7 +29,7 @@ const UserSetting: FC = (): React.ReactElement => {
   return (
     <StandardTemplate title={'사용자관리'}>
       <Grid container spacing={2}>
-        <Grid item xs={4} sx={{ height: 'calc(100vh - 64px)', overflowY: 'auto' }}>
+        <Grid item xs={4}>
           <ClientListGrid
             data={user.data}
             refetch={() => {
