@@ -70,8 +70,8 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
   }, [])
 
   const columns = [
-    { field: 'name', headerName: '사용자', flex: 1 },
-    { field: 'id', headerName: '이메일 주소', flex: 1 }
+    { field: 'name', headerName: '고객사 ID', flex: 1 },
+    { field: 'id', headerName: '고객사 명', flex: 1 }
   ]
 
   return (

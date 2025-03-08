@@ -1,11 +1,12 @@
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import { IconButton, Switch, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import { SelectChangeEvent } from '@mui/material/Select'
+import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { useAuth } from 'src/hooks/useAuth'
+import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { UserListAll } from 'src/model/userSetting/userSettingModel'
 import { useUserArrDel, useUserMod } from 'src/service/setting/userSetting'
@@ -20,17 +21,12 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
   const { mutateAsync: userDel } = useUserArrDel()
   const { mutateAsync: modUser } = useUserMod()
 
-  // ** State
-  const [plan, setPlan] = useState<string>('')
-  const [value, setValue] = useState<string>('')
-  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
+  const userContext = useUser()
 
   const [userData, setUserData] = useState<UserListAll[]>([])
 
   const [isOpen, setIsOpen] = useState(false)
   const [selectUser, setSelectUser] = useState<UserListAll>()
-
-  const [userCheck, setUserCheck] = useState<string[]>([])
 
   const auth = useAuth()
 
@@ -46,30 +42,6 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
       refetch()
     }
   }
-
-  const handleFilter = useCallback(
-    (val: string) => {
-      if (val !== '') {
-        const newData = userData.map(obj => {
-          const shouldDisplay = !obj.name || obj.name.toLowerCase().includes(val)
-
-          return { ...obj, display: shouldDisplay }
-        })
-
-        setUserData(newData)
-      } else {
-        const newData = userData.map(obj => ({ ...obj, display: true }))
-        setUserData(newData)
-      }
-
-      setValue(val)
-    },
-    [userData]
-  )
-
-  const handlePlanChange = useCallback((e: SelectChangeEvent) => {
-    setPlan(e.target.value)
-  }, [])
 
   const columns = [
     { field: 'name', headerName: '사용자', flex: 1 },
@@ -168,6 +140,14 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
       <Grid container>
         <Grid item xs={12}>
           <Card>
+            <LayoutControlPanel
+              menuName='사용자'
+              id='user'
+              selectedTarget='user'
+              onClick={() => {
+                userContext.setLayoutDisplay(!userContext.layoutDisplay)
+              }}
+            />
             <CustomTable
               showMoreButton={true}
               rows={userData}

@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { UserProvider } from 'src/context/UserContext'
 import { MUserGroup } from 'src/model/userSetting/userSettingModel'
 import { create } from 'zustand'
 import UserSetting from './UserSetting'
@@ -32,7 +33,11 @@ export const useUserSettingStore = create<MUserSettingStore & MUserSettingAction
 }))
 
 const Index: FC = ({}): React.ReactElement => {
-  return <UserSetting />
+  return (
+    <UserProvider>
+      <UserSetting />
+    </UserProvider>
+  )
 }
 
 export default Index
