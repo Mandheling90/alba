@@ -18,7 +18,17 @@ interface TableWrapperProps {
   $showMoreButton: boolean
 }
 
-const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect>> = ({ showMoreButton, rows, columns, selectRowEvent }) => {
+interface IGridOptions {
+  checkboxSelection: boolean
+}
+
+const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptions>> = ({
+  showMoreButton,
+  rows,
+  columns,
+  checkboxSelection = true,
+  selectRowEvent
+}) => {
   const pageSizeOptions = [25, 50, 100]
   const [pageSize, setPageSize] = useState(25)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: pageSize })
@@ -30,7 +40,7 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect>> = ({ showMoreButton
           autoHeight
           rows={rows}
           columns={columns}
-          checkboxSelection
+          checkboxSelection={checkboxSelection}
           disableRowSelectionOnClick
           pageSizeOptions={pageSizeOptions}
           paginationModel={paginationModel}
