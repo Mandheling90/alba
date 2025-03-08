@@ -3,7 +3,7 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import { SelectChangeEvent } from '@mui/material/Select'
-import { DataGrid } from '@mui/x-data-grid'
+import CustomTable from 'src/@core/components/table/CustomTable'
 import { useAuth } from 'src/hooks/useAuth'
 import { UserListAll } from 'src/model/userSetting/userSettingModel'
 import { useUserArrDel, useUserMod } from 'src/service/setting/userSetting'
@@ -11,9 +11,10 @@ import { useUserArrDel, useUserMod } from 'src/service/setting/userSetting'
 interface IClientList {
   data: UserListAll[]
   refetch: () => void
+  selectRowEvent: (row: any) => void
 }
 
-const ClientList: FC<IClientList> = ({ data, refetch }) => {
+const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) => {
   const { mutateAsync: userDel } = useUserArrDel()
   const { mutateAsync: modUser } = useUserMod()
 
@@ -75,34 +76,17 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
 
   return (
     <>
-      <Grid container spacing={6}>
+      <Grid container>
         <Grid item xs={12}>
           <Card>
-            <DataGrid
-              autoHeight
-              rows={userData
-                ?.map((item, index) => {
-                  return {
-                    ...item,
-                    display: item.display ?? true,
-                    groupName: item.group.name
-                  }
-                })
-                .filter(row => row.display)}
+            <CustomTable
+              showMoreButton
+              rows={userData}
               columns={columns}
-              disableRowSelectionOnClick
-              initialState={{
-                pagination: {
-                  paginationModel: { pageSize: 100 }
-                }
-              }}
-              pageSizeOptions={[100]}
-              hideFooterPagination
-              onRowSelectionModelChange={e => {
-                console.log(e)
-                setUserCheck(e as string[])
-              }}
-              isRowSelectable={(params: any) => params.row.id !== auth?.user?.userInfo?.id}
+              isAllView
+              selectRowEvent={selectRowEvent}
+              checkboxSelection={false}
+              enablePointer
             />
           </Card>
         </Grid>
@@ -111,4 +95,4 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
   )
 }
 
-export default ClientList
+export default ClientSimpleList

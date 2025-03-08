@@ -315,7 +315,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       <Grid container>
         <Grid item xs={12}>
           <Card>
-            <CustomTable showMoreButton={true} rows={clientData} columns={columns} />
+            <CustomTable showMoreButton={true} rows={clientData} columns={columns} id='clientId' />
           </Card>
         </Grid>
       </Grid>

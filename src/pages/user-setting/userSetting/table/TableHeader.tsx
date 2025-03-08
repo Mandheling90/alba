@@ -6,8 +6,9 @@ import TextField from '@mui/material/TextField'
 
 // ** Icon Imports
 import { useState } from 'react'
+
+import IconCustom from 'src/layouts/components/IconCustom'
 import { useUserArrDel } from 'src/service/setting/userSetting'
-import Icon from '../../icon'
 import UserAddModModal from '../modal/UserAddModModal'
 
 interface TableHeaderProps {
@@ -45,7 +46,7 @@ const TableHeader = (props: TableHeaderProps) => {
         sx={{ mr: 4, mb: 2 }}
         color='secondary'
         variant='outlined'
-        startIcon={<Icon icon='mdi:export-variant' />}
+        startIcon={<IconCustom icon='mdi:export-variant' />}
         onClick={() => {
           onExport?.()
         }}

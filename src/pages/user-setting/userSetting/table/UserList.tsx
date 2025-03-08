@@ -4,14 +4,12 @@ import { IconButton, Switch, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import { SelectChangeEvent } from '@mui/material/Select'
-import { DataGrid } from '@mui/x-data-grid'
+import CustomTable from 'src/@core/components/table/CustomTable'
 import { useAuth } from 'src/hooks/useAuth'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { UserListAll } from 'src/model/userSetting/userSettingModel'
 import { useUserArrDel, useUserMod } from 'src/service/setting/userSetting'
-import { exportToExcel } from 'src/utils/CommonUtil'
 import UserAddModModal from '../modal/UserAddModModal'
-import TableHeader from './TableHeader'
 
 interface IUserList {
   data: UserListAll[]
@@ -148,6 +146,10 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
     }
   ]
 
+  const handleCheckboxSelection = (selectedRows: any[]) => {
+    console.log(selectedRows)
+  }
+
   return (
     <>
       {isOpen && (
@@ -163,43 +165,15 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
         />
       )}
 
-      <Grid container spacing={6}>
+      <Grid container>
         <Grid item xs={12}>
           <Card>
-            <TableHeader
-              plan={plan}
-              value={value}
-              handleFilter={handleFilter}
-              handlePlanChange={handlePlanChange}
-              userCheck={userCheck}
-              refetch={refetch}
-              onExport={() => {
-                exportToExcel(data, '유저리스트')
-              }}
-            />
-            <DataGrid
-              autoHeight
-              rows={userData
-                ?.map((item, index) => {
-                  return {
-                    ...item,
-                    display: item.display ?? true,
-                    groupName: item.group.name
-                  }
-                })
-                .filter(row => row.display)}
+            <CustomTable
+              showMoreButton={true}
+              rows={userData}
               columns={columns}
-              checkboxSelection
-              disableRowSelectionOnClick
-              pageSizeOptions={[10, 25, 50]}
-              paginationModel={paginationModel}
-              onPaginationModelChange={setPaginationModel}
-              onRowSelectionModelChange={e => {
-                console.log(e)
-
-                setUserCheck(e as string[])
-              }}
-              isRowSelectable={(params: any) => params.row.id !== auth?.user?.userInfo?.id}
+              onCheckboxSelectionChange={handleCheckboxSelection}
+              isAllView
             />
           </Card>
         </Grid>

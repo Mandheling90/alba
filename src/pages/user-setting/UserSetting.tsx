@@ -4,11 +4,11 @@ import { FC, useEffect } from 'react'
 
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PageHeader from 'src/@core/components/page-header'
-import RoleCards from 'src/@core/components/userSetting/roles/RoleCards'
-import Table from 'src/@core/components/userSetting/table/Table'
 import { useUserAll, useUserGroupList } from 'src/service/setting/userSetting'
 import { useUserSettingStore } from '.'
-import ClientListGrid from './ClientListGrid'
+import ClientListGrid from './client/ClientListGrid'
+import RoleCards from './userSetting/roles/RoleCards'
+import UserList from './userSetting/table/UserList'
 
 const UserSetting: FC = (): React.ReactElement => {
   const { data: userGroup, refetch: userGroupRefetch } = useUserGroupList()
@@ -26,20 +26,25 @@ const UserSetting: FC = (): React.ReactElement => {
     return <></>
   }
 
+  const handleSelectClientGrid = (row: any) => {
+    console.log(row)
+  }
+
   return (
     <StandardTemplate title={'사용자관리'}>
-      <Grid container spacing={2}>
-        <Grid item xs={4}>
+      <Grid container spacing={5}>
+        <Grid item xs={3}>
           <ClientListGrid
             data={user.data}
             refetch={() => {
               userRefetch()
               userGroupRefetch()
             }}
+            selectRowEvent={handleSelectClientGrid}
           />
         </Grid>
 
-        <Grid item xs={8}>
+        <Grid item xs={9}>
           <Grid container>
             <Grid item xs={12}>
               <PageHeader
@@ -49,7 +54,7 @@ const UserSetting: FC = (): React.ReactElement => {
                   </Typography>
                 }
               />
-              <Table
+              <UserList
                 data={user.data}
                 refetch={() => {
                   userRefetch()
