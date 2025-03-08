@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 
-import { IconButton, Switch, Typography } from '@mui/material'
+import { Box, IconButton, Switch, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
@@ -148,13 +148,15 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
                 userContext.setLayoutDisplay(!userContext.layoutDisplay)
               }}
             />
-            <CustomTable
-              showMoreButton={true}
-              rows={userData}
-              columns={columns}
-              onCheckboxSelectionChange={handleCheckboxSelection}
-              isAllView
-            />
+            <Box sx={{ maxHeight: '30vh', overflow: 'auto' }}>
+              <CustomTable
+                showMoreButton={true}
+                rows={userData}
+                columns={columns}
+                onCheckboxSelectionChange={handleCheckboxSelection}
+                isAllView
+              />
+            </Box>
           </Card>
         </Grid>
       </Grid>

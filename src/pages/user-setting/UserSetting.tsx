@@ -54,7 +54,7 @@ const UserSetting: FC = (): React.ReactElement => {
             </Typography>
           }
         />
-        <Box sx={{ maxHeight: '42.5vh', overflow: 'auto' }}>
+        <Box>
           <UserList
             data={user.data}
             refetch={() => {
@@ -73,7 +73,12 @@ const UserSetting: FC = (): React.ReactElement => {
 
   return (
     <StandardTemplate title={'사용자관리'}>
-      <SlidingLayout isOpen={userContext.layoutDisplay} sideContent={sideContent} mainContent={mainContent} />
+      <SlidingLayout
+        isOpen={userContext.layoutDisplay}
+        sideContent={sideContent}
+        mainContent={mainContent}
+        maxHeight='85vh'
+      />
     </StandardTemplate>
   )
 }

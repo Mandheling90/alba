@@ -7,9 +7,17 @@ interface SlidingLayoutProps {
   mainContent: ReactNode
   sideWidth?: number
   spacing?: number
+  maxHeight?: string
 }
 
-const SlidingLayout: FC<SlidingLayoutProps> = ({ isOpen, sideContent, mainContent, sideWidth = 3, spacing = 5 }) => {
+const SlidingLayout: FC<SlidingLayoutProps> = ({
+  isOpen,
+  sideContent,
+  mainContent,
+  sideWidth = 3,
+  spacing = 5,
+  maxHeight = '85vh'
+}) => {
   const [gridSize, setGridSize] = useState(isOpen ? 12 - sideWidth : 12)
 
   return (
@@ -26,7 +34,7 @@ const SlidingLayout: FC<SlidingLayoutProps> = ({ isOpen, sideContent, mainConten
           item
           xs={sideWidth}
           sx={{
-            maxHeight: '85vh',
+            maxHeight,
             overflow: 'auto'
           }}
         >
