@@ -200,7 +200,16 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
             <Typography variant='inherit' noWrap sx={{ flex: 1, textAlign: 'center' }}>
               {row.analysisChannels}
             </Typography>
-            <IconCustom isCommon icon='colons' />
+            <Box
+              sx={{
+                cursor: 'pointer'
+              }}
+              onClick={() => {
+                setIsOpen(true)
+              }}
+            >
+              <IconCustom isCommon icon='colons' />
+            </Box>
           </Box>
         )
       }
@@ -297,8 +306,8 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
         onClose={() => {
           setIsOpen(false)
         }}
-        title={`선택된 컨텐츠는 아래 총 ${kioskListInfo?.count}곳의 키오스크에 게시되어 있습니다`}
-        contents={kioskListInfo?.kioskList ?? ''}
+        title={`선택된 컨텐츠는 아래 총 2곳의 키오스크에 게시되어 있습니다`}
+        contents={''}
       />
 
       {contents.selectedContentIds.length > 0 && (
