@@ -45,7 +45,7 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
           pageSizeOptions={pageSizeOptions}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
-          getRowId={row => row.clientId}
+          getRowId={row => row.id}
           onRowClick={row => selectRowEvent && selectRowEvent(row.row)}
           onRowSelectionModelChange={e => {
             console.log(e)
