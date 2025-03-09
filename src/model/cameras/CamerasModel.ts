@@ -1,78 +1,93 @@
-export interface MCameraClient {
+import { SORT } from 'src/enum/commonEnum'
+
+export interface ICameraClientReq {
+  id?: number
+  sort?: string
+  order?: SORT
+  keyword?: string
+}
+
+export interface ICameraClientDetailReq {
+  id?: number
+  clientId: string
+}
+
+export interface ICameraClient {
   id: number
   clientId: string
   clientNm: string
 }
-
-export interface MCameraClientDetail extends MCameraClient {
-  desc: string
+export interface ICameraClientDetail {
+  id: number
+  cameraLabel: string
+  zonePoints: IPoint
 }
 
-export interface MPoint {
+export interface IPoint {
   lat: number | null
   lon: number | null
 }
 
-export interface MLocationState {
-  selected: MSelectedLocation
-  center: MPoint
-  selectedNode?: MAreas
-  selectAreaId: MSelectAreaId
+export interface ILocationState {
+  selected: ISelectedLocation
+  center: IPoint
+  selectedNode?: IAreas
+  selectAreaId: ISelectAreaId
   isSearch?: boolean
-  displayInfo: MDisplayInfo
+  displayInfo: IDisplayInfo
 }
 
-export interface MSelectedLocation {
+export interface ISelectedLocation {
   areaId: number[]
   subAreaId: number[]
   cameraId: number
 }
 
-export interface MAreas {
+export interface IAreas {
   areaId: number
   areaName: string
   areaExtName?: string | null
   lat: number
   lon: number
-  alarmLevelCount: MAlarmLevelCount[]
-  subAreas: MSubAreas[]
+  alarmLevelCount: IAlarmLevelCount[]
+  subAreas: ISubAreas[]
 }
 
-export interface MSelectAreaId {
+export interface ISelectAreaId {
   areaId: number
   subAreaId: number
   cameraId: number
 }
 
-export interface MDisplayInfo {
+export interface IDisplayInfo {
   areaId: number[]
   subAreaId: number[]
   cameraId: number[]
 }
 
-export interface MAlarmLevelCount {
+export interface IAlarmLevelCount {
   alarmLevel: string
   count: number
 }
 
-export interface MSubAreas {
+export interface ISubAreas {
   areaId: number
   areaName: string
   lat: number
   lon: number
   highestAlarmLevel: string
-  alarmLevelCount: MAlarmLevelCount[]
+  alarmLevelCount: IAlarmLevelCount[]
   instanceStateCount: [
     {
       state: string
       count: number
     }
   ]
-  cameras: MCameras[]
+  cameras: ICameras[]
   areaExtName: string
 }
 
-export interface MCameras {
+export interface ICameras {
   cameraId: number
   cameraName: string
   cameraExtName?: string
@@ -85,17 +100,17 @@ export interface MCameras {
   hlsUrl: string
   cameraLabel: string
   areaExtName: string
-  zonePoints: MZonePoints
-  zonePointList?: MPoint[]
+  zonePoints: IZonePoints
+  zonePointList?: IPoint[]
   videoPosition: string
   updDt: string
   cameraUpdDt: number
   dataStatus?: number
 }
 
-export interface MZonePoints {
-  sw: MPoint
-  ne: MPoint
-  s?: MPoint | undefined
-  center?: MPoint | undefined
+export interface IZonePoints {
+  sw: IPoint
+  ne: IPoint
+  s?: IPoint | undefined
+  center?: IPoint | undefined
 }
