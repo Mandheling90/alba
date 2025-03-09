@@ -18,7 +18,7 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
   const [isHovered, setIsHovered] = React.useState(false)
 
   return (
-    <Box sx={{ ml: 5, mb: 2, mt: 4 }} color='secondary'>
+    <Box>
       <AppBar position='static' color='inherit' elevation={0}>
         <Toolbar
           sx={{
