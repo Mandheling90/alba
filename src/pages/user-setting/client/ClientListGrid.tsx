@@ -1,16 +1,17 @@
 // ** MUI Imports
 import { Box, IconButton, TextField } from '@mui/material'
 import { FC } from 'react'
-import ClientList from 'src/@core/components/userSetting/table/ClientList'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { UserListAll } from 'src/model/userSetting/userSettingModel'
+import ClientSimpleList from 'src/pages/user-setting/client/table/ClientSimpleList'
 
 interface IClientListGrid {
   data: UserListAll[]
   refetch: () => void
+  selectRowEvent: (row: any) => void
 }
 
-const ClientListGrid: FC<IClientListGrid> = ({ data, refetch }): React.ReactElement => {
+const ClientListGrid: FC<IClientListGrid> = ({ data, refetch, selectRowEvent }): React.ReactElement => {
   return (
     <Box>
       <TextField
@@ -37,7 +38,7 @@ const ClientListGrid: FC<IClientListGrid> = ({ data, refetch }): React.ReactElem
         }}
       />
 
-      <ClientList data={data} refetch={refetch} />
+      <ClientSimpleList data={data} refetch={refetch} selectRowEvent={selectRowEvent} />
     </Box>
   )
 }
