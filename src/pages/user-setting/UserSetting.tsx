@@ -7,9 +7,11 @@ import PageHeader from 'src/@core/components/page-header'
 import { useUserAll, useUserGroupList } from 'src/service/setting/userSetting'
 
 import SlidingLayout from 'src/@core/components/layout/SlidingLayout'
+import { YN } from 'src/enum/commonEnum'
 import { useUser } from 'src/hooks/useUser'
 import ClientListGrid from './client/ClientListGrid'
-import RoleCards from './userSetting/roles/RoleCards'
+import RoleAdd from './userSetting/roles/RoleAdd'
+import RoleList from './userSetting/table/RoleList'
 import UserList from './userSetting/table/UserList'
 
 const UserSetting: FC = (): React.ReactElement => {
@@ -46,7 +48,7 @@ const UserSetting: FC = (): React.ReactElement => {
 
   const mainContent = (
     <Grid container>
-      <Grid item xs={12}>
+      <Grid item xs={12} mb={5}>
         <PageHeader
           title={
             <Typography variant='h5' sx={{ fontSize: 24, fontWeight: 500, mb: 5 }}>
@@ -65,8 +67,75 @@ const UserSetting: FC = (): React.ReactElement => {
         </Box>
       </Grid>
 
-      <Grid item xs={12} sx={{ maxHeight: '42.5vh', overflow: 'auto', mb: 4 }}>
-        <RoleCards data={userGroup?.data} refetch={userGroupRefetch} />
+      <Grid item xs={12} sx={{ maxHeight: '42.5vh', overflow: 'auto' }}>
+        <Grid container spacing={5}>
+          <Grid item xs={5}>
+            <RoleList
+              data={userGroup?.data}
+              refetch={() => {
+                userGroupRefetch()
+              }}
+            />
+          </Grid>
+          <Grid item xs={7}>
+            <RoleAdd
+              groupInfo={{
+                id: 3,
+                name: 'ADMIN',
+                users: 2,
+                dataStatus: YN.Y,
+                roleList: [
+                  {
+                    viewName: '홍보물 관리',
+                    fullAccess: YN.Y,
+                    createYn: YN.Y,
+                    updateYn: YN.Y,
+                    deleteYn: YN.Y,
+                    readYn: YN.Y
+                  },
+                  {
+                    viewName: '사용자 관리',
+                    fullAccess: YN.Y,
+                    createYn: YN.Y,
+                    updateYn: YN.Y,
+                    deleteYn: YN.Y,
+                    readYn: YN.Y
+                  },
+                  {
+                    viewName: '키오스크 관리',
+                    fullAccess: YN.Y,
+                    createYn: YN.Y,
+                    updateYn: YN.Y,
+                    deleteYn: YN.Y,
+                    readYn: YN.Y
+                  },
+                  {
+                    viewName: '통계 및 로그 관리',
+                    fullAccess: YN.Y,
+                    createYn: YN.Y,
+                    updateYn: YN.Y,
+                    deleteYn: YN.Y,
+                    readYn: YN.Y
+                  },
+                  {
+                    viewName: '모니터링',
+                    fullAccess: YN.Y,
+                    createYn: YN.Y,
+                    updateYn: YN.Y,
+                    deleteYn: YN.Y,
+                    readYn: YN.Y
+                  }
+                ]
+              }}
+              refetch={() => {
+                userGroupRefetch()
+              }}
+              onClose={function (): void {
+                throw new Error('Function not implemented.')
+              }}
+            />
+          </Grid>
+        </Grid>
       </Grid>
     </Grid>
   )

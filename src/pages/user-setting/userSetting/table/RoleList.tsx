@@ -2,28 +2,26 @@ import { FC, useEffect, useState } from 'react'
 
 import { Box, Button, IconButton, Switch, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
-import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { useAuth } from 'src/hooks/useAuth'
 import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { UserListAll } from 'src/model/userSetting/userSettingModel'
+import { MUserGroup, UserListAll } from 'src/model/userSetting/userSettingModel'
 import { useUserArrDel, useUserMod } from 'src/service/setting/userSetting'
 import UserAddModModal from '../modal/UserAddModModal'
 
 interface IUserList {
-  data: UserListAll[]
+  data: MUserGroup[]
   refetch: () => void
 }
 
-const UserList: FC<IUserList> = ({ data, refetch }) => {
+const RoleList: FC<IUserList> = ({ data, refetch }) => {
   const { mutateAsync: userDel } = useUserArrDel()
   const { mutateAsync: modUser } = useUserMod()
 
   const userContext = useUser()
 
-  const [userData, setUserData] = useState<UserListAll[]>([])
+  const [userData, setUserData] = useState<MUserGroup[]>([])
 
   const [isOpen, setIsOpen] = useState(false)
   const [selectUser, setSelectUser] = useState<UserListAll>()
@@ -137,60 +135,38 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
         />
       )}
 
-      <Grid container>
-        <Grid item xs={12}>
-          <Card>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', m: 3 }}>
-              <LayoutControlPanel
-                menuName='사용자'
-                id='user'
-                selectedTarget='user'
-                onClick={() => {
-                  userContext.setLayoutDisplay(!userContext.layoutDisplay)
-                }}
-              />
-
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <Button
-                  variant={'contained'}
-                  startIcon={<IconCustom isCommon icon='plus' />}
-                  onClick={() => {
-                    // setIsOpen(true)
-                  }}
-                >
-                  사용자 추가
-                </Button>
-
-                <Button
-                  variant={'contained'}
-                  startIcon={<IconCustom isCommon icon='minus' />}
-                  onClick={async () => {
-                    const result = window.confirm('정말삭제 하시겠습니까?')
-
-                    if (result) {
-                      // await userDel({ idList: userCheck })
-                      // refetch()
-                    }
-                  }}
-                >
-                  사용자 삭제
-                </Button>
-              </Box>
-            </Box>
-            <Box sx={{ maxHeight: '30vh', overflow: 'auto' }}>
-              <CustomTable
-                showMoreButton={true}
-                rows={userData}
-                columns={columns}
-                onCheckboxSelectionChange={handleCheckboxSelection}
-                isAllView
-              />
-            </Box>
-          </Card>
-        </Grid>
-      </Grid>
+      <Card sx={{ height: '100%' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', m: 3 }}>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant={'contained'}
+              startIcon={<IconCustom isCommon icon='plus' />}
+              onClick={() => {
+                // setIsOpen(true)
+              }}
+              sx={{
+                clipPath: 'polygon(0 0, 80% 0, 95% 50%, 80% 100%, 0 100%, 0% 50%)',
+                paddingRight: '2rem'
+              }}
+            >
+              권한 추가
+            </Button>
+          </Box>
+        </Box>
+        <Box sx={{ maxHeight: '30vh', overflow: 'auto' }}>
+          <CustomTable
+            showMoreButton={true}
+            rows={userData}
+            columns={columns}
+            isAllView
+            checkboxSelection={false}
+            enablePointer
+            selectRowEvent={handleCheckboxSelection}
+          />
+        </Box>
+      </Card>
     </>
   )
 }
 
-export default UserList
+export default RoleList

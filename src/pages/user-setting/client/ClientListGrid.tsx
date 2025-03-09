@@ -1,5 +1,5 @@
 // ** MUI Imports
-import { Box, IconButton, TextField } from '@mui/material'
+import { Box, Card, IconButton, TextField } from '@mui/material'
 import { FC } from 'react'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { UserListAll } from 'src/model/userSetting/userSettingModel'
@@ -13,11 +13,10 @@ interface IClientListGrid {
 
 const ClientListGrid: FC<IClientListGrid> = ({ data, refetch, selectRowEvent }): React.ReactElement => {
   return (
-    <Box>
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
       <TextField
         size='small'
         fullWidth
-        sx={{ mb: 5 }}
         value={''}
         placeholder='고객사 ID, 고객사명'
         InputProps={{
@@ -37,8 +36,9 @@ const ClientListGrid: FC<IClientListGrid> = ({ data, refetch, selectRowEvent }):
           }
         }}
       />
-
-      <ClientSimpleList data={data} refetch={refetch} selectRowEvent={selectRowEvent} />
+      <Card sx={{ flex: 1, minHeight: 0 }}>
+        <ClientSimpleList data={data} refetch={refetch} selectRowEvent={selectRowEvent} />
+      </Card>
     </Box>
   )
 }

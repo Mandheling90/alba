@@ -1,7 +1,5 @@
 import { FC, useCallback, useEffect, useState } from 'react'
 
-import Card from '@mui/material/Card'
-import Grid from '@mui/material/Grid'
 import { SelectChangeEvent } from '@mui/material/Select'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { useAuth } from 'src/hooks/useAuth'
@@ -75,23 +73,15 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
   ]
 
   return (
-    <>
-      <Grid container>
-        <Grid item xs={12}>
-          <Card>
-            <CustomTable
-              showMoreButton
-              rows={userData}
-              columns={columns}
-              isAllView
-              selectRowEvent={selectRowEvent}
-              checkboxSelection={false}
-              enablePointer
-            />
-          </Card>
-        </Grid>
-      </Grid>
-    </>
+    <CustomTable
+      showMoreButton
+      rows={userData}
+      columns={columns}
+      isAllView
+      selectRowEvent={selectRowEvent}
+      checkboxSelection={false}
+      enablePointer
+    />
   )
 }
 
