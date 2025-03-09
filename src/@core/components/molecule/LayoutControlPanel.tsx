@@ -43,7 +43,8 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
               cursor: 'pointer',
               padding: '0px 15px',
               borderRadius: '8px 0px 0px 8px',
-              backgroundColor: isHovered ? '#9155FD' : 'transparent'
+              backgroundColor: isHovered ? '#9155FD' : 'transparent',
+              transition: 'all 0.3s ease'
             }}
             onClick={onClick}
             onMouseEnter={() => setIsHovered(true)}
@@ -54,7 +55,9 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
               icon={isHovered ? 'camera-fold-hover-icon' : 'camera-fold-icon'}
               style={{
                 width: '40px',
-                height: '20px'
+                height: '20px',
+                transition: 'opacity 0.3s ease',
+                opacity: 1
               }}
             />
           </Box>
