@@ -1,6 +1,7 @@
 import { FC, useState } from 'react'
 
-import { Box, Button, Card, Checkbox, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, Checkbox, Typography } from '@mui/material'
+import DuplicateText from 'src/@core/components/molecule/DuplicateText'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { EResultCode, YN } from 'src/enum/commonEnum'
 import { MRoleList, MUserGroup } from 'src/model/userSetting/userSettingModel'
@@ -198,18 +199,20 @@ const RoleAdd: FC<IRoleAddModal> = ({ groupInfo, onClose, refetch }) => {
         <Typography variant='h5' component='span' mr={5}>
           {groupInfo ? '권한 이름' : '새로운 권한 이름'}
         </Typography>
-
-        <TextField
-          size='small'
+        <DuplicateText
           value={rows.name}
+          setValue={e => setRows({ ...rows, name: e.target.value })}
           placeholder='새로운 권한 이름 입력'
-          onChange={e => setRows({ ...rows, name: e.target.value })}
-          sx={{ p: 1 }}
+          duplicateCheck={() => {
+            // TODO: 중복 확인 로직 구현
+            alert('중복 확인 기능이 구현될 예정입니다.')
+          }}
+          isDuplicate={false}
         />
       </Box>
 
-      <Box>
-        <Box sx={{ maxHeight: '25vh', overflow: 'auto' }}>
+      <Box sx={{ minHeight: '23vh', maxHeight: '23vh', overflow: 'auto' }}>
+        <Box sx={{ overflow: 'auto' }}>
           <CustomTable
             showMoreButton={true}
             rows={

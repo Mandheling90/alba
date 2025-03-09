@@ -2141,7 +2141,7 @@ export const sampleClientDetail: IClientDetail = {
   ]
 }
 
-export const useClientList = (req: MContentReq) => {
+export const useClientList = (req?: MContentReq) => {
   // 실제 API 호출 대신 샘플 데이터 반환
   return useQuery<MResult<IClient[]>>([EPath.CONTENTS, req], () => {
     return Promise.resolve({

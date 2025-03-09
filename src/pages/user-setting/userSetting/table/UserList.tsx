@@ -44,7 +44,19 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
   }
 
   const columns = [
-    { field: 'name', headerName: '사용자', flex: 1 },
+    { field: 'name', headerName: '사용자명', flex: 1 },
+    {
+      field: 'name2',
+      headerName: '사용자 ID',
+      flex: 1,
+      renderCell: ({ row }: any) => {
+        return (
+          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
+            {row.name}
+          </Typography>
+        )
+      }
+    },
     { field: 'id', headerName: '이메일 주소', flex: 1 },
     {
       field: 'groupName',
@@ -61,11 +73,10 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
     {
       field: 'status',
       headerName: '상태',
-      flex: 1,
+      flex: 0.5,
       renderCell: ({ row }: any) => {
         return (
           <Switch
-            disabled={row.id === auth?.user?.userInfo?.id}
             checked={row.status === 1}
             onChange={event => {
               modUser({ id: row.id, status: event.target.checked ? 1 : 0 })
@@ -78,6 +89,8 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
               })
               setUserData(updatedList)
             }}
+
+            // disabled={row.id === auth?.user?.userInfo?.id}
           />
         )
       }
@@ -85,34 +98,30 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
     {
       field: 'updateDelete',
       headerName: '수정 및 삭제',
-      flex: 1,
+      flex: 0.5,
       renderCell: ({ row }: any) => {
         return (
-          <>
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', gap: 1 }}>
             <IconButton
               sx={{ color: 'text.secondary' }}
-              disabled={row.id === auth?.user?.userInfo?.id}
               onClick={e => {
                 setSelectUser(row)
                 setIsOpen(true)
               }}
             >
-              {row.id !== auth?.user?.userInfo?.id && <IconCustom path='settingCard' icon='pen' />}
-
+              <IconCustom path='settingCard' icon='pen' />
               <Typography sx={{ textDecoration: 'none' }}></Typography>
             </IconButton>
             <IconButton
               sx={{ color: 'text.secondary' }}
-              disabled={row.id === auth?.user?.userInfo?.id}
               onClick={e => {
                 userDeleteFn(row.id)
               }}
             >
-              {row.id !== auth?.user?.userInfo?.id && <IconCustom path='settingCard' icon='delete' />}
-
+              <IconCustom path='settingCard' icon='delete' />
               <Typography sx={{ textDecoration: 'none' }}></Typography>
             </IconButton>
-          </>
+          </Box>
         )
       }
     }
@@ -155,7 +164,8 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
                   variant={'contained'}
                   startIcon={<IconCustom isCommon icon='plus' />}
                   onClick={() => {
-                    // setIsOpen(true)
+                    setSelectUser(undefined)
+                    setIsOpen(true)
                   }}
                 >
                   사용자 추가
@@ -177,7 +187,7 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
                 </Button>
               </Box>
             </Box>
-            <Box sx={{ maxHeight: '30vh', overflow: 'auto' }}>
+            <Box sx={{ maxHeight: '33.5vh', overflow: 'auto' }}>
               <CustomTable
                 showMoreButton={true}
                 rows={userData}

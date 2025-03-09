@@ -16,6 +16,7 @@ import UserList from './userSetting/table/UserList'
 
 const UserSetting: FC = (): React.ReactElement => {
   const userContext = useUser()
+
   const { data: userGroup, refetch: userGroupRefetch } = useUserGroupList()
   const { data: user, refetch: userRefetch } = useUserAll()
 
@@ -33,18 +34,7 @@ const UserSetting: FC = (): React.ReactElement => {
     console.log(row)
   }
 
-  console.log(userContext.layoutDisplay)
-
-  const sideContent = (
-    <ClientListGrid
-      data={user.data}
-      refetch={() => {
-        userRefetch()
-        userGroupRefetch()
-      }}
-      selectRowEvent={handleSelectClientGrid}
-    />
-  )
+  const sideContent = <ClientListGrid selectRowEvent={handleSelectClientGrid} />
 
   const mainContent = (
     <Grid container>
@@ -67,7 +57,7 @@ const UserSetting: FC = (): React.ReactElement => {
         </Box>
       </Grid>
 
-      <Grid item xs={12} sx={{ maxHeight: '42.5vh', overflow: 'auto' }}>
+      <Grid item xs={12} sx={{ maxHeight: '42vh', overflow: 'auto' }}>
         <Grid container spacing={5}>
           <Grid item xs={5}>
             <RoleList

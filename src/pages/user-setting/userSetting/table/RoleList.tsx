@@ -42,20 +42,8 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
   }
 
   const columns = [
-    { field: 'name', headerName: '사용자', flex: 1 },
-    { field: 'id', headerName: '이메일 주소', flex: 1 },
-    {
-      field: 'groupName',
-      headerName: '권한',
-      flex: 1,
-      renderCell: ({ row }: any) => {
-        return (
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.groupName}
-          </Typography>
-        )
-      }
-    },
+    { field: 'name', headerName: '사용자권한명명', flex: 1 },
+    { field: 'users', headerName: '사용자수', flex: 1 },
     {
       field: 'status',
       headerName: '상태',
@@ -63,8 +51,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
       renderCell: ({ row }: any) => {
         return (
           <Switch
-            disabled={row.id === auth?.user?.userInfo?.id}
-            checked={row.status === 1}
+            checked={row.dataStatus === 'Y'}
             onChange={event => {
               modUser({ id: row.id, status: event.target.checked ? 1 : 0 })
               const updatedList = userData.map(user => {
@@ -135,7 +122,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
         />
       )}
 
-      <Card sx={{ height: '100%' }}>
+      <Card>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', m: 3 }}>
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Button
@@ -153,7 +140,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
             </Button>
           </Box>
         </Box>
-        <Box sx={{ maxHeight: '30vh', overflow: 'auto' }}>
+        <Box sx={{ minHeight: '32vh', maxHeight: '32vh', overflow: 'auto' }}>
           <CustomTable
             showMoreButton={true}
             rows={userData}

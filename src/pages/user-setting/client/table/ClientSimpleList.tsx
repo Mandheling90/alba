@@ -3,11 +3,11 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { SelectChangeEvent } from '@mui/material/Select'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { useAuth } from 'src/hooks/useAuth'
-import { UserListAll } from 'src/model/userSetting/userSettingModel'
+import { IClient } from 'src/model/client/clientModel'
 import { useUserArrDel, useUserMod } from 'src/service/setting/userSetting'
 
 interface IClientList {
-  data: UserListAll[]
+  data: IClient[]
   refetch: () => void
   selectRowEvent: (row: any) => void
 }
@@ -21,10 +21,10 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
   const [value, setValue] = useState<string>('')
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
 
-  const [userData, setUserData] = useState<UserListAll[]>([])
+  const [userData, setUserData] = useState<(IClient & { display: boolean })[]>([])
 
   const [isOpen, setIsOpen] = useState(false)
-  const [selectUser, setSelectUser] = useState<UserListAll>()
+  const [selectUser, setSelectUser] = useState<IClient>()
 
   const [userCheck, setUserCheck] = useState<string[]>([])
 
@@ -47,7 +47,7 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
     (val: string) => {
       if (val !== '') {
         const newData = userData.map(obj => {
-          const shouldDisplay = !obj.name || obj.name.toLowerCase().includes(val)
+          const shouldDisplay = !obj.clientName || obj.clientName.toLowerCase().includes(val)
 
           return { ...obj, display: shouldDisplay }
         })
@@ -68,12 +68,13 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
   }, [])
 
   const columns = [
-    { field: 'name', headerName: '고객사 ID', flex: 1 },
-    { field: 'id', headerName: '고객사 명', flex: 1 }
+    { field: 'clientId', headerName: '고객사 ID', flex: 1 },
+    { field: 'clientName', headerName: '고객사 명', flex: 1 }
   ]
 
   return (
     <CustomTable
+      id='clientId'
       showMoreButton
       rows={userData}
       columns={columns}

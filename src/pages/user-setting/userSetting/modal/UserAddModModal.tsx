@@ -21,6 +21,7 @@ import { EResultCode, YN } from 'src/enum/commonEnum'
 import { UserListAll } from 'src/model/userSetting/userSettingModel'
 
 // import { useUserSettingStore } from 'src/pages/user-setting'
+import { smallPlaceholderStyle } from 'src/@core/styles/TextFieldStyle'
 import { useUser } from 'src/hooks/useUser'
 import { useUserMod, useUserSave } from 'src/service/setting/userSetting'
 import { filterDifferentProperties, handlePhoneChange, isValidEmail, isValidPassword } from 'src/utils/CommonUtil'
@@ -44,6 +45,7 @@ const defaultPassword = {
 }
 const defaultValue = {
   id: '',
+  email: '',
   mobile: '',
   name: '',
   role: '',
@@ -160,29 +162,55 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
               size='small'
               value={userInfo.name}
               label='이름'
-              placeholder='이름'
-              sx={{ width: '100%' }}
+              placeholder='필수항목 - 이름 입력'
+              sx={{ width: '100%', ...smallPlaceholderStyle }}
               name='name'
               onChange={handleChange}
               error={!!errors.name}
             />
           </Grid>
-          <Grid item xs={6}></Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={6}>
+            <TextField
+              size='small'
+              value={userInfo.mobile}
+              type='tel'
+              label='모바일폰 번호'
+              placeholder='선택항목 - 모바일 폰 번호 입력(연속숫자)'
+              sx={{ width: '100%', ...smallPlaceholderStyle }}
+              name='mobile'
+              onChange={handleChange}
+              error={!!errors.mobile}
+            />
+          </Grid>
+
+          <Grid item xs={6}>
             <TextField
               size='small'
               value={userInfo.id}
               type='email'
-              label='이메일 주소'
-              placeholder='이메일 주소'
-              sx={{ width: '100%' }}
+              label='사용자 ID'
+              placeholder='필수항목 - 국문,영문 및 숫자조합'
+              sx={{ width: '100%', ...smallPlaceholderStyle }}
               name='id'
+              onChange={handleChange}
+              error={!!errors.id}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              size='small'
+              value={userInfo.email}
+              type='email'
+              label='이메일 주소'
+              placeholder='선택항목 - 사용자 이메일 주소 입력'
+              sx={{ width: '100%', ...smallPlaceholderStyle }}
+              name='email'
               InputProps={{
                 readOnly: selectUser ? true : false
               }}
               onChange={handleChange}
-              error={!!errors.id}
+              error={!!errors.email}
             />
           </Grid>
 
@@ -192,9 +220,12 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
               value={userInfo.password}
               type='password'
               label='비밀번호'
-              placeholder='비밀번호'
+              placeholder='필수항목 - 대소문자 알파벳, 숫자 및 특수문자 조합 8~16자리'
               fullWidth
               name='password'
+              sx={{
+                ...smallPlaceholderStyle
+              }}
               onChange={handleChange}
               error={!!errors.password}
               helperText={errors.password}
@@ -207,27 +238,17 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
               value={userInfo.passwordConfirm}
               type='password'
               label='비밀번호 확인'
-              placeholder='비밀번호 확인'
+              placeholder='필수항목 - 대소문자 알파벳, 숫자 및 특수문자 조합'
               fullWidth
               name='passwordConfirm'
+              sx={{
+                ...smallPlaceholderStyle
+              }}
               onChange={handleChange}
               error={!!errors.passwordConfirm}
             />
           </Grid>
 
-          <Grid item xs={6}>
-            <TextField
-              size='small'
-              value={userInfo.mobile}
-              type='tel'
-              label='모바일폰 번호'
-              placeholder='모바일폰 번호'
-              sx={{ width: '100%' }}
-              name='mobile'
-              onChange={handleChange}
-              error={!!errors.mobile}
-            />
-          </Grid>
           <Grid item xs={6}></Grid>
         </Grid>
         {!isSelfUserMod && (
@@ -239,7 +260,7 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
             </Grid>
 
             <Grid item xs={6}>
-              <FormControl>
+              <FormControl sx={{ width: '100%' }}>
                 <InputLabel size='small' id='demo-simple-select-label'>
                   사용권한
                 </InputLabel>

@@ -55,6 +55,7 @@ export interface UserListAll {
   group: MUserGroup
   id: string
   mobile: string
+  email: string
   name: string
   role: string
   status: number

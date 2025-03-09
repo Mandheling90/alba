@@ -36,6 +36,7 @@ export interface IClientBase {
   contractPeriod: string
   reportReceiver: string
   clientAccount: string
+  solutions?: ISolutionCard[]
 }
 
 // 기본 고객사 정보 인터페이스
@@ -76,4 +77,46 @@ export interface ISolutionCard {
   id: number
   selectedSolution: string
   services: IService[]
+}
+
+// 샘플 데이터
+export const sampleClientData: IClient = {
+  clientId: 'CLIENT001',
+  clientName: '테스트 고객사',
+  address: '서울시 강남구 테헤란로 123',
+  serviceTypes: [SERVICE_TYPE.COUNTING, SERVICE_TYPE.MONITORING],
+  solutionTypes: [SOLUTION_TYPE.CVEDIA, SOLUTION_TYPE.PROAI_EDGE],
+  analysisChannels: 2,
+  reportGeneration: true,
+  reportEmail: 'test@example.com',
+  accountStatus: true,
+  businessNumber: '123-45-67890',
+  businessStatus: '1',
+  contractPeriod: '2024-03-20 ~ 2025-03-19',
+  reportReceiver: 'receiver@example.com',
+  clientAccount: 'testaccount',
+  solutions: [
+    {
+      id: 0,
+      selectedSolution: '1',
+      services: [
+        {
+          id: '1',
+          name: '정문 카메라',
+          serviceType: '1',
+          address: '192.168.0.100',
+          rtsAddress: 'rtsp://192.168.0.100:554/stream',
+          description: '정문 출입구 모니터링'
+        },
+        {
+          id: '2',
+          name: '주차장 카메라',
+          serviceType: '2',
+          address: '192.168.0.101',
+          rtsAddress: 'rtsp://192.168.0.101:554/stream',
+          description: '주차장 차량 카운팅'
+        }
+      ]
+    }
+  ]
 }

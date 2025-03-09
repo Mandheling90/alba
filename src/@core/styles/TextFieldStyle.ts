@@ -25,3 +25,9 @@ export const requiredCenterPlaceholderStyle = {
     opacity: 1
   }
 }
+
+export const smallPlaceholderStyle = {
+  '& .MuiInputBase-input::placeholder': {
+    fontSize: '12px'
+  }
+}
