@@ -19,7 +19,9 @@ import {
 } from '@mui/material'
 import { EResultCode, YN } from 'src/enum/commonEnum'
 import { UserListAll } from 'src/model/userSetting/userSettingModel'
-import { useUserSettingStore } from 'src/pages/user-setting'
+
+// import { useUserSettingStore } from 'src/pages/user-setting'
+import { useUser } from 'src/hooks/useUser'
 import { useUserMod, useUserSave } from 'src/service/setting/userSetting'
 import { filterDifferentProperties, handlePhoneChange, isValidEmail, isValidPassword } from 'src/utils/CommonUtil'
 
@@ -52,7 +54,7 @@ const defaultValue = {
 }
 
 const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, selectUser, onClose, onSubmitAfter }) => {
-  const { userGroupInfo } = useUserSettingStore()
+  const { userGroupInfo } = useUser()
 
   const { mutateAsync: saveUser } = useUserSave()
   const { mutateAsync: modUser } = useUserMod()

@@ -30,8 +30,9 @@ const StandardTemplate: FC<{
             }
           />
         </Grid>
-
-        {children}
+        <Grid item xs={12}>
+          {children}
+        </Grid>
       </Grid>
     </Grid>
   )

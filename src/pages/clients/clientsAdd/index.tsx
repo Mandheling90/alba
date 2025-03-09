@@ -6,7 +6,8 @@ import StepperCustomDot from 'src/@core/components/atom/StepperCustomDot'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import StepperWrapper from 'src/@core/styles/mui/stepper'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { IClient } from 'src/model/client/clientModel'
+import { IClientDetail } from 'src/model/client/clientModel'
+import { useClientDetail } from 'src/service/client/clientService'
 import StepOneContent from './StepOneContent'
 import StepTwoContent from './StepTwoContent'
 
@@ -38,32 +39,46 @@ const CustomStepContent = styled(StepContent)<{ stepindex: number; activestep: n
 
 // 두 번째 스텝 컴포넌트
 
-const Index: FC = () => {
+const Index: FC = ({}) => {
   const router = useRouter()
+
+  console.log(router.query.id)
+
+  const { data, refetch } = useClientDetail(Number(router.query.id))
+
   const [activeStep, setActiveStep] = useState<number>(0)
-  const [clientData, setClientData] = useState<IClient | null>(null)
-  const [isEditMode, setIsEditMode] = useState(false)
-  const [stepOneData, setStepOneData] = useState<Partial<IClient>>({})
+  const [clientData, setClientData] = useState<IClientDetail | null>({
+    clientId: '',
+    clientName: '',
+    address: '',
+    serviceTypes: [],
+    solutionTypes: [],
+    analysisChannels: 0,
+    reportGeneration: false,
+    reportEmail: '',
+    accountStatus: false,
+    businessNumber: '',
+    businessStatus: '',
+    contractPeriod: '',
+    reportReceiver: '',
+    clientAccount: '',
+    solutions: []
+  })
+
   const [expandedSteps, setExpandedSteps] = useState<boolean[]>([true, true])
 
   useEffect(() => {
-    if (router.query.mode === 'edit' && router.query.clientData) {
-      const data = JSON.parse(router.query.clientData as string) as IClient
-      setClientData(data)
-      setStepOneData(data)
-      setIsEditMode(true)
+    if (router.query.id && data?.data) {
+      setClientData(data.data)
     }
-  }, [router.query])
+  }, [data])
 
-  const handleStepOneDataChange = (data: Partial<IClient>) => {
-    setStepOneData(data)
+  const handleStepOneDataChange = (data: Partial<IClientDetail>) => {
+    setClientData(prev => (prev ? ({ ...prev, ...data } as IClientDetail) : null))
   }
-
-  console.log(clientData)
 
   const handleNext = () => setActiveStep(prev => prev + 1)
   const handleBack = () => setActiveStep(prev => prev - 1)
-  const handleReset = () => setActiveStep(0)
 
   const toggleStep = (index: number) => {
     setExpandedSteps(prev => {
@@ -80,7 +95,6 @@ const Index: FC = () => {
       content: (
         <StepOneContent
           clientData={clientData}
-          isEditMode={isEditMode}
           onDataChange={handleStepOneDataChange}
           onNext={() => {
             activeStep === 0 && handleNext()
@@ -93,7 +107,7 @@ const Index: FC = () => {
     },
     {
       title: '분석 솔루션 및 카메라 정보 등록',
-      content: <StepTwoContent initialData={clientData} isEditMode={isEditMode} />
+      content: <StepTwoContent clientData={clientData} onDataChange={handleStepOneDataChange} />
     }
   ]
 

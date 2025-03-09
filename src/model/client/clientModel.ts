@@ -20,8 +20,8 @@ export enum SOLUTION_TYPE {
   PROAI_EDGE = 'PROAI_EDGE'
 }
 
-// 고객사 정보 인터페이스
-export interface IClient {
+// 공통 고객사 정보 인터페이스
+export interface IClientBase {
   clientId: string
   clientName: string
   address: string
@@ -38,6 +38,14 @@ export interface IClient {
   clientAccount: string
 }
 
+// 기본 고객사 정보 인터페이스
+export type IClient = IClientBase
+
+// 상세 고객사 정보 인터페이스
+export interface IClientDetail extends IClientBase {
+  solutions?: ISolutionCard[]
+}
+
 export interface IService {
   id: string
   name: string
@@ -47,6 +55,23 @@ export interface IService {
   description?: string
 }
 
+export interface ISolutionCard {
+  id: number
+  selectedSolution: string
+  services: IService[]
+}
+
+// 카메라 서비스 인터페이스
+export interface IService {
+  id: string
+  name: string
+  serviceType: string
+  address?: string
+  rtsAddress?: string
+  description?: string
+}
+
+// 솔루션 카드 인터페이스
 export interface ISolutionCard {
   id: number
   selectedSolution: string

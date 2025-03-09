@@ -20,8 +20,8 @@ import Icon from 'src/@core/components/icon'
 import { useAuth } from 'src/hooks/useAuth'
 
 // ** Type Imports
-import UserAddModModal from 'src/@core/components/userSetting/modal/UserAddModModal'
 import { Settings } from 'src/@core/context/settingsContext'
+import UserAddModModal from 'src/pages/user-setting/userSetting/modal/UserAddModModal'
 import { useUserDetailInfo } from 'src/service/commonService'
 
 interface Props {
