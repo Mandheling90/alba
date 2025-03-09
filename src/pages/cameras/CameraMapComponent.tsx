@@ -2,14 +2,14 @@ import { FC, useEffect } from 'react'
 import { Map, useKakaoLoader } from 'react-kakao-maps-sdk'
 import { defaultMapDisplayInfo, defaultMapInfo } from 'src/enum/mapEnum'
 import { useCameras } from 'src/hooks/useCameras'
-import { MPoint } from 'src/model/cameras/CamerasModel'
+import { IPoint } from 'src/model/cameras/CamerasModel'
 
 interface IMapComponent {
   mapContainerRef?: any
   isScreen?: boolean
   children?: React.ReactNode
   isIndividual?: boolean
-  mapClick?: (value: MPoint) => void
+  mapClick?: (value: IPoint) => void
   onClick?: (_map: kakao.maps.Map, mouseEvent: kakao.maps.event.MouseEvent) => void
   handleMouseMove?: (_map: any, mouseEvent: any) => void
   handleRightClick?: (_map: any, mouseEvent: any) => void
