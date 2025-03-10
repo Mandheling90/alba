@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import PageSizeSelect from './PageSizeSelect'
 
 interface IRowSelect {
-  selectRowEvent: (row: any) => void
+  selectRowEvent?: (row: any) => void
   onCheckboxSelectionChange?: (selectedRows: any[]) => void
 }
 
@@ -61,8 +61,10 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
           onPaginationModelChange={setPaginationModel}
           getRowId={row => row[id ?? 'id']}
           onRowClick={row => {
-            setSelectedRow(row.id)
-            selectRowEvent && selectRowEvent(row.row)
+            if (selectRowEvent) {
+              setSelectedRow(row.id)
+              selectRowEvent(row.row)
+            }
           }}
           onRowSelectionModelChange={selectedIds => {
             setSelectedCheckboxes(selectedIds)

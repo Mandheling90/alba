@@ -12,6 +12,7 @@ interface ICustomSelectBox {
   onChange: (event: SelectChangeEvent) => void
   options: Option[]
   placeholder?: string
+  placeholderColor?: string
   backgroundColor?: string
   border?: boolean
   width?: string
@@ -22,6 +23,7 @@ const CustomSelectBox: FC<ICustomSelectBox> = ({
   onChange,
   options,
   placeholder,
+  placeholderColor = '#757575',
   backgroundColor,
   border = true,
   width
@@ -63,7 +65,7 @@ const CustomSelectBox: FC<ICustomSelectBox> = ({
       }}
     >
       {placeholder && (
-        <MenuItem value='' disabled>
+        <MenuItem value='' disabled sx={{ color: placeholderColor }}>
           {placeholder}
         </MenuItem>
       )}

@@ -11,6 +11,24 @@ import { useClientDetail } from 'src/service/client/clientService'
 import StepOneContent from './StepOneContent'
 import StepTwoContent from './StepTwoContent'
 
+export const DEFAULT_CLIENT_DATA: IClientDetail = {
+  clientId: '',
+  clientName: '',
+  address: '',
+  serviceTypes: [],
+  solutionTypes: [],
+  analysisChannels: 0,
+  reportGeneration: false,
+  reportEmail: '',
+  accountStatus: false,
+  businessNumber: '',
+  businessStatus: '',
+  contractPeriod: '',
+  reportReceiver: '',
+  clientAccount: '',
+  solutions: []
+}
+
 // StepContent 커스텀
 const CustomStepContent = styled(StepContent)<{ stepindex: number; activestep: number }>(
   ({ theme, stepindex, activestep }) => ({
@@ -37,8 +55,6 @@ const CustomStepContent = styled(StepContent)<{ stepindex: number; activestep: n
   })
 )
 
-// 두 번째 스텝 컴포넌트
-
 const Index: FC = ({}) => {
   const router = useRouter()
 
@@ -47,38 +63,31 @@ const Index: FC = ({}) => {
   const { data, refetch } = useClientDetail(Number(router.query.id))
 
   const [activeStep, setActiveStep] = useState<number>(0)
-  const [clientData, setClientData] = useState<IClientDetail | null>({
-    clientId: '',
-    clientName: '',
-    address: '',
-    serviceTypes: [],
-    solutionTypes: [],
-    analysisChannels: 0,
-    reportGeneration: false,
-    reportEmail: '',
-    accountStatus: false,
-    businessNumber: '',
-    businessStatus: '',
-    contractPeriod: '',
-    reportReceiver: '',
-    clientAccount: '',
-    solutions: []
-  })
+  const [clientData, setClientData] = useState<IClientDetail | null>(DEFAULT_CLIENT_DATA)
 
   const [expandedSteps, setExpandedSteps] = useState<boolean[]>([true, true])
 
+  const [isStepOneValid, setIsStepOneValid] = useState<boolean>(true)
+
   useEffect(() => {
     if (router.query.id && data?.data) {
+      setActiveStep(1)
       setClientData(data.data)
     }
   }, [data])
+
+  // 스텝 1에서 필수값 누락시 스텝 뒤로 돌아가기
+  useEffect(() => {
+    if (!isStepOneValid) {
+      setActiveStep(0)
+    }
+  }, [isStepOneValid])
 
   const handleStepOneDataChange = (data: Partial<IClientDetail>) => {
     setClientData(prev => (prev ? ({ ...prev, ...data } as IClientDetail) : null))
   }
 
   const handleNext = () => setActiveStep(prev => prev + 1)
-  const handleBack = () => setActiveStep(prev => prev - 1)
 
   const toggleStep = (index: number) => {
     setExpandedSteps(prev => {
@@ -99,15 +108,23 @@ const Index: FC = ({}) => {
           onNext={() => {
             activeStep === 0 && handleNext()
           }}
-          onBack={() => {
-            activeStep > 0 && handleBack()
+          onReset={() => {
+            setClientData({
+              ...DEFAULT_CLIENT_DATA,
+              solutions: clientData?.solutions || []
+            })
+          }}
+          onValidationChange={(isValid: boolean) => {
+            setIsStepOneValid(isValid)
           }}
         />
       )
     },
     {
       title: '분석 솔루션 및 카메라 정보 등록',
-      content: <StepTwoContent clientData={clientData} onDataChange={handleStepOneDataChange} />
+      content: (
+        <StepTwoContent clientData={clientData} onDataChange={handleStepOneDataChange} disabled={activeStep === 0} />
+      )
     }
   ]
 
@@ -118,7 +135,11 @@ const Index: FC = ({}) => {
           {steps.map((step, index) => {
             return (
               <Step key={index} className={clsx({ active: activeStep === index })} expanded={true}>
-                <StepLabel StepIconComponent={StepperCustomDot}>
+                <StepLabel
+                  StepIconComponent={props => (
+                    <StepperCustomDot {...props} isValid={index === 0 ? isStepOneValid : false} />
+                  )}
+                >
                   <div className='step-label' style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <Typography className='step-number'>{`0${index + 1}`}</Typography>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

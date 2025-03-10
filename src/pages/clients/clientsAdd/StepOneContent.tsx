@@ -7,18 +7,23 @@ import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 import { grayTextBackground, grayTextFieldStyle, requiredTextFieldStyle } from 'src/@core/styles/TextFieldStyle'
 import { IClient, IClientDetail } from 'src/model/client/clientModel'
-import ButtonGroup from './ButtonGroup'
 
 interface IStepOneContentProps {
   clientData: IClientDetail | null
-
   onDataChange: (data: Partial<IClient>) => void
   onNext: () => void
-  onBack: () => void
+  onReset: () => void
+  onValidationChange?: (isValid: boolean) => void
 }
 
 // 첫 번째 스텝 컴포넌트
-const StepOneContent: FC<IStepOneContentProps> = ({ clientData, onDataChange, onNext, onBack }) => {
+const StepOneContent: FC<IStepOneContentProps> = ({
+  clientData,
+  onDataChange,
+  onNext,
+  onReset,
+  onValidationChange
+}) => {
   const handleChange = (field: keyof IClientDetail) => (event: React.ChangeEvent<HTMLInputElement>) => {
     onDataChange({ [field]: event.target.value })
   }
@@ -38,6 +43,16 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, onDataChange, on
   const theme = useTheme()
   const { direction } = theme
   const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
+
+  // 필수값 체크 함수 추가
+  const checkRequiredFields = (): boolean => {
+    if (!clientData) return false
+
+    const isValid = Boolean(clientData.clientId && clientData.clientName && clientData.reportReceiver)
+    onValidationChange?.(isValid)
+
+    return isValid
+  }
 
   return (
     <>
@@ -137,7 +152,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, onDataChange, on
                 <Box sx={{ width: '100%' }}>
                   <PickersRange
                     useIcon={true}
-                    label={'게시일'}
+                    label={'선택입력'}
                     popperPlacement={popperPlacement}
                     returnFormat='yyyy-MM-dd'
                     onChange={handleDateChange}
@@ -197,7 +212,22 @@ const StepOneContent: FC<IStepOneContentProps> = ({ clientData, onDataChange, on
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <ButtonGroup onNext={onNext} onBack={onBack} />
+        <div className='button-wrapper'>
+          <Button size='medium' variant='contained' onClick={onNext} sx={{ mr: 4 }} disabled={!checkRequiredFields()}>
+            등록
+          </Button>
+
+          <Button
+            size='medium'
+            color='secondary'
+            variant='outlined'
+            onClick={() => {
+              onReset()
+            }}
+          >
+            취소
+          </Button>
+        </div>
       </Box>
     </>
   )

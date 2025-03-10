@@ -142,13 +142,14 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
         </Box>
         <Box sx={{ minHeight: '32vh', maxHeight: '32vh', overflow: 'auto' }}>
           <CustomTable
-            showMoreButton={true}
+            showMoreButton={false}
             rows={userData}
             columns={columns}
             isAllView
             checkboxSelection={false}
-            enablePointer
-            selectRowEvent={handleCheckboxSelection}
+
+            // enablePointer
+            // selectRowEvent={handleCheckboxSelection}
           />
         </Box>
       </Card>

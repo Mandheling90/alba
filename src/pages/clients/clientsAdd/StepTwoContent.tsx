@@ -5,17 +5,19 @@ import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { IClientDetail, ISolutionCard } from 'src/model/client/clientModel'
-import ButtonGroup from './ButtonGroup'
 import SolutionList from './SolutionList'
 
 interface IStepTwoContent {
   clientData: IClientDetail | null
   onDataChange: (data: Partial<IClientDetail>) => void
+  disabled: boolean
 }
 
 // 첫 번째 스텝 컴포넌트
-const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange }) => {
+const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange, disabled }) => {
   const [solutionCards, setSolutionCards] = useState<ISolutionCard[]>(clientData?.solutions || [])
+
+  console.log(solutionCards)
 
   useEffect(() => {
     if (clientData?.solutions) {
@@ -33,7 +35,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange }) => {
       {
         id: prev.length,
         selectedSolution: '1',
-        services: [{ id: '1', name: '', serviceType: '' }]
+        services: [{ id: '0', name: '', serviceType: '' }]
       }
     ])
   }
@@ -48,8 +50,23 @@ const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange }) => {
     )
   }
 
+  // 필수값 체크 함수 추가
+  const isValidSolution = (index: number) => {
+    const card = solutionCards[index]
+    if (!card) return false
+
+    // 모든 서비스의 name과 serviceType이 입력되었는지 확인
+    return card.services.every(service => service.name.trim() !== '' && service.serviceType.trim() !== '')
+  }
+
   return (
-    <>
+    <Box
+      sx={{
+        pointerEvents: disabled ? 'none' : 'auto',
+        opacity: disabled ? 0.5 : 1,
+        transition: 'opacity 0.3s'
+      }}
+    >
       <Box mb={5}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography>
@@ -112,7 +129,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange }) => {
                             {
                               id: String(c.services.length + 1),
                               name: ``,
-                              serviceType: ''
+                              serviceType: '1'
                             }
                           ]
                         }
@@ -148,18 +165,49 @@ const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange }) => {
           </WindowCard>
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <ButtonGroup
-              onNext={() => {
-                console.log('onNext')
-              }}
-              onBack={() => {
-                console.log('onBack')
-              }}
-            />
+            <div className='button-wrapper'>
+              <Button
+                size='medium'
+                variant='contained'
+                onClick={() => {
+                  if (isValidSolution(index)) {
+                    console.log('등록')
+                  } else {
+                    alert('서비스 이름과 타입을 모두 입력해주세요.')
+                  }
+                }}
+                sx={{ mr: 4 }}
+                disabled={!isValidSolution(index)}
+              >
+                등록
+              </Button>
+
+              <Button
+                size='medium'
+                color='secondary'
+                variant='outlined'
+                onClick={() => {
+                  setSolutionCards(prev =>
+                    prev.map((c, i) =>
+                      i === index
+                        ? {
+                            ...c,
+                            selectedSolution: '1',
+                            services: [{ id: '1', name: '', serviceType: '' }]
+                          }
+                        : c
+                    )
+                  )
+                }}
+                disabled={false}
+              >
+                취소
+              </Button>
+            </div>
           </Box>
         </Box>
       ))}
-    </>
+    </Box>
   )
 }
 

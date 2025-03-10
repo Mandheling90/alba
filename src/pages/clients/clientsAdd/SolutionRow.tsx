@@ -26,7 +26,9 @@ const SolutionRow: FC<ISolutionRow> = ({ service, onDelete, onTypeChange, onUpda
         onChange={e => onTypeChange(service.id, e.target.value)}
         options={serviceOptions}
         width='300px'
-        placeholder='분석 서비스 선택'
+
+        // placeholder='분석 서비스 선택'
+        // placeholderColor='#757575'
       />
 
       <TextField
