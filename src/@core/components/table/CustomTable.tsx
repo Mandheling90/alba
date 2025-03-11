@@ -10,7 +10,7 @@ interface IRowSelect {
 }
 
 interface IPageSizeSelect {
-  showMoreButton: boolean
+  showMoreButton?: boolean
   rows: any[]
   columns: any[]
 }
@@ -22,17 +22,15 @@ interface TableWrapperProps {
 interface IGridOptions {
   id?: string
   isAllView?: boolean
-  checkboxSelection: boolean
   enablePointer?: boolean
 }
 
 const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptions>> = ({
   id,
   isAllView = false,
-  showMoreButton,
+  showMoreButton = false,
   rows,
   columns,
-  checkboxSelection = true,
   selectRowEvent,
   enablePointer = false,
   onCheckboxSelectionChange
@@ -54,7 +52,7 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
           autoHeight
           rows={rows}
           columns={columns}
-          checkboxSelection={checkboxSelection}
+          checkboxSelection={!!onCheckboxSelectionChange}
           disableRowSelectionOnClick
           pageSizeOptions={pageSizeOptions}
           paginationModel={paginationModel}
@@ -68,12 +66,15 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
           }}
           onRowSelectionModelChange={selectedIds => {
             setSelectedCheckboxes(selectedIds)
-            if (checkboxSelection && onCheckboxSelectionChange) {
+            if (onCheckboxSelectionChange) {
               const selectedRows = getSelectedRows(selectedIds)
               onCheckboxSelectionChange(selectedRows)
             }
           }}
-          rowSelectionModel={checkboxSelection ? selectedCheckboxes : selectedRow ? [selectedRow] : []}
+          rowSelectionModel={[
+            ...(onCheckboxSelectionChange ? selectedCheckboxes : []),
+            ...(selectRowEvent && selectedRow ? [selectedRow] : [])
+          ]}
           hideFooterPagination={isAllView}
           sx={{
             '& .MuiDataGrid-row.Mui-selected': {

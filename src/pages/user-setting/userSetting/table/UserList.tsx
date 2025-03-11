@@ -189,11 +189,14 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
             </Box>
             <Box sx={{ maxHeight: '33.5vh', overflow: 'auto' }}>
               <CustomTable
-                showMoreButton={true}
                 rows={userData}
                 columns={columns}
                 onCheckboxSelectionChange={handleCheckboxSelection}
                 isAllView
+                enablePointer
+                selectRowEvent={e => {
+                  userContext.setSelectedGroupId(e.group.id)
+                }}
               />
             </Box>
           </Card>
