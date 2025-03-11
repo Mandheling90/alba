@@ -225,7 +225,6 @@ const RoleAdd: FC<IRoleAddModal> = ({ groupInfo, onClose, refetch }) => {
             }
             columns={columns}
             isAllView
-            checkboxSelection={false}
           />
         </Box>
       </Box>

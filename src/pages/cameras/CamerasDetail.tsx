@@ -98,7 +98,6 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
                 rows={clientDetailData?.data ?? []}
                 columns={clientDetailColumns}
                 selectRowEvent={handleSelectClientGrid}
-                checkboxSelection={false}
                 isAllView
               />
             </Box>

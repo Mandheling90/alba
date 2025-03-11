@@ -146,7 +146,6 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
             rows={userData}
             columns={columns}
             isAllView
-            checkboxSelection={false}
 
             // enablePointer
             // selectRowEvent={handleCheckboxSelection}

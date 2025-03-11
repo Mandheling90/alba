@@ -58,10 +58,15 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           getRowId={row => row[id ?? 'id']}
+          getRowClassName={params => (selectedRow === params.id ? 'selected-by-click' : '')}
           onRowClick={row => {
             if (selectRowEvent) {
-              setSelectedRow(row.id)
-              selectRowEvent(row.row)
+              if (selectedRow === row.id) {
+                setSelectedRow(null)
+              } else {
+                setSelectedRow(row.id)
+                selectRowEvent(row.row)
+              }
             }
           }}
           onRowSelectionModelChange={selectedIds => {
@@ -78,9 +83,15 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
           hideFooterPagination={isAllView}
           sx={{
             '& .MuiDataGrid-row.Mui-selected': {
-              backgroundColor: 'rgba(145, 85, 253, 0.08) !important',
+              backgroundColor: 'rgba(145, 85, 253, 0.08)',
               '&:hover': {
-                backgroundColor: 'rgba(144, 85, 253, 0.16) !important'
+                backgroundColor: 'rgba(144, 85, 253, 0.16)'
+              }
+            },
+            '& .selected-by-click': {
+              backgroundColor: 'rgba(255, 0, 0, 0.1) !important',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 0, 0, 0.2) !important'
               }
             },
             '& .MuiDataGrid-row': {

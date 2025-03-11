@@ -90,7 +90,6 @@ const CamerasClient: FC<IClientList> = ({ handleSelectClientGrid }) => {
         rows={clientData?.data || []}
         columns={clientColumns}
         selectRowEvent={handleSelectClientGrid}
-        checkboxSelection={false}
         isAllView
       />
     </Box>

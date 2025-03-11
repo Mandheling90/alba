@@ -80,7 +80,6 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
       columns={columns}
       isAllView
       selectRowEvent={selectRowEvent}
-      checkboxSelection={false}
       enablePointer
     />
   )
