@@ -78,12 +78,10 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
               sx={{ color: 'text.secondary' }}
               disabled={row.id === auth?.user?.userInfo?.id}
               onClick={e => {
-                setSelectUser(row)
-                setIsOpen(true)
+                userContext.setSelectedGroupId(row.id)
               }}
             >
-              {row.id !== auth?.user?.userInfo?.id && <IconCustom path='settingCard' icon='pen' />}
-
+              <IconCustom path='settingCard' icon='pen' />
               <Typography sx={{ textDecoration: 'none' }}></Typography>
             </IconButton>
             <IconButton
@@ -93,8 +91,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
                 userDeleteFn(row.id)
               }}
             >
-              {row.id !== auth?.user?.userInfo?.id && <IconCustom path='settingCard' icon='delete' />}
-
+              <IconCustom path='settingCard' icon='delete' />
               <Typography sx={{ textDecoration: 'none' }}></Typography>
             </IconButton>
           </>
@@ -102,10 +99,6 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
       }
     }
   ]
-
-  const handleCheckboxSelection = (selectedRows: any[]) => {
-    console.log(selectedRows)
-  }
 
   return (
     <>
@@ -129,7 +122,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
               variant={'contained'}
               startIcon={<IconCustom isCommon icon='plus' />}
               onClick={() => {
-                // setIsOpen(true)
+                userContext.setSelectedGroupId('new')
               }}
               sx={{
                 clipPath: 'polygon(0 0, 80% 0, 95% 50%, 80% 100%, 0 100%, 0% 50%)',

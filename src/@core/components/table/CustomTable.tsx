@@ -53,7 +53,6 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
           rows={rows}
           columns={columns}
           checkboxSelection={!!onCheckboxSelectionChange}
-          disableRowSelectionOnClick
           pageSizeOptions={pageSizeOptions}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
@@ -70,6 +69,10 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
             }
           }}
           onRowSelectionModelChange={selectedIds => {
+            if (selectedIds.length === 0) {
+              setSelectedRow(null)
+            }
+
             setSelectedCheckboxes(selectedIds)
             if (onCheckboxSelectionChange) {
               const selectedRows = getSelectedRows(selectedIds)

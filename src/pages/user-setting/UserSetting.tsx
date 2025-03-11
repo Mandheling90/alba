@@ -7,7 +7,6 @@ import PageHeader from 'src/@core/components/page-header'
 import { useUserAll, useUserGroupList } from 'src/service/setting/userSetting'
 
 import SlidingLayout from 'src/@core/components/layout/SlidingLayout'
-import { YN } from 'src/enum/commonEnum'
 import { useUser } from 'src/hooks/useUser'
 import ClientListGrid from './client/ClientListGrid'
 import RoleAdd from './userSetting/roles/RoleAdd'
@@ -69,54 +68,7 @@ const UserSetting: FC = (): React.ReactElement => {
           </Grid>
           <Grid item xs={7}>
             <RoleAdd
-              groupInfo={{
-                id: 3,
-                name: 'ADMIN',
-                users: 2,
-                dataStatus: YN.Y,
-                roleList: [
-                  {
-                    viewName: '홍보물 관리',
-                    fullAccess: YN.Y,
-                    createYn: YN.Y,
-                    updateYn: YN.Y,
-                    deleteYn: YN.Y,
-                    readYn: YN.Y
-                  },
-                  {
-                    viewName: '사용자 관리',
-                    fullAccess: YN.Y,
-                    createYn: YN.Y,
-                    updateYn: YN.Y,
-                    deleteYn: YN.Y,
-                    readYn: YN.Y
-                  },
-                  {
-                    viewName: '키오스크 관리',
-                    fullAccess: YN.Y,
-                    createYn: YN.Y,
-                    updateYn: YN.Y,
-                    deleteYn: YN.Y,
-                    readYn: YN.Y
-                  },
-                  {
-                    viewName: '통계 및 로그 관리',
-                    fullAccess: YN.Y,
-                    createYn: YN.Y,
-                    updateYn: YN.Y,
-                    deleteYn: YN.Y,
-                    readYn: YN.Y
-                  },
-                  {
-                    viewName: '모니터링',
-                    fullAccess: YN.Y,
-                    createYn: YN.Y,
-                    updateYn: YN.Y,
-                    deleteYn: YN.Y,
-                    readYn: YN.Y
-                  }
-                ]
-              }}
+              data={userGroup?.data}
               refetch={() => {
                 userGroupRefetch()
               }}

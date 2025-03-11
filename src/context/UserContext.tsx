@@ -6,8 +6,8 @@ export type UserValuesType = {
   setLayoutDisplay: (layoutDisplay: boolean) => void
   userGroupInfo: MUserGroup[]
   setUserGroupInfo: (value: MUserGroup[]) => void
-  selectedGroupId: number | null
-  setSelectedGroupId: (id: number | null) => void
+  selectedGroupId: number | null | 'new'
+  setSelectedGroupId: (id: number | null | 'new') => void
   clear: () => void
 }
 
@@ -31,7 +31,7 @@ type Props = {
 const UserProvider = ({ children }: Props) => {
   const [layoutDisplay, setLayoutDisplay] = useState(defaultProvider.layoutDisplay)
   const [userGroupInfo, setUserGroupInfo] = useState<MUserGroup[]>(defaultProvider.userGroupInfo)
-  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(defaultProvider.selectedGroupId)
+  const [selectedGroupId, setSelectedGroupId] = useState<number | null | 'new'>(defaultProvider.selectedGroupId)
 
   const clear = () => {
     setLayoutDisplay(defaultProvider.layoutDisplay)

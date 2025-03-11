@@ -1,14 +1,15 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import { Box, Button, Card, Checkbox, Typography } from '@mui/material'
 import DuplicateText from 'src/@core/components/molecule/DuplicateText'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { EResultCode, YN } from 'src/enum/commonEnum'
+import { useUser } from 'src/hooks/useUser'
 import { MRoleList, MUserGroup } from 'src/model/userSetting/userSettingModel'
-import { useUserGroupMod, useUserGroupSave } from 'src/service/setting/userSetting'
+import { useUserGroup, useUserGroupMod, useUserGroupSave } from 'src/service/setting/userSetting'
 
 interface IRoleAddModal {
-  groupInfo?: MUserGroup & MRoleList
+  data: MUserGroup[]
   onClose: () => void
   refetch: () => void
 }
@@ -62,11 +63,29 @@ export const defaultValue = {
   ]
 }
 
-const RoleAdd: FC<IRoleAddModal> = ({ groupInfo, onClose, refetch }) => {
+const RoleAdd: FC<IRoleAddModal> = ({ data, onClose, refetch }) => {
+  const { mutateAsync: groupMutate } = useUserGroup()
+  const userContext = useUser()
+
+  // const [groupData, setGroupData] = useState<any>(null)
+  const [rows, setRows] = useState<MUserGroup & MRoleList>(defaultValue)
+
+  useEffect(() => {
+    if (typeof userContext.selectedGroupId === 'number') {
+      const fetchData = async () => {
+        const res = await groupMutate({ id: userContext.selectedGroupId as number })
+        setRows(res.data)
+      }
+      fetchData()
+    } else {
+      setRows(defaultValue)
+    }
+  }, [userContext.selectedGroupId])
+
   const { mutateAsync: saveGroup } = useUserGroupSave()
   const { mutateAsync: modGroup } = useUserGroupMod()
 
-  const [rows, setRows] = useState<MUserGroup & MRoleList>(groupInfo ? groupInfo : defaultValue)
+  // const [rows, setRows] = useState<MUserGroup & MRoleList>(groupInfo ? groupInfo : defaultValue)
 
   const updateState = (viewName: string, roleType: string, checked: YN) => {
     setRows(rows => ({
@@ -193,11 +212,15 @@ const RoleAdd: FC<IRoleAddModal> = ({ groupInfo, onClose, refetch }) => {
     }
   ]
 
+  if (!rows) {
+    return <></>
+  }
+
   return (
     <Card>
       <Box sx={{ display: 'flex', alignItems: 'center', m: 5 }}>
         <Typography variant='h5' component='span' mr={5}>
-          {groupInfo ? '권한 이름' : '새로운 권한 이름'}
+          {userContext.selectedGroupId === 'new' ? '새로운 권한 이름' : '권한 이름'}
         </Typography>
         <DuplicateText
           value={rows.name}
