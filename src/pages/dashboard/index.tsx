@@ -1,7 +1,8 @@
 import { FC } from 'react'
+import Dashboard from './Dashboard'
 
 const Index: FC = ({}): React.ReactElement => {
-  return <>대쉬보드</>
+  return <Dashboard />
 }
 
 export default Index
