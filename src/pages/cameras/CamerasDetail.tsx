@@ -8,6 +8,7 @@ import { useCameras } from 'src/hooks/useCameras'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { ICameraClient, ICameraClientDetail } from 'src/model/cameras/CamerasModel'
 import { useCameraClientDetailList } from 'src/service/cameras/camerasService'
+import CamerasMap from './map/CamerasMap'
 
 interface IClientDetail {
   selectClient: ICameraClient | null
@@ -105,7 +106,9 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
         </Grid>
       </Grid>
       <Grid item xs={12} sx={{ maxHeight: '50vh', overflow: 'auto', width: '100%' }}>
-        <Card>grid2</Card>
+        <Card>
+          <CamerasMap height='50vh' />
+        </Card>
       </Grid>
     </Grid>
   )

@@ -14,6 +14,7 @@ import { KioskManagerProvider } from './KioskManagerContext'
 import { MonitoringProvider } from './MonitoringContext'
 
 import { ClientsProvider } from './ClientsContext'
+import { MapProvider } from './MapContext'
 import { SocketDataProvider } from './SocketDataContext'
 import { StatisticsProvider } from './StatisticsContext'
 
@@ -27,23 +28,25 @@ const ContextProviders = ({ children, emotionCache, settingsProps }: ProvidersPr
   return (
     <CacheProvider value={emotionCache}>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <ContentsProvider>
-            <ClientsProvider>
-              <KioskProvider>
-                <KioskManagerProvider>
-                  <StatisticsProvider>
-                    <MonitoringProvider>
-                      <SocketDataProvider>
-                        <SettingsProvider {...settingsProps}>{children}</SettingsProvider>
-                      </SocketDataProvider>
-                    </MonitoringProvider>
-                  </StatisticsProvider>
-                </KioskManagerProvider>
-              </KioskProvider>
-            </ClientsProvider>
-          </ContentsProvider>
-        </AuthProvider>
+        <MapProvider>
+          <AuthProvider>
+            <ContentsProvider>
+              <ClientsProvider>
+                <KioskProvider>
+                  <KioskManagerProvider>
+                    <StatisticsProvider>
+                      <MonitoringProvider>
+                        <SocketDataProvider>
+                          <SettingsProvider {...settingsProps}>{children}</SettingsProvider>
+                        </SocketDataProvider>
+                      </MonitoringProvider>
+                    </StatisticsProvider>
+                  </KioskManagerProvider>
+                </KioskProvider>
+              </ClientsProvider>
+            </ContentsProvider>
+          </AuthProvider>
+        </MapProvider>
       </QueryClientProvider>
     </CacheProvider>
   )
