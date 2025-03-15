@@ -8,7 +8,7 @@ import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import PickersComponent from './PickersComponent'
 
 // ** Custom Component Imports
-import { IconButton } from '@mui/material'
+import { IconButton, useTheme } from '@mui/material'
 import format from 'date-fns/format'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
 import IconCustom from 'src/layouts/components/IconCustom'
@@ -16,7 +16,6 @@ import IconCustom from 'src/layouts/components/IconCustom'
 export type DateType = Date | null | undefined
 
 const PickersRange = ({
-  popperPlacement,
   label,
   width,
   onChange,
@@ -31,7 +30,6 @@ const PickersRange = ({
   inputStyle,
   useNotDefaultStyle = false
 }: {
-  popperPlacement: ReactDatePickerProps['popperPlacement']
   label?: string
   width?: number
   onChange: (start: string, end: string) => void
@@ -46,6 +44,10 @@ const PickersRange = ({
   inputStyle?: React.CSSProperties
   useNotDefaultStyle?: boolean
 }) => {
+  const theme = useTheme()
+  const { direction } = theme
+  const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
+
   const [startDate, setStartDate] = useState<DateType>()
   const [endDate, setEndDate] = useState<DateType>()
 
@@ -113,7 +115,7 @@ const PickersRange = ({
     >
       {useFrontIcon && (
         <IconButton onClick={handleIconClick}>
-          <IconCustom icon='carbon_calendar' isCommon style={{ cursor: 'pointer' }} />
+          <IconCustom icon='calendar' isCommon style={{ cursor: 'pointer' }} />
         </IconButton>
       )}
 

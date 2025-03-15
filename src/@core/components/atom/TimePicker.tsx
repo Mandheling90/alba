@@ -10,6 +10,7 @@ const TimePickerWrapper = styled.div`
 const TimeInputs = styled.div`
   display: flex;
   gap: 4px;
+  align-items: center;
 `
 
 const TimeInput = styled.div`
@@ -33,13 +34,13 @@ const modalStyle = {
 
 interface ITimePicker {
   hour: number
-  minute: number
+  minute?: number
   onChange: (hour: number, minute: number) => void
 }
 
 const TimePicker: React.FC<ITimePicker> = ({ hour, minute, onChange }) => {
   const [selectedHour, setSelectedHour] = useState<number>(hour)
-  const [selectedMinute, setSelectedMinute] = useState<number>(minute)
+  const [selectedMinute, setSelectedMinute] = useState<number>(minute ?? 0)
   const [openHourModal, setOpenHourModal] = useState<boolean>(false)
   const [openMinuteModal, setOpenMinuteModal] = useState<boolean>(false)
   const [hourModalPosition, setHourModalPosition] = useState({ top: 0, left: 0 })
@@ -47,7 +48,7 @@ const TimePicker: React.FC<ITimePicker> = ({ hour, minute, onChange }) => {
 
   useEffect(() => {
     setSelectedHour(hour)
-    setSelectedMinute(minute)
+    setSelectedMinute(minute ?? 0)
   }, [hour, minute])
 
   const hourListRef = useRef<HTMLUListElement | null>(null)
@@ -91,7 +92,7 @@ const TimePicker: React.FC<ITimePicker> = ({ hour, minute, onChange }) => {
               (childTop - parentTop) -
               hourListRef.current.clientHeight / 2 +
               selectedElement.clientHeight / 2,
-            behavior: 'smooth'
+            behavior: 'auto'
           })
         }
       }
@@ -112,7 +113,7 @@ const TimePicker: React.FC<ITimePicker> = ({ hour, minute, onChange }) => {
               (childTop - parentTop) -
               minuteListRef.current.clientHeight / 2 +
               selectedElement.clientHeight / 2,
-            behavior: 'smooth'
+            behavior: 'auto'
           })
         }
       }
@@ -122,8 +123,13 @@ const TimePicker: React.FC<ITimePicker> = ({ hour, minute, onChange }) => {
   return (
     <TimePickerWrapper>
       <TimeInputs>
-        <TimeInput onClick={handleHourClick}>{selectedHour.toString().padStart(2, '0')}</TimeInput>:
-        <TimeInput onClick={handleMinuteClick}>{selectedMinute.toString().padStart(2, '0')}</TimeInput>
+        <TimeInput onClick={handleHourClick}>{selectedHour.toString().padStart(2, '0')}</TimeInput>시{' '}
+        {minute ? (
+          <TimeInput onClick={handleMinuteClick}>{selectedMinute.toString().padStart(2, '0')}</TimeInput>
+        ) : (
+          '00'
+        )}
+        분
       </TimeInputs>
 
       <Modal open={openHourModal} onClose={handleCloseHourModal}>

@@ -47,11 +47,34 @@ export enum ROLE {
 }
 
 export const EComponentList = [
+  // {
+  //   title: '대쉬보드',
+  //   path: '/dashboard',
+  //   icon: 'dashboard'
+  // },
   {
     title: '대쉬보드',
-    path: '/dashboard',
-    icon: 'dashboard'
+    icon: 'dashboard',
+    children: [
+      {
+        title: '방문자수 통계',
+        path: '/dashboard/visitors'
+      },
+      {
+        title: '방문자수 통계 - 시간별',
+        path: '/dashboard/visitorsByHour'
+      },
+      {
+        title: '방문자 특성 통계',
+        path: '/dashboard/visitorAttributes'
+      },
+      {
+        title: '방문자 특성 통계 - 시간별',
+        path: '/dashboard/visitorAttributesByHour'
+      }
+    ]
   },
+
   {
     title: '고객사 관리',
     path: '/clients',

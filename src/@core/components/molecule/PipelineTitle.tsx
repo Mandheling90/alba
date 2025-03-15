@@ -4,11 +4,12 @@ import { FC } from 'react'
 interface IPipelineTitle {
   Icon?: React.ReactNode
   title?: string[]
+  marginBottom?: number
 }
 
-const PipelineTitle: FC<IPipelineTitle> = ({ Icon, title }): React.ReactElement => {
+const PipelineTitle: FC<IPipelineTitle> = ({ Icon, title, marginBottom = 0 }): React.ReactElement => {
   return (
-    <Box display='flex' alignItems='center' m={3}>
+    <Box display='flex' alignItems='center' mb={marginBottom}>
       {(title ?? []).map((t, i) => (
         <Box key={t} sx={{ display: 'flex', alignItems: 'center' }}>
           {i === 0 && Icon && <Box mr={2}>{Icon}</Box>}

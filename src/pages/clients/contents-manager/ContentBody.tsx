@@ -165,7 +165,6 @@ const ContentBody: FC<IContentBody> = ({ isDisabled = false }) => {
                   label='게시날짜'
                   placeholder='필수입력'
                   placeholderColor={'red'}
-                  popperPlacement={popperPlacement}
                   onChange={handleDateChange}
                   selectedStartDate={selectedContent?.postStartDate}
                   selectedEndDate={selectedContent?.postEndDate}

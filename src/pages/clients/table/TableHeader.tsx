@@ -43,7 +43,6 @@ const TableHeader = (props: TableHeaderProps) => {
             useIcon={true}
             width={250}
             label={'게시일'}
-            popperPlacement={popperPlacement}
             returnFormat='yyyy-MM-dd'
             onChange={(start, end) => {
               setReqPram({ startDate: start, endDate: end })

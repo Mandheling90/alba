@@ -1,0 +1,176 @@
+import React, { useEffect, useState } from 'react'
+
+// BaseChart를 가장 먼저 로드
+
+// Highcharts 모듈을 동적으로 로드
+let Highcharts: any
+let HeatmapModule: any
+
+if (typeof window !== 'undefined') {
+  import('highcharts').then(module => {
+    Highcharts = module.default
+    import('highcharts/modules/heatmap').then(heatmapModule => {
+      HeatmapModule = heatmapModule.default || heatmapModule
+      if (typeof HeatmapModule === 'function') {
+        HeatmapModule(Highcharts)
+      }
+    })
+  })
+}
+
+const HeatMapChart: React.FC = () => {
+  const [HighchartsReact, setHighchartsReact] = useState<any>(null)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      import('highcharts-react-official').then(module => {
+        setHighchartsReact(() => module.default)
+      })
+    }
+  }, [])
+
+  useEffect(() => {
+    if (Highcharts) {
+      Highcharts.setOptions({
+        time: {
+          timezoneOffset: -9 * 60 // KST 적용 (UTC+9)
+        }
+      })
+    }
+  }, [Highcharts])
+
+  const options: Highcharts.Options = {
+    chart: {
+      type: 'heatmap',
+      marginTop: 40,
+      marginBottom: 80,
+      plotBorderWidth: 1
+    },
+    title: {
+      text: '시간별 연령별 방문자수 및 성별 비율',
+      style: {
+        fontSize: '1em'
+      }
+    },
+    xAxis: {
+      categories: [
+        '0시',
+        '1시',
+        '2시',
+        '3시',
+        '4시',
+        '5시',
+        '6시',
+        '7시',
+        '8시',
+        '9시',
+        '10시',
+        '11시',
+        '12시',
+        '13시',
+        '14시',
+        '15시',
+        '16시',
+        '17시',
+        '18시',
+        '19시',
+        '20시',
+        '21시',
+        '22시',
+        '23시'
+      ]
+    },
+    yAxis: {
+      categories: ['60대이상', '50대', '40대', '30대', '20대', '10대', '10대이하'],
+      title: undefined,
+      reversed: true
+    },
+    accessibility: {
+      point: {
+        descriptionFormat:
+          '{(add index 1)}. ' + '{series.xAxis.categories.(x)} sales ' + '{series.yAxis.categories.(y)}, {value}.'
+      }
+    },
+    colorAxis: {
+      min: 0,
+      max: 150,
+      stops: [
+        [0, '#B9EEFF'],
+        [0.4, '#7FACFF'],
+        [0.7, '#FF97A6'],
+        [1, '#FF0000']
+      ]
+    },
+    legend: {
+      align: 'right',
+      layout: 'vertical',
+      margin: 0,
+      verticalAlign: 'top',
+      y: 25,
+      symbolHeight: 280
+    },
+    tooltip: {
+      formatter: function (this: any) {
+        return `<b>시간대: ${this.series.xAxis.categories[this.x]}</b><br>
+                <b>연령: ${this.series.yAxis.categories[this.y]}</b><br>
+                방문자수: ${this.visitors}<br>
+                남성: ${this.male}%<br>
+                여성: ${this.female}%`
+      }
+    },
+    series: [
+      {
+        type: 'heatmap',
+        name: '방문자수 및 성별 비율',
+        borderWidth: 1,
+        data: (function () {
+          const data = []
+          for (let i = 0; i < 24; i++) {
+            for (let j = 0; j < 7; j++) {
+              const visitors = Math.floor(Math.random() * 151)
+              const male = Math.floor(Math.random() * 101)
+              const female = 100 - male
+              data.push({
+                x: i,
+                y: j,
+                visitors: visitors,
+                male: male,
+                female: female,
+                value: visitors
+              })
+            }
+          }
+
+          return data
+        })(),
+        dataLabels: {
+          enabled: true,
+          color: '#000000',
+          formatter: function (this: any) {
+            return `${this.point.visitors}<br>(${this.point.male}%, ${this.point.female}%)`
+          }
+        }
+      }
+    ],
+    responsive: {
+      rules: [
+        {
+          condition: {
+            maxWidth: 500
+          },
+          chartOptions: {
+            yAxis: {
+              labels: {
+                format: '{substr value 0 1}'
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+
+  return Highcharts && HighchartsReact ? <HighchartsReact highcharts={Highcharts} options={options} /> : null
+}
+
+export default HeatMapChart

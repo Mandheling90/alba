@@ -153,7 +153,6 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   <PickersRange
                     useIcon={true}
                     label={'선택입력'}
-                    popperPlacement={popperPlacement}
                     returnFormat='yyyy-MM-dd'
                     onChange={handleDateChange}
                     inputStyle={{ backgroundColor: grayTextBackground, border: 'none' }}

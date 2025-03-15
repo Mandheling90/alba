@@ -92,9 +92,15 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
               }
             },
             '& .selected-by-click': {
-              backgroundColor: 'rgba(255, 0, 0, 0.1) !important',
+              backgroundColor:
+                onCheckboxSelectionChange && selectRowEvent
+                  ? 'rgba(255, 0, 0, 0.1) !important'
+                  : 'rgba(145, 85, 253, 0.1) !important',
               '&:hover': {
-                backgroundColor: 'rgba(255, 0, 0, 0.2) !important'
+                backgroundColor:
+                  onCheckboxSelectionChange && selectRowEvent
+                    ? 'rgba(255, 0, 0, 0.2) !important'
+                    : 'rgba(145, 85, 253, 0.2) !important'
               }
             },
             '& .MuiDataGrid-row': {
