@@ -1,4 +1,4 @@
-import Highcharts from 'highcharts/highstock'
+// import Highcharts from 'highcharts/highstock'
 import React, { useEffect, useRef } from 'react'
 
 // 샘플 데이터 생성 함수
@@ -31,112 +31,135 @@ interface ILiveDataLineChart {
 const LiveDataLineChart: React.FC<ILiveDataLineChart> = ({ selected, data, secondData, height = '400px' }) => {
   const chartRef = useRef<HTMLDivElement>(null)
 
+  let Highcharts: any
+  let HeatmapModule: any
+
   useEffect(() => {
-    if (!chartRef.current) return
+    let isMounted = true // 컴포넌트가 마운트된 상태인지 확인
 
-    // Add id to the div element
-    chartRef.current.id = 'highcharts-container'
+    const loadHighcharts = async () => {
+      if (typeof window === 'undefined' || !chartRef.current) return
 
-    const options: Highcharts.Options = {
-      chart: {
-        renderTo: chartRef.current,
-        type: 'spline',
-        height: height
-      },
+      const highchartsModule = await import('highcharts')
+      const heatmapModule = await import('highcharts/modules/heatmap')
 
-      time: {
-        useUTC: false
-      },
+      if (!isMounted) return // 컴포넌트가 언마운트된 경우 중단
 
-      title: {
-        text: 'Live random data'
-      },
+      Highcharts = highchartsModule.default
+      HeatmapModule = heatmapModule.default || heatmapModule
 
-      accessibility: {
-        announceNewData: {
-          enabled: true,
-          minAnnounceInterval: 15000,
-          announcementFormatter: function (allSeries, newSeries, newPoint) {
-            if (newPoint) {
-              return 'New point added. Value: ' + newPoint.y
-            }
+      if (typeof HeatmapModule === 'function') {
+        HeatmapModule(Highcharts)
+      }
 
-            return false
-          }
-        }
-      },
+      // 차트 생성
+      const options: Highcharts.Options = {
+        chart: {
+          renderTo: chartRef.current,
+          type: 'spline',
+          height: height
+        },
 
-      xAxis: {
-        type: 'datetime',
-        tickPixelInterval: 150,
-        maxPadding: 0.1
-      },
+        time: {
+          timezoneOffset: new Date().getTimezoneOffset()
+        },
 
-      yAxis: {
         title: {
-          text: 'Value'
+          text: 'Live random data'
         },
-        min: 0,
-        max: 100
-      },
 
-      tooltip: {
-        headerFormat: '<b>{series.name}</b><br/>',
-        pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
-      },
+        accessibility: {
+          announceNewData: {
+            enabled: true,
+            minAnnounceInterval: 15000,
+            announcementFormatter: function (allSeries, newSeries, newPoint) {
+              if (newPoint) {
+                return 'New point added. Value: ' + newPoint.y
+              }
 
-      legend: {
-        enabled: true
-      },
-
-      exporting: {
-        enabled: false
-      },
-
-      plotOptions: {
-        series: {
-          marker: {
-            enabled: true
+              return false
+            }
           }
-        }
-      },
-
-      series: [
-        {
-          type: 'spline',
-          name: 'Random data 1',
-          lineWidth: 2,
-          color: '#87CEEB',
-          data: data || [],
-          turboThreshold: 0
         },
-        {
-          type: 'spline',
-          name: 'Random data 2',
-          lineWidth: 2,
-          color: '#00008B',
-          data: secondData || [],
-          turboThreshold: 0
-        }
-      ]
+
+        xAxis: {
+          type: 'datetime',
+          tickPixelInterval: 150,
+          maxPadding: 0.1
+        },
+
+        yAxis: {
+          title: {
+            text: 'Value'
+          },
+          min: 0,
+          max: 100
+        },
+
+        tooltip: {
+          headerFormat: '<b>{series.name}</b><br/>',
+          pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
+        },
+
+        legend: {
+          enabled: true
+        },
+
+        exporting: {
+          enabled: false
+        },
+
+        plotOptions: {
+          series: {
+            marker: {
+              enabled: true
+            }
+          }
+        },
+
+        series: [
+          {
+            type: 'spline',
+            name: 'Random data 1',
+            lineWidth: 2,
+            color: '#87CEEB',
+            data: data || [],
+            turboThreshold: 0
+          },
+          {
+            type: 'spline',
+            name: 'Random data 2',
+            lineWidth: 2,
+            color: '#00008B',
+            data: secondData || [],
+            turboThreshold: 0
+          }
+        ]
+      }
+
+      const chart = Highcharts.chart(options)
+
+      const intervalId = setInterval(() => {
+        if (!chart || !chart.series || chart.series.length < 2) return
+
+        const x = new Date().getTime()
+        const y1 = Math.random() * 100
+        const y2 = Math.random() * 100
+
+        chart.series[0].addPoint([x, y1], false)
+        chart.series[1].addPoint([x, y2], true)
+      }, 1000)
+
+      return () => {
+        clearInterval(intervalId)
+        chart.destroy()
+      }
     }
 
-    const chart = Highcharts.chart(options)
-
-    const intervalId = setInterval(() => {
-      if (!chart || !chart.series || chart.series.length < 2) return
-
-      const x = new Date().getTime()
-      const y1 = Math.random() * 100
-      const y2 = Math.random() * 100
-
-      chart.series[0].addPoint([x, y1], false)
-      chart.series[1].addPoint([x, y2], true)
-    }, 1000)
+    loadHighcharts()
 
     return () => {
-      clearInterval(intervalId)
-      chart.destroy()
+      isMounted = false // 컴포넌트가 언마운트되었음을 표시
     }
   }, [data, secondData])
 
