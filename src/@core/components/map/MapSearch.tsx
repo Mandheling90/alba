@@ -47,7 +47,7 @@ const MapSearch: FC<IMapSearch> = ({ onSearch }): React.ReactElement => {
       size='small'
       onChange={(event, newValue: string | IPlacesList) => {
         if (typeof newValue !== 'string') {
-          setMapInfo({ ...mapInfo, center: { lat: Number(newValue.y), lon: Number(newValue.x) } })
+          setMapInfo({ ...mapInfo, center: { lat: Number(newValue.y), lon: Number(newValue.x) }, mapLevel: 3 })
           onSearch?.(Number(newValue.y), Number(newValue.x))
         }
       }}
