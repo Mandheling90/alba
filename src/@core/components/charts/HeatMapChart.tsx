@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react'
 
-// BaseChart를 가장 먼저 로드
-
 // Highcharts 모듈을 동적으로 로드
 let Highcharts: any
 let HeatmapModule: any
