@@ -61,6 +61,12 @@ const BarStackedChart: React.FC = () => {
           }
         }
       },
+      legend: {
+        enabled: true,
+        align: 'right',
+        verticalAlign: 'top',
+        useHTML: true
+      },
       series: [
         {
           type: 'column',

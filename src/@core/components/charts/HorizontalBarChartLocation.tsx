@@ -1,10 +1,13 @@
 import Highcharts, { Chart as ChartType } from 'highcharts'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import SwitchCustom from '../atom/SwitchCustom'
 
 const HorizontalBarChartLocation = () => {
+  const chartRef = useRef<ChartType | null>(null)
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      Highcharts.chart({
+      chartRef.current = Highcharts.chart({
         chart: {
           renderTo: 'location-chart-container',
           type: 'spline',
@@ -12,54 +15,6 @@ const HorizontalBarChartLocation = () => {
           // height: 500,
           events: {
             load: function (this: ChartType) {
-              const btnSelect = this.renderer
-                .button(
-                  '전체 선택',
-                  0,
-                  0,
-                  function (this: ChartType) {
-                    this.series.forEach((s: Highcharts.Series) => {
-                      s.setVisible(true, false)
-                    })
-                    this.redraw()
-                  }.bind(this)
-                )
-                .attr({ zIndex: 3 })
-                .align(
-                  {
-                    align: 'center',
-                    verticalAlign: 'top',
-                    x: -70,
-                    y: 0
-                  },
-                  false
-                )
-                .add()
-
-              const btnDeselect = this.renderer
-                .button(
-                  '전체 선택해제',
-                  0,
-                  0,
-                  function (this: ChartType) {
-                    this.series.forEach((s: Highcharts.Series) => {
-                      s.setVisible(false, false)
-                    })
-                    this.redraw()
-                  }.bind(this)
-                )
-                .attr({ zIndex: 3 })
-                .align(
-                  {
-                    align: 'center',
-                    verticalAlign: 'top',
-                    x: 0,
-                    y: 0
-                  },
-                  false
-                )
-                .add()
-
               // 차트 로드 시 첫 번째 시리즈에 대해 마우스오버 상태를 적용
               if (this.series && this.series.length > 0) {
                 this.series[0].onMouseOver()
@@ -67,12 +22,20 @@ const HorizontalBarChartLocation = () => {
             }
           }
         },
-        title: {
-          text: '시간대별 방문자 수',
-          align: 'left'
-        },
-        subtitle: {
-          text: '7개 장소별 방문자 수'
+
+        // title: {
+        //   text: '시간대별 방문자 수',
+        //   align: 'left'
+        // },
+
+        // subtitle: {
+        //   text: '7개 장소별 방문자 수'
+        // },
+        legend: {
+          enabled: true,
+          align: 'right',
+          verticalAlign: 'top',
+          useHTML: true
         },
         xAxis: {
           type: 'datetime',
@@ -174,7 +137,37 @@ const HorizontalBarChartLocation = () => {
     }
   }, [])
 
-  return <div id='location-chart-container' style={{ width: '100%', height: '100%' }} />
+  const handleSwitchChange = (selected: boolean) => {
+    if (chartRef.current) {
+      chartRef.current.series.forEach((s: Highcharts.Series) => {
+        s.setVisible(selected, false)
+      })
+      chartRef.current.redraw()
+    }
+  }
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <style>
+        {`
+          .highcharts-title {
+            display: none;
+          }
+        `}
+      </style>
+      <div id='location-chart-container' style={{ width: '100%', height: '100%' }} />
+      <div style={{ position: 'absolute', top: '10px', left: '50px' }}>
+        <SwitchCustom
+          width={90}
+          switchName={['전체', '개별']}
+          activeColor={['rgba(145, 85, 253, 1)', 'rgba(145, 85, 253, 1)']}
+          selected={true}
+          superSelected={false}
+          onChange={selected => handleSwitchChange(selected)}
+        />
+      </div>
+    </div>
+  )
 }
 
 export default HorizontalBarChartLocation

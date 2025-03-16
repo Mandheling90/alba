@@ -1,10 +1,15 @@
+import { Box } from '@mui/material'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+import { useState } from 'react'
+import RoundedBubble from '../atom/RoundedBubble'
 
 // Age categories
 const categories = ['10대 이하', '10대', '20대', '30대', '40대', '50대', '60대 이상']
 
-const PyramidChart = () => {
+const PyramidChart = ({}) => {
+  const [hoveredPoint, setHoveredPoint] = useState('')
+
   const options = {
     chart: {
       type: 'bar'
@@ -64,7 +69,12 @@ const PyramidChart = () => {
     plotOptions: {
       series: {
         stacking: 'normal',
-        borderRadius: '50%'
+        borderRadius: '50%',
+        states: {
+          inactive: {
+            opacity: 0.5 // 마우스 오버 시 반대쪽 차트의 불투명도 조정
+          }
+        }
       }
     },
     tooltip: {
@@ -106,16 +116,51 @@ const PyramidChart = () => {
     series: [
       {
         name: '남성',
-        data: [-12, -33, -60, -28, -18, -3, -2]
+        data: [-12, -33, -60, -28, -18, -3, -2],
+        point: {
+          events: {
+            mouseOver: function (this: Highcharts.Point) {
+              setHoveredPoint('남성') // 마우스 오버한 데이터 포인트 저장
+            },
+            mouseOut: function () {
+              setHoveredPoint('') // 마우스 아웃 시 빈 문자열 전송
+            }
+          }
+        }
       },
       {
         name: '여성',
-        data: [25, 37, 115, 72, 27, 13, 1]
+        data: [25, 37, 115, 72, 27, 13, 1],
+        point: {
+          events: {
+            mouseOver: function (this: Highcharts.Point) {
+              setHoveredPoint('여성') // 마우스 오버한 데이터 포인트 저장
+            },
+            mouseOut: function () {
+              setHoveredPoint('') // 마우스 아웃 시 빈 문자열 전송
+            }
+          }
+        }
       }
     ]
   }
 
-  return <HighchartsReact highcharts={Highcharts} options={options} />
+  return (
+    <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+      {hoveredPoint === '여성' && (
+        <Box sx={{ position: 'absolute', zIndex: 999, left: '5%', top: '15%' }}>
+          <RoundedBubble title={'남성전체:'} content={'30.1%'} background={'#38A3FA'} tailDirection={'5'} />
+        </Box>
+      )}
+      {hoveredPoint === '남성' && (
+        <Box sx={{ position: 'absolute', zIndex: 999, right: '5%', top: '15%' }}>
+          <RoundedBubble title={'여성전체:'} content={'30.1%'} background={'#4D3FBA'} tailDirection={'7'} />
+        </Box>
+      )}
+
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </Box>
+  )
 }
 
 export default PyramidChart

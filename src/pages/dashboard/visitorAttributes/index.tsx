@@ -1,8 +1,9 @@
 import { Card, Grid } from '@mui/material'
-import { FC } from 'react'
+import dynamic from 'next/dynamic'
+import { FC, useEffect, useState } from 'react'
 import BarChart from 'src/@core/components/charts/BarChart'
-import { LiveDataLineChartExample } from 'src/@core/components/charts/LiveDataLineChart_bak'
 import PieChart from 'src/@core/components/charts/PieChart'
+
 import PyramidChart from 'src/@core/components/charts/PyramidChart'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
@@ -11,7 +12,31 @@ import { exampleMVisitant } from 'src/model/dashboard/dashboard'
 import ChartDetailSwiper from '../swiper/ChartDetailSwiper'
 import VisitantList from '../table/VisitantList'
 
+const LiveDataLineChart = dynamic(() => import('src/@core/components/charts/LiveDataLineChart'), {
+  ssr: false
+})
+
+const generateSampleData = (count = 70): [number, number][] => {
+  const data: [number, number][] = []
+  const now = Date.now()
+
+  for (let i = 0; i < count; i++) {
+    data.push([now - (count - i) * 1000, Math.random() * 100])
+  }
+
+  return data
+}
+
 const VisitorAttributes: FC = ({}): React.ReactElement => {
+  const [data, setData] = useState<[number, number][]>([])
+  const [secondData, setSecondData] = useState<[number, number][]>([])
+  const [hoveredPoint, setHoveredPoint] = useState<string>('')
+
+  useEffect(() => {
+    setData(generateSampleData())
+    setSecondData(generateSampleData())
+  }, [])
+
   return (
     <StandardTemplate title={'방문자 특성 통계'}>
       <Grid container spacing={5} alignItems={'flex-end'}>
@@ -24,7 +49,7 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
         </Grid>
         <Grid item xs={9.5}>
           <Card>
-            <LiveDataLineChartExample />
+            <LiveDataLineChart selected={1} data={data} secondData={secondData} />
           </Card>
         </Grid>
         <Grid item xs={2.5}>
@@ -57,15 +82,9 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
 
         <Grid item xs={12}>
           <Card>
-            <BarChart />
-          </Card>
-        </Grid>
-        <Grid item xs={6}>
-          <Card>
-            <VisitantList
-              data={exampleMVisitant}
-              refetch={() => {
-                console.log('refetch')
+            <BarChart
+              onHover={category => {
+                setHoveredPoint(category)
               }}
             />
           </Card>
@@ -77,6 +96,18 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
               refetch={() => {
                 console.log('refetch')
               }}
+              selected={hoveredPoint}
+            />
+          </Card>
+        </Grid>
+        <Grid item xs={6}>
+          <Card>
+            <VisitantList
+              data={exampleMVisitant}
+              refetch={() => {
+                console.log('refetch')
+              }}
+              selected={hoveredPoint}
             />
           </Card>
         </Grid>

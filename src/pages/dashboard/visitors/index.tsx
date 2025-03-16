@@ -47,7 +47,6 @@ const Visitors: FC = ({}): React.ReactElement => {
         <Grid item xs={9.5}>
           <Card>
             <LiveDataLineChart selected={1} data={data} secondData={secondData} />
-            {/* <LiveDataLineChartExample /> */}
           </Card>
         </Grid>
         <Grid item xs={2.5}>
