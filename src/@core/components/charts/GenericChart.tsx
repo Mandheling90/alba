@@ -110,7 +110,6 @@ const GenericChart: React.FC<ChartProps> = ({ selected, data, seriesTypes, color
   // 차트 옵션 설정
   const chartOptions: Highcharts.Options = {
     time: {
-      useUTC: false, // UTC를 사용하도록 설정
       timezoneOffset: 540 // KST의 오프셋 (9시간 * 60분)
     },
 
@@ -120,12 +119,12 @@ const GenericChart: React.FC<ChartProps> = ({ selected, data, seriesTypes, color
       max: maxTimestamp !== -Infinity ? maxTimestamp : undefined,
       labels: {
         formatter: function () {
-          const xAxis = this.chart.xAxis[0]
-          const timeRange = (xAxis.max ?? 0) - (xAxis.min ?? 0)
-          const value = typeof this.value === 'number' ? this.value : Number(this.value)
+          const xAxis = (this as any).chart.xAxis[0]
+          const timeRange: number = (xAxis.max ?? 0) - (xAxis.min ?? 0)
+          const value: number = typeof this.value === 'number' ? this.value : Number(this.value)
 
           // KST로 변환하기 위해 9시간 (32400000ms) 추가
-          const kstValue = value + 9 * 3600 * 1000
+          const kstValue: number = value + 9 * 3600 * 1000
 
           if (timeRange >= 2592000000) {
             return Highcharts.dateFormat('%m월', kstValue)
@@ -147,7 +146,7 @@ const GenericChart: React.FC<ChartProps> = ({ selected, data, seriesTypes, color
         }
       },
       events: {
-        afterSetExtremes: function (e) {
+        afterSetExtremes: function (e: any) {
           const min = e.min
           const max = e.max
 
@@ -169,25 +168,25 @@ const GenericChart: React.FC<ChartProps> = ({ selected, data, seriesTypes, color
 
     tooltip: {
       split: true,
-      formatter: function () {
+      formatter: function (): string[] {
         const x = typeof this.x === 'number' ? this.x : Number(this.x)
-        const points = this.points
+        const chartPoints = (this as any).points
 
         // KST로 변환하기 위해 9시간 (32400000ms) 추가
-        const kstX = x + 9 * 3600 * 1000
-        const tooltipArray = [
+        const kstX: number = x + 9 * 3600 * 1000
+        const tooltipArray: string[] = [
           `<div class='tooltipArray'> 
           ${Highcharts.dateFormat('%m월%d일 %H시', kstX)} 
         </div>`
         ]
 
-        points?.forEach((point, index) => {
+        chartPoints?.forEach((point: any, index: number) => {
           const seriesName = point.series.name
 
           // 첫 번째 값이 존재하고, 두 번째 값을 처리할 때 퍼센티지 계산
           let percentageText = ''
-          if (index === 1 && points[0]?.y) {
-            const percentage = ((point.y ?? 0 - points[0].y) / points[0].y) * 100
+          if (index === 1 && chartPoints[0]?.y) {
+            const percentage = ((point.y ?? 0 - chartPoints[0].y) / chartPoints[0].y) * 100
             percentageText = `(${percentage.toFixed(1)}%)`
           }
 

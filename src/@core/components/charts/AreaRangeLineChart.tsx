@@ -10,6 +10,12 @@ if (typeof Highcharts === 'object') {
   HighchartsMore(Highcharts)
 }
 
+Highcharts.setOptions({
+  global: {
+    // useUTC 제거
+  }
+})
+
 interface IAreaRangeLineChart {
   kioskStatus?: KIOSK_STATUS
   arearangeData: any[]
@@ -23,7 +29,6 @@ const AreaRangeLineChart: React.FC<IAreaRangeLineChart> = ({
 }) => {
   const options: Highcharts.Options = {
     time: {
-      useUTC: false, // UTC를 사용하도록 설정
       timezoneOffset: 540 // KST의 오프셋 (9시간 * 60분)
     },
     chart: {
@@ -35,8 +40,7 @@ const AreaRangeLineChart: React.FC<IAreaRangeLineChart> = ({
       text: undefined
     },
     subtitle: {
-      text: '인원수',
-      align: 'left'
+      text: '인원수'
     },
     xAxis: {
       type: 'datetime',
@@ -69,8 +73,8 @@ const AreaRangeLineChart: React.FC<IAreaRangeLineChart> = ({
 
         const dateStr = `${formatDate(startDate)} (${formatHourRange(startDate, endDate)})`
 
-        const range = this.points?.[0]
-        const avg = this.points?.[1]
+        const range = (this as any).points?.[0]
+        const avg = (this as any).points?.[1]
 
         return `
           ${dateStr}<br/>

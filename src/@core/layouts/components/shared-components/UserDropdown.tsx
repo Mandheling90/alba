@@ -98,7 +98,8 @@ const UserDropdown = (props: Props) => {
             name: auth?.user?.userInfo?.name,
             role: auth?.user?.userInfo?.role,
             status: auth?.user?.userInfo?.status,
-            display: true
+            display: true,
+            email: auth?.user?.userInfo?.email
           }}
           onClose={() => {
             setIsOpen(false)

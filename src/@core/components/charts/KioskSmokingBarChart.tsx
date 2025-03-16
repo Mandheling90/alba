@@ -53,10 +53,10 @@ const KioskSmokingBarChart: React.FC<BitcoinChartProps> = ({ selected, data, sec
       formatter: function () {
         const x = typeof this.x === 'number' ? this.x : Number(this.x)
 
-        const points = this.points,
+        const points = (this as any).points,
           tooltipArray = [Highcharts.dateFormat('%m월%d일 %H:%M', x) + '</b>']
 
-        points?.forEach(function (point, index) {
+        points?.forEach(function (point: any, index: number) {
           tooltipArray.push('VALUE: <b>' + point.y + '</b>명')
         })
 

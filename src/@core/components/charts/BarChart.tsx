@@ -3,7 +3,7 @@ import HighchartsReact from 'highcharts-react-official'
 import { useEffect } from 'react'
 
 interface IBarChart {
-  onHover: (category: string) => void // 선택된 값
+  onHover?: (category: string) => void // 선택된 값
 }
 
 const BarChart = ({ onHover }: IBarChart) => {
@@ -48,10 +48,10 @@ const BarChart = ({ onHover }: IBarChart) => {
         point: {
           events: {
             mouseOver: function (this: Highcharts.Point) {
-              onHover(String(this.category)) // 마우스 오버한 데이터 포인트 저장
+              onHover?.(String(this.category)) // 마우스 오버한 데이터 포인트 저장
             },
             mouseOut: function () {
-              onHover('') // 마우스 아웃 시 빈 문자열 전송
+              onHover?.('') // 마우스 아웃 시 빈 문자열 전송
             }
           }
         }
@@ -62,10 +62,10 @@ const BarChart = ({ onHover }: IBarChart) => {
         point: {
           events: {
             mouseOver: function (this: Highcharts.Point) {
-              onHover(String(this.category)) // 마우스 오버한 데이터 포인트 저장
+              onHover?.(String(this.category)) // 마우스 오버한 데이터 포인트 저장
             },
             mouseOut: function () {
-              onHover('') // 마우스 아웃 시 빈 문자열 전송
+              onHover?.('') // 마우스 아웃 시 빈 문자열 전송
             }
           }
         }

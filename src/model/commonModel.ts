@@ -45,7 +45,9 @@ export interface MUserInfo {
   status: number
   role: ROLE
   group: MUserGroup
+  email: string
 }
+
 export interface MVerifyCodeReq {
   code: string
   email: string

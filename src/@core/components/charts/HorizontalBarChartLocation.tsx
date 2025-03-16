@@ -72,8 +72,7 @@ const HorizontalBarChartLocation = () => {
           align: 'left'
         },
         subtitle: {
-          text: '7개 장소별 방문자 수',
-          align: 'left'
+          text: '7개 장소별 방문자 수'
         },
         xAxis: {
           type: 'datetime',
