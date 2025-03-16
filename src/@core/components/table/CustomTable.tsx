@@ -25,7 +25,9 @@ interface IGridOptions {
   enablePointer?: boolean
 }
 
-const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptions>> = ({
+const CustomTable: FC<
+  IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptions> & { highlightCriteria?: { field: string; value: any } }
+> = ({
   id,
   isAllView = false,
   showMoreButton = false,
@@ -33,7 +35,8 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
   columns,
   selectRowEvent,
   enablePointer = false,
-  onCheckboxSelectionChange
+  onCheckboxSelectionChange,
+  highlightCriteria
 }) => {
   const pageSizeOptions = [25, 50, 100]
   const [pageSize, setPageSize] = useState(isAllView ? 100 : 25)
@@ -57,8 +60,13 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           getRowId={row => row[id ?? 'id']}
-          getRowClassName={params => (selectedRow === params.id ? 'selected-by-click' : '')}
-          onRowClick={row => {
+          getRowClassName={(params): string => {
+            const isSelectedByClick = selectedRow === params.id
+            const isHighlighted = highlightCriteria && params.row[highlightCriteria.field] === highlightCriteria.value
+
+            return isSelectedByClick ? 'selected-by-click' : isHighlighted ? 'highlighted-row' : ''
+          }}
+          onRowClick={(row: any) => {
             if (selectRowEvent) {
               if (selectedRow === row.id) {
                 setSelectedRow(null)
@@ -68,7 +76,7 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
               }
             }
           }}
-          onRowSelectionModelChange={selectedIds => {
+          onRowSelectionModelChange={(selectedIds: any[]) => {
             if (selectedIds.length === 0) {
               setSelectedRow(null)
             }
@@ -101,6 +109,12 @@ const CustomTable: FC<IPageSizeSelect & Partial<IRowSelect> & Partial<IGridOptio
                   onCheckboxSelectionChange && selectRowEvent
                     ? 'rgba(255, 0, 0, 0.2) !important'
                     : 'rgba(145, 85, 253, 0.2) !important'
+              }
+            },
+            '& .highlighted-row': {
+              backgroundColor: 'rgba(145, 85, 253, 0.08) !important',
+              '&:hover': {
+                backgroundColor: 'rgba(144, 85, 253, 0.16) !important'
               }
             },
             '& .MuiDataGrid-row': {

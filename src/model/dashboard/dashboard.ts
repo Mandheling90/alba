@@ -22,25 +22,25 @@ export const exampleMVisitant: MVisitant = {
   currentDayInOutTotal: 160,
   visitantList: [
     {
-      location: '서울',
+      location: '남문출입구',
       previousDayInOut: 50,
       currentDayInOut: 60,
       change: 20
     },
     {
-      location: '부산',
+      location: '북문출입구',
       previousDayInOut: 50,
       currentDayInOut: 60,
       change: 20
     },
     {
-      location: '대전',
+      location: '교육동1층입구',
       previousDayInOut: 50,
       currentDayInOut: 60,
       change: 20
     },
     {
-      location: '대구',
+      location: '교육동2층입구',
       previousDayInOut: 50,
       currentDayInOut: 60,
       change: 20

@@ -1,7 +1,7 @@
 import { Card, Grid } from '@mui/material'
 import { FC } from 'react'
 import BarChart from 'src/@core/components/charts/BarChart'
-import { LiveDataLineChartExample } from 'src/@core/components/charts/LiveDataLineChart'
+import { LiveDataLineChartExample } from 'src/@core/components/charts/LiveDataLineChart_bak'
 import PieChart from 'src/@core/components/charts/PieChart'
 import PyramidChart from 'src/@core/components/charts/PyramidChart'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'

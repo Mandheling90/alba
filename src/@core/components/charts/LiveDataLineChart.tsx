@@ -1,25 +1,5 @@
-// import Highcharts from 'highcharts/highstock'
-import React, { useEffect, useRef } from 'react'
-
-// 샘플 데이터 생성 함수
-const generateSampleData = (count = 20): [number, number][] => {
-  const data: [number, number][] = []
-  const now = Date.now()
-
-  for (let i = 0; i < count; i++) {
-    data.push([now - (count - i) * 1000, Math.random() * 100])
-  }
-
-  return data
-}
-
-// 사용 예시 컴포넌트
-export const LiveDataLineChartExample: React.FC = () => {
-  const initialData = generateSampleData()
-  const initialData2 = generateSampleData()
-
-  return <LiveDataLineChart selected={1} data={initialData} secondData={initialData2} />
-}
+import Highcharts from 'highcharts/highstock'
+import { useEffect } from 'react'
 
 interface ILiveDataLineChart {
   selected: number // 선택된 값
@@ -29,141 +9,133 @@ interface ILiveDataLineChart {
 }
 
 const LiveDataLineChart: React.FC<ILiveDataLineChart> = ({ selected, data, secondData, height = '400px' }) => {
-  const chartRef = useRef<HTMLDivElement>(null)
-
-  let Highcharts: any
-  let HeatmapModule: any
-
   useEffect(() => {
-    let isMounted = true // 컴포넌트가 마운트된 상태인지 확인
-
-    const loadHighcharts = async () => {
-      if (typeof window === 'undefined' || !chartRef.current) return
-
-      const highchartsModule = await import('highcharts')
-      const heatmapModule = await import('highcharts/modules/heatmap')
-
-      if (!isMounted) return // 컴포넌트가 언마운트된 경우 중단
-
-      Highcharts = highchartsModule.default
-      HeatmapModule = heatmapModule.default || heatmapModule
-
-      if (typeof HeatmapModule === 'function') {
-        HeatmapModule(Highcharts)
+    const style = document.createElement('style')
+    style.innerHTML = `
+      .highcharts-range-selector-group {
+        display: none;
       }
-
-      // 차트 생성
-      const options: Highcharts.Options = {
-        chart: {
-          renderTo: chartRef.current,
-          type: 'spline',
-          height: height
-        },
-
-        time: {
-          timezoneOffset: new Date().getTimezoneOffset()
-        },
-
-        title: {
-          text: 'Live random data'
-        },
-
-        accessibility: {
-          announceNewData: {
-            enabled: true,
-            minAnnounceInterval: 15000,
-            announcementFormatter: function (allSeries, newSeries, newPoint) {
-              if (newPoint) {
-                return 'New point added. Value: ' + newPoint.y
-              }
-
-              return false
-            }
-          }
-        },
-
-        xAxis: {
-          type: 'datetime',
-          tickPixelInterval: 150,
-          maxPadding: 0.1
-        },
-
-        yAxis: {
-          title: {
-            text: 'Value'
-          },
-          min: 0,
-          max: 100
-        },
-
-        tooltip: {
-          headerFormat: '<b>{series.name}</b><br/>',
-          pointFormat: '{point.x:%Y-%m-%d %H:%M:%S}<br/>{point.y:.2f}'
-        },
-
-        legend: {
-          enabled: true
-        },
-
-        exporting: {
-          enabled: false
-        },
-
-        plotOptions: {
-          series: {
-            marker: {
-              enabled: true
-            }
-          }
-        },
-
-        series: [
-          {
-            type: 'spline',
-            name: 'Random data 1',
-            lineWidth: 2,
-            color: '#87CEEB',
-            data: data || [],
-            turboThreshold: 0
-          },
-          {
-            type: 'spline',
-            name: 'Random data 2',
-            lineWidth: 2,
-            color: '#00008B',
-            data: secondData || [],
-            turboThreshold: 0
-          }
-        ]
-      }
-
-      const chart = Highcharts.chart(options)
-
-      const intervalId = setInterval(() => {
-        if (!chart || !chart.series || chart.series.length < 2) return
-
-        const x = new Date().getTime()
-        const y1 = Math.random() * 100
-        const y2 = Math.random() * 100
-
-        chart.series[0].addPoint([x, y1], false)
-        chart.series[1].addPoint([x, y2], true)
-      }, 1000)
-
-      return () => {
-        clearInterval(intervalId)
-        chart.destroy()
-      }
-    }
-
-    loadHighcharts()
+    `
+    document.head.appendChild(style)
 
     return () => {
-      isMounted = false // 컴포넌트가 언마운트되었음을 표시
+      document.head.removeChild(style)
     }
+  }, [])
+
+  useEffect(() => {
+    const chart = Highcharts.stockChart('container', {
+      chart: {
+        events: {
+          load: function () {
+            const series = this.series as Highcharts.Series[]
+            if (!series || series.length < 2 || !series[0].data || !series[1].data || !data || !secondData) {
+              console.error('Series or series data is undefined or not enough series present')
+
+              return
+            }
+            setInterval(function () {
+              const lastPoint = series[0]?.data[series[0].data.length - 1]
+              if (!lastPoint) {
+                console.error('Last point is undefined')
+
+                return
+              }
+              const x = lastPoint.x + 1000
+              const y1 = Math.random() * 100
+              const y2 = Math.random() * 100
+
+              series[0].addPoint([x, y1], false)
+              series[1].addPoint([x, y2], true)
+
+              data.push([x, y1])
+              secondData.push([x, y2])
+            }, 2000)
+          }
+        }
+      },
+
+      time: {
+        timezoneOffset: new Date().getTimezoneOffset()
+      },
+      rangeSelector: {
+        selected: 0,
+        buttonTheme: {
+          width: 50
+        },
+        buttons: [
+          {
+            type: 'minute',
+            count: 1,
+            text: '1 min',
+            title: 'View 1 min'
+          }
+        ]
+      },
+      xAxis: {
+        type: 'datetime',
+        tickPixelInterval: 150,
+        maxPadding: 0.1,
+        crosshair: true
+      },
+      yAxis: {
+        opposite: false,
+        title: {
+          text: '방문객수'
+        },
+        min: 0,
+        max: 100
+      },
+      tooltip: {
+        headerFormat: '<b>{point.x:%m월%d일 %H:%M}</b><br/>',
+        pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y:.1f}</b><br/>',
+        shared: true
+      },
+      plotOptions: {
+        spline: {
+          marker: {
+            radius: 4
+          }
+        }
+      },
+      legend: {
+        enabled: true,
+        align: 'right',
+        verticalAlign: 'top',
+        useHTML: true
+      },
+      navigator: {
+        enabled: false
+      },
+
+      series: [
+        {
+          type: 'spline',
+          name: '전일 방문객',
+          marker: {
+            symbol: 'circle'
+          },
+          lineWidth: 2,
+          color: '#87CEEB',
+          data: data || [],
+          turboThreshold: 0
+        },
+        {
+          type: 'spline',
+          name: '금일 방문객',
+          marker: {
+            symbol: 'square'
+          },
+          lineWidth: 2,
+          color: '#00008B',
+          data: secondData || [],
+          turboThreshold: 0
+        }
+      ]
+    })
   }, [data, secondData])
 
-  return <div ref={chartRef} />
+  return <div id='container' />
 }
 
 export default LiveDataLineChart

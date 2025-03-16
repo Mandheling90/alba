@@ -11,10 +11,13 @@ import { MVisitant, MVisitantList } from 'src/model/dashboard/dashboard'
 
 interface IVisitantList {
   data: MVisitant
+  selected?: string
   refetch: () => void
 }
 
-const VisitantList: FC<IVisitantList> = ({ data, refetch }) => {
+const VisitantList: FC<IVisitantList> = ({ data, selected = '', refetch }) => {
+  console.log(selected)
+
   const router = useRouter()
 
   const [visitantData, setVisitantData] = useState<MVisitantList[]>([])
@@ -68,9 +71,7 @@ const VisitantList: FC<IVisitantList> = ({ data, refetch }) => {
             id='location'
             isAllView
             enablePointer
-            selectRowEvent={e => {
-              console.log(e)
-            }}
+            highlightCriteria={{ field: 'location', value: selected }}
           />
         </Card>
       </Grid>
