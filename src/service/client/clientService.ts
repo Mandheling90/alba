@@ -1,10 +1,8 @@
-import { useMutation, useQuery } from 'react-query'
-import { EPath } from 'src/enum/contentsEnum'
+import { useQuery } from 'react-query'
+import { EPath } from 'src/enum/clientEnum'
 
 import { IClient, IClientDetail, SERVICE_TYPE, SOLUTION_TYPE } from 'src/model/client/clientModel'
 import MResult from 'src/model/commonModel'
-import { MContent, MContentReq, MContentsDeleteReq, MKioskContentList } from 'src/model/contents/contentsModel'
-import { createDelete, createFilePatch, createFilePost, createGet } from 'src/module/reactQuery'
 
 // 샘플 데이터
 export const sampleClientsList: IClient[] = [
@@ -391,7 +389,7 @@ export const sampleClientDetail: IClientDetail = {
   ]
 }
 
-export const useClientList = (req?: MContentReq) => {
+export const useClientList = (req?: any) => {
   // 실제 API 호출 대신 샘플 데이터 반환
   return useQuery<MResult<IClient[]>>([EPath.CONTENTS, req], () => {
     return Promise.resolve({
@@ -411,35 +409,3 @@ export const useClientDetail = (id?: number) => {
     })
   })
 }
-
-export const useListKiosksByContent = (id: number[]) => {
-  return useQuery<MResult<MKioskContentList[]>>([EPath.CONTENTS + `/${id.join(',')}`], {})
-}
-
-export const useContentsDelete = () => {
-  return useMutation((params: MContentsDeleteReq[]) => {
-    return createDelete<MResult>([EPath.CONTENTS, params])
-  }, {})
-}
-
-export const useContentsUpdate = () => {
-  return useMutation((params: Partial<MContent>) => {
-    return createFilePatch<MResult>([EPath.CONTENTS, params])
-  }, {})
-}
-
-export const useContentsInsert = () => {
-  return useMutation((params: Partial<MContent>) => {
-    return createFilePost<MResult>([EPath.CONTENTS, params])
-  }, {})
-}
-
-export const useContentsListDetail = () => {
-  return useMutation((id: number) => {
-    return createGet<MContent>([EPath.CONTENTS_DETAIL + `/${id}`])
-  }, {})
-}
-
-// export const useContentsListDetail = (id: number) => {
-//   return useQuery<MResult<MContent>>([EPath.CONTENTS_DETAIL + `/${id}`], { enabled: false })
-// }

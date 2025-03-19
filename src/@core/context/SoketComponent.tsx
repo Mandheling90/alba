@@ -1,11 +1,9 @@
 import { Box, Typography } from '@mui/material'
-import { ReactNode, useEffect, useState } from 'react'
-import { EPath } from 'src/enum/kisokEnum'
-import { useSocketData } from 'src/hooks/useSocketData'
-import { useWebSocket } from 'src/hooks/useWebSocket'
+import { ReactNode, useState } from 'react'
+
+// import { useSocketData } from 'src/hooks/useSocketData'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { useSaveLog } from 'src/service/commonService'
-import { addErrorFlag } from 'src/utils/CommonUtil'
 import SimpleDialogModal from '../components/molecule/SimpleDialogModal'
 
 interface Props {
@@ -16,7 +14,7 @@ const SoketComponent = (props: Props) => {
   const { children } = props
 
   // 키오스크 에러여부 체크 소캣 통신
-  const socketData = useSocketData()
+  // const socketData = useSocketData()
   const { mutateAsync: saveLog } = useSaveLog()
 
   const [errorOpen, setErrorOpen] = useState(false)
@@ -37,34 +35,34 @@ const SoketComponent = (props: Props) => {
     }
   }
 
-  const { responseMessages } = useWebSocket(EPath.KIOSK_HEALTH_CHECK, logErrorToServer, timeOut) // 서버 주소로 변경
-  const { responseMessages: monitoringRes } = useWebSocket(EPath.KIOSK_MONITORING_CHECK, logErrorToServer, timeOut) // 서버 주소로 변경
+  // const { responseMessages } = useWebSocket(EPath.KIOSK_HEALTH_CHECK, logErrorToServer, timeOut) // 서버 주소로 변경
+  // const { responseMessages: monitoringRes } = useWebSocket(EPath.KIOSK_MONITORING_CHECK, logErrorToServer, timeOut) // 서버 주소로 변경
 
-  useEffect(() => {
-    if (responseMessages[0]) {
-      const arrayObject = JSON.parse(responseMessages[0])
+  // useEffect(() => {
+  //   if (responseMessages[0]) {
+  //     const arrayObject = JSON.parse(responseMessages[0])
 
-      if (JSON.stringify(socketData.kioskHealth) !== JSON.stringify(arrayObject)) {
-        socketData.setKioskHealth(arrayObject)
-        socketData.setKioskHealthErrorCount(arrayObject.length)
-      }
-    }
-  }, [responseMessages])
+  //     if (JSON.stringify(socketData.kioskHealth) !== JSON.stringify(arrayObject)) {
+  //       socketData.setKioskHealth(arrayObject)
+  //       socketData.setKioskHealthErrorCount(arrayObject.length)
+  //     }
+  //   }
+  // }, [responseMessages])
 
-  useEffect(() => {
-    if (monitoringRes[0]) {
-      const arrayObject = addErrorFlag(JSON.parse(monitoringRes[0]))
+  // useEffect(() => {
+  //   if (monitoringRes[0]) {
+  //     const arrayObject = addErrorFlag(JSON.parse(monitoringRes[0]))
 
-      if (JSON.stringify(socketData.monitoringHealth) !== JSON.stringify(arrayObject.data)) {
-        console.log(arrayObject.data)
+  //     if (JSON.stringify(socketData.monitoringHealth) !== JSON.stringify(arrayObject.data)) {
+  //       console.log(arrayObject.data)
 
-        socketData.setMonitoringHealth(arrayObject.data)
-        socketData.setMonitoringHealthErrorCount(arrayObject.errCount)
-      } else {
-        console.log('same!')
-      }
-    }
-  }, [monitoringRes])
+  //       socketData.setMonitoringHealth(arrayObject.data)
+  //       socketData.setMonitoringHealthErrorCount(arrayObject.errCount)
+  //     } else {
+  //       console.log('same!')
+  //     }
+  //   }
+  // }, [monitoringRes])
 
   return (
     <>

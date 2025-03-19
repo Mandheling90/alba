@@ -21,8 +21,17 @@ const HeatMapChart: React.FC = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      import('highcharts-react-official').then(module => {
-        setHighchartsReact(() => module.default)
+      import('highcharts').then(module => {
+        Highcharts = module.default
+        import('highcharts/modules/heatmap').then(heatmapModule => {
+          HeatmapModule = heatmapModule.default || heatmapModule
+          if (typeof HeatmapModule === 'function') {
+            HeatmapModule(Highcharts)
+          }
+          import('highcharts-react-official').then(module => {
+            setHighchartsReact(() => module.default)
+          })
+        })
       })
     }
   }, [])

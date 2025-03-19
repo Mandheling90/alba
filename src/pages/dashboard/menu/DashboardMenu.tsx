@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 import PickersRange from 'src/@core/components/atom/PickersRange'
 import TimePicker from 'src/@core/components/atom/TimePicker'
 import CustomSelectCheckBox from 'src/@core/components/molecule/CustomSelectCheckBox'
@@ -24,11 +24,12 @@ const FlexBox = styled(Box)({
 const DashboardMenu: FC<IDashboardMenu> = ({ refetch, useAgeSelect = false }) => {
   const theme = useTheme()
   const clients = useClients()
-  const { sort } = clients.kioskSort
 
-  const [labelArray, setLabelArray] = useState(
-    clients.initialKioskList.map(item => ({ label: `${item.name}, ${item.location}`, id: item.id }))
-  )
+  // const { sort } = clients.kioskSort
+
+  // const [labelArray, setLabelArray] = useState(
+  //   clients.initialKioskList.map(item => ({ label: `${item.name}, ${item.location}`, id: item.id }))
+  // )
 
   const [selectedValues, setSelectedValues] = useState<string[]>(['1'])
   const [selectedAgeValues, setSelectedAgeValues] = useState<string[]>(['1'])
@@ -42,15 +43,15 @@ const DashboardMenu: FC<IDashboardMenu> = ({ refetch, useAgeSelect = false }) =>
 
   const row = { startTime: '', endTime: '' }
 
-  useEffect(() => {
-    if (typeof clients.kioskListReq.status === 'number') {
-      setLabelArray(
-        clients.initialKioskList
-          .filter(list => list.kioskStatus === clients.kioskListReq.status)
-          .map(item => ({ label: `${item.name}, ${item.location}`, id: item.id }))
-      )
-    }
-  }, [clients.kioskListReq.status, clients.initialKioskList])
+  // useEffect(() => {
+  //   if (typeof clients.kioskListReq.status === 'number') {
+  //     setLabelArray(
+  //       clients.initialKioskList
+  //         .filter(list => list.kioskStatus === clients.kioskListReq.status)
+  //         .map(item => ({ label: `${item.name}, ${item.location}`, id: item.id }))
+  //     )
+  //   }
+  // }, [clients.kioskListReq.status, clients.initialKioskList])
 
   const autocompleteRef = useRef<any>(null)
 

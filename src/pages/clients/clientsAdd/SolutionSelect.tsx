@@ -1,7 +1,7 @@
 import { MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import { FC } from 'react'
 
-import { KIOSK_STATUS } from 'src/enum/kisokEnum'
+import { KIOSK_STATUS } from 'src/enum/clientEnum'
 import { useClients } from 'src/hooks/useClients'
 
 interface IClientsSelect {
@@ -18,10 +18,10 @@ const ClientsSelect: FC<IClientsSelect> = ({ onChange }) => {
         height: '40px',
         textAlign: 'center',
         '& .MuiSelect-select': {
-          color: clients.kioskListReq.status === KIOSK_STATUS.ALL ? 'red' : 'inherit'
+          // color: clients.kioskListReq.status === KIOSK_STATUS.ALL ? 'red' : 'inherit'
         }
       }}
-      value={String(clients.kioskListReq.status ?? KIOSK_STATUS.ALL)}
+      value={''}
       size='small'
       onChange={onChange}
       displayEmpty

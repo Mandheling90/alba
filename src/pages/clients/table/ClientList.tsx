@@ -11,12 +11,11 @@ import BorderNameTag from 'src/@core/components/atom/BorderNameTag'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import SimpleDialogModal from 'src/@core/components/molecule/SimpleDialogModal'
 import CustomTable from 'src/@core/components/table/CustomTable'
-import { useContents } from 'src/hooks/useContents'
+
 import IconCustom from 'src/layouts/components/IconCustom'
 import { IClient, SERVICE_TYPE, SERVICE_TYPE_LABELS } from 'src/model/client/clientModel'
-import { MContent } from 'src/model/contents/contentsModel'
+
 import styled from 'styled-components'
-import ContentsDeleteModal from '../modal/ContentsDeleteModal'
 
 interface IClientList {
   data: IClient[]
@@ -28,13 +27,8 @@ interface IKioskListInfo {
   kioskList: string
 }
 
-interface MContentData extends MContent {
-  display?: boolean
-}
-
 const ClientList: FC<IClientList> = ({ data, refetch }) => {
   const router = useRouter()
-  const contents = useContents()
 
   // ** State
   const [plan, setPlan] = useState<string>('')
@@ -310,7 +304,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
         contents={''}
       />
 
-      {contents.selectedContentIds.length > 0 && (
+      {/* {contents.selectedContentIds.length > 0 && (
         <ContentsDeleteModal
           open={isDeleteModalOpen}
           onClose={() => {
@@ -319,7 +313,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
             refetch()
           }}
         />
-      )}
+      )} */}
 
       <Grid container>
         <Grid item xs={12}>

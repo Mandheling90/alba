@@ -4,16 +4,13 @@ import { Box, Grid, Typography } from '@mui/material'
 import { FC } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
-import { useContents } from 'src/hooks/useContents'
 
 import { useClientList } from 'src/service/client/clientService'
 import ClientsMenu from './menu/ClientsMenu'
 import ClientList from './table/ClientList'
 
 const Contents: FC = (): React.ReactElement => {
-  const contents = useContents()
-
-  const { data, refetch } = useClientList(contents.contentListReqPram)
+  const { data, refetch } = useClientList()
 
   if (!data) {
     return <></>

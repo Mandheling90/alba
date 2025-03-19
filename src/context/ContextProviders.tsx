@@ -8,15 +8,8 @@ import { AuthProvider } from 'src/context/AuthContext'
 
 // ** Other imports
 import { queryClient } from '../module/reactQuery'
-import { ContentsProvider } from './ContensContext'
-import { KioskProvider } from './KioskContext'
-import { KioskManagerProvider } from './KioskManagerContext'
-import { MonitoringProvider } from './MonitoringContext'
-
 import { ClientsProvider } from './ClientsContext'
 import { MapProvider } from './MapContext'
-import { SocketDataProvider } from './SocketDataContext'
-import { StatisticsProvider } from './StatisticsContext'
 
 type ProvidersProps = {
   children: ReactNode
@@ -28,25 +21,13 @@ const ContextProviders = ({ children, emotionCache, settingsProps }: ProvidersPr
   return (
     <CacheProvider value={emotionCache}>
       <QueryClientProvider client={queryClient}>
-        <MapProvider>
-          <AuthProvider>
-            <ContentsProvider>
-              <ClientsProvider>
-                <KioskProvider>
-                  <KioskManagerProvider>
-                    <StatisticsProvider>
-                      <MonitoringProvider>
-                        <SocketDataProvider>
-                          <SettingsProvider {...settingsProps}>{children}</SettingsProvider>
-                        </SocketDataProvider>
-                      </MonitoringProvider>
-                    </StatisticsProvider>
-                  </KioskManagerProvider>
-                </KioskProvider>
-              </ClientsProvider>
-            </ContentsProvider>
-          </AuthProvider>
-        </MapProvider>
+        <AuthProvider>
+          <MapProvider>
+            <ClientsProvider>
+              <SettingsProvider {...settingsProps}>{children}</SettingsProvider>
+            </ClientsProvider>
+          </MapProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </CacheProvider>
   )

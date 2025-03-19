@@ -30,8 +30,8 @@ import { hasActiveChild, removeChildren } from 'src/@core/layouts/utils'
 import { LayoutProps, NavGroup } from 'src/@core/layouts/types'
 
 // ** Custom Components Imports
-import CircleNumber from 'src/@core/components/atom/CircleNumber'
-import { useSocketData } from 'src/hooks/useSocketData'
+
+// import { useSocketData } from 'src/hooks/useSocketData'
 import CanViewNavGroup from 'src/layouts/components/acl/CanViewNavGroup'
 import IconCustom from 'src/layouts/components/IconCustom'
 import Translations from 'src/layouts/components/Translations'
@@ -84,7 +84,8 @@ const VerticalNavGroup = (props: Props) => {
   const router = useRouter()
   const currentURL = router.asPath
   const { direction, navCollapsed, verticalNavToggleType } = settings
-  const socketData = useSocketData()
+
+  // const socketData = useSocketData()
 
   // ** Accordion menu group open toggle
   const toggleActiveGroup = (item: NavGroup, parent: NavGroup | undefined) => {
@@ -232,10 +233,10 @@ const VerticalNavGroup = (props: Props) => {
                 {/* <UserIcon icon={icon as string} {...(parent && { fontSize: '0.875rem' })} /> */}
                 {icon && <IconCustom path='menu' icon={icon as string} />}
 
-                {navCollapsed &&
+                {/* {navCollapsed &&
                   !navHover &&
                   item.title === '키오스크 관리' &&
-                  socketData.kioskHealthErrorCount > 0 && <CircleNumber text={socketData.kioskHealthErrorCount} />}
+                  socketData.kioskHealthErrorCount > 0 && <CircleNumber text={socketData.kioskHealthErrorCount} />} */}
               </ListItemIcon>
             )}
 
@@ -252,9 +253,9 @@ const VerticalNavGroup = (props: Props) => {
                 sx={{ display: 'flex', alignItems: 'center' }}
               >
                 <Translations text={item.title} />{' '}
-                {item.title === '키오스크 관리' && socketData.kioskHealthErrorCount > 0 && (
+                {/* {item.title === '키오스크 관리' && socketData.kioskHealthErrorCount > 0 && (
                   <CircleNumber text={socketData.kioskHealthErrorCount} />
-                )}
+                )} */}
               </Typography>
 
               <Box

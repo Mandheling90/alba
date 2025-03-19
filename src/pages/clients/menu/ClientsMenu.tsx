@@ -1,12 +1,10 @@
 import { Box, Button, TextField } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useRef } from 'react'
 import styled from 'styled-components'
 
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
-import { KIOSK_STATUS } from 'src/enum/kisokEnum'
 import { useClients } from 'src/hooks/useClients'
-import { excludeId } from 'src/utils/CommonUtil'
 import ClientsButtonList from './ClientsButtonList'
 
 interface IKioskMenu {
@@ -16,21 +14,6 @@ interface IKioskMenu {
 const ClientsMenu: FC<IKioskMenu> = ({ refetch }) => {
   const theme = useTheme()
   const clients = useClients()
-  const { sort } = clients.kioskSort
-
-  const [labelArray, setLabelArray] = useState(
-    clients.initialKioskList.map(item => ({ label: `${item.name}, ${item.location}`, id: item.id }))
-  )
-
-  useEffect(() => {
-    if (typeof clients.kioskListReq.status === 'number') {
-      setLabelArray(
-        clients.initialKioskList
-          .filter(list => list.kioskStatus === clients.kioskListReq.status)
-          .map(item => ({ label: `${item.name}, ${item.location}`, id: item.id }))
-      )
-    }
-  }, [clients.kioskListReq.status, clients.initialKioskList])
 
   const autocompleteRef = useRef<any>(null)
 
@@ -46,13 +29,6 @@ const ClientsMenu: FC<IKioskMenu> = ({ refetch }) => {
         value={'1'}
         onChange={event => {
           handleClear()
-          clients.setKioskListReq(
-            excludeId(
-              excludeId(excludeId({ ...clients.kioskListReq, status: Number(event.target.value) }, 'keyword'), 'id'),
-              'status',
-              KIOSK_STATUS.ALL
-            )
-          )
         }}
         options={[
           { key: '1', value: '1', label: '전체' },
@@ -65,21 +41,18 @@ const ClientsMenu: FC<IKioskMenu> = ({ refetch }) => {
       <TextField
         size='small'
         sx={{ width: '325px', ml: 5 }}
-        value={clients.kioskListReq.keyword}
+        value={''}
         placeholder='고객사명, 고객사 주소, 고객사 상태'
-        onChange={e => clients.setKioskListReq({ ...clients.kioskListReq, keyword: e.target.value })}
-        onKeyPress={e => {
-          if (e.key === 'Enter') {
-            // contents.setContentListReqPram({ ...contents.contentListReqPram, ...reqPram })
-          }
-        }}
+
+        // onChange={e => {}}
+        // onKeyPress={e => {}}
       />
 
       <Button
         sx={{ ml: 5 }}
         variant={'contained'}
         onClick={() => {
-          // contents.setContentListReqPram({ ...contents.contentListReqPram, ...reqPram })
+          console.log('검색')
         }}
       >
         검색

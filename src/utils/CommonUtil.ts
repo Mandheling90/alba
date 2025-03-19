@@ -1,6 +1,7 @@
 import { saveAs } from 'file-saver'
-import { KIOSK_STATUS, POWER_TYPE } from 'src/enum/kisokEnum'
-import { MMonitoringHealth } from 'src/model/monitoring/monitoringModel'
+
+// import { KIOSK_STATUS, POWER_TYPE } from 'src/enum/kisokEnum'
+// import { MMonitoringHealth } from 'src/model/monitoring/monitoringModel'
 
 import * as XLSX from 'xlsx'
 
@@ -245,47 +246,47 @@ export const isValidPassword = (password: string) => {
   return passwordRegex.test(password)
 }
 
-export const addErrorFlag = (kiosks: MMonitoringHealth[]): { data: MMonitoringHealth[]; errCount: number } => {
-  let errCount = 0
+// export const addErrorFlag = (kiosks: MMonitoringHealth[]): { data: MMonitoringHealth[]; errCount: number } => {
+//   let errCount = 0
 
-  const data = kiosks.map(kiosk => {
-    kiosk.status = KIOSK_STATUS.ENABLED
+//   const data = kiosks.map(kiosk => {
+//     kiosk.status = KIOSK_STATUS.ENABLED
 
-    const allModulesDisabled = kiosk.modules.every(module => module.powerType === 0)
+//     const allModulesDisabled = kiosk.modules.every(module => module.powerType === 0)
 
-    // `remote`의 상태 확인 후 `isError` 추가
-    if (kiosk.remote) {
-      if (kiosk.remote.status === KIOSK_STATUS.ERROR) {
-        kiosk.status = KIOSK_STATUS.ERROR
-        errCount = errCount + 1
-      }
-    }
+//     // `remote`의 상태 확인 후 `isError` 추가
+//     if (kiosk.remote) {
+//       if (kiosk.remote.status === KIOSK_STATUS.ERROR) {
+//         kiosk.status = KIOSK_STATUS.ERROR
+//         errCount = errCount + 1
+//       }
+//     }
 
-    // 각 `module`과 그 안의 `items` 상태 확인 후 `isError` 추가
-    kiosk.modules = kiosk.modules.map(module => {
-      if (module.powerType === POWER_TYPE.ON && module.status === KIOSK_STATUS.ERROR) {
-        kiosk.status = KIOSK_STATUS.ERROR
-        errCount = errCount + 1
-      }
+//     // 각 `module`과 그 안의 `items` 상태 확인 후 `isError` 추가
+//     kiosk.modules = kiosk.modules.map(module => {
+//       if (module.powerType === POWER_TYPE.ON && module.status === KIOSK_STATUS.ERROR) {
+//         kiosk.status = KIOSK_STATUS.ERROR
+//         errCount = errCount + 1
+//       }
 
-      module.items = module.items.map(item => {
-        if (module.powerType === POWER_TYPE.ON && item.status === KIOSK_STATUS.ERROR) {
-          kiosk.status = KIOSK_STATUS.ERROR
-          errCount = errCount + 1
-        }
+//       module.items = module.items.map(item => {
+//         if (module.powerType === POWER_TYPE.ON && item.status === KIOSK_STATUS.ERROR) {
+//           kiosk.status = KIOSK_STATUS.ERROR
+//           errCount = errCount + 1
+//         }
 
-        return item
-      })
+//         return item
+//       })
 
-      return module
-    })
+//       return module
+//     })
 
-    if (kiosk.status !== KIOSK_STATUS.ERROR && allModulesDisabled) {
-      kiosk.status = KIOSK_STATUS.DISABLED
-    }
+//     if (kiosk.status !== KIOSK_STATUS.ERROR && allModulesDisabled) {
+//       kiosk.status = KIOSK_STATUS.DISABLED
+//     }
 
-    return kiosk
-  })
+//     return kiosk
+//   })
 
-  return { data: data, errCount: errCount }
-}
+//   return { data: data, errCount: errCount }
+// }

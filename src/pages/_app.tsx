@@ -62,7 +62,6 @@ import '../../styles/globals.css'
 
 // ** react-query
 import { QueryClientProvider } from 'react-query'
-import SoketComponent from 'src/@core/context/SoketComponent'
 import ContextProviders from 'src/context/ContextProviders'
 import { queryClient } from '../module/reactQuery'
 
@@ -138,16 +137,16 @@ const App = (props: ExtendedAppProps) => {
               {({ settings }) => {
                 return (
                   <ThemeComponent settings={settings}>
-                    <SoketComponent>
-                      <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                        <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard} authGuard={authGuard}>
-                          {getLayout(<Component {...pageProps} />)}
-                        </AclGuard>
-                      </Guard>
-                      <ReactHotToast>
-                        <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
-                      </ReactHotToast>
-                    </SoketComponent>
+                    {/* <SoketComponent> */}
+                    <Guard authGuard={authGuard} guestGuard={guestGuard}>
+                      <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard} authGuard={authGuard}>
+                        {getLayout(<Component {...pageProps} />)}
+                      </AclGuard>
+                    </Guard>
+                    <ReactHotToast>
+                      <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
+                    </ReactHotToast>
+                    {/* </SoketComponent> */}
                   </ThemeComponent>
                 )
               }}

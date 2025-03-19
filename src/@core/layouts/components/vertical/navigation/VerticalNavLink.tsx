@@ -26,9 +26,9 @@ import CanViewNavLink from 'src/layouts/components/acl/CanViewNavLink'
 import Translations from 'src/layouts/components/Translations'
 
 // ** Util Import
-import CircleNumber from 'src/@core/components/atom/CircleNumber'
 import { handleURLQueries } from 'src/@core/layouts/utils'
-import { useSocketData } from 'src/hooks/useSocketData'
+
+// import { useSocketData } from 'src/hooks/useSocketData'
 import IconCustom from 'src/layouts/components/IconCustom'
 
 interface Props {
@@ -100,7 +100,7 @@ const VerticalNavLink = ({
 
   const icon = parent && !item.icon ? themeConfig.navSubItemIcon : isNavLinkActive() ? item.icon + '-select' : item.icon
 
-  const socketData = useSocketData()
+  // const socketData = useSocketData()
 
   return (
     <CanViewNavLink navLink={item}>
@@ -148,9 +148,9 @@ const VerticalNavLink = ({
             >
               {icon && <IconCustom path='menu' icon={icon as string} />}
 
-              {navCollapsed && !navHover && item.title === '모니터링' && socketData.monitoringHealthErrorCount > 0 && (
+              {/* {navCollapsed && !navHover && item.title === '모니터링' && socketData.monitoringHealthErrorCount > 0 && (
                 <CircleNumber text={socketData.monitoringHealthErrorCount} />
-              )}
+              )} */}
             </ListItemIcon>
           )}
 
@@ -167,9 +167,9 @@ const VerticalNavLink = ({
               sx={{ display: 'flex', alignItems: 'center' }}
             >
               <Translations text={item.title} />
-              {item.title === '모니터링' && socketData.monitoringHealthErrorCount > 0 && (
+              {/* {item.title === '모니터링' && socketData.monitoringHealthErrorCount > 0 && (
                 <CircleNumber text={socketData.monitoringHealthErrorCount} />
-              )}
+              )} */}
             </Typography>
             {item.badgeContent ? (
               <Chip
