@@ -1,9 +1,8 @@
 import { IconButton } from '@mui/material'
 import format from 'date-fns/format'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import DatePicker, { ReactDatePickerProps } from 'react-datepicker'
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
-import { useStatistics } from 'src/hooks/useStatistics'
 import IconCustom from 'src/layouts/components/IconCustom'
 import styled from 'styled-components'
 
@@ -50,8 +49,6 @@ const PickersRangeIcon = ({
   popperPlacement: ReactDatePickerProps['popperPlacement']
   onChange: (start: string, end: string) => void
 }) => {
-  const statistics = useStatistics()
-
   const datePickerRef = useRef<any>(null)
   const [startDate, setStartDate] = useState<DateType>()
   const [endDate, setEndDate] = useState<DateType>()
@@ -78,13 +75,13 @@ const PickersRangeIcon = ({
     }
   }
 
-  useEffect(() => {
-    if (statistics.requiredFields === 'date') {
-      setShowTooltip(true)
-    } else {
-      setShowTooltip(false)
-    }
-  }, [statistics.requiredFields])
+  // useEffect(() => {
+  //   if (statistics.requiredFields === 'date') {
+  //     setShowTooltip(true)
+  //   } else {
+  //     setShowTooltip(false)
+  //   }
+  // }, [statistics.requiredFields])
 
   return (
     <>
