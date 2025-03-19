@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, Suspense } from 'react'
+import { ReactNode, Suspense, useEffect } from 'react'
 
 // ** Next Imports
 import type { NextPage } from 'next'
@@ -104,6 +104,28 @@ const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
 
 // ** Configure JSS & ClassName
 const App = (props: ExtendedAppProps) => {
+  // ** Highcharts Imports - 차트 프로바이더로 추후 이동
+  useEffect(() => {
+    let Highcharts: any
+    let HeatmapModule: any
+
+    import('highcharts')
+      .then(module => {
+        Highcharts = module.default
+
+        return import('highcharts/modules/heatmap')
+      })
+      .then(heatmapModule => {
+        HeatmapModule = heatmapModule.default || heatmapModule
+        if (typeof HeatmapModule === 'function') {
+          HeatmapModule(Highcharts)
+        }
+      })
+      .catch(error => {
+        console.error('Error loading Highcharts or Heatmap module:', error)
+      })
+  }, [])
+
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
   // Variables

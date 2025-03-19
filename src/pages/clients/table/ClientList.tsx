@@ -3,7 +3,6 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { Box, IconButton, Switch, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
-import { SelectChangeEvent } from '@mui/material/Select'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
 
@@ -30,21 +29,12 @@ interface IKioskListInfo {
 const ClientList: FC<IClientList> = ({ data, refetch }) => {
   const router = useRouter()
 
-  // ** State
-  const [plan, setPlan] = useState<string>('')
-  const [value, setValue] = useState<string>('')
-  const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
-
   const [clientData, setclientData] = useState<IClient[]>([])
 
-  const [checkedId, setCheckedId] = useState<number[]>([])
-
   const [isOpen, setIsOpen] = useState(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [kioskListInfo, setKioskListInfo] = useState<IKioskListInfo>()
 
   useEffect(() => {
-    setclientData(data.map(obj => ({ ...obj, display: true })))
+    setclientData(data)
   }, [data])
 
   const handleFilter = useCallback(
@@ -61,15 +51,9 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
         const newData = clientData.map(obj => ({ ...obj, display: true }))
         setclientData(newData)
       }
-
-      setValue(val)
     },
     [clientData]
   )
-
-  const handlePlanChange = useCallback((e: SelectChangeEvent) => {
-    setPlan(e.target.value)
-  }, [])
 
   const columns: GridColDef[] = [
     {

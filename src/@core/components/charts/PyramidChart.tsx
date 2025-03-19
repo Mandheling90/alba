@@ -15,7 +15,7 @@ const PyramidChart = ({}) => {
       type: 'bar'
     },
     title: {
-      text: '방문자 연령 및 성별 비율'
+      text: ''
     },
     subtitle: {
       text: ''

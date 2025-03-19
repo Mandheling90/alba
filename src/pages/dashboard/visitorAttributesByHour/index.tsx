@@ -1,8 +1,8 @@
 import { Box, Card, Grid } from '@mui/material'
+import dynamic from 'next/dynamic'
 import { FC } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 
-import HeatMapChart from 'src/@core/components/charts/HeatMapChart'
 import PieChart from 'src/@core/components/charts/PieChart'
 import PyramidChart from 'src/@core/components/charts/PyramidChart'
 import { VisitorChartExample } from 'src/@core/components/charts/StackedBarChart'
@@ -11,6 +11,11 @@ import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
 import IconCustom from 'src/layouts/components/IconCustom'
 import DashboardMenu from '../menu/DashboardMenu'
 import ChartDetailSwiper from '../swiper/ChartDetailSwiper'
+
+// import HeatMapChart from 'src/@core/components/charts/HeatMapChart'
+const HeatMapChart = dynamic(() => import('src/@core/components/charts/HeatMapChart'), {
+  ssr: false
+})
 
 const VisitorAttributesByHour: FC = ({}): React.ReactElement => {
   return (
