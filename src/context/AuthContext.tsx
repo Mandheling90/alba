@@ -58,12 +58,12 @@ const AuthProvider = ({ children }: Props) => {
           const userInfo = await userDetailInfoMutate()
 
           // 프론트에서 그룹권한 체크하도록 처리
-          const userGroup = await groupMutate({ id: userInfo?.data?.group?.id })
+          // const userGroup = await groupMutate({ id: userInfo?.data?.group?.id })
 
-          const viewNamesWithY =
-            userGroup.data.roleList
-              .filter(role => Object.values(role).some(value => value === 'Y'))
-              .map(role => role.viewName) ?? []
+          // const viewNamesWithY =
+          //   userGroup.data.roleList
+          //     .filter(role => Object.values(role).some(value => value === 'Y'))
+          //     .map(role => role.viewName) ?? []
 
           if (result.data) {
             setUser({
@@ -71,7 +71,7 @@ const AuthProvider = ({ children }: Props) => {
               componentListInfo: result.data,
               userInfo: userInfo.data,
               role: userInfo.data.role,
-              viewNamesWithY: viewNamesWithY
+              viewNamesWithY: []
             })
           } else {
             handleLogout()
@@ -101,18 +101,19 @@ const AuthProvider = ({ children }: Props) => {
         return
       }
 
-      window.localStorage.setItem(ELocalStorageKey.ACCESS_TOKEN, result.data?.token ?? '')
+      window.localStorage.setItem(ELocalStorageKey.ACCESS_TOKEN, result.data?.accessToken ?? '')
+      window.localStorage.setItem(ELocalStorageKey.REFRESH_TOKEN, result.data?.refreshToken ?? '')
 
       const componentList = await componentListInfoMutate()
       const userInfo = await userDetailInfoMutate()
 
       // 프론트에서 그룹권한 체크하도록 처리
-      const userGroup = await groupMutate({ id: userInfo?.data?.group?.id })
+      // const userGroup = await groupMutate({ id: userInfo?.data?.group?.id })
 
-      const viewNamesWithY =
-        userGroup.data.roleList
-          .filter(role => Object.values(role).some(value => value === 'Y'))
-          .map(role => role.viewName) ?? []
+      // const viewNamesWithY =
+      //   userGroup.data.roleList
+      //     .filter(role => Object.values(role).some(value => value === 'Y'))
+      //     .map(role => role.viewName) ?? []
 
       if (result.code !== EResultCode.FAIL) {
         if (params.rememberMe) {
@@ -126,7 +127,7 @@ const AuthProvider = ({ children }: Props) => {
           userName: userInfo.data.name,
           componentListInfo: componentList.data,
           userInfo: userInfo.data,
-          viewNamesWithY: viewNamesWithY
+          viewNamesWithY: []
         })
 
         const returnUrl = router.query.returnUrl

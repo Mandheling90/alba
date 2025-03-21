@@ -62,8 +62,9 @@ const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(LGOIN_REMEMBER !== '')
 
   const [values, setValues] = useState<State>({
-    id: rememberMe ? LGOIN_REMEMBER : '',
-    password: '',
+    // id: rememberMe ? LGOIN_REMEMBER : '',
+    id: 'test123',
+    password: 'Dains1234!',
     showPassword: false
   })
   const [errorMessage, setErrorMessage] = useState('')

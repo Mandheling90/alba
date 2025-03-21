@@ -1,16 +1,17 @@
 export const EPath = {
-  COMMON_LOGIN: '/user/login',
+  COMMON_LOGIN: '/auth/login',
   COMPONENT_LIST: '/view',
   GENERATE_CODE: '/mail/generate',
-  VERIFY_CODE: '/mail/verify',
-  CHANGE_PASSWORD: '/user/new-password',
+  VERIFY_CODE: '/auth/verify/code',
+  CHANGE_PASSWORD: '/auth/change/password',
   USER_DETAIL: '/user/detail',
   LOG: '/log'
 } as const
 
 export const ELocalStorageKey = {
   LGOIN_REMEMBER: 'RememberMe',
-  ACCESS_TOKEN: 'accessToken'
+  ACCESS_TOKEN: 'accessToken',
+  REFRESH_TOKEN: 'refreshToken'
 } as const
 
 export enum EResultCode {
@@ -24,10 +25,10 @@ export const EErrorMessage = {
 } as const
 
 export const EApiResultCode = {
-  SUCCESS: '0',
-  FAIL: '-1',
-  NONE: '-999',
-  DUPLICATION_PARM: '-409'
+  SUCCESS: 200,
+  FAIL: -1,
+  NONE: -999,
+  DUPLICATION_PARM: -409
 } as const
 
 export enum YN {

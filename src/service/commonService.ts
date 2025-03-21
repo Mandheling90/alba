@@ -1,5 +1,5 @@
 import { useMutation } from 'react-query'
-import { EPath, EResultCode } from 'src/enum/commonEnum'
+import { EPath, EResultCode, ROLE, YN } from 'src/enum/commonEnum'
 import MResult, { IComponents, MAuthInfo, MChangePassword, MUserInfo, MVerifyCodeReq } from 'src/model/commonModel'
 import API from 'src/module/api'
 import { createGet, createPatch } from 'src/module/reactQuery'
@@ -48,14 +48,53 @@ export const useChangePassword = () => {
 
 //메뉴 리스트 조회
 export const useComponentListInfo = () => {
+  const exampleComponent: IComponents = {
+    componentId: 1,
+    componentName: 'Dashboard',
+    componentUri: '/dashboard',
+    componentIconClass: 'icon-dashboard',
+    subComponents: [
+      {
+        componentId: 101,
+        componentName: 'Overview',
+        componentUri: '/dashboard/overview',
+        componentIconClass: 'icon-overview'
+      },
+      {
+        componentId: 102,
+        componentName: 'Stats',
+        componentUri: '/dashboard/stats',
+        componentIconClass: 'icon-stats'
+      }
+    ]
+  }
+
   return useMutation(() => {
-    return API.get<IComponents[]>(EPath.COMPONENT_LIST, {})
+    // return API.get<IComponents[]>(EPath.COMPONENT_LIST, {})
+    return Promise.resolve({ data: [exampleComponent] })
   }, {})
 }
 
 export const useUserDetailInfo = () => {
+  const exampleUserInfo: MUserInfo = {
+    id: 'user123',
+    name: '홍길동',
+    mobile: '010-1234-5678',
+    status: 1,
+    role: ROLE.ADMIN, // ROLE 타입에 맞는 값으로 대체해야 합니다.
+    group: {
+      id: 1,
+      dataStatus: YN.Y,
+      name: '',
+      description: '',
+      users: 1
+    }, // MUserGroup 타입에 맞는 값으로 대체해야 합니다.
+    email: 'honggildong@example.com'
+  }
+
   return useMutation(() => {
-    return API.get<MUserInfo>(EPath.USER_DETAIL, {})
+    // return API.get<MUserInfo>(EPath.USER_DETAIL, {})
+    return Promise.resolve({ data: exampleUserInfo })
   }, {})
 }
 

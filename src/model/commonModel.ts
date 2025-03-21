@@ -21,7 +21,7 @@ export interface MCommonResult {
 }
 
 export interface MAuthInfo {
-  token: string
+  accessToken: string
   refreshToken?: string
 }
 
