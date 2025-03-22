@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { useAuth } from 'src/hooks/useAuth'
+import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { UserListAll } from 'src/model/userSetting/userSettingModel'
@@ -22,6 +23,7 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
   const { mutateAsync: modUser } = useUserMod()
 
   const userContext = useUser()
+  const layoutContext = useLayout()
 
   const [userData, setUserData] = useState<UserListAll[]>([])
 
@@ -155,7 +157,7 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
                 id='user'
                 selectedTarget='user'
                 onClick={() => {
-                  userContext.setLayoutDisplay(!userContext.layoutDisplay)
+                  layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
                 }}
               />
 

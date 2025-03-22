@@ -9,6 +9,7 @@ import { AuthProvider } from 'src/context/AuthContext'
 // ** Other imports
 import { queryClient } from '../module/reactQuery'
 import { ClientsProvider } from './ClientsContext'
+import { LayoutProvider } from './LayoutContext'
 import { MapProvider } from './MapContext'
 
 type ProvidersProps = {
@@ -21,13 +22,15 @@ const ContextProviders = ({ children, emotionCache, settingsProps }: ProvidersPr
   return (
     <CacheProvider value={emotionCache}>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <MapProvider>
-            <ClientsProvider>
-              <SettingsProvider {...settingsProps}>{children}</SettingsProvider>
-            </ClientsProvider>
-          </MapProvider>
-        </AuthProvider>
+        <LayoutProvider>
+          <AuthProvider>
+            <MapProvider>
+              <ClientsProvider>
+                <SettingsProvider {...settingsProps}>{children}</SettingsProvider>
+              </ClientsProvider>
+            </MapProvider>
+          </AuthProvider>
+        </LayoutProvider>
       </QueryClientProvider>
     </CacheProvider>
   )

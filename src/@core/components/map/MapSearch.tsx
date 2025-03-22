@@ -11,9 +11,11 @@ interface IPlacesList {
 
 interface IMapSearch {
   onSearch?: (lat: number, lon: number) => void
+  useSearchButton?: boolean
+  textFieldColor?: string
 }
 
-const MapSearch: FC<IMapSearch> = ({ onSearch }): React.ReactElement => {
+const MapSearch: FC<IMapSearch> = ({ onSearch, textFieldColor, useSearchButton = false }): React.ReactElement => {
   const [placesList, setPlacesList] = useState<IPlacesList[]>([])
   const { mapInfo, setMapInfo } = useMap()
 
@@ -61,6 +63,8 @@ const MapSearch: FC<IMapSearch> = ({ onSearch }): React.ReactElement => {
           onClick={() => {
             // console.log('onClick')
           }}
+          textFieldColor={textFieldColor}
+          useSearchButton={useSearchButton}
         />
       )}
     />

@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import React from 'react'
 import { MapMarker } from 'react-kakao-maps-sdk'
 import MapComponent from 'src/@core/components/map/MapComponent'
@@ -22,14 +22,22 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
   }
 
   return (
-    <Box style={{ width: '100%', height: height }}>
-      <MapSearch />
-      <MapComponent onClick={handleMapClick}>
-        {mapInfo.markerPosition && (
-          <MapMarker position={{ lat: mapInfo.markerPosition.lat, lng: mapInfo.markerPosition.lon }} />
-        )}
-      </MapComponent>
-    </Box>
+    <Grid container>
+      <Grid item xs={12}>
+        <Box sx={{ my: 2 }}>
+          <MapSearch useSearchButton textFieldColor='#fff' />
+        </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <Box style={{ width: '100%', height: height }}>
+          <MapComponent onClick={handleMapClick}>
+            {mapInfo.markerPosition && (
+              <MapMarker position={{ lat: mapInfo.markerPosition.lat, lng: mapInfo.markerPosition.lon }} />
+            )}
+          </MapComponent>
+        </Box>
+      </Grid>
+    </Grid>
   )
 }
 

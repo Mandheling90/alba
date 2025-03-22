@@ -1,4 +1,5 @@
 import { SORT } from 'src/enum/commonEnum'
+import { SERVICE_TYPE } from '../client/clientModel'
 
 export interface ICameraClientReq {
   id?: number
@@ -16,11 +17,6 @@ export interface ICameraClient {
   id: number
   clientId: string
   clientNm: string
-}
-export interface ICameraClientDetail {
-  id: number
-  cameraLabel: string
-  zonePoints: IPoint
 }
 
 export interface IPoint {
@@ -113,4 +109,12 @@ export interface IZonePoints {
   ne: IPoint
   s?: IPoint | undefined
   center?: IPoint | undefined
+}
+
+export interface ICameraList {
+  cameraId: string
+  cameraName: string
+  serviceTypes: SERVICE_TYPE[]
+  isUse: boolean
+  zonePoints: IPoint
 }

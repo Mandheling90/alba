@@ -1,5 +1,6 @@
 import { AppBar, Box, Toolbar, Typography } from '@mui/material'
 import React from 'react'
+import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
 
 interface ILayoutControlPanel {
@@ -16,6 +17,7 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
   onClick
 }) => {
   const [isHovered, setIsHovered] = React.useState(false)
+  const layoutContext = useLayout()
 
   return (
     <Box>
@@ -25,7 +27,6 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
             display: 'flex',
             alignItems: 'stretch',
             justifyContent: 'flex-start',
-            width: '387px',
             minHeight: '40px',
             '@media (min-width: 600px)': {
               paddingLeft: 0,
@@ -52,7 +53,15 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
           >
             <IconCustom
               isCommon
-              icon={isHovered ? 'camera-fold-hover-icon' : 'camera-fold-icon'}
+              icon={
+                layoutContext.layoutDisplay
+                  ? isHovered
+                    ? 'camera-fold-hover-icon'
+                    : 'camera-fold-icon'
+                  : isHovered
+                  ? 'camera-open-hover-icon'
+                  : 'camera-open-icon'
+              }
               style={{
                 width: '40px',
                 height: '20px',
@@ -62,7 +71,6 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
             />
           </Box>
 
-          {/* 중간 보라색 섹션: 고객사 */}
           <Box
             sx={{
               border: `1px solid #9155FD`,
@@ -94,7 +102,6 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
             <Typography variant='body1'>{id}</Typography>
           </Box>
 
-          {/* 오른쪽 섹션: 국립농업박물관 */}
           <Box
             sx={{
               border: `1px solid #BBBABD`,

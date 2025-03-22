@@ -7,6 +7,7 @@ import PageHeader from 'src/@core/components/page-header'
 import { useUserAll, useUserGroupList } from 'src/service/setting/userSetting'
 
 import SlidingLayout from 'src/@core/components/layout/SlidingLayout'
+import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
 import ClientListGrid from './client/ClientListGrid'
 import RoleAdd from './userSetting/roles/RoleAdd'
@@ -15,6 +16,7 @@ import UserList from './userSetting/table/UserList'
 
 const UserSetting: FC = (): React.ReactElement => {
   const userContext = useUser()
+  const layoutContext = useLayout()
 
   const { data: userGroup, refetch: userGroupRefetch } = useUserGroupList()
   const { data: user, refetch: userRefetch } = useUserAll()
@@ -85,7 +87,7 @@ const UserSetting: FC = (): React.ReactElement => {
   return (
     <StandardTemplate title={'사용자관리'}>
       <SlidingLayout
-        isOpen={userContext.layoutDisplay}
+        isOpen={layoutContext.layoutDisplay}
         sideContent={sideContent}
         mainContent={mainContent}
         maxHeight='85vh'
