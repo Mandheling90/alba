@@ -18,7 +18,7 @@ const ButtonHover: React.FC<IButtonHover> = ({ display, hover }) => {
   }
 
   return (
-    <Box onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <Box onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} sx={{ display: 'flex', alignItems: 'center' }}>
       {isHovered ? hover : display}
     </Box>
   )

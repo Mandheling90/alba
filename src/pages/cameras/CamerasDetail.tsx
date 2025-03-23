@@ -4,7 +4,7 @@ import PageHeader from 'src/@core/components/page-header'
 import { useCameras } from 'src/hooks/useCameras'
 import { ICameraClient } from 'src/model/cameras/CamerasModel'
 import CamerasMap from './map/CamerasMap'
-import CamerasClient from './table/CamerasClient'
+import CamerasClientList from './table/CamerasClientList'
 
 interface IClientDetail {
   selectClient: ICameraClient | null
@@ -35,13 +35,13 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
             </Typography>
           }
         />
-        <Box>
-          <CamerasClient handleSelectClientGrid={handleSelectClientGrid} />
+        <Box sx={{ height: '35vh', overflow: 'auto' }}>
+          <CamerasClientList handleSelectClientGrid={handleSelectClientGrid} />
         </Box>
       </Grid>
 
       <Grid item xs={12}>
-        <CamerasMap height='50vh' />
+        <CamerasMap height='40vh' />
       </Grid>
     </Grid>
   )

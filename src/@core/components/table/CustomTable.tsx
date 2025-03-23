@@ -23,6 +23,7 @@ interface IGridOptions {
   id?: string
   isAllView?: boolean
   enablePointer?: boolean
+  showHeader?: boolean
 }
 
 const CustomTable: FC<
@@ -36,7 +37,8 @@ const CustomTable: FC<
   selectRowEvent,
   enablePointer = false,
   onCheckboxSelectionChange,
-  highlightCriteria
+  highlightCriteria,
+  showHeader = true
 }) => {
   const pageSizeOptions = [25, 50, 100]
   const [pageSize, setPageSize] = useState(isAllView ? 100 : 25)
@@ -119,6 +121,9 @@ const CustomTable: FC<
             },
             '& .MuiDataGrid-row': {
               cursor: enablePointer ? 'pointer' : 'default'
+            },
+            '& .MuiDataGrid-columnHeaders': {
+              display: showHeader ? 'block' : 'none'
             }
           }}
         />

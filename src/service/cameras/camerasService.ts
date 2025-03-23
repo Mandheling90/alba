@@ -1,45 +1,110 @@
 import { useQuery } from 'react-query'
 import { EPath } from 'src/enum/camerasEnum'
-import { ICameraClientReq, ICameraList } from 'src/model/cameras/CamerasModel'
+import { ICameraClientReq, MClientCameraList } from 'src/model/cameras/CamerasModel'
 import { SERVICE_TYPE } from 'src/model/client/clientModel'
 import MResult from 'src/model/commonModel'
 
-export const sampeCameraClientDetailList: ICameraList[] = [
-  {
-    cameraId: '1',
-    cameraName: '테스트',
-    serviceTypes: [SERVICE_TYPE.MONITORING, SERVICE_TYPE.CAR_COUNT],
-    isUse: true,
-    zonePoints: {
-      lat: 33.450701,
-      lon: 126.5654
+export const sampeCameraClientDetailList: MClientCameraList = {
+  cameraList: [
+    {
+      id: 1,
+      cameraId: '1',
+      cameraName: '테스트',
+      serviceTypes: [SERVICE_TYPE.MONITORING, SERVICE_TYPE.CAR_COUNT],
+      isUse: true,
+      zonePoints: {
+        lat: 33.450701,
+        lon: 126.5654
+      }
+    },
+    {
+      id: 2,
+      cameraId: '2',
+      cameraName: '북문 엘레베이터 ',
+      serviceTypes: [SERVICE_TYPE.MONITORING],
+      isUse: true,
+      zonePoints: {
+        lat: 37.2759369002521,
+        lon: 126.981901924188
+      }
+    },
+    {
+      id: 3,
+      cameraId: '3',
+      cameraName: '교육동 1층 출입구 우측',
+      serviceTypes: [SERVICE_TYPE.MONITORING],
+      isUse: true,
+      zonePoints: {
+        lat: 37.27575984256296,
+        lon: 126.98188054344705
+      }
+    },
+    {
+      id: 4,
+      cameraId: '4',
+      cameraName: '교육동 1층 출입구 우측',
+      serviceTypes: [SERVICE_TYPE.MONITORING],
+      isUse: true,
+      zonePoints: {
+        lat: 37.27575984256296,
+        lon: 126.98188054344705
+      }
     }
-  },
-  {
-    cameraId: '2',
-    cameraName: '북문 엘레베이터 ',
-    serviceTypes: [SERVICE_TYPE.MONITORING],
-    isUse: true,
-    zonePoints: {
-      lat: 37.2759369002521,
-      lon: 126.981901924188
+  ],
+  groupList: [
+    {
+      id: 1,
+      groupId: '1',
+      groupName: '그룹1',
+      cameraList: [
+        {
+          id: 5,
+          cameraId: '5',
+          cameraName: '교육동 1층 출입구 우측',
+          serviceTypes: [SERVICE_TYPE.MONITORING],
+          isUse: true,
+          zonePoints: {
+            lat: 37.27575984256296,
+            lon: 126.98188054344705
+          }
+        },
+        {
+          id: 7,
+          cameraId: '7',
+          cameraName: '교육동 1층 출입구 우측',
+          serviceTypes: [SERVICE_TYPE.MONITORING],
+          isUse: true,
+          zonePoints: {
+            lat: 37.27575984256296,
+            lon: 126.98188054344705
+          }
+        }
+      ]
+    },
+    {
+      id: 2,
+      groupId: '2',
+      groupName: '그룹2',
+      cameraList: [
+        {
+          id: 6,
+          cameraId: '6',
+          cameraName: '교육동 1층 출입구 우측',
+          serviceTypes: [SERVICE_TYPE.MONITORING],
+          isUse: true,
+          zonePoints: {
+            lat: 37.27575984256296,
+            lon: 126.98188054344705
+          }
+        }
+      ]
     }
-  },
-  {
-    cameraId: '3',
-    cameraName: '교육동 1층 출입구 우측',
-    serviceTypes: [SERVICE_TYPE.MONITORING],
-    isUse: true,
-    zonePoints: {
-      lat: 37.27575984256296,
-      lon: 126.98188054344705
-    }
-  }
-]
+  ]
+}
 
-export const useCameraClientList = (req: ICameraClientReq) => {
+export const useClientCameraList = (req: ICameraClientReq) => {
   //return useQuery<MResult<MCameraClient[]>>([EPath.CONTENTS, req], {})
-  return useQuery<MResult<ICameraList[]>>([EPath.CAMERAS_CLIENT, req], () => {
+  return useQuery<MResult<MClientCameraList>>([EPath.CAMERAS_CLIENT, req], () => {
     return Promise.resolve({
       code: '0',
       msg: '성공',

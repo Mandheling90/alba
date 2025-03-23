@@ -111,10 +111,22 @@ export interface IZonePoints {
   center?: IPoint | undefined
 }
 
-export interface ICameraList {
+export interface MCameraList {
+  id: number
   cameraId: string
   cameraName: string
   serviceTypes: SERVICE_TYPE[]
   isUse: boolean
   zonePoints: IPoint
+}
+export interface MGroupList {
+  id: number
+  groupId: string
+  groupName: string
+  cameraList: MCameraList[]
+}
+
+export interface MClientCameraList {
+  cameraList: MCameraList[]
+  groupList: MGroupList[]
 }
