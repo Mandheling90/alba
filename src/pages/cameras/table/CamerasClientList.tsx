@@ -4,7 +4,6 @@ import { FC, useEffect } from 'react'
 import ButtonHover from 'src/@core/components/atom/ButtonHover'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import DividerBar from 'src/@core/components/atom/DividerBar'
-import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import PipeLine from 'src/@core/components/table/PipeLine'
@@ -15,6 +14,7 @@ import { ICameraClient, MCameraList } from 'src/model/cameras/CamerasModel'
 import { SERVICE_TYPE, SERVICE_TYPE_LABELS } from 'src/model/client/clientModel'
 import { useClientCameraList } from 'src/service/cameras/camerasService'
 import styled from 'styled-components'
+import CameraModifyActions from './CameraModifyActions'
 import GroupList from './GroupList'
 
 interface IClientList {
@@ -245,31 +245,14 @@ const CamerasClientList: FC<IClientList> = ({ handleSelectClientGrid }) => {
       flex: 0.4,
       renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
         return (
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-            {tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ? (
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <CustomAddCancelButton
-                  onCancelClick={() => handleCancelClick(row.id)}
-                  onSaveClick={() => handleSaveClick(row.id)}
-                />
-              </Box>
-            ) : (
-              <IconButton sx={{ color: 'text.secondary' }} onClick={() => handleEditClick(row)}>
-                <IconCustom isCommon path='camera' icon='mod-off' hoverIcon='mod-on' />
-              </IconButton>
-            )}
-
-            {cameraGroupLinkDisplay && (
-              <IconButton
-                sx={{ color: 'text.secondary' }}
-                onClick={() => {
-                  // setCameraModifyId(row.id)
-                }}
-              >
-                <IconCustom isCommon path='camera' icon='linkIcon-on' />
-              </IconButton>
-            )}
-          </Box>
+          <CameraModifyActions
+            row={row}
+            isModify={tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ?? false}
+            cameraGroupLinkDisplay={cameraGroupLinkDisplay}
+            handleEditClick={handleEditClick}
+            handleCancelClick={handleCancelClick}
+            handleSaveClick={handleSaveClick}
+          />
         )
       }
     }
