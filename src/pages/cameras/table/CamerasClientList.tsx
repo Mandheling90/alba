@@ -1,6 +1,6 @@
 import { Box, Button, Card, Grid, IconButton, Switch, TextField, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { FC, useState } from 'react'
+import { FC, useEffect } from 'react'
 import ButtonHover from 'src/@core/components/atom/ButtonHover'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import DividerBar from 'src/@core/components/atom/DividerBar'
@@ -11,7 +11,7 @@ import PipeLine from 'src/@core/components/table/PipeLine'
 import { useCameras } from 'src/hooks/useCameras'
 import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { ICameraClient, MCameraList, MClientCameraList } from 'src/model/cameras/CamerasModel'
+import { ICameraClient, MCameraList } from 'src/model/cameras/CamerasModel'
 import { SERVICE_TYPE, SERVICE_TYPE_LABELS } from 'src/model/client/clientModel'
 import { useClientCameraList } from 'src/service/cameras/camerasService'
 import styled from 'styled-components'
@@ -29,72 +29,26 @@ const ButtonHoverIconList = styled(Box)`
 
 const CamerasClientList: FC<IClientList> = ({ handleSelectClientGrid }) => {
   const cameraContext = useCameras()
+  const {
+    clientListReq,
+    clientCameraData,
+    setClientCameraData,
+    setGroupAddMod,
+    cameraGroupLinkDisplay,
+    setCameraGroupLinkDisplay,
+    updateClientCameraData,
+    handleEditClick,
+    handleSaveClick,
+    handleCancelClick,
+    tempClientCameraData
+  } = cameraContext
   const layoutContext = useLayout()
 
-  const { data, refetch } = useClientCameraList(cameraContext.clientListReq)
-  const [clientCameraData, setClientCameraData] = useState<MClientCameraList | null>(data?.data || null)
-  const [tempData, setTempData] = useState<MCameraList[] | null>(null)
+  const { data, refetch } = useClientCameraList(clientListReq)
 
-  const [groupAddMod, setGroupAddMod] = useState(false)
-  const [cameraGroupLinkDisplay, setCameraGroupLinkDisplay] = useState(false)
-
-  const updateClientCameraData = (id: number, updatedFields: Partial<MCameraList>) => {
-    setClientCameraData(prevData => {
-      if (!prevData || !prevData.cameraList) return prevData // clientCameraData가 null인 경우 기존 데이터 반환
-
-      const existingIndex = prevData.cameraList.findIndex(camera => camera.id === id)
-      if (existingIndex !== -1) {
-        // 이미 존재하는 경우 업데이트
-        const updatedCameraList = [...prevData.cameraList]
-        updatedCameraList[existingIndex] = { ...updatedCameraList[existingIndex], ...updatedFields }
-
-        return { ...prevData, cameraList: updatedCameraList }
-      }
-
-      return prevData // id가 존재하지 않는 경우 기존 데이터 반환
-    })
-  }
-
-  const handleEditClick = (row: MCameraList) => {
-    setTempData(prevData => {
-      if (!prevData) return [row]
-
-      const existingIndex = prevData.findIndex(camera => camera.id === row.id)
-      if (existingIndex !== -1) {
-        // 이미 존재하는 경우 업데이트
-        const updatedData = [...prevData]
-        updatedData[existingIndex] = { ...updatedData[existingIndex], ...row }
-
-        return updatedData
-      } else {
-        // 존재하지 않는 경우 새로 추가
-        return [...prevData, row]
-      }
-    })
-  }
-
-  const handleSaveClick = (id: number) => {
-    setTempData(prevData => prevData?.filter(camera => camera.id !== id) || null)
-  }
-
-  const handleCancelClick = (id: number) => {
-    if (!tempData) return // tempData가 null인 경우 함수 종료
-
-    const cameraToCancel = tempData.find(camera => camera.id === id)
-    if (!cameraToCancel) return // 해당 id의 카메라가 없는 경우 함수 종료
-
-    setClientCameraData(prevData => {
-      if (!prevData || !prevData.cameraList) return prevData // clientCameraData가 null인 경우 기존 데이터 반환
-
-      const updatedCameraList = prevData.cameraList.map(camera =>
-        camera.id === id ? { ...camera, ...cameraToCancel } : camera
-      )
-
-      return { ...prevData, cameraList: updatedCameraList }
-    })
-
-    setTempData(prevData => prevData?.filter(camera => camera.id !== id) || null)
-  }
+  useEffect(() => {
+    setClientCameraData(data?.data || null)
+  }, [data?.data])
 
   const clientColumns: GridColDef[] = [
     {
@@ -120,7 +74,7 @@ const CamerasClientList: FC<IClientList> = ({ handleSelectClientGrid }) => {
       renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
         return (
           <>
-            {tempData?.some(camera => camera.id === row.id) ? (
+            {tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ? (
               <TextField
                 size='small'
                 value={row.cameraId}
@@ -145,7 +99,7 @@ const CamerasClientList: FC<IClientList> = ({ handleSelectClientGrid }) => {
       renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
         return (
           <>
-            {tempData?.some(camera => camera.id === row.id) ? (
+            {tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ? (
               <TextField
                 size='small'
                 value={row.cameraName}
@@ -220,7 +174,7 @@ const CamerasClientList: FC<IClientList> = ({ handleSelectClientGrid }) => {
               width: '100%'
             }}
           >
-            {tempData?.some(camera => camera.id === row.id) ? (
+            {tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ? (
               <>
                 <TextField
                   size='small'
@@ -292,7 +246,7 @@ const CamerasClientList: FC<IClientList> = ({ handleSelectClientGrid }) => {
       renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-            {tempData?.some(camera => camera.id === row.id) ? (
+            {tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ? (
               <Box sx={{ display: 'flex', gap: 2 }}>
                 <CustomAddCancelButton
                   onCancelClick={() => handleCancelClick(row.id)}
@@ -426,19 +380,21 @@ const CamerasClientList: FC<IClientList> = ({ handleSelectClientGrid }) => {
           />
 
           <DividerBar />
-
-          <GroupList
-            groupList={data?.data?.groupList || []}
-            clientColumns={clientColumns}
-            isAddOpen={true}
-            isModify={false}
-            handleClose={() => {
-              setCameraGroupLinkDisplay(false)
-            }}
-            handleGroupModifyId={() => {
-              setCameraGroupLinkDisplay(true)
-            }}
-          />
+          {data?.data?.groupList.map((group, index) => (
+            <GroupList
+              key={index}
+              group={group}
+              clientColumns={clientColumns}
+              isAddOpen={true}
+              isModify={false}
+              handleClose={() => {
+                setCameraGroupLinkDisplay(false)
+              }}
+              handleGroupModifyId={() => {
+                setCameraGroupLinkDisplay(true)
+              }}
+            />
+          ))}
         </Card>
       </Grid>
     </Grid>

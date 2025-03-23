@@ -1,78 +1,54 @@
 import { ReactNode, createContext, useState } from 'react'
 import { SORT } from 'src/enum/commonEnum'
-import { ICameraClient, ICameraClientDetailReq, ICameraClientReq, ILocationState } from 'src/model/cameras/CamerasModel'
+import { ICameraClientReq, MCameraList, MClientCameraList } from 'src/model/cameras/CamerasModel'
 
 export type CamerasValuesType = {
-  layoutDisplay: boolean
-  setLayoutDisplay: (layoutDisplay: boolean) => void
+  clientCameraData: MClientCameraList | null
+  setClientCameraData: React.Dispatch<React.SetStateAction<MClientCameraList | null>>
 
   clientListReq: ICameraClientReq
   setClientListReq: (clientListReq: ICameraClientReq) => void
 
-  clientCameraDetailListReq: ICameraClientDetailReq
-  setClientCameraDetailListReq: (clientCameraDetailListReq: ICameraClientDetailReq) => void
+  groupAddMod: boolean
+  setGroupAddMod: React.Dispatch<React.SetStateAction<boolean>>
 
-  loading: boolean
-  setLoading: (value: boolean) => void
+  cameraGroupLinkDisplay: boolean
+  setCameraGroupLinkDisplay: React.Dispatch<React.SetStateAction<boolean>>
 
-  errors: Partial<Record<keyof ICameraClient, string>>
-  setErrors: (errors: Partial<Record<keyof ICameraClient, string>>) => void
-
-  selectedContent: Partial<ICameraClient>
-  setSelectedContent: (selectedContent: Partial<ICameraClient>) => void
-
-  selectedContentIds: number[]
-  setSelectedContentIds: (selectedContentIds: number[]) => void
-
-  mapLevel: number
-  setMapLevel: (value: number) => void
-
-  locationSelect: ILocationState
-  setLocationSelect: (value: ILocationState, individual?: boolean) => void
-
-  locationSelectIndividual: ILocationState
-
-  mapDisplayMode: string
-  setMapDisplayMode: (value: string) => void
+  tempClientCameraData: MClientCameraList | null
+  setTempClientCameraData: React.Dispatch<React.SetStateAction<MClientCameraList | null>>
 
   clear: () => void
+
+  updateClientCameraData: (id: number, updatedFields: Partial<MCameraList>) => void
+  handleEditClick: (row: MCameraList) => void
+  handleSaveClick: (id: number) => void
+  handleCancelClick: (id: number) => void
 }
 
 // ** Defaults
 const defaultProvider: CamerasValuesType = {
-  layoutDisplay: true,
-  setLayoutDisplay: () => null,
+  clientCameraData: { cameraList: [], groupList: [] },
+  setClientCameraData: () => null,
 
   clientListReq: { sort: 'id', order: SORT.DESC },
   setClientListReq: () => null,
 
-  loading: true,
-  setLoading: () => Boolean,
+  groupAddMod: false,
+  setGroupAddMod: () => null,
 
-  errors: {},
-  setErrors: () => null,
+  cameraGroupLinkDisplay: false,
+  setCameraGroupLinkDisplay: () => null,
 
-  selectedContent: {},
-  setSelectedContent: () => null,
+  tempClientCameraData: null,
+  setTempClientCameraData: () => null,
 
-  selectedContentIds: [],
-  setSelectedContentIds: () => null,
+  clear: () => null,
 
-  mapLevel: 0, // add this property
-  setMapLevel: () => null, // add this property
-
-  locationSelect: {} as ILocationState, // add this property
-  setLocationSelect: () => null, // add this property
-
-  locationSelectIndividual: {} as ILocationState, // add this property
-
-  mapDisplayMode: '', // add this property
-  setMapDisplayMode: () => null, // add this property
-
-  clientCameraDetailListReq: { clientId: '' },
-  setClientCameraDetailListReq: () => null,
-
-  clear: () => null
+  updateClientCameraData: () => null,
+  handleEditClick: () => null,
+  handleSaveClick: () => null,
+  handleCancelClick: () => null
 }
 
 const CamerasContext = createContext(defaultProvider)
@@ -82,58 +58,92 @@ type Props = {
 }
 
 const CamerasProvider = ({ children }: Props) => {
-  const [layoutDisplay, setLayoutDisplay] = useState(defaultProvider.layoutDisplay)
-  const [selectedContent, setSelectedContent] = useState<Partial<ICameraClient>>(defaultProvider.selectedContent)
+  const [clientCameraData, setClientCameraData] = useState<MClientCameraList | null>(defaultProvider.clientCameraData)
   const [clientListReq, setClientListReq] = useState<ICameraClientReq>(defaultProvider.clientListReq)
-  const [selectedContentIds, setSelectedContentIds] = useState(defaultProvider.selectedContentIds)
-  const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
-  const [errors, setErrors] = useState<Partial<Record<keyof ICameraClient, string>>>({})
-  const [mapLevel, setMapLevel] = useState(defaultProvider.mapLevel)
-  const [mapDisplayMode, setMapDisplayMode] = useState(defaultProvider.mapDisplayMode)
-  const [locationSelect, setLocationSelect] = useState(defaultProvider.locationSelect)
-  const [locationSelectIndividual, setLocationSelectIndividual] = useState(defaultProvider.locationSelectIndividual)
-  const [clientCameraDetailListReq, setClientCameraDetailListReq] = useState<ICameraClientDetailReq>(
-    defaultProvider.clientCameraDetailListReq
-  )
+  const [groupAddMod, setGroupAddMod] = useState<boolean>(defaultProvider.groupAddMod)
+  const [cameraGroupLinkDisplay, setCameraGroupLinkDisplay] = useState<boolean>(defaultProvider.cameraGroupLinkDisplay)
+
+  const [tempClientCameraData, setTempClientCameraData] = useState<MClientCameraList | null>(null)
 
   const clear = () => {
     // setLayoutDisplay(defaultProvider.layoutDisplay)
   }
 
+  const updateClientCameraData = (id: number, updatedFields: Partial<MCameraList>) => {
+    setClientCameraData((prevData: MClientCameraList | null) => {
+      if (!prevData || !prevData.cameraList) return prevData
+      const existingIndex = prevData.cameraList.findIndex((camera: MCameraList) => camera.id === id)
+      if (existingIndex !== -1) {
+        const updatedCameraList = [...prevData.cameraList]
+        updatedCameraList[existingIndex] = { ...updatedCameraList[existingIndex], ...updatedFields }
+
+        return { ...prevData, cameraList: updatedCameraList }
+      }
+
+      return prevData
+    })
+  }
+
+  const handleEditClick = (row: MCameraList) => {
+    setTempClientCameraData(prevData => {
+      if (!prevData) return { cameraList: [row], groupList: [] }
+      const existingIndex = prevData.cameraList.findIndex(camera => camera.id === row.id)
+      if (existingIndex !== -1) {
+        const updatedCameraList = [...prevData.cameraList]
+        updatedCameraList[existingIndex] = { ...updatedCameraList[existingIndex], ...row }
+
+        return { ...prevData, cameraList: updatedCameraList }
+      } else {
+        return { ...prevData, cameraList: [...prevData.cameraList, row] }
+      }
+    })
+  }
+
+  const handleSaveClick = (id: number) => {
+    setTempClientCameraData(prevData => {
+      if (!prevData) return null
+      const updatedCameraList = prevData.cameraList.filter(camera => camera.id !== id)
+
+      return { ...prevData, cameraList: updatedCameraList }
+    })
+  }
+
+  const handleCancelClick = (id: number) => {
+    if (!tempClientCameraData) return
+    const cameraToCancel = tempClientCameraData.cameraList.find(camera => camera.id === id)
+    if (!cameraToCancel) return
+    setClientCameraData((prevData: MClientCameraList | null) => {
+      if (!prevData || !prevData.cameraList) return prevData
+      const updatedCameraList = prevData.cameraList.map((camera: MCameraList) =>
+        camera.id === id ? { ...camera, ...cameraToCancel } : camera
+      )
+
+      return { ...prevData, cameraList: updatedCameraList }
+    })
+    setTempClientCameraData(prevData => {
+      if (!prevData) return null
+      const updatedCameraList = prevData.cameraList.filter(camera => camera.id !== id)
+
+      return { ...prevData, cameraList: updatedCameraList }
+    })
+  }
+
   const values: CamerasValuesType = {
-    layoutDisplay,
-    setLayoutDisplay,
-
-    clientListReq: clientListReq,
+    clientCameraData,
+    setClientCameraData,
+    clientListReq,
     setClientListReq,
-
-    loading,
-    setLoading,
-
-    errors,
-    setErrors,
-
-    selectedContent,
-    setSelectedContent,
-
-    selectedContentIds,
-    setSelectedContentIds,
-
-    mapLevel,
-    setMapLevel,
-
-    locationSelect,
-    locationSelectIndividual,
-
-    setLocationSelect,
-
-    mapDisplayMode,
-    setMapDisplayMode,
-
-    clientCameraDetailListReq: clientCameraDetailListReq,
-    setClientCameraDetailListReq,
-
-    clear
+    groupAddMod,
+    setGroupAddMod,
+    cameraGroupLinkDisplay,
+    setCameraGroupLinkDisplay,
+    tempClientCameraData,
+    setTempClientCameraData,
+    clear,
+    updateClientCameraData,
+    handleEditClick,
+    handleSaveClick,
+    handleCancelClick
   }
 
   return <CamerasContext.Provider value={values}>{children}</CamerasContext.Provider>
