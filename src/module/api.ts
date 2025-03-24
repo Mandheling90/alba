@@ -36,6 +36,38 @@ export const getAccessToken = async () => {
   return await localStorage.getItem(ELocalStorageKey.ACCESS_TOKEN)
 }
 
+export const setRefreshToken = async (newToken: string) => {
+  await localStorage.setItem(ELocalStorageKey.REFRESH_TOKEN, newToken)
+}
+
+export const getRefreshToken = async () => {
+  return await localStorage.getItem(ELocalStorageKey.REFRESH_TOKEN)
+}
+
+const refreshAccessToken = async () => {
+  try {
+    const refreshToken = await getRefreshToken()
+    if (!refreshToken) {
+      throw new Error('리프레시 토큰이 없습니다.')
+    }
+
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_HOST}/auth/refresh`, {
+      refreshToken
+    })
+
+    const newAccessToken = response.data.data.accessToken
+    await setAccessToken(newAccessToken)
+
+    return newAccessToken
+  } catch (error) {
+    // 리프레시 토큰도 만료된 경우 로그아웃 처리
+    localStorage.removeItem(ELocalStorageKey.ACCESS_TOKEN)
+    localStorage.removeItem(ELocalStorageKey.REFRESH_TOKEN)
+    window.location.href = '/login'
+    throw error
+  }
+}
+
 const API = axios.create({ ...defaultConfig })
 
 // API.defaults.headers.common['Content-Type'] = 'application/json'
@@ -104,9 +136,15 @@ API.interceptors.response.use(
           break
         case HttpStatusCode.Unauthorized:
           console.log('HttpStatusCode.Unauthorized')
+          try {
+            const newAccessToken = await refreshAccessToken()
+            error.config.headers['Authorization'] = `Bearer ${newAccessToken}`
 
-          // return await resetTokenAndReattemptRequest(error);
-          break
+            return axios(error.config)
+          } catch (refreshError) {
+            msg = '인증이 만료되었습니다. 다시 로그인해주세요.'
+            break
+          }
         case HttpStatusCode.Forbidden:
           isAlert = true
           console.log('HttpStatusCode.Forbidden')
