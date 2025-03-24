@@ -1,11 +1,14 @@
 import { FC } from 'react'
 import { CamerasProvider } from 'src/context/CamerasContext'
+import { TableProvider } from 'src/context/TableContext'
 import Cameras from './Cameras'
 
 const Index: FC = ({}): React.ReactElement => {
   return (
     <CamerasProvider>
-      <Cameras />
+      <TableProvider>
+        <Cameras />
+      </TableProvider>
     </CamerasProvider>
   )
 }

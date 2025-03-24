@@ -2,6 +2,9 @@ import { ReactNode, createContext, useState } from 'react'
 import { MUserGroup } from 'src/model/userSetting/userSettingModel'
 
 export type UserValuesType = {
+  companyId: string
+  setCompanyId: (companyId: string) => void
+
   layoutDisplay: boolean
   setLayoutDisplay: (layoutDisplay: boolean) => void
   userGroupInfo: MUserGroup[]
@@ -13,6 +16,9 @@ export type UserValuesType = {
 
 // ** Defaults
 const defaultProvider: UserValuesType = {
+  companyId: 'Dains',
+  setCompanyId: () => null,
+
   layoutDisplay: true,
   setLayoutDisplay: () => null,
   userGroupInfo: [],
@@ -29,6 +35,8 @@ type Props = {
 }
 
 const UserProvider = ({ children }: Props) => {
+  const [companyId, setCompanyId] = useState(defaultProvider.companyId)
+
   const [layoutDisplay, setLayoutDisplay] = useState(defaultProvider.layoutDisplay)
   const [userGroupInfo, setUserGroupInfo] = useState<MUserGroup[]>(defaultProvider.userGroupInfo)
   const [selectedGroupId, setSelectedGroupId] = useState<number | null | 'new'>(defaultProvider.selectedGroupId)
@@ -40,6 +48,8 @@ const UserProvider = ({ children }: Props) => {
   }
 
   const values: UserValuesType = {
+    companyId,
+    setCompanyId,
     layoutDisplay,
     setLayoutDisplay,
     userGroupInfo,

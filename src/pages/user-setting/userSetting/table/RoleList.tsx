@@ -2,16 +2,16 @@ import { FC, useEffect, useState } from 'react'
 
 import { Box, Button, IconButton, Switch, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
+import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { useAuth } from 'src/hooks/useAuth'
 import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { MUserGroup, UserListAll } from 'src/model/userSetting/userSettingModel'
+import { MAuthList } from 'src/model/userSetting/userSettingModel'
 import { useUserArrDel, useUserMod } from 'src/service/setting/userSetting'
-import UserAddModModal from '../modal/UserAddModModal'
 
 interface IUserList {
-  data: MUserGroup[]
+  data: MAuthList[]
   refetch: () => void
 }
 
@@ -21,10 +21,10 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
 
   const userContext = useUser()
 
-  const [userData, setUserData] = useState<MUserGroup[]>([])
+  const [userData, setUserData] = useState<MAuthList[]>([])
 
   const [isOpen, setIsOpen] = useState(false)
-  const [selectUser, setSelectUser] = useState<UserListAll>()
+  const [selectUser, setSelectUser] = useState<MAuthList>()
 
   const auth = useAuth()
 
@@ -55,7 +55,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
             onChange={event => {
               modUser({ id: row.id, status: event.target.checked ? 1 : 0 })
               const updatedList = userData.map(user => {
-                if (user.id === row.id) {
+                if (user.authId === row.authId) {
                   return { ...user, status: event.target.checked ? 1 : 0 }
                 }
 
@@ -102,7 +102,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
 
   return (
     <>
-      {isOpen && (
+      {/* {isOpen && (
         <UserAddModModal
           isOpen={isOpen}
           selectUser={selectUser}
@@ -113,7 +113,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
             refetch()
           }}
         />
-      )}
+      )} */}
 
       <Card>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', m: 3 }}>
@@ -135,6 +135,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
         </Box>
         <Box sx={{ minHeight: '32vh', maxHeight: '32vh', overflow: 'auto' }}>
           <CustomTable
+            id='authId'
             showMoreButton={false}
             rows={userData}
             columns={columns}
@@ -143,6 +144,8 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
             // enablePointer
             // selectRowEvent={handleCheckboxSelection}
           />
+
+          <DividerBar />
         </Box>
       </Card>
     </>

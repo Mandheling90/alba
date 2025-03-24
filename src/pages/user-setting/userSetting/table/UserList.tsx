@@ -1,20 +1,20 @@
 import { FC, useEffect, useState } from 'react'
 
 import { Box, Button, IconButton, Switch, Typography } from '@mui/material'
-import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
+import DividerBar from 'src/@core/components/atom/DividerBar'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { UserListAll } from 'src/model/userSetting/userSettingModel'
+import { MUserCompanyList } from 'src/model/userSetting/userSettingModel'
 import { useUserArrDel, useUserMod } from 'src/service/setting/userSetting'
 import UserAddModModal from '../modal/UserAddModModal'
 
 interface IUserList {
-  data: UserListAll[]
+  data: MUserCompanyList[]
   refetch: () => void
 }
 
@@ -25,10 +25,10 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
   const userContext = useUser()
   const layoutContext = useLayout()
 
-  const [userData, setUserData] = useState<UserListAll[]>([])
+  const [userData, setUserData] = useState<MUserCompanyList[]>([])
 
   const [isOpen, setIsOpen] = useState(false)
-  const [selectUser, setSelectUser] = useState<UserListAll>()
+  const [selectUser, setSelectUser] = useState<MUserCompanyList>()
 
   const auth = useAuth()
 
@@ -150,58 +150,58 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
 
       <Grid container>
         <Grid item xs={12}>
-          <Card>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', m: 3 }}>
-              <LayoutControlPanel
-                menuName='사용자'
-                id='user'
-                selectedTarget='user'
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', m: 3 }}>
+            <LayoutControlPanel
+              menuName='사용자'
+              id='user'
+              selectedTarget='user'
+              onClick={() => {
+                layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
+              }}
+            />
+
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button
+                variant={'contained'}
+                startIcon={<IconCustom isCommon icon='plus' />}
                 onClick={() => {
-                  layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
+                  setSelectUser(undefined)
+                  setIsOpen(true)
                 }}
-              />
+              >
+                사용자 추가
+              </Button>
 
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <Button
-                  variant={'contained'}
-                  startIcon={<IconCustom isCommon icon='plus' />}
-                  onClick={() => {
-                    setSelectUser(undefined)
-                    setIsOpen(true)
-                  }}
-                >
-                  사용자 추가
-                </Button>
+              <Button
+                variant={'contained'}
+                startIcon={<IconCustom isCommon icon='minus' />}
+                onClick={async () => {
+                  const result = window.confirm('정말삭제 하시겠습니까?')
 
-                <Button
-                  variant={'contained'}
-                  startIcon={<IconCustom isCommon icon='minus' />}
-                  onClick={async () => {
-                    const result = window.confirm('정말삭제 하시겠습니까?')
-
-                    if (result) {
-                      // await userDel({ idList: userCheck })
-                      // refetch()
-                    }
-                  }}
-                >
-                  사용자 삭제
-                </Button>
-              </Box>
-            </Box>
-            <Box sx={{ maxHeight: '33.5vh', overflow: 'auto' }}>
-              <CustomTable
-                rows={userData}
-                columns={columns}
-                onCheckboxSelectionChange={handleCheckboxSelection}
-                isAllView
-                enablePointer
-                selectRowEvent={e => {
-                  userContext.setSelectedGroupId(e.group.id)
+                  if (result) {
+                    // await userDel({ idList: userCheck })
+                    // refetch()
+                  }
                 }}
-              />
+              >
+                사용자 삭제
+              </Button>
             </Box>
-          </Card>
+          </Box>
+          <Box sx={{ maxHeight: '33.5vh', overflow: 'auto' }}>
+            <CustomTable
+              rows={userData}
+              columns={columns}
+              onCheckboxSelectionChange={handleCheckboxSelection}
+              isAllView
+              enablePointer
+              selectRowEvent={e => {
+                userContext.setSelectedGroupId(e.group.id)
+              }}
+            />
+
+            <DividerBar />
+          </Box>
         </Grid>
       </Grid>
     </>

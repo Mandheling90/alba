@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query'
 import { EPath } from 'src/enum/clientEnum'
 
-import { IClient, IClientDetail, SERVICE_TYPE, SOLUTION_TYPE } from 'src/model/client/clientModel'
+import { IClient, IClientDetail, MCompanySearch, SERVICE_TYPE, SOLUTION_TYPE } from 'src/model/client/clientModel'
 import MResult from 'src/model/commonModel'
 
 // 샘플 데이터
@@ -398,6 +398,10 @@ export const useClientList = (req?: any) => {
       data: sampleClientsList
     })
   })
+}
+
+export const useCompanySearchList = (params: { keyword: string }) => {
+  return useQuery<MResult<MCompanySearch[]>>([EPath.COMPANY_SEARCH, params], {})
 }
 
 export const useClientDetail = (id?: number) => {

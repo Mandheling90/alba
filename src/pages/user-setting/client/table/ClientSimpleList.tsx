@@ -3,11 +3,11 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { SelectChangeEvent } from '@mui/material/Select'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { useAuth } from 'src/hooks/useAuth'
-import { IClient } from 'src/model/client/clientModel'
+import { IClient, MCompanySearch } from 'src/model/client/clientModel'
 import { useUserArrDel, useUserMod } from 'src/service/setting/userSetting'
 
 interface IClientList {
-  data: IClient[]
+  data: MCompanySearch[]
   refetch: () => void
   selectRowEvent: (row: any) => void
 }
@@ -21,7 +21,7 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
   const [value, setValue] = useState<string>('')
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 })
 
-  const [userData, setUserData] = useState<(IClient & { display: boolean })[]>([])
+  const [userData, setUserData] = useState<(MCompanySearch & { display: boolean })[]>([])
 
   const [isOpen, setIsOpen] = useState(false)
   const [selectUser, setSelectUser] = useState<IClient>()
@@ -47,7 +47,7 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
     (val: string) => {
       if (val !== '') {
         const newData = userData.map(obj => {
-          const shouldDisplay = !obj.clientName || obj.clientName.toLowerCase().includes(val)
+          const shouldDisplay = !obj.companyName || obj.companyName.toLowerCase().includes(val)
 
           return { ...obj, display: shouldDisplay }
         })
@@ -68,13 +68,13 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
   }, [])
 
   const columns = [
-    { field: 'clientId', headerName: '고객사 ID', flex: 1 },
-    { field: 'clientName', headerName: '고객사 명', flex: 1 }
+    { field: 'companyId', headerName: '고객사 ID', flex: 1 },
+    { field: 'companyName', headerName: '고객사 명', flex: 1 }
   ]
 
   return (
     <CustomTable
-      id='clientId'
+      id='companyId'
       showMoreButton
       rows={userData}
       columns={columns}

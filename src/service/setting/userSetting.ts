@@ -3,8 +3,11 @@ import { EPath } from 'src/enum/userSettingEnum'
 
 import MResult from 'src/model/commonModel'
 import {
+  MAuthList,
+  MAuthMenuList,
   MRoleList,
   MUserArrDelete,
+  MUserCompanyList,
   MUserGroup,
   MUserMod,
   MUserSave,
@@ -65,3 +68,15 @@ export const useUserArrDel = () => {
 //     return API.post<MResult>(EPath.USER_STATUS, { ...params })
 //   }, {})
 // }
+
+export const useAuthList = (params: { companyId: string }) => {
+  return useQuery<MResult<MAuthList[]>>([EPath.AUTH_LIST, params], {})
+}
+
+export const useAuthMenuList = (params: { companyId: string }) => {
+  return useQuery<MResult<MAuthMenuList[]>>([EPath.AUTH_MENU_LIST, params], {})
+}
+
+export const useUserCompanyList = (params: { companyId: string }) => {
+  return useQuery<MResult<MUserCompanyList[]>>([EPath.USER_COMPANY_LIST + `/${params.companyId}`], {})
+}

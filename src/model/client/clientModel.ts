@@ -120,3 +120,8 @@ export const sampleClientData: IClient = {
     }
   ]
 }
+
+export interface MCompanySearch {
+  companyId: string
+  companyName: string
+}

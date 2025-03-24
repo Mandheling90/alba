@@ -1,5 +1,6 @@
 export const EPath = {
-  CONTENTS: '/cameras'
+  CONTENTS: '/cameras',
+  COMPANY_SEARCH: '/company/search/list'
 } as const
 
 export enum KIOSK_STATUS {

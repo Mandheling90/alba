@@ -4,14 +4,14 @@ import { FC } from 'react'
 import IconCustom from 'src/layouts/components/IconCustom'
 
 import ClientSimpleList from 'src/pages/user-setting/client/table/ClientSimpleList'
-import { useClientList } from 'src/service/client/clientService'
+import { useCompanySearchList } from 'src/service/client/clientService'
 
 interface IClientListGrid {
   selectRowEvent: (row: any) => void
 }
 
 const ClientListGrid: FC<IClientListGrid> = ({ selectRowEvent }): React.ReactElement => {
-  const { data, refetch } = useClientList()
+  const { data, refetch } = useCompanySearchList({ keyword: '' })
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>

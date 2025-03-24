@@ -18,7 +18,7 @@ import {
   Typography
 } from '@mui/material'
 import { EResultCode, YN } from 'src/enum/commonEnum'
-import { UserListAll } from 'src/model/userSetting/userSettingModel'
+import { MUserCompanyList, UserListAll } from 'src/model/userSetting/userSettingModel'
 
 // import { useUserSettingStore } from 'src/pages/user-setting'
 import { smallPlaceholderStyle } from 'src/@core/styles/TextFieldStyle'
@@ -29,7 +29,7 @@ import { filterDifferentProperties, handlePhoneChange, isValidEmail, isValidPass
 interface IRoleAddModal {
   isOpen: boolean
   isSelfUserMod?: boolean
-  selectUser?: UserListAll
+  selectUser?: MUserCompanyList
   onClose: () => void
   onSubmitAfter?: () => void
 }
@@ -65,7 +65,7 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
 
   useEffect(() => {
     if (selectUser) {
-      setUserInfo({ ...selectUser, ...defaultPassword })
+      // setUserInfo({ ...selectUser, ...defaultPassword })
     }
   }, [selectUser])
 
@@ -320,7 +320,7 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
                 try {
                   if (selectUser) {
                     const req = await filterDifferentProperties(
-                      { ...selectUser, groupId: selectUser.group.id },
+                      { ...selectUser, groupId: selectUser.authId },
                       {
                         name: userInfo.name,
                         mobile: userInfo.mobile,

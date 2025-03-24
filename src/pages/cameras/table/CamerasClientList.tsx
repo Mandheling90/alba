@@ -354,6 +354,7 @@ const CamerasClientList: FC<IClientList> = ({ handleSelectClientGrid }) => {
             </Box>
           </Box>
           <CustomTable
+            combineTableId={'camera'}
             id='cameraId'
             showMoreButton={false}
             rows={clientCameraData?.cameraList ?? []}

@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
-import { FC, useState } from 'react'
+import { FC, useContext, useState } from 'react'
+import { TableContext } from 'src/context/TableContext'
 import styled from 'styled-components'
 import PageSizeSelect from './PageSizeSelect'
 
@@ -24,6 +25,7 @@ interface IGridOptions {
   isAllView?: boolean
   enablePointer?: boolean
   showHeader?: boolean
+  combineTableId?: string
 }
 
 const CustomTable: FC<
@@ -38,13 +40,23 @@ const CustomTable: FC<
   enablePointer = false,
   onCheckboxSelectionChange,
   highlightCriteria,
-  showHeader = true
+  showHeader = true,
+  combineTableId
 }) => {
-  const pageSizeOptions = [25, 50, 100]
+  const { combineselectedRows, setSelectedRow } = useContext(TableContext)
   const [pageSize, setPageSize] = useState(isAllView ? 100 : 25)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: isAllView ? 100 : 25 })
-  const [selectedRow, setSelectedRow] = useState<any>(null)
   const [selectedCheckboxes, setSelectedCheckboxes] = useState<any[]>([])
+  const [localSelectedRow, setLocalSelectedRow] = useState<any>(null)
+
+  const selectedRow = combineTableId ? combineselectedRows[combineTableId] : localSelectedRow
+  const handleSetSelectedRow = (value: any) => {
+    if (combineTableId) {
+      setSelectedRow(combineTableId, value)
+    } else {
+      setLocalSelectedRow(value)
+    }
+  }
 
   const getSelectedRows = (selectedIds: any[]) => {
     return rows.filter(row => selectedIds.includes(row[id ?? 'id']))
@@ -58,7 +70,6 @@ const CustomTable: FC<
           rows={rows}
           columns={columns}
           checkboxSelection={!!onCheckboxSelectionChange}
-          pageSizeOptions={pageSizeOptions}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           getRowId={row => row[id ?? 'id']}
@@ -71,16 +82,16 @@ const CustomTable: FC<
           onRowClick={(row: any) => {
             if (selectRowEvent) {
               if (selectedRow === row.id) {
-                setSelectedRow(null)
+                handleSetSelectedRow(null)
               } else {
-                setSelectedRow(row.id)
+                handleSetSelectedRow(row.id)
                 selectRowEvent(row.row)
               }
             }
           }}
           onRowSelectionModelChange={(selectedIds: any[]) => {
             if (selectedIds.length === 0) {
-              setSelectedRow(null)
+              handleSetSelectedRow(null)
             }
 
             setSelectedCheckboxes(selectedIds)

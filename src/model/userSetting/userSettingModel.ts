@@ -88,3 +88,29 @@ export interface MUserStatus {
 export interface MUserArrDelete {
   idList: string[]
 }
+
+export interface MAuthList {
+  authId: number
+  name: string
+  userAuthCount: number
+}
+
+export interface MAuthMenuList {
+  menuId: number
+  menuName: string
+  createYn: YN
+  updateYn: YN
+  deleteYn: YN
+  readYn: YN
+}
+
+export interface MUserCompanyList {
+  id: string
+  name: string
+  mobileNo: string | null
+  mailAddress: string | null
+  authId: number
+  authName: string | null
+  userStatus: number
+  userStatusStr: string
+}

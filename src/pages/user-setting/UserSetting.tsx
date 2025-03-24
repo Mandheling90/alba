@@ -1,38 +1,50 @@
 // ** MUI Imports
-import { Box, Grid, Typography } from '@mui/material'
-import { FC, useEffect } from 'react'
+import { Card, Grid, Typography } from '@mui/material'
+import { FC } from 'react'
 
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PageHeader from 'src/@core/components/page-header'
-import { useUserAll, useUserGroupList } from 'src/service/setting/userSetting'
 
 import SlidingLayout from 'src/@core/components/layout/SlidingLayout'
 import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
+import { useAuthList, useAuthMenuList, useUserCompanyList } from 'src/service/setting/userSetting'
 import ClientListGrid from './client/ClientListGrid'
 import RoleAdd from './userSetting/roles/RoleAdd'
 import RoleList from './userSetting/table/RoleList'
 import UserList from './userSetting/table/UserList'
 
 const UserSetting: FC = (): React.ReactElement => {
-  const userContext = useUser()
   const layoutContext = useLayout()
+  const { layoutDisplay } = layoutContext
 
-  const { data: userGroup, refetch: userGroupRefetch } = useUserGroupList()
-  const { data: user, refetch: userRefetch } = useUserAll()
+  const userContext = useUser()
+  const { companyId, setCompanyId } = userContext
 
-  useEffect(() => {
-    if (userGroup?.data) {
-      userContext.setUserGroupInfo(userGroup?.data ?? [])
-    }
-  }, [userContext.setUserGroupInfo, userGroup])
+  const { data: UserCompanyList, refetch: UserCompanyListRefetch } = useUserCompanyList({ companyId: companyId })
+  const { data: AuthList, refetch: AuthListRefetch } = useAuthList({ companyId: companyId })
+  const { data: AuthMenuList, refetch: AuthMenuListRefetch } = useAuthMenuList({ companyId: companyId })
 
-  if (!user?.data || !userGroup?.data) {
-    return <></>
-  }
+  // const { data: user, refetch: userRefetch } = useUserAll()
+
+  // useEffect(() => {
+  //   if (AuthList?.data) {
+  //     // userContext.setUserGroupInfo(AuthList?.data ?? [])
+  //   }
+  // }, [userContext.setUserGroupInfo, AuthList])
+
+  // if (!user?.data || !AuthList?.data) {
+  //   return <></>
+  // }
 
   const handleSelectClientGrid = (row: any) => {
-    console.log(row)
+    setCompanyId(row.companyId)
+  }
+
+  const refetch = () => {
+    UserCompanyListRefetch()
+    AuthListRefetch()
+    AuthMenuListRefetch()
   }
 
   const sideContent = <ClientListGrid selectRowEvent={handleSelectClientGrid} />
@@ -47,33 +59,21 @@ const UserSetting: FC = (): React.ReactElement => {
             </Typography>
           }
         />
-        <Box>
-          <UserList
-            data={user.data}
-            refetch={() => {
-              userRefetch()
-              userGroupRefetch()
-            }}
-          />
-        </Box>
+
+        <Card sx={{ minHeight: '39vh', overflow: 'auto' }}>
+          <UserList data={UserCompanyList?.data ?? []} refetch={refetch} />
+        </Card>
       </Grid>
 
       <Grid item xs={12} sx={{ maxHeight: '42vh', overflow: 'auto' }}>
         <Grid container spacing={5}>
           <Grid item xs={5}>
-            <RoleList
-              data={userGroup?.data}
-              refetch={() => {
-                userGroupRefetch()
-              }}
-            />
+            <RoleList data={AuthList?.data ?? []} refetch={refetch} />
           </Grid>
           <Grid item xs={7}>
             <RoleAdd
-              data={userGroup?.data}
-              refetch={() => {
-                userGroupRefetch()
-              }}
+              data={AuthMenuList?.data ?? []}
+              refetch={refetch}
               onClose={function (): void {
                 throw new Error('Function not implemented.')
               }}
@@ -86,12 +86,7 @@ const UserSetting: FC = (): React.ReactElement => {
 
   return (
     <StandardTemplate title={'사용자관리'}>
-      <SlidingLayout
-        isOpen={layoutContext.layoutDisplay}
-        sideContent={sideContent}
-        mainContent={mainContent}
-        maxHeight='85vh'
-      />
+      <SlidingLayout isOpen={layoutDisplay} sideContent={sideContent} mainContent={mainContent} maxHeight='85vh' />
     </StandardTemplate>
   )
 }

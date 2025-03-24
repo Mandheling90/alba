@@ -126,6 +126,7 @@ const GroupList: FC<IGroupList> = ({ group, clientColumns, isAddOpen, isModify, 
         <Collapse in={groupOpen}>
           <DividerBar />
           <CustomTable
+            combineTableId={'camera'}
             id='cameraId'
             showMoreButton={false}
             rows={group.cameraList || []}
