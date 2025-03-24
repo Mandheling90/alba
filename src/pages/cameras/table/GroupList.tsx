@@ -71,7 +71,10 @@ const GroupList: FC<IGroupList> = ({ group, clientColumns, isAddOpen, isModify, 
       <>
         <Box my={2} display='flex' alignItems='center' ml={6} gap={3}>
           <CustomTooltip title={groupOpen ? '접기' : '펼치기'} placement='top'>
-            <Box sx={{ cursor: 'pointer' }} onClick={() => setGroupOpen(!groupOpen)}>
+            <Box
+              sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+              onClick={() => setGroupOpen(!groupOpen)}
+            >
               <IconCustom isCommon path='camera' icon={groupOpen ? 'group-open' : 'group-close'} />
             </Box>
           </CustomTooltip>
