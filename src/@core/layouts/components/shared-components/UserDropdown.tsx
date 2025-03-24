@@ -21,7 +21,6 @@ import { useAuth } from 'src/hooks/useAuth'
 
 // ** Type Imports
 import { Settings } from 'src/@core/context/settingsContext'
-import UserAddModModal from 'src/pages/user-setting/userSetting/modal/UserAddModModal'
 import { useUserDetailInfo } from 'src/service/commonService'
 
 interface Props {
@@ -88,7 +87,7 @@ const UserDropdown = (props: Props) => {
 
   return (
     <Fragment>
-      {auth?.user?.userInfo && (
+      {/* {auth?.user?.userInfo && (
         <UserAddModModal
           isOpen={isOpen}
           selectUser={{
@@ -110,7 +109,7 @@ const UserDropdown = (props: Props) => {
           }}
           isSelfUserMod
         />
-      )}
+      )} */}
 
       <Badge
         overlap='circular'
