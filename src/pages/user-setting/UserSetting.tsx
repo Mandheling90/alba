@@ -19,11 +19,11 @@ const UserSetting: FC = (): React.ReactElement => {
   const { layoutDisplay } = layoutContext
 
   const userContext = useUser()
-  const { companyId, setCompanyId } = userContext
+  const { companyNo, setCompanyNo } = userContext
 
-  const { data: UserCompanyList, refetch: UserCompanyListRefetch } = useUserCompanyList({ companyId: companyId })
-  const { data: AuthList, refetch: AuthListRefetch } = useAuthList({ companyId: companyId })
-  const { data: AuthMenuList, refetch: AuthMenuListRefetch } = useAuthMenuList({ companyId: companyId })
+  const { data: UserCompanyList, refetch: UserCompanyListRefetch } = useUserCompanyList({ companyNo })
+  const { data: AuthList, refetch: AuthListRefetch } = useAuthList({ companyNo })
+  const { data: AuthMenuList, refetch: AuthMenuListRefetch } = useAuthMenuList({ companyNo })
 
   // const { data: user, refetch: userRefetch } = useUserAll()
 
@@ -38,7 +38,7 @@ const UserSetting: FC = (): React.ReactElement => {
   // }
 
   const handleSelectClientGrid = (row: any) => {
-    setCompanyId(row.companyId)
+    setCompanyNo(row.companyNo)
   }
 
   const refetch = () => {

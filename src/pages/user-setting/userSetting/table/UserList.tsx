@@ -10,7 +10,7 @@ import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MUserCompanyList } from 'src/model/userSetting/userSettingModel'
-import { useUserArrDel, useUserMod } from 'src/service/setting/userSetting'
+import { useUserArrDel } from 'src/service/setting/userSetting'
 import UserAddModModal from '../modal/UserAddModModal'
 
 interface IUserList {
@@ -18,9 +18,46 @@ interface IUserList {
   refetch: () => void
 }
 
+// [
+//   {
+//       "userNo": 22,
+//       "userId": "111",
+//       "name": "111",
+//       "mobileNo": null,
+//       "mailAddress": null,
+//       "authId": 3,
+//       "authName": "사용자",
+//       "userStatus": 1,
+//       "userStatusStr": "활성"
+//   },
+//   {
+//       "userNo": 23,
+//       "userId": "dains",
+//       "name": "관리자",
+//       "mobileNo": null,
+//       "mailAddress": "ljw@da-ins.co.kr",
+//       "authId": 2,
+//       "authName": "시스템관리자",
+//       "userStatus": 0,
+//       "userStatusStr": "비활성"
+//   },
+//   {
+//       "userNo": 139,
+//       "userId": "test123",
+//       "name": "다인스1",
+//       "mobileNo": "010-2222-5678",
+//       "mailAddress": "bsh@da-ins.co.kr",
+//       "authId": 0,
+//       "authName": null,
+//       "userStatus": 1,
+//       "userStatusStr": "활성"
+//   }
+// ]
+
 const UserList: FC<IUserList> = ({ data, refetch }) => {
   const { mutateAsync: userDel } = useUserArrDel()
-  const { mutateAsync: modUser } = useUserMod()
+
+  // const { mutateAsync: modUser } = useUserMod()
 
   const userContext = useUser()
   const layoutContext = useLayout()
@@ -59,37 +96,29 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
         )
       }
     },
-    { field: 'id', headerName: '이메일 주소', flex: 1 },
+    { field: 'mailAddress', headerName: '이메일 주소', flex: 1 },
     {
-      field: 'groupName',
+      field: 'authName',
       headerName: '권한',
-      flex: 1,
-      renderCell: ({ row }: any) => {
-        return (
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.groupName}
-          </Typography>
-        )
-      }
+      flex: 1
     },
     {
-      field: 'status',
+      field: 'userStatus',
       headerName: '상태',
       flex: 0.5,
       renderCell: ({ row }: any) => {
         return (
           <Switch
-            checked={row.status === 1}
+            checked={row.userStatus === 1}
             onChange={event => {
-              modUser({ id: row.id, status: event.target.checked ? 1 : 0 })
-              const updatedList = userData.map(user => {
-                if (user.id === row.id) {
-                  return { ...user, status: event.target.checked ? 1 : 0 }
-                }
-
-                return user
-              })
-              setUserData(updatedList)
+              // modUser({ id: row.id, userStatus: event.target.checked ? 1 : 0 })
+              // const updatedList = userData.map(user => {
+              //   if (user.id === row.id) {
+              //     return { ...user, userStatus: event.target.checked ? 1 : 0 }
+              //   }
+              //   return user
+              // })
+              // setUserData(updatedList)
             }}
 
             // disabled={row.id === auth?.user?.userInfo?.id}
@@ -190,13 +219,14 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
           </Box>
           <Box sx={{ maxHeight: '33.5vh', overflow: 'auto' }}>
             <CustomTable
+              id='userNo'
               rows={userData}
               columns={columns}
               onCheckboxSelectionChange={handleCheckboxSelection}
               isAllView
               enablePointer
               selectRowEvent={e => {
-                userContext.setSelectedGroupId(e.group.id)
+                // userContext.setSelectedGroupId(e.group.id)
               }}
             />
 

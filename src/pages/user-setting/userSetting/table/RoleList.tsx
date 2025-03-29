@@ -42,8 +42,8 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
   }
 
   const columns = [
-    { field: 'name', headerName: '사용자권한명명', flex: 1 },
-    { field: 'users', headerName: '사용자수', flex: 1 },
+    { field: 'name', headerName: '사용자권한명', flex: 1 },
+    { field: 'userAuthCount', headerName: '사용자수', flex: 1 },
     {
       field: 'status',
       headerName: '상태',
@@ -53,15 +53,14 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
           <Switch
             checked={row.dataStatus === 'Y'}
             onChange={event => {
-              modUser({ id: row.id, status: event.target.checked ? 1 : 0 })
-              const updatedList = userData.map(user => {
-                if (user.authId === row.authId) {
-                  return { ...user, status: event.target.checked ? 1 : 0 }
-                }
-
-                return user
-              })
-              setUserData(updatedList)
+              // modUser({ id: row.id, status: event.target.checked ? 1 : 0 })
+              // const updatedList = userData.map(user => {
+              //   if (user.authId === row.authId) {
+              //     return { ...user, status: event.target.checked ? 1 : 0 }
+              //   }
+              //   return user
+              // })
+              // setUserData(updatedList)
             }}
           />
         )

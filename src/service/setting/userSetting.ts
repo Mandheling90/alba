@@ -69,14 +69,14 @@ export const useUserArrDel = () => {
 //   }, {})
 // }
 
-export const useAuthList = (params: { companyId: string }) => {
+export const useAuthList = (params: { companyNo: number }) => {
   return useQuery<MResult<MAuthList[]>>([EPath.AUTH_LIST, params], {})
 }
 
-export const useAuthMenuList = (params: { companyId: string }) => {
+export const useAuthMenuList = (params: { companyNo: number }) => {
   return useQuery<MResult<MAuthMenuList[]>>([EPath.AUTH_MENU_LIST, params], {})
 }
 
-export const useUserCompanyList = (params: { companyId: string }) => {
-  return useQuery<MResult<MUserCompanyList[]>>([EPath.USER_COMPANY_LIST + `/${params.companyId}`], {})
+export const useUserCompanyList = (params: { companyNo: number }) => {
+  return useQuery<MResult<MUserCompanyList[]>>([EPath.USER_COMPANY_LIST + `/${params.companyNo}`], {})
 }

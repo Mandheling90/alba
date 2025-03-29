@@ -27,7 +27,6 @@ import { Toaster } from 'react-hot-toast'
 // ** Component Imports
 import AclGuard from 'src/@core/components/auth/AclGuard'
 import AuthGuard from 'src/@core/components/auth/AuthGuard'
-import GuestGuard from 'src/@core/components/auth/GuestGuard'
 import ThemeComponent from 'src/@core/theme/ThemeComponent'
 import UserLayout from 'src/layouts/UserLayout'
 
@@ -94,7 +93,7 @@ if (themeConfig.routingLoader) {
 
 const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
   if (guestGuard) {
-    return <GuestGuard fallback={<Spinner />}>{children}</GuestGuard>
+    return <>{children}</>
   } else if (!guestGuard && !authGuard) {
     return <>{children}</>
   } else {
