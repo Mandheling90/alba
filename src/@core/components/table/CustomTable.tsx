@@ -8,6 +8,8 @@ import PageSizeSelect from './PageSizeSelect'
 interface IRowSelect {
   selectRowEvent?: (row: any) => void
   onCheckboxSelectionChange?: (selectedRows: any[]) => void
+  onDragStart?: (row: any) => void
+  onDragEnd?: () => void
 }
 
 interface IPageSizeSelect {
@@ -41,18 +43,21 @@ const CustomTable: FC<
   onCheckboxSelectionChange,
   highlightCriteria,
   showHeader = true,
-  combineTableId
+  combineTableId,
+  onDragStart,
+  onDragEnd
 }) => {
-  const { combineselectedRows, setSelectedRow } = useContext(TableContext)
+  const { selectedRow: combineselectedRows, setSelectedRowFn } = useContext(TableContext)
   const [pageSize, setPageSize] = useState(isAllView ? 100 : 25)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: isAllView ? 100 : 25 })
   const [selectedCheckboxes, setSelectedCheckboxes] = useState<any[]>([])
   const [localSelectedRow, setLocalSelectedRow] = useState<any>(null)
 
   const selectedRow = combineTableId ? combineselectedRows[combineTableId] : localSelectedRow
+
   const handleSetSelectedRow = (value: any) => {
     if (combineTableId) {
-      setSelectedRow(combineTableId, value)
+      setSelectedRowFn(combineTableId, value)
     } else {
       setLocalSelectedRow(value)
     }
@@ -90,10 +95,7 @@ const CustomTable: FC<
             }
           }}
           onRowSelectionModelChange={(selectedIds: any[]) => {
-            if (selectedIds.length === 0) {
-              handleSetSelectedRow(null)
-            }
-
+            // 체크박스 선택 상태만 관리
             setSelectedCheckboxes(selectedIds)
             if (onCheckboxSelectionChange) {
               const selectedRows = getSelectedRows(selectedIds)
@@ -106,6 +108,15 @@ const CustomTable: FC<
           ]}
           hideFooterPagination={isAllView}
           sx={{
+            '& .MuiDataGrid-row': {
+              cursor: enablePointer ? 'pointer' : 'default',
+              '&.draggable': {
+                cursor: 'grab',
+                '&:active': {
+                  cursor: 'grabbing'
+                }
+              }
+            },
             '& .MuiDataGrid-row.Mui-selected': {
               backgroundColor: 'rgba(145, 85, 253, 0.08)',
               '&:hover': {
@@ -130,11 +141,25 @@ const CustomTable: FC<
                 backgroundColor: 'rgba(144, 85, 253, 0.16) !important'
               }
             },
-            '& .MuiDataGrid-row': {
-              cursor: enablePointer ? 'pointer' : 'default'
-            },
             '& .MuiDataGrid-columnHeaders': {
               display: showHeader ? 'block' : 'none'
+            }
+          }}
+          componentsProps={{
+            row: {
+              draggable: true,
+              onDragStart: (e: React.DragEvent) => {
+                const rowId = e.currentTarget.getAttribute('data-id')
+                const row = rows.find(r => r[id ?? 'id'] === rowId)
+                if (row && onDragStart) {
+                  onDragStart(row)
+                }
+              },
+              onDragEnd: () => {
+                if (onDragEnd) {
+                  onDragEnd()
+                }
+              }
             }
           }}
         />

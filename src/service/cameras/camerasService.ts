@@ -15,7 +15,8 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       zonePoints: {
         lat: 33.450701,
         lon: 126.5654
-      }
+      },
+      groupId: null
     },
     {
       id: 2,
@@ -24,9 +25,10 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       serviceTypes: [SERVICE_TYPE.MONITORING],
       isUse: true,
       zonePoints: {
-        lat: 37.2759369002521,
-        lon: 126.981901924188
-      }
+        lat: 37.517997924982076,
+        lon: 127.0267860525248
+      },
+      groupId: null
     },
     {
       id: 3,
@@ -35,9 +37,10 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       serviceTypes: [SERVICE_TYPE.MONITORING],
       isUse: true,
       zonePoints: {
-        lat: 37.27575984256296,
-        lon: 126.98188054344705
-      }
+        lat: 37.50455795749328,
+        lon: 126.99787378587119
+      },
+      groupId: null
     },
     {
       id: 4,
@@ -48,56 +51,54 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       zonePoints: {
         lat: 37.27575984256296,
         lon: 126.98188054344705
-      }
+      },
+      groupId: 1
+    },
+    {
+      id: 6,
+      cameraId: '6',
+      cameraName: '교육동 1층 출입구 우측',
+      serviceTypes: [SERVICE_TYPE.MONITORING],
+      isUse: true,
+      zonePoints: {
+        lat: 37.27575984256296,
+        lon: 126.98188054344705
+      },
+      groupId: 1
+    },
+    {
+      id: 5,
+      cameraId: '5',
+      cameraName: '교육동 1층 출입구 우측',
+      serviceTypes: [SERVICE_TYPE.MONITORING],
+      isUse: true,
+      zonePoints: {
+        lat: 37.27575984256296,
+        lon: 126.98188054344705
+      },
+      groupId: 2
+    },
+    {
+      id: 7,
+      cameraId: '7',
+      cameraName: '교육동 1층 출입구 우측',
+      serviceTypes: [SERVICE_TYPE.MONITORING],
+      isUse: true,
+      zonePoints: {
+        lat: 37.27575984256296,
+        lon: 126.98188054344705
+      },
+      groupId: 2
     }
   ],
   groupList: [
     {
       id: 1,
-      groupId: '1',
-      groupName: '그룹1',
-      cameraList: [
-        {
-          id: 5,
-          cameraId: '5',
-          cameraName: '교육동 1층 출입구 우측',
-          serviceTypes: [SERVICE_TYPE.MONITORING],
-          isUse: true,
-          zonePoints: {
-            lat: 37.27575984256296,
-            lon: 126.98188054344705
-          }
-        },
-        {
-          id: 7,
-          cameraId: '7',
-          cameraName: '교육동 1층 출입구 우측',
-          serviceTypes: [SERVICE_TYPE.MONITORING],
-          isUse: true,
-          zonePoints: {
-            lat: 37.27575984256296,
-            lon: 126.98188054344705
-          }
-        }
-      ]
+      groupName: '그룹1'
     },
     {
       id: 2,
-      groupId: '2',
-      groupName: '그룹2',
-      cameraList: [
-        {
-          id: 6,
-          cameraId: '6',
-          cameraName: '교육동 1층 출입구 우측',
-          serviceTypes: [SERVICE_TYPE.MONITORING],
-          isUse: true,
-          zonePoints: {
-            lat: 37.27575984256296,
-            lon: 126.98188054344705
-          }
-        }
-      ]
+      groupName: '그룹2'
     }
   ]
 }

@@ -9,8 +9,8 @@ export type CamerasValuesType = {
   clientListReq: ICameraClientReq
   setClientListReq: (clientListReq: ICameraClientReq) => void
 
-  groupAddMod: boolean
-  setGroupAddMod: React.Dispatch<React.SetStateAction<boolean>>
+  groupModifyId: number | null
+  setGroupModifyId: React.Dispatch<React.SetStateAction<number | null>>
 
   cameraGroupLinkDisplay: boolean
   setCameraGroupLinkDisplay: React.Dispatch<React.SetStateAction<boolean>>
@@ -18,12 +18,18 @@ export type CamerasValuesType = {
   tempClientCameraData: MClientCameraList | null
   setTempClientCameraData: React.Dispatch<React.SetStateAction<MClientCameraList | null>>
 
+  selectedCamera: MCameraList | null
+  setSelectedCamera: React.Dispatch<React.SetStateAction<MCameraList | null>>
+
+  mapModifyModCameraId: number | null
+  setMapModifyModCameraId: React.Dispatch<React.SetStateAction<number | null>>
+
   clear: () => void
 
   updateClientCameraData: (id: number, updatedFields: Partial<MCameraList>) => void
   handleEditClick: (row: MCameraList) => void
-  handleSaveClick: (id: number) => void
-  handleCancelClick: (id: number) => void
+  handleSaveClick: (id: number | undefined) => void
+  handleCancelClick: (id: number | undefined) => void
 }
 
 // ** Defaults
@@ -34,14 +40,20 @@ const defaultProvider: CamerasValuesType = {
   clientListReq: { sort: 'id', order: SORT.DESC },
   setClientListReq: () => null,
 
-  groupAddMod: false,
-  setGroupAddMod: () => null,
+  groupModifyId: null,
+  setGroupModifyId: () => null,
 
   cameraGroupLinkDisplay: false,
   setCameraGroupLinkDisplay: () => null,
 
   tempClientCameraData: null,
   setTempClientCameraData: () => null,
+
+  selectedCamera: null,
+  setSelectedCamera: () => null,
+
+  mapModifyModCameraId: null,
+  setMapModifyModCameraId: () => null,
 
   clear: () => null,
 
@@ -60,10 +72,12 @@ type Props = {
 const CamerasProvider = ({ children }: Props) => {
   const [clientCameraData, setClientCameraData] = useState<MClientCameraList | null>(defaultProvider.clientCameraData)
   const [clientListReq, setClientListReq] = useState<ICameraClientReq>(defaultProvider.clientListReq)
-  const [groupAddMod, setGroupAddMod] = useState<boolean>(defaultProvider.groupAddMod)
+  const [groupModifyId, setGroupModifyId] = useState<number | null>(defaultProvider.groupModifyId)
   const [cameraGroupLinkDisplay, setCameraGroupLinkDisplay] = useState<boolean>(defaultProvider.cameraGroupLinkDisplay)
 
   const [tempClientCameraData, setTempClientCameraData] = useState<MClientCameraList | null>(null)
+  const [selectedCamera, setSelectedCamera] = useState<MCameraList | null>(null)
+  const [mapModifyModCameraId, setMapModifyModCameraId] = useState<number | null>(defaultProvider.mapModifyModCameraId)
 
   const clear = () => {
     // setLayoutDisplay(defaultProvider.layoutDisplay)
@@ -99,17 +113,39 @@ const CamerasProvider = ({ children }: Props) => {
     })
   }
 
-  const handleSaveClick = (id: number) => {
+  const handleSaveClick = (id: number | undefined) => {
     setTempClientCameraData(prevData => {
       if (!prevData) return null
-      const updatedCameraList = prevData.cameraList.filter(camera => camera.id !== id)
+      const updatedCameraList = id ? prevData.cameraList.filter(camera => camera.id !== id) : []
 
       return { ...prevData, cameraList: updatedCameraList }
     })
   }
 
-  const handleCancelClick = (id: number) => {
+  const handleCancelClick = (id: number | undefined) => {
     if (!tempClientCameraData) return
+
+    if (!id) {
+      setClientCameraData(prevData => {
+        if (!prevData) return null
+
+        const updatedCameraList = prevData.cameraList.map(camera => {
+          const tempCamera = tempClientCameraData.cameraList.find(temp => temp.id === camera.id)
+
+          return tempCamera ? { ...camera, ...tempCamera } : camera
+        })
+
+        return {
+          ...prevData,
+          cameraList: updatedCameraList,
+          groupList: prevData.groupList || []
+        }
+      })
+      setTempClientCameraData(null)
+
+      return
+    }
+
     const cameraToCancel = tempClientCameraData.cameraList.find(camera => camera.id === id)
     if (!cameraToCancel) return
     setClientCameraData((prevData: MClientCameraList | null) => {
@@ -133,14 +169,18 @@ const CamerasProvider = ({ children }: Props) => {
     setClientCameraData,
     clientListReq,
     setClientListReq,
-    groupAddMod,
-    setGroupAddMod,
+    groupModifyId,
+    setGroupModifyId,
     cameraGroupLinkDisplay,
     setCameraGroupLinkDisplay,
     tempClientCameraData,
     setTempClientCameraData,
     clear,
     updateClientCameraData,
+    selectedCamera,
+    setSelectedCamera,
+    mapModifyModCameraId,
+    setMapModifyModCameraId,
     handleEditClick,
     handleSaveClick,
     handleCancelClick

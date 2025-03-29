@@ -1,16 +1,18 @@
 import { ReactNode, createContext, useState } from 'react'
 
 export type TableValuesType = {
-  combineselectedRows: { [key: string]: any }
-  setSelectedRow: (tableId: string, row: any) => void
+  selectedRow: { [key: string]: any }
+  setSelectedRow: React.Dispatch<React.SetStateAction<{ [key: string]: any }>>
+  setSelectedRowFn: (tableId: string, row: any) => void
   clearSelection: (tableId: string) => void
   clearAllSelections: () => void
   isMergedSelection: boolean
 }
 
 const defaultProvider: TableValuesType = {
-  combineselectedRows: {},
+  selectedRow: {},
   setSelectedRow: () => null,
+  setSelectedRowFn: () => null,
   clearSelection: () => null,
   clearAllSelections: () => null,
   isMergedSelection: false
@@ -24,15 +26,15 @@ type Props = {
 }
 
 const TableProvider = ({ children, isMergedSelection = false }: Props) => {
-  const [combineselectedRows, setCombineselectedRows] = useState<{ [key: string]: any }>({})
+  const [selectedRow, setSelectedRow] = useState<{ [key: string]: any }>({})
 
-  const setSelectedRow = (tableId: string, row: any) => {
+  const setSelectedRowFn = (tableId: string, row: any) => {
     if (isMergedSelection) {
-      setCombineselectedRows(prev => ({
+      setSelectedRow(prev => ({
         ...Object.fromEntries(Object.keys(prev).map(key => [key, row]))
       }))
     } else {
-      setCombineselectedRows(prev => ({
+      setSelectedRow(prev => ({
         ...prev,
         [tableId]: row
       }))
@@ -40,7 +42,7 @@ const TableProvider = ({ children, isMergedSelection = false }: Props) => {
   }
 
   const clearSelection = (tableId: string) => {
-    setCombineselectedRows(prev => {
+    setSelectedRow(prev => {
       const newState = { ...prev }
       delete newState[tableId]
 
@@ -49,12 +51,13 @@ const TableProvider = ({ children, isMergedSelection = false }: Props) => {
   }
 
   const clearAllSelections = () => {
-    setCombineselectedRows({})
+    setSelectedRow({})
   }
 
   const values: TableValuesType = {
-    combineselectedRows,
+    selectedRow,
     setSelectedRow,
+    setSelectedRowFn,
     clearSelection,
     clearAllSelections,
     isMergedSelection

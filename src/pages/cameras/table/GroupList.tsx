@@ -1,6 +1,6 @@
 import { Box, Collapse, IconButton, TextField, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
@@ -13,20 +13,49 @@ import CameraModifyActions from './CameraModifyActions'
 
 interface IGroupList {
   group: MGroupList
+  cameraList: MCameraList[]
   clientColumns: GridColDef[]
   isAddOpen: boolean
   isModify: boolean
   handleClose: () => void
-  handleGroupModifyId: (groupId: string) => void
+  handleGroupModifyId: (groupId: number) => void
+  onDrop: () => void
+  onDragStart: (row: MCameraList) => void
+  onDragEnd: () => void
+  selectRowEvent: (row: MCameraList) => void
 }
 
-const GroupList: FC<IGroupList> = ({ group, clientColumns, isAddOpen, isModify, handleClose, handleGroupModifyId }) => {
+const GroupList: FC<IGroupList> = ({
+  group,
+  cameraList,
+  clientColumns,
+  isAddOpen,
+  isModify,
+  handleClose,
+  handleGroupModifyId,
+  onDrop,
+  onDragStart,
+  onDragEnd,
+  selectRowEvent
+}) => {
   const cameraContext = useCameras()
-  const { cameraGroupLinkDisplay, handleEditClick, handleSaveClick, handleCancelClick, tempClientCameraData } =
-    cameraContext
+  const {
+    cameraGroupLinkDisplay,
+    handleEditClick,
+    handleSaveClick,
+    handleCancelClick,
+    tempClientCameraData,
+    groupModifyId
+  } = cameraContext
 
-  const [isGroupModifyId, setIsGroupModifyId] = useState(false)
+  const [isGroupModify, setIsGroupModify] = useState(false)
   const [groupOpen, setGroupOpen] = useState(true)
+
+  useEffect(() => {
+    if (groupModifyId === group.id) {
+      setIsGroupModify(true)
+    }
+  }, [groupModifyId])
 
   const updatedClientColumns = (clientColumns: GridColDef[]): GridColDef[] => {
     return clientColumns.map(column => {
@@ -37,7 +66,7 @@ const GroupList: FC<IGroupList> = ({ group, clientColumns, isAddOpen, isModify, 
         }
       }
       if (column.field === 'modify') {
-        console.log(column)
+        // console.log(column)
 
         return {
           ...column,
@@ -62,14 +91,27 @@ const GroupList: FC<IGroupList> = ({ group, clientColumns, isAddOpen, isModify, 
   }
 
   const handleCloseModify = () => {
-    setIsGroupModifyId(false)
+    setIsGroupModify(false)
     handleClose()
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    if (isGroupModify) {
+      e.preventDefault()
+      e.stopPropagation()
+      onDrop()
+    }
   }
 
   return (
     <Box>
       <>
-        <Box my={2} display='flex' alignItems='center' ml={6} gap={3}>
+        <Box my={2} display='flex' alignItems='center' ml={6} gap={3} onDragOver={handleDragOver} onDrop={handleDrop}>
           <CustomTooltip title={groupOpen ? '접기' : '펼치기'} placement='top'>
             <Box
               sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
@@ -79,7 +121,7 @@ const GroupList: FC<IGroupList> = ({ group, clientColumns, isAddOpen, isModify, 
             </Box>
           </CustomTooltip>
 
-          {isGroupModifyId ? (
+          {isGroupModify ? (
             <TextField size='small' value={group.groupName} />
           ) : (
             <Typography component='span' variant='inherit' sx={{ minWidth: '150px', textAlign: 'center' }}>
@@ -88,10 +130,10 @@ const GroupList: FC<IGroupList> = ({ group, clientColumns, isAddOpen, isModify, 
           )}
           <PipeLine />
           <Typography component='span' variant='inherit' sx={{ minWidth: '150px', textAlign: 'center' }}>
-            {group.cameraList.length}대의 카메라
+            {cameraList.length}대의 카메라
           </Typography>
 
-          {isGroupModifyId ? (
+          {isGroupModify ? (
             <Box display='flex' alignItems='center' gap={3} ml={5}>
               <CustomAddCancelButton onSaveClick={handleCloseModify} onCancelClick={handleCloseModify} />
               <Box
@@ -107,8 +149,8 @@ const GroupList: FC<IGroupList> = ({ group, clientColumns, isAddOpen, isModify, 
             <Box display='flex' alignItems='center'>
               <IconButton
                 onClick={() => {
-                  handleGroupModifyId(group.groupId)
-                  setIsGroupModifyId(true)
+                  handleGroupModifyId(group.id)
+                  setIsGroupModify(true)
                 }}
               >
                 <IconCustom isCommon path='camera' icon='group-mod-blank' hoverIcon='group-mod-fill' />
@@ -129,18 +171,18 @@ const GroupList: FC<IGroupList> = ({ group, clientColumns, isAddOpen, isModify, 
             combineTableId={'camera'}
             id='cameraId'
             showMoreButton={false}
-            rows={group.cameraList || []}
+            rows={cameraList || []}
             columns={updatedClientColumns(clientColumns)}
-            selectRowEvent={(row: IGroupList) => {
-              console.log(row)
-            }}
+            selectRowEvent={selectRowEvent}
             isAllView
             showHeader={false}
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}
           />
         </Collapse>
         <DividerBar />
 
-        {isGroupModifyId && (
+        {isGroupModify && (
           <>
             <Box
               display='flex'
@@ -152,7 +194,7 @@ const GroupList: FC<IGroupList> = ({ group, clientColumns, isAddOpen, isModify, 
               <Box display='flex' alignItems='center' gap={1}>
                 <IconCustom isCommon path='camera' icon={'linkIcon-on'} />
                 <Typography component='span' variant='inherit'>
-                  카메라그룹에 포함될 카메라 항목을 마우스로 끌어놓거나
+                  카메라`그룹에 포함될 카메라 항목을 마우스`로 끌어놓거나
                 </Typography>
               </Box>
               <Box display='flex' alignItems='center' gap={1}>

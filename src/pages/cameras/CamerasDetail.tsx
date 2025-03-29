@@ -12,10 +12,6 @@ interface IClientDetail {
 const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
   const cameraContext = useCameras()
 
-  const handleSelectClientGrid = (row: ICameraClient) => {
-    // setSelectCamera(row as unknown as ICameraClientDetail)
-  }
-
   // useEffect(() => {
   //   cameraContext.setClientCameraDetailListReq({
   //     ...cameraContext.clientCameraDetailListReq,
@@ -36,7 +32,7 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
           }
         />
         <Box sx={{ height: '35vh', overflow: 'auto' }}>
-          <CamerasClientList handleSelectClientGrid={handleSelectClientGrid} />
+          <CamerasClientList />
         </Box>
       </Grid>
 

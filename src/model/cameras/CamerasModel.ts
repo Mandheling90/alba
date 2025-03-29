@@ -118,12 +118,11 @@ export interface MCameraList {
   serviceTypes: SERVICE_TYPE[]
   isUse: boolean
   zonePoints: IPoint
+  groupId: number | null
 }
 export interface MGroupList {
   id: number
-  groupId: string
   groupName: string
-  cameraList: MCameraList[]
 }
 
 export interface MClientCameraList {
