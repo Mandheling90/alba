@@ -1,6 +1,6 @@
 import { Box, Collapse, IconButton, TextField, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
@@ -45,17 +45,18 @@ const GroupList: FC<IGroupList> = ({
     handleSaveClick,
     handleCancelClick,
     tempClientCameraData,
-    groupModifyId
+    groupModifyId,
+    setGroupModifyId
   } = cameraContext
 
-  const [isGroupModify, setIsGroupModify] = useState(false)
+  // const [isGroupModify, setIsGroupModify] = useState(false)
   const [groupOpen, setGroupOpen] = useState(true)
 
-  useEffect(() => {
-    if (groupModifyId === group.id) {
-      setIsGroupModify(true)
-    }
-  }, [groupModifyId])
+  // useEffect(() => {
+  //   if (groupModifyId === group.id) {
+  //     setIsGroupModify(true)
+  //   }
+  // }, [groupModifyId])
 
   const updatedClientColumns = (clientColumns: GridColDef[]): GridColDef[] => {
     return clientColumns.map(column => {
@@ -91,7 +92,7 @@ const GroupList: FC<IGroupList> = ({
   }
 
   const handleCloseModify = () => {
-    setIsGroupModify(false)
+    setGroupModifyId(null)
     handleClose()
   }
 
@@ -101,7 +102,7 @@ const GroupList: FC<IGroupList> = ({
   }
 
   const handleDrop = (e: React.DragEvent) => {
-    if (isGroupModify) {
+    if (groupModifyId === group.id) {
       e.preventDefault()
       e.stopPropagation()
       onDrop()
@@ -121,7 +122,7 @@ const GroupList: FC<IGroupList> = ({
             </Box>
           </CustomTooltip>
 
-          {isGroupModify ? (
+          {groupModifyId === group.id ? (
             <TextField size='small' value={group.groupName} />
           ) : (
             <Typography component='span' variant='inherit' sx={{ minWidth: '150px', textAlign: 'center' }}>
@@ -133,7 +134,7 @@ const GroupList: FC<IGroupList> = ({
             {cameraList.length}대의 카메라
           </Typography>
 
-          {isGroupModify ? (
+          {groupModifyId === group.id ? (
             <Box display='flex' alignItems='center' gap={3} ml={5}>
               <CustomAddCancelButton onSaveClick={handleCloseModify} onCancelClick={handleCloseModify} />
               <Box
@@ -150,7 +151,7 @@ const GroupList: FC<IGroupList> = ({
               <IconButton
                 onClick={() => {
                   handleGroupModifyId(group.id)
-                  setIsGroupModify(true)
+                  setGroupModifyId(group.id)
                 }}
               >
                 <IconCustom isCommon path='camera' icon='group-mod-blank' hoverIcon='group-mod-fill' />
@@ -182,7 +183,7 @@ const GroupList: FC<IGroupList> = ({
         </Collapse>
         <DividerBar />
 
-        {isGroupModify && (
+        {groupModifyId === group.id && (
           <>
             <Box
               display='flex'

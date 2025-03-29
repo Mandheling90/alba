@@ -6,6 +6,7 @@ import MapSearch from 'src/@core/components/map/MapSearch'
 import { defaultMapInfo } from 'src/enum/mapEnum'
 import { useCameras } from 'src/hooks/useCameras'
 import { useMap } from 'src/hooks/useMap'
+import IconCustom from 'src/layouts/components/IconCustom'
 
 interface ICamerasMap {
   height?: string
@@ -59,8 +60,18 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
   return (
     <Grid container>
       <Grid item xs={12}>
-        <Box sx={{ my: 2 }}>
-          <MapSearch useSearchButton textFieldColor='#fff' />
+        <Box sx={{ my: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <IconCustom isCommon path='camera' icon='map-mode' hoverIcon='map-mode-hovering' />
+          </Box>
+
+          <Box sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <IconCustom isCommon path='camera' icon='image-mode' hoverIcon='image-mode-hovering' />
+          </Box>
+
+          <Box sx={{ flex: 0.7 }}>
+            <MapSearch useSearchButton textFieldColor='#fff' />
+          </Box>
         </Box>
       </Grid>
       <Grid item xs={12}>

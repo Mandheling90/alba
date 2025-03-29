@@ -1,6 +1,7 @@
 import { Box } from '@mui/material'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
+import { useCameras } from 'src/hooks/useCameras'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MCameraList } from 'src/model/cameras/CamerasModel'
 
@@ -12,6 +13,8 @@ interface CameraModifyActionsProps {
   handleEditClick: (row: MCameraList) => void
   handleCancelClick: (id: number) => void
   handleSaveClick: (id: number) => void
+
+  // addCameraToGroup: (groupIndex: number) => void
 }
 
 const CameraModifyActions: React.FC<CameraModifyActionsProps> = ({
@@ -22,7 +25,12 @@ const CameraModifyActions: React.FC<CameraModifyActionsProps> = ({
   handleEditClick,
   handleCancelClick,
   handleSaveClick
+
+  // addCameraToGroup
 }) => {
+  const cameraContext = useCameras()
+  const { groupModifyId, updateClientCameraData } = cameraContext
+
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: 3 }}>
       {isModify ? (
@@ -43,7 +51,13 @@ const CameraModifyActions: React.FC<CameraModifyActionsProps> = ({
           <Box
             sx={{ color: 'text.secondary', cursor: 'pointer' }}
             onClick={() => {
-              // setCameraModifyId(row.id)
+              if (isGroupModify) {
+                updateClientCameraData(row.id, { groupId: null })
+              } else {
+                if (groupModifyId) {
+                  updateClientCameraData(row.id, { groupId: groupModifyId })
+                }
+              }
             }}
           >
             <IconCustom

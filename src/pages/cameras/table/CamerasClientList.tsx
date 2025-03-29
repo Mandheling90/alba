@@ -30,6 +30,7 @@ const CamerasClientList: FC = () => {
     clientListReq,
     clientCameraData,
     setClientCameraData,
+    groupModifyId,
     setGroupModifyId,
     cameraGroupLinkDisplay,
     setCameraGroupLinkDisplay,
@@ -271,29 +272,9 @@ const CamerasClientList: FC = () => {
     setDraggedRow(null)
   }
 
-  const handleDrop = (groupIndex: number) => {
-    if (draggedRow && clientCameraData) {
-      const targetGroup = clientCameraData?.groupList[groupIndex]
-
-      if (!targetGroup) return
-
-      // 카메라 리스트 업데이트
-      const updatedCameraList = clientCameraData.cameraList.map(camera => {
-        if (camera.id === draggedRow.id) {
-          return {
-            ...camera,
-            groupId: targetGroup.id
-          }
-        }
-
-        return camera
-      })
-
-      // 상태 업데이트
-      setClientCameraData({
-        ...clientCameraData,
-        cameraList: updatedCameraList
-      })
+  const handleDrop = () => {
+    if (draggedRow && clientCameraData && groupModifyId) {
+      updateClientCameraData(draggedRow.id, { groupId: groupModifyId })
     }
   }
 
@@ -431,7 +412,7 @@ const CamerasClientList: FC = () => {
               handleGroupModifyId={() => {
                 setCameraGroupLinkDisplay(true)
               }}
-              onDrop={() => handleDrop(index)}
+              onDrop={() => handleDrop()}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
               selectRowEvent={(row: MCameraList) => setSelectedCamera(row)}
