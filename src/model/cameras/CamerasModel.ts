@@ -111,13 +111,19 @@ export interface IZonePoints {
   center?: IPoint | undefined
 }
 
+export interface IMarkers {
+  x: number
+  y: number
+}
+
 export interface MCameraList {
   id: number
   cameraId: string
   cameraName: string
   serviceTypes: SERVICE_TYPE[]
   isUse: boolean
-  zonePoints: IPoint
+  zonePoints?: IPoint
+  markers?: IMarkers
   groupId: number | null
 }
 export interface MGroupList {

@@ -2,6 +2,11 @@ import { ReactNode, createContext, useState } from 'react'
 import { SORT } from 'src/enum/commonEnum'
 import { ICameraClientReq, MCameraList, MClientCameraList } from 'src/model/cameras/CamerasModel'
 
+export interface IViewType {
+  type: 'map' | 'image'
+  size: 'full' | 'half'
+}
+
 export type CamerasValuesType = {
   clientCameraData: MClientCameraList | null
   setClientCameraData: React.Dispatch<React.SetStateAction<MClientCameraList | null>>
@@ -18,11 +23,14 @@ export type CamerasValuesType = {
   tempClientCameraData: MClientCameraList | null
   setTempClientCameraData: React.Dispatch<React.SetStateAction<MClientCameraList | null>>
 
-  selectedCamera: MCameraList | null
-  setSelectedCamera: React.Dispatch<React.SetStateAction<MCameraList | null>>
+  selectedCamera: MCameraList[] | null
+  setSelectedCamera: React.Dispatch<React.SetStateAction<MCameraList[] | null>>
 
   mapModifyModCameraId: number | null
   setMapModifyModCameraId: React.Dispatch<React.SetStateAction<number | null>>
+
+  viewType: IViewType
+  setViewType: React.Dispatch<React.SetStateAction<IViewType>>
 
   clear: () => void
 
@@ -49,11 +57,14 @@ const defaultProvider: CamerasValuesType = {
   tempClientCameraData: null,
   setTempClientCameraData: () => null,
 
-  selectedCamera: null,
+  selectedCamera: [],
   setSelectedCamera: () => null,
 
   mapModifyModCameraId: null,
   setMapModifyModCameraId: () => null,
+
+  viewType: { type: 'map', size: 'full' },
+  setViewType: () => null,
 
   clear: () => null,
 
@@ -76,8 +87,10 @@ const CamerasProvider = ({ children }: Props) => {
   const [cameraGroupLinkDisplay, setCameraGroupLinkDisplay] = useState<boolean>(defaultProvider.cameraGroupLinkDisplay)
 
   const [tempClientCameraData, setTempClientCameraData] = useState<MClientCameraList | null>(null)
-  const [selectedCamera, setSelectedCamera] = useState<MCameraList | null>(null)
+  const [selectedCamera, setSelectedCamera] = useState<MCameraList[] | null>(null)
   const [mapModifyModCameraId, setMapModifyModCameraId] = useState<number | null>(defaultProvider.mapModifyModCameraId)
+
+  const [viewType, setViewType] = useState<IViewType>(defaultProvider.viewType)
 
   const clear = () => {
     // setLayoutDisplay(defaultProvider.layoutDisplay)
@@ -175,12 +188,14 @@ const CamerasProvider = ({ children }: Props) => {
     setCameraGroupLinkDisplay,
     tempClientCameraData,
     setTempClientCameraData,
-    clear,
     updateClientCameraData,
     selectedCamera,
     setSelectedCamera,
     mapModifyModCameraId,
     setMapModifyModCameraId,
+    viewType,
+    setViewType,
+    clear,
     handleEditClick,
     handleSaveClick,
     handleCancelClick

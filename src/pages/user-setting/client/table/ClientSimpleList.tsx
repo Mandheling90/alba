@@ -31,7 +31,9 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
   const auth = useAuth()
 
   useEffect(() => {
-    setUserData(data.map(obj => ({ ...obj, display: true })))
+    if (data.length > 0) {
+      setUserData(data.map(obj => ({ ...obj, display: true })))
+    }
   }, [data])
 
   const userDeleteFn = async (id: string) => {

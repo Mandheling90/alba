@@ -16,6 +16,10 @@ export const sampeCameraClientDetailList: MClientCameraList = {
         lat: 33.450701,
         lon: 126.5654
       },
+      markers: {
+        x: 10.5654,
+        y: 33.450701
+      },
       groupId: null
     },
     {
@@ -27,6 +31,10 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       zonePoints: {
         lat: 37.517997924982076,
         lon: 127.0267860525248
+      },
+      markers: {
+        x: 10.5654,
+        y: 20.450701
       },
       groupId: null
     },
@@ -40,6 +48,10 @@ export const sampeCameraClientDetailList: MClientCameraList = {
         lat: 37.50455795749328,
         lon: 126.99787378587119
       },
+      markers: {
+        x: 60.5654,
+        y: 23.450701
+      },
       groupId: null
     },
     {
@@ -49,8 +61,12 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       serviceTypes: [SERVICE_TYPE.MONITORING],
       isUse: true,
       zonePoints: {
-        lat: 37.27575984256296,
-        lon: 126.98188054344705
+        lat: 37.276241533447084,
+        lon: 126.97963098519628
+      },
+      markers: {
+        x: 80.5654,
+        y: 13.450701
       },
       groupId: 1
     },
@@ -61,8 +77,12 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       serviceTypes: [SERVICE_TYPE.MONITORING],
       isUse: true,
       zonePoints: {
-        lat: 37.27575984256296,
-        lon: 126.98188054344705
+        lat: 37.273991170554886,
+        lon: 126.9691514169705
+      },
+      markers: {
+        x: 20.5654,
+        y: 63.450701
       },
       groupId: 1
     },
@@ -76,6 +96,10 @@ export const sampeCameraClientDetailList: MClientCameraList = {
         lat: 37.27575984256296,
         lon: 126.98188054344705
       },
+      markers: {
+        x: 10.5654,
+        y: 33.450701
+      },
       groupId: 2
     },
     {
@@ -87,6 +111,10 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       zonePoints: {
         lat: 37.27575984256296,
         lon: 126.98188054344705
+      },
+      markers: {
+        x: 50.5654,
+        y: 10.450701
       },
       groupId: 2
     }
@@ -113,22 +141,3 @@ export const useClientCameraList = (req: ICameraClientReq) => {
     })
   })
 }
-
-// export const useCameraClientDetailList = (req: ICameraClientDetailReq) => {
-//   const isValidReq = !!req.clientId
-
-//   //return useQuery<MResult<MCameraClientDetail[]>>([EPath.CONTENTS, req], {})
-//   return useQuery<MResult<ICameraList[]>>(
-//     [EPath.CAMERAS_CLIENT_DETAIL, req],
-//     () => {
-//       return Promise.resolve({
-//         code: '0',
-//         msg: '성공',
-//         data: sampeCameraClientDetailList
-//       })
-//     },
-//     {
-//       enabled: isValidReq
-//     }
-//   )
-// }

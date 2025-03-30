@@ -1,6 +1,6 @@
 import { Box, Button, Card, Grid, IconButton, Switch, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { FC, useEffect, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import ButtonHover from 'src/@core/components/atom/ButtonHover'
 import CustomTextFieldState from 'src/@core/components/atom/CustomTextFieldState'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
@@ -8,7 +8,7 @@ import DividerBar from 'src/@core/components/atom/DividerBar'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import PipeLine from 'src/@core/components/table/PipeLine'
-import { useCameras } from 'src/hooks/useCameras'
+import { CamerasContext } from 'src/context/CamerasContext'
 import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MCameraList } from 'src/model/cameras/CamerasModel'
@@ -25,7 +25,6 @@ const ButtonHoverIconList = styled(Box)`
 `
 
 const CamerasClientList: FC = () => {
-  const cameraContext = useCameras()
   const {
     clientListReq,
     clientCameraData,
@@ -42,7 +41,8 @@ const CamerasClientList: FC = () => {
     setSelectedCamera,
     mapModifyModCameraId,
     setMapModifyModCameraId
-  } = cameraContext
+  } = useContext(CamerasContext)
+
   const layoutContext = useLayout()
   const [draggedRow, setDraggedRow] = useState<MCameraList | null>(null)
 
@@ -180,10 +180,10 @@ const CamerasClientList: FC = () => {
               <>
                 <CustomTextFieldState
                   size='small'
-                  value={row.zonePoints.lat}
+                  value={row.zonePoints?.lat ?? ''}
                   onChange={e => {
                     updateClientCameraData(row.id, {
-                      zonePoints: { ...row.zonePoints, lat: parseFloat(e.target.value) }
+                      zonePoints: { lat: parseFloat(e.target.value), lon: row.zonePoints?.lon ?? null }
                     })
                   }}
                 />
@@ -201,10 +201,10 @@ const CamerasClientList: FC = () => {
                 </IconButton>
                 <CustomTextFieldState
                   size='small'
-                  value={row.zonePoints.lon}
+                  value={row.zonePoints?.lon ?? ''}
                   onChange={e => {
                     updateClientCameraData(row.id, {
-                      zonePoints: { ...row.zonePoints, lon: parseFloat(e.target.value) }
+                      zonePoints: { lat: row.zonePoints?.lat ?? null, lon: parseFloat(e.target.value) }
                     })
                   }}
                 />
@@ -212,13 +212,13 @@ const CamerasClientList: FC = () => {
             ) : (
               <>
                 <Typography component='span' variant='inherit'>
-                  {row.zonePoints.lat !== null ? `${row.zonePoints.lat.toFixed(5)}` : 'N/A'}
+                  {row.zonePoints?.lat !== null ? `${row.zonePoints?.lat.toFixed(5)}` : 'N/A'}
                 </Typography>
 
                 <PipeLine />
 
                 <Typography component='span' variant='inherit'>
-                  {row.zonePoints.lon !== null ? ` ${row.zonePoints.lon.toFixed(5)}` : 'N/A'}
+                  {row.zonePoints?.lon !== null ? ` ${row.zonePoints?.lon.toFixed(5)}` : 'N/A'}
                 </Typography>
               </>
             )}
@@ -377,7 +377,7 @@ const CamerasClientList: FC = () => {
               <Button
                 variant={'outlined'}
                 onClick={() => {
-                  setSelectedCamera(null)
+                  setSelectedCamera([])
                   handleCancelClick(undefined)
                 }}
               >
@@ -391,10 +391,11 @@ const CamerasClientList: FC = () => {
             showMoreButton={false}
             rows={clientCameraData?.cameraList?.filter(camera => camera.groupId === null) ?? []}
             columns={clientColumns}
-            selectRowEvent={(row: MCameraList) => setSelectedCamera(row)}
+            selectRowEvent={(row: MCameraList) => setSelectedCamera([row])}
             isAllView
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
+            enablePointer
           />
 
           <DividerBar />
@@ -404,8 +405,6 @@ const CamerasClientList: FC = () => {
               group={group}
               cameraList={clientCameraData?.cameraList?.filter(camera => camera.groupId === group.id) ?? []}
               clientColumns={clientColumns}
-              isAddOpen={true}
-              isModify={false}
               handleClose={() => {
                 setCameraGroupLinkDisplay(false)
               }}
@@ -415,7 +414,7 @@ const CamerasClientList: FC = () => {
               onDrop={() => handleDrop()}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
-              selectRowEvent={(row: MCameraList) => setSelectedCamera(row)}
+              selectRowEvent={(row: MCameraList) => setSelectedCamera([row])}
             />
           ))}
         </Card>

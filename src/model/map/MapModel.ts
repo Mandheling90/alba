@@ -5,7 +5,7 @@ export interface MMapInfo {
   areaEventMapLevel: number
   center: MPoint
   mapTypeId: number
-  markerPosition?: MPoint
+  markerPositions?: MPoint[]
 }
 
 export interface MPoint {
