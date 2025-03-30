@@ -1,7 +1,8 @@
 import { Box } from '@mui/material'
+import { useContext } from 'react'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
-import { useCameras } from 'src/hooks/useCameras'
+import { CamerasContext } from 'src/context/CamerasContext'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MCameraList } from 'src/model/cameras/CamerasModel'
 
@@ -28,8 +29,7 @@ const CameraModifyActions: React.FC<CameraModifyActionsProps> = ({
 
   // addCameraToGroup
 }) => {
-  const cameraContext = useCameras()
-  const { groupModifyId, updateClientCameraData } = cameraContext
+  const { groupModifyId, updateClientCameraData } = useContext(CamerasContext)
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: 3 }}>
