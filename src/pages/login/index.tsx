@@ -1,5 +1,5 @@
 // ** React Imports
-import { ChangeEvent, ReactNode, useState } from 'react'
+import { ChangeEvent, ReactNode, useEffect, useState } from 'react'
 
 // ** Next Imports
 import Link from 'next/link'
@@ -57,12 +57,8 @@ interface State {
 }
 
 const LoginPage = () => {
-  const LGOIN_REMEMBER = window.localStorage.getItem(ELocalStorageKey.LGOIN_REMEMBER) ?? ''
-
-  const [rememberMe, setRememberMe] = useState<boolean>(LGOIN_REMEMBER !== '')
-
+  const [rememberMe, setRememberMe] = useState<boolean>(false)
   const [values, setValues] = useState<State>({
-    // id: rememberMe ? LGOIN_REMEMBER : '',
     id: 'dains',
     password: 'dains',
     showPassword: false
@@ -72,6 +68,17 @@ const LoginPage = () => {
   // ** Hooks
   const auth = useAuth()
   const theme = useTheme()
+
+  useEffect(() => {
+    const savedLogin = localStorage.getItem(ELocalStorageKey.LGOIN_REMEMBER) ?? ''
+    setRememberMe(savedLogin !== '')
+    if (savedLogin !== '') {
+      setValues(prev => ({
+        ...prev,
+        id: savedLogin
+      }))
+    }
+  }, [])
 
   const onSubmit = (event: React.FormEvent) => {
     event.preventDefault()
