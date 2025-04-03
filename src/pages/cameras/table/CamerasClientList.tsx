@@ -1,13 +1,13 @@
-import { Box, Button, Card, Grid, IconButton, Switch, Typography } from '@mui/material'
+import { Box, Button, Card, Grid, Switch, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC, useContext, useEffect, useState } from 'react'
 import ButtonHover from 'src/@core/components/atom/ButtonHover'
 import CustomTextFieldState from 'src/@core/components/atom/CustomTextFieldState'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import DividerBar from 'src/@core/components/atom/DividerBar'
+import LatLonInput from 'src/@core/components/atom/LatLonInput'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
-import PipeLine from 'src/@core/components/table/PipeLine'
 import { CamerasContext } from 'src/context/CamerasContext'
 import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
@@ -40,7 +40,8 @@ const CamerasClientList: FC = () => {
     tempClientCameraData,
     setSelectedCamera,
     mapModifyModCameraId,
-    setMapModifyModCameraId
+    setMapModifyModCameraId,
+    viewType
   } = useContext(CamerasContext)
 
   const layoutContext = useLayout()
@@ -167,62 +168,44 @@ const CamerasClientList: FC = () => {
       align: 'center',
       flex: 0.5,
       renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
-        return (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-around',
-              width: '100%'
+        const isEditing = tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ?? false
+
+        return viewType.type === 'map' ? (
+          <LatLonInput
+            lat={row.zonePoints?.lat ?? null}
+            lon={row.zonePoints?.lon ?? null}
+            isEditing={isEditing}
+            onLatChange={value => {
+              updateClientCameraData(row.id, {
+                zonePoints: { lat: value, lon: row.zonePoints?.lon ?? null }
+              })
             }}
-          >
-            {tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ? (
-              <>
-                <CustomTextFieldState
-                  size='small'
-                  value={row.zonePoints?.lat ?? ''}
-                  onChange={e => {
-                    updateClientCameraData(row.id, {
-                      zonePoints: { lat: parseFloat(e.target.value), lon: row.zonePoints?.lon ?? null }
-                    })
-                  }}
-                />
-                <IconButton
-                  sx={{ color: 'text.secondary' }}
-                  onClick={() => {
-                    setMapModifyModCameraId(row.id)
-                  }}
-                >
-                  <IconCustom
-                    isCommon
-                    path='camera'
-                    icon={`${mapModifyModCameraId !== row.id ? 'map-point' : 'map-mod'}`}
-                  />
-                </IconButton>
-                <CustomTextFieldState
-                  size='small'
-                  value={row.zonePoints?.lon ?? ''}
-                  onChange={e => {
-                    updateClientCameraData(row.id, {
-                      zonePoints: { lat: row.zonePoints?.lat ?? null, lon: parseFloat(e.target.value) }
-                    })
-                  }}
-                />
-              </>
-            ) : (
-              <>
-                <Typography component='span' variant='inherit'>
-                  {row.zonePoints?.lat !== null ? `${row.zonePoints?.lat.toFixed(5)}` : 'N/A'}
-                </Typography>
-
-                <PipeLine />
-
-                <Typography component='span' variant='inherit'>
-                  {row.zonePoints?.lon !== null ? ` ${row.zonePoints?.lon.toFixed(5)}` : 'N/A'}
-                </Typography>
-              </>
-            )}
-          </Box>
+            onLonChange={value => {
+              updateClientCameraData(row.id, {
+                zonePoints: { lat: row.zonePoints?.lat ?? null, lon: value }
+              })
+            }}
+            onMapClick={() => setMapModifyModCameraId(row.id)}
+            isMapActive={mapModifyModCameraId === row.id}
+          />
+        ) : (
+          <LatLonInput
+            lat={row.markers?.x ?? 0}
+            lon={row.markers?.y ?? 0}
+            isEditing={isEditing}
+            onLatChange={value => {
+              updateClientCameraData(row.id, {
+                markers: { x: value ?? 0, y: row.markers?.y ?? 0 }
+              })
+            }}
+            onLonChange={value => {
+              updateClientCameraData(row.id, {
+                markers: { x: row.markers?.x ?? 0, y: value ?? 0 }
+              })
+            }}
+            onMapClick={() => setMapModifyModCameraId(row.id)}
+            isMapActive={mapModifyModCameraId === row.id}
+          />
         )
       }
     },

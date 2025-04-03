@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useRef } from 'react'
 import { MapMarker } from 'react-kakao-maps-sdk'
 import MapComponent from 'src/@core/components/map/MapComponent'
 
+import ImageMap from 'src/@core/components/map/ImageMap'
 import MapSearch from 'src/@core/components/map/MapSearch'
 import { CamerasContext } from 'src/context/CamerasContext'
 import { defaultMapInfo } from 'src/enum/mapEnum'
@@ -89,12 +90,21 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
       setMapInfo({
         ...mapInfo,
         markerPositions: [
-          ...(mapInfo.markerPositions ?? []),
           {
             lat,
             lon: lng
           }
         ]
+      })
+
+      setMapModifyModCameraId(null)
+    }
+  }
+
+  const handleImageMapClick = (x: number, y: number) => {
+    if (mapModifyModCameraId) {
+      updateClientCameraData(mapModifyModCameraId, {
+        markers: { x, y }
       })
 
       setMapModifyModCameraId(null)
@@ -150,7 +160,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
                 ))}
             </MapComponent>
           ) : (
-            <></>
+            <ImageMap height={height} handleImageMapClick={handleImageMapClick} />
           )}
         </Box>
       </Grid>
