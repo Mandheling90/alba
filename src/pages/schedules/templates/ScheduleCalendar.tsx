@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 // ** Full Calendar & it's Plugins
 import bootstrap5Plugin from '@fullcalendar/bootstrap5'
@@ -13,8 +13,10 @@ import DateItem from './DateItem'
 
 const ScheduleCalendar = () => {
   const calendarRef = useRef<FullCalendar>(null)
+  const api = calendarRef.current?.getApi()
+
   const layoutContext = useLayout()
-  const { selectedCustomerInfo, selectedLocationInfo } = useScheduleContext()
+  const { selectedCustomerInfo } = useScheduleContext()
   const calendarOptions: CalendarOptions = {
     locale: 'ko',
     events: [],
@@ -98,19 +100,23 @@ const ScheduleCalendar = () => {
       console.log('clickedEvent', clickedEvent)
     },
     dayCellContent: ({ dayNumberText, isOther }) => {
-      console.log('isOther', isOther)
-
       return <DateItem dayNumberText={dayNumberText} isOther={isOther} />
     }
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      api?.updateSize()
+    }, 320)
+  }, [layoutContext.layoutDisplay])
 
   return (
     <CalendarContainer isLayoutDisplay={layoutContext.layoutDisplay}>
       <FullCalendar
         {...calendarOptions}
         ref={calendarRef}
-        _resize={te => {
-          console.log('resize', te)
+        _resize={resize => {
+          console.log('resize', resize)
         }}
       />
     </CalendarContainer>
