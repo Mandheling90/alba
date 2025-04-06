@@ -6,7 +6,8 @@ export const EPath = {
   CHANGE_PASSWORD: '/auth/change/password',
   USER_DETAIL: '/user/detail',
   LOG: '/log',
-  CUSTOMER_LIST: '/customer/list'
+  CUSTOMER_LIST: '/customer/list',
+  GATE_LIST: '/gate/list'
 } as const
 
 export const ELocalStorageKey = {
