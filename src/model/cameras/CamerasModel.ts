@@ -134,4 +134,9 @@ export interface MGroupList {
 export interface MClientCameraList {
   cameraList: MCameraList[]
   groupList: MGroupList[]
+
+  floorPlan?: {
+    floorPlanImageUrl: string
+    zonePoints?: IPoint
+  }
 }

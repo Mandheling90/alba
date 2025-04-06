@@ -41,7 +41,7 @@ const LatLonInput: FC<LatLonInputProps> = ({
             }}
           />
           <IconButton sx={{ color: 'text.secondary' }} onClick={onMapClick}>
-            <IconCustom isCommon path='camera' icon={`${!isMapActive ? 'map-point' : 'map-mod'}`} />
+            <IconCustom isCommon path='camera' icon={`${!isMapActive ? 'map-point-small' : 'map-mod'}`} />
           </IconButton>
           <CustomTextFieldState
             size='small'

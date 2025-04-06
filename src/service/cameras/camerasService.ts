@@ -12,10 +12,11 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       cameraName: '테스트',
       serviceTypes: [SERVICE_TYPE.MONITORING, SERVICE_TYPE.CAR_COUNT],
       isUse: true,
-      zonePoints: {
-        lat: 33.450701,
-        lon: 126.5654
-      },
+
+      // zonePoints: {
+      //   lat: 37.517997924982076,
+      //   lon: 127.0267860525248
+      // },
       markers: {
         x: 10.5654,
         y: 33.450701
@@ -28,10 +29,11 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       cameraName: '북문 엘레베이터 ',
       serviceTypes: [SERVICE_TYPE.MONITORING],
       isUse: true,
-      zonePoints: {
-        lat: 37.517997924982076,
-        lon: 127.0267860525248
-      },
+
+      // zonePoints: {
+      //   lat: 37.517997924982076,
+      //   lon: 127.0267860525248
+      // },
       markers: {
         x: 10.5654,
         y: 20.450701
@@ -44,10 +46,11 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       cameraName: '교육동 1층 출입구 우측',
       serviceTypes: [SERVICE_TYPE.MONITORING],
       isUse: true,
-      zonePoints: {
-        lat: 37.50455795749328,
-        lon: 126.99787378587119
-      },
+
+      // zonePoints: {
+      //   lat: 37.517997924982076,
+      //   lon: 127.0267860525248
+      // },
       markers: {
         x: 60.5654,
         y: 23.450701
@@ -60,10 +63,11 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       cameraName: '교육동 1층 출입구 우측',
       serviceTypes: [SERVICE_TYPE.MONITORING],
       isUse: true,
-      zonePoints: {
-        lat: 37.276241533447084,
-        lon: 126.97963098519628
-      },
+
+      // zonePoints: {
+      //   lat: 37.517997924982076,
+      //   lon: 127.0267860525248
+      // },
       markers: {
         x: 80.5654,
         y: 13.450701
@@ -76,10 +80,11 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       cameraName: '교육동 1층 출입구 우측',
       serviceTypes: [SERVICE_TYPE.MONITORING],
       isUse: true,
-      zonePoints: {
-        lat: 37.273991170554886,
-        lon: 126.9691514169705
-      },
+
+      // zonePoints: {
+      //   lat: 37.517997924982076,
+      //   lon: 127.0267860525248
+      // },
       markers: {
         x: 20.5654,
         y: 63.450701
@@ -92,10 +97,11 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       cameraName: '교육동 1층 출입구 우측',
       serviceTypes: [SERVICE_TYPE.MONITORING],
       isUse: true,
-      zonePoints: {
-        lat: 37.27575984256296,
-        lon: 126.98188054344705
-      },
+
+      // zonePoints: {
+      //   lat: 37.517997924982076,
+      //   lon: 127.0267860525248
+      // },
       markers: {
         x: 10.5654,
         y: 33.450701
@@ -108,10 +114,11 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       cameraName: '교육동 1층 출입구 우측',
       serviceTypes: [SERVICE_TYPE.MONITORING],
       isUse: true,
-      zonePoints: {
-        lat: 37.27575984256296,
-        lon: 126.98188054344705
-      },
+
+      // zonePoints: {
+      //   lat: 37.517997924982076,
+      //   lon: 127.0267860525248
+      // },
       markers: {
         x: 50.5654,
         y: 10.450701
@@ -129,6 +136,14 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       groupName: '그룹2'
     }
   ]
+
+  // floorPlan: {
+  //   floorPlanImageUrl: '/images/sample.png',
+  //   zonePoints: {
+  //     lat: 37.517997924982076,
+  //     lon: 127.0267860525248
+  //   }
+  // }
 }
 
 export const useClientCameraList = (req: ICameraClientReq) => {

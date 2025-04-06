@@ -5,9 +5,7 @@ import { MPoint } from 'src/model/map/MapModel'
 
 interface IMapComponent {
   mapContainerRef?: any
-  isScreen?: boolean
   children?: React.ReactNode
-  isIndividual?: boolean
   mapClick?: (value: MPoint) => void
   onClick?: (_map: kakao.maps.Map, mouseEvent: kakao.maps.event.MouseEvent) => void
   handleMouseMove?: (_map: any, mouseEvent: any) => void
@@ -16,8 +14,6 @@ interface IMapComponent {
 
 const MapComponent: FC<IMapComponent> = ({
   mapContainerRef = null,
-  isScreen = false,
-  isIndividual = false,
   children,
   onClick,
   handleMouseMove,
@@ -40,12 +36,12 @@ const MapComponent: FC<IMapComponent> = ({
       }}
       isPanto={false}
       level={mapInfo.mapLevel}
-      style={{ width: '100%', height: '100%' }}
+      style={{
+        width: '100%',
+        height: '100%'
+      }}
       onDragEnd={map => {
-        // setLocationSelect({
-        //   ...locationSelectInfo,
-        //   center: { lat: map.getCenter().getLat(), lon: map.getCenter().getLng() }
-        // })
+        setMapInfo({ ...mapInfo, center: { lat: map.getCenter().getLat(), lon: map.getCenter().getLng() } })
       }}
       onZoomChanged={map => setMapInfo({ ...mapInfo, mapLevel: map.getLevel() })}
       mapTypeId={mapInfo.mapTypeId ?? 1}

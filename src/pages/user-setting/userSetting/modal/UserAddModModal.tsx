@@ -63,6 +63,9 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
 
   const [userInfo, setUserInfo] = useState<UserListAll & IUserInfoAdd>(defaultValue)
 
+  console.log(userGroupInfo)
+  console.log(userInfo)
+
   useEffect(() => {
     if (selectUser) {
       // setUserInfo({ ...selectUser, ...defaultPassword })

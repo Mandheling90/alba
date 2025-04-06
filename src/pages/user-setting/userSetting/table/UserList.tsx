@@ -18,48 +18,11 @@ interface IUserList {
   refetch: () => void
 }
 
-// [
-//   {
-//       "userNo": 22,
-//       "userId": "111",
-//       "name": "111",
-//       "mobileNo": null,
-//       "mailAddress": null,
-//       "authId": 3,
-//       "authName": "사용자",
-//       "userStatus": 1,
-//       "userStatusStr": "활성"
-//   },
-//   {
-//       "userNo": 23,
-//       "userId": "dains",
-//       "name": "관리자",
-//       "mobileNo": null,
-//       "mailAddress": "ljw@da-ins.co.kr",
-//       "authId": 2,
-//       "authName": "시스템관리자",
-//       "userStatus": 0,
-//       "userStatusStr": "비활성"
-//   },
-//   {
-//       "userNo": 139,
-//       "userId": "test123",
-//       "name": "다인스1",
-//       "mobileNo": "010-2222-5678",
-//       "mailAddress": "bsh@da-ins.co.kr",
-//       "authId": 0,
-//       "authName": null,
-//       "userStatus": 1,
-//       "userStatusStr": "활성"
-//   }
-// ]
-
 const UserList: FC<IUserList> = ({ data, refetch }) => {
   const { mutateAsync: userDel } = useUserArrDel()
 
-  // const { mutateAsync: modUser } = useUserMod()
+  const { setUserGroupInfo } = useUser()
 
-  const userContext = useUser()
   const layoutContext = useLayout()
 
   const [userData, setUserData] = useState<MUserCompanyList[]>([])
@@ -70,7 +33,9 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
   const auth = useAuth()
 
   useEffect(() => {
-    setUserData(data.map(obj => ({ ...obj, display: true })))
+    if (data) {
+      setUserData(data.map(obj => ({ ...obj, display: true })))
+    }
   }, [data])
 
   const userDeleteFn = async (id: string) => {
@@ -159,7 +124,7 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
   ]
 
   const handleCheckboxSelection = (selectedRows: any[]) => {
-    console.log(selectedRows)
+    setUserGroupInfo(selectedRows)
   }
 
   return (

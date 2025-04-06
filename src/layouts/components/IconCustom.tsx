@@ -1,4 +1,4 @@
-import { CSSProperties, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import { useSettings } from 'src/@core/hooks/useSettings'
 
 interface IIconCustom {
@@ -12,6 +12,10 @@ interface IIconCustom {
 const IconCustom = ({ path, icon, style, isCommon, hoverIcon }: IIconCustom) => {
   const { settings } = useSettings()
   const [currentIcon, setCurrentIcon] = useState(icon)
+
+  useEffect(() => {
+    setCurrentIcon(icon)
+  }, [icon])
 
   const src = `/images${isCommon ? '/common' : `/${settings.mode}`}${path ? `/${path}` : ''}/${
     hoverIcon ? currentIcon : icon

@@ -170,40 +170,26 @@ const CamerasClientList: FC = () => {
       renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
         const isEditing = tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ?? false
 
-        return viewType.type === 'map' ? (
-          <LatLonInput
-            lat={row.zonePoints?.lat ?? null}
-            lon={row.zonePoints?.lon ?? null}
-            isEditing={isEditing}
-            onLatChange={value => {
-              updateClientCameraData(row.id, {
-                zonePoints: { lat: value, lon: row.zonePoints?.lon ?? null }
-              })
-            }}
-            onLonChange={value => {
-              updateClientCameraData(row.id, {
-                zonePoints: { lat: row.zonePoints?.lat ?? null, lon: value }
-              })
-            }}
-            onMapClick={() => setMapModifyModCameraId(row.id)}
-            isMapActive={mapModifyModCameraId === row.id}
-          />
-        ) : (
+        return (
           <LatLonInput
             lat={row.markers?.x ?? 0}
             lon={row.markers?.y ?? 0}
             isEditing={isEditing}
             onLatChange={value => {
-              updateClientCameraData(row.id, {
-                markers: { x: value ?? 0, y: row.markers?.y ?? 0 }
-              })
+              viewType.type === 'image' &&
+                updateClientCameraData(row.id, {
+                  markers: { x: value ?? 0, y: row.markers?.y ?? 0 }
+                })
             }}
             onLonChange={value => {
-              updateClientCameraData(row.id, {
-                markers: { x: row.markers?.x ?? 0, y: value ?? 0 }
-              })
+              viewType.type === 'image' &&
+                updateClientCameraData(row.id, {
+                  markers: { x: row.markers?.x ?? 0, y: value ?? 0 }
+                })
             }}
-            onMapClick={() => setMapModifyModCameraId(row.id)}
+            onMapClick={() => {
+              viewType.type === 'image' && setMapModifyModCameraId(row.id)
+            }}
             isMapActive={mapModifyModCameraId === row.id}
           />
         )

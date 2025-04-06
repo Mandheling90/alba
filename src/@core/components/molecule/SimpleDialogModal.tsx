@@ -73,18 +73,19 @@ const SimpleDialogModal: React.FC<ModalProps> = ({
               <Button
                 variant='contained'
                 onClick={() => {
-                  onClose()
-                }}
-              >
-                취소
-              </Button>
-              <Button
-                variant='contained'
-                onClick={() => {
                   onConfirm ? onConfirm() : onClose()
                 }}
               >
                 확인
+              </Button>
+
+              <Button
+                variant='outlined'
+                onClick={() => {
+                  onClose()
+                }}
+              >
+                취소
               </Button>
             </>
           ) : (

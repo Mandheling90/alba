@@ -3,7 +3,7 @@ import { SORT } from 'src/enum/commonEnum'
 import { ICameraClientReq, MCameraList, MClientCameraList } from 'src/model/cameras/CamerasModel'
 
 export interface IViewType {
-  type: 'map' | 'image'
+  type: 'map' | 'image' | 'newImage'
   size: 'full' | 'half'
 }
 
@@ -113,7 +113,7 @@ const CamerasProvider = ({ children }: Props) => {
 
   const handleEditClick = (row: MCameraList) => {
     setTempClientCameraData(prevData => {
-      if (!prevData) return { cameraList: [row], groupList: [] }
+      if (!prevData) return { cameraList: [row], groupList: [], zonePoints: { lat: 0, lon: 0 } }
       const existingIndex = prevData.cameraList.findIndex(camera => camera.id === row.id)
       if (existingIndex !== -1) {
         const updatedCameraList = [...prevData.cameraList]

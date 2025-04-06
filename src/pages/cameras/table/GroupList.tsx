@@ -131,7 +131,9 @@ const GroupList: FC<IGroupList> = ({
         }}
         onClick={() => {
           setSelectedRow({})
-          setSelectedCamera(cameraList)
+
+          // 그룹 선택 시 첫번째 카메라만 선택 - 기획 변경
+          setSelectedCamera([cameraList[0]])
         }}
       >
         <CustomTooltip title={groupOpen ? '접기' : '펼치기'} placement='top'>
