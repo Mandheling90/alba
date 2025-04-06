@@ -42,13 +42,16 @@ const ScheduleCalendar = () => {
         click() {
           // handleLeftSidebarToggle()
         }
+      },
+      dummyButton: {
+        text: ''
       }
     },
 
     headerToolbar: {
       start: 'toggleSidebarButton,selectedCustomerButton,selectedCustomerInfo',
       center: 'prev title next',
-      end: 'next'
+      end: 'dummyButton'
     },
     titleFormat: { year: 'numeric', month: 'short' },
     navLinkDayClick(date, jsEvent) {
@@ -103,7 +106,13 @@ const ScheduleCalendar = () => {
 
   return (
     <CalendarContainer isLayoutDisplay={layoutContext.layoutDisplay}>
-      <FullCalendar {...calendarOptions} ref={calendarRef} />
+      <FullCalendar
+        {...calendarOptions}
+        ref={calendarRef}
+        _resize={te => {
+          console.log('resize', te)
+        }}
+      />
     </CalendarContainer>
   )
 }
@@ -164,6 +173,11 @@ const CalendarContainer = styled.section<{ isLayoutDisplay: boolean }>`
     }
     .fc-selectedCustomerInfo-button {
       pointer-events: none;
+    }
+    .fc-dummyButton-button {
+      pointer-events: none;
+      visibility: hidden;
+      width: 200px;
     }
   }
 `
