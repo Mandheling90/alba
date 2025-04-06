@@ -8,6 +8,7 @@ import { useLayout } from 'src/hooks/useLayout'
 import styled from 'styled-components'
 import { ScheduleContextProvider } from './contexts/scheduleContext'
 import CustomerSearcher from './templates/CustomerSearcher'
+import GateSelect from './templates/GateSelect'
 import ScheduleCalendar from './templates/ScheduleCalendar'
 
 // ** Types
@@ -25,7 +26,12 @@ const Index: FC = ({}): React.ReactElement => {
               <CustomerSearcher />
             </Section>
           }
-          mainContent={<ScheduleCalendar />}
+          mainContent={
+            <Section>
+              <GateSelect />
+              <ScheduleCalendar />
+            </Section>
+          }
           maxHeight='85vh'
         />
       </StandardTemplate>

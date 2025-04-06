@@ -5,29 +5,29 @@ type CustomerInfo = {
   customerName: string
 }
 
-type LocationInfo = {
-  locationId: string
-  locationName: string
+type GateInfo = {
+  gateId: string
+  gateName: string
 }
 
 const ScheduleContext = createContext<{
   selectedCustomerInfo: CustomerInfo
-  selectedLocationInfo: LocationInfo
+  selectedGateInfo: GateInfo
   setSelectedCustomerInfo: Dispatch<SetStateAction<CustomerInfo>>
-  setSelectedLocationInfo: Dispatch<SetStateAction<LocationInfo>>
+  setSelectedGateInfo: Dispatch<SetStateAction<GateInfo>>
 }>({
   selectedCustomerInfo: {
     customerId: '',
     customerName: ''
   },
-  selectedLocationInfo: {
-    locationId: '',
-    locationName: ''
+  selectedGateInfo: {
+    gateId: '',
+    gateName: ''
   },
   setSelectedCustomerInfo: () => {
     return void 0
   },
-  setSelectedLocationInfo: () => {
+  setSelectedGateInfo: () => {
     return void 0
   }
 })
@@ -41,14 +41,14 @@ export const ScheduleContextProvider = ({ children }: { children: React.ReactNod
     customerId: '',
     customerName: ''
   })
-  const [selectedLocationInfo, setSelectedLocationInfo] = useState<LocationInfo>({
-    locationId: '',
-    locationName: ''
+  const [selectedGateInfo, setSelectedGateInfo] = useState<GateInfo>({
+    gateId: '',
+    gateName: ''
   })
 
   return (
     <ScheduleContext.Provider
-      value={{ selectedCustomerInfo, setSelectedCustomerInfo, selectedLocationInfo, setSelectedLocationInfo }}
+      value={{ selectedCustomerInfo, setSelectedCustomerInfo, selectedGateInfo, setSelectedGateInfo }}
     >
       {children}
     </ScheduleContext.Provider>
