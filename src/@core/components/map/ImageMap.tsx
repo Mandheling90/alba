@@ -10,9 +10,16 @@ interface IImageMap {
   handleImageMapClick: (x: number, y: number) => void
   imageUpdateFn: () => void
   floorplanLocation: () => void
+  resizeing: () => void
 }
 
-const ImageMap = ({ height, handleImageMapClick, imageUpdateFn, floorplanLocation }: IImageMap): React.ReactElement => {
+const ImageMap = ({
+  height,
+  handleImageMapClick,
+  imageUpdateFn,
+  floorplanLocation,
+  resizeing
+}: IImageMap): React.ReactElement => {
   const { clientCameraData, selectedCamera } = useContext(CamerasContext)
 
   const [displaySize, setDisplaySize] = useState({ width: 0, height: 0 })
@@ -178,6 +185,9 @@ const ImageMap = ({ height, handleImageMapClick, imageUpdateFn, floorplanLocatio
             alignItems: 'flex-end'
           }}
         >
+          <Box onClick={resizeing}>
+            <IconCustom isCommon path='camera' icon='floorplanLoc_default' hoverIcon='floorplanLoc_hovering' />
+          </Box>
           <Box onClick={floorplanLocation}>
             <IconCustom isCommon path='camera' icon='floorplanLoc_default' hoverIcon='floorplanLoc_hovering' />
           </Box>

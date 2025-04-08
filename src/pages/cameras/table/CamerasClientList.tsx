@@ -264,6 +264,14 @@ const CamerasClientList: FC = () => {
     }
   }
 
+  const selectRowEvent = (row: MCameraList) => {
+    if (Object.keys(row).length === 0) {
+      setSelectedCamera([])
+    } else {
+      setSelectedCamera([row])
+    }
+  }
+
   return (
     <Grid container>
       <Grid item xs={12}>
@@ -377,13 +385,7 @@ const CamerasClientList: FC = () => {
             showMoreButton={false}
             rows={clientCameraData?.cameraList?.filter(camera => camera.groupId === null) ?? []}
             columns={clientColumns}
-            selectRowEvent={(row: MCameraList) => {
-              if (Object.keys(row).length === 0) {
-                setSelectedCamera([])
-              } else {
-                setSelectedCamera([row])
-              }
-            }}
+            selectRowEvent={selectRowEvent}
             isAllView
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
@@ -406,7 +408,7 @@ const CamerasClientList: FC = () => {
               onDrop={() => handleDrop()}
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
-              selectRowEvent={(row: MCameraList) => setSelectedCamera([row])}
+              selectRowEvent={selectRowEvent}
             />
           ))}
         </Card>

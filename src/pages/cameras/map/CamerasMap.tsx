@@ -319,6 +319,12 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
                 })
                 setIsDragging(true)
               }}
+              resizeing={() => {
+                setViewType({
+                  ...viewType,
+                  size: viewType.size === 'full' ? 'half' : 'full'
+                })
+              }}
             />
           )}
         </Box>
