@@ -11,6 +11,9 @@ export type CamerasValuesType = {
   clientCameraData: MClientCameraList | null
   setClientCameraData: React.Dispatch<React.SetStateAction<MClientCameraList | null>>
 
+  clientCameraDataOrigin: MClientCameraList | null
+  setClientCameraDataOrigin: React.Dispatch<React.SetStateAction<MClientCameraList | null>>
+
   clientListReq: ICameraClientReq
   setClientListReq: (clientListReq: ICameraClientReq) => void
 
@@ -19,9 +22,6 @@ export type CamerasValuesType = {
 
   cameraGroupLinkDisplay: boolean
   setCameraGroupLinkDisplay: React.Dispatch<React.SetStateAction<boolean>>
-
-  tempClientCameraData: MClientCameraList | null
-  setTempClientCameraData: React.Dispatch<React.SetStateAction<MClientCameraList | null>>
 
   selectedCamera: MCameraList[] | null
   setSelectedCamera: React.Dispatch<React.SetStateAction<MCameraList[] | null>>
@@ -34,8 +34,11 @@ export type CamerasValuesType = {
 
   clear: () => void
 
-  updateClientCameraData: (id: number, updatedFields: Partial<MCameraList>) => void
-  handleEditClick: (row: MCameraList) => void
+  updateClientCameraData: (
+    id: number | undefined,
+    updatedFields: Partial<MClientCameraList> | Partial<MCameraList>
+  ) => void
+
   handleSaveClick: (id: number | undefined) => void
   handleCancelClick: (id: number | undefined) => void
 }
@@ -45,6 +48,9 @@ const defaultProvider: CamerasValuesType = {
   clientCameraData: { cameraList: [], groupList: [] },
   setClientCameraData: () => null,
 
+  clientCameraDataOrigin: { cameraList: [], groupList: [] },
+  setClientCameraDataOrigin: () => null,
+
   clientListReq: { sort: 'id', order: SORT.DESC },
   setClientListReq: () => null,
 
@@ -53,9 +59,6 @@ const defaultProvider: CamerasValuesType = {
 
   cameraGroupLinkDisplay: false,
   setCameraGroupLinkDisplay: () => null,
-
-  tempClientCameraData: null,
-  setTempClientCameraData: () => null,
 
   selectedCamera: [],
   setSelectedCamera: () => null,
@@ -69,7 +72,8 @@ const defaultProvider: CamerasValuesType = {
   clear: () => null,
 
   updateClientCameraData: () => null,
-  handleEditClick: () => null,
+
+  // handleEditClick: () => null,
   handleSaveClick: () => null,
   handleCancelClick: () => null
 }
@@ -82,11 +86,14 @@ type Props = {
 
 const CamerasProvider = ({ children }: Props) => {
   const [clientCameraData, setClientCameraData] = useState<MClientCameraList | null>(defaultProvider.clientCameraData)
+  const [clientCameraDataOrigin, setClientCameraDataOrigin] = useState<MClientCameraList | null>(
+    defaultProvider.clientCameraDataOrigin
+  )
+
   const [clientListReq, setClientListReq] = useState<ICameraClientReq>(defaultProvider.clientListReq)
   const [groupModifyId, setGroupModifyId] = useState<number | null>(defaultProvider.groupModifyId)
   const [cameraGroupLinkDisplay, setCameraGroupLinkDisplay] = useState<boolean>(defaultProvider.cameraGroupLinkDisplay)
 
-  const [tempClientCameraData, setTempClientCameraData] = useState<MClientCameraList | null>(null)
   const [selectedCamera, setSelectedCamera] = useState<MCameraList[] | null>(null)
   const [mapModifyModCameraId, setMapModifyModCameraId] = useState<number | null>(defaultProvider.mapModifyModCameraId)
 
@@ -96,98 +103,113 @@ const CamerasProvider = ({ children }: Props) => {
     // setLayoutDisplay(defaultProvider.layoutDisplay)
   }
 
-  const updateClientCameraData = (id: number, updatedFields: Partial<MCameraList>) => {
+  const updateClientCameraData = (
+    id: number | undefined,
+    updatedFields: Partial<MClientCameraList> | Partial<MCameraList>
+  ) => {
     setClientCameraData((prevData: MClientCameraList | null) => {
-      if (!prevData || !prevData.cameraList) return prevData
-      const existingIndex = prevData.cameraList.findIndex((camera: MCameraList) => camera.id === id)
-      if (existingIndex !== -1) {
-        const updatedCameraList = [...prevData.cameraList]
-        updatedCameraList[existingIndex] = { ...updatedCameraList[existingIndex], ...updatedFields }
+      if (!prevData) return prevData
 
-        return { ...prevData, cameraList: updatedCameraList }
+      // 카메라 리스트 업데이트
+      if (id !== undefined) {
+        const existingIndex = prevData.cameraList.findIndex((camera: MCameraList) => camera.id === id)
+        if (existingIndex !== -1) {
+          const updatedCameraList = [...prevData.cameraList]
+          updatedCameraList[existingIndex] = { ...updatedCameraList[existingIndex], ...updatedFields }
+
+          return { ...prevData, cameraList: updatedCameraList }
+        }
       }
 
-      return prevData
-    })
-  }
-
-  const handleEditClick = (row: MCameraList) => {
-    setTempClientCameraData(prevData => {
-      if (!prevData) return { cameraList: [row], groupList: [], zonePoints: { lat: 0, lon: 0 } }
-      const existingIndex = prevData.cameraList.findIndex(camera => camera.id === row.id)
-      if (existingIndex !== -1) {
-        const updatedCameraList = [...prevData.cameraList]
-        updatedCameraList[existingIndex] = { ...updatedCameraList[existingIndex], ...row }
-
-        return { ...prevData, cameraList: updatedCameraList }
-      } else {
-        return { ...prevData, cameraList: [...prevData.cameraList, row] }
+      // 그룹 리스트 업데이트
+      if ('groupList' in updatedFields) {
+        return { ...prevData, groupList: updatedFields.groupList || [] }
       }
+
+      // floorPlan 업데이트
+      if ('floorPlan' in updatedFields) {
+        return { ...prevData, floorPlan: updatedFields.floorPlan }
+      }
+
+      // 기타 필드 업데이트
+      return { ...prevData, ...updatedFields }
     })
   }
 
   const handleSaveClick = (id: number | undefined) => {
-    setTempClientCameraData(prevData => {
-      if (!prevData) return null
-      const updatedCameraList = id ? prevData.cameraList.filter(camera => camera.id !== id) : []
-
-      return { ...prevData, cameraList: updatedCameraList }
-    })
-  }
-
-  const handleCancelClick = (id: number | undefined) => {
-    if (!tempClientCameraData) return
+    if (!clientCameraData) return
 
     if (!id) {
-      setClientCameraData(prevData => {
-        if (!prevData) return null
-
-        const updatedCameraList = prevData.cameraList.map(camera => {
-          const tempCamera = tempClientCameraData.cameraList.find(temp => temp.id === camera.id)
-
-          return tempCamera ? { ...camera, ...tempCamera } : camera
-        })
-
-        return {
-          ...prevData,
-          cameraList: updatedCameraList,
-          groupList: prevData.groupList || []
-        }
-      })
-      setTempClientCameraData(null)
+      // 전체 저장의 경우 현재 데이터를 origin으로 저장
+      setClientCameraDataOrigin(clientCameraData)
 
       return
     }
 
-    const cameraToCancel = tempClientCameraData.cameraList.find(camera => camera.id === id)
-    if (!cameraToCancel) return
-    setClientCameraData((prevData: MClientCameraList | null) => {
-      if (!prevData || !prevData.cameraList) return prevData
-      const updatedCameraList = prevData.cameraList.map((camera: MCameraList) =>
-        camera.id === id ? { ...camera, ...cameraToCancel } : camera
-      )
+    // 특정 카메라 저장의 경우
+    setClientCameraDataOrigin(prevData => {
+      if (!prevData) return clientCameraData
 
-      return { ...prevData, cameraList: updatedCameraList }
+      // 현재 데이터에서 해당 카메라 정보 가져오기
+      const updatedCamera = clientCameraData.cameraList.find(camera => camera.id === id)
+      if (!updatedCamera) return prevData
+
+      // 카메라 리스트 업데이트
+      const updatedCameraList = prevData.cameraList.map(camera => (camera.id === id ? updatedCamera : camera))
+
+      return {
+        ...prevData,
+        cameraList: updatedCameraList,
+        groupList: clientCameraData.groupList,
+        floorPlan: clientCameraData.floorPlan
+      }
     })
-    setTempClientCameraData(prevData => {
-      if (!prevData) return null
-      const updatedCameraList = prevData.cameraList.filter(camera => camera.id !== id)
+  }
 
-      return { ...prevData, cameraList: updatedCameraList }
+  const handleCancelClick = (id: number | undefined) => {
+    if (!clientCameraDataOrigin) return
+
+    if (!id) {
+      // 전체 취소의 경우 origin 데이터로 복원
+      setClientCameraData(clientCameraDataOrigin)
+
+      return
+    }
+
+    // 특정 카메라 취소의 경우
+    setClientCameraData(prevData => {
+      if (!prevData) return null
+
+      // origin 데이터에서 해당 카메라 정보 가져오기
+      const originalCamera = clientCameraDataOrigin.cameraList.find(camera => camera.id === id)
+      if (!originalCamera) return prevData
+
+      // 카메라 리스트 업데이트
+      const updatedCameraList = prevData.cameraList.map(camera => (camera.id === id ? originalCamera : camera))
+
+      // 그룹 리스트도 origin 데이터에서 가져오기
+      const updatedGroupList = clientCameraDataOrigin.groupList
+
+      return {
+        ...prevData,
+        cameraList: updatedCameraList,
+        groupList: updatedGroupList,
+        floorPlan: clientCameraDataOrigin.floorPlan
+      }
     })
   }
 
   const values: CamerasValuesType = {
     clientCameraData,
     setClientCameraData,
+    clientCameraDataOrigin,
+    setClientCameraDataOrigin,
     clientListReq,
     setClientListReq,
     groupModifyId,
     setGroupModifyId,
     cameraGroupLinkDisplay,
     setCameraGroupLinkDisplay,
-    tempClientCameraData,
-    setTempClientCameraData,
     updateClientCameraData,
     selectedCamera,
     setSelectedCamera,
@@ -196,7 +218,6 @@ const CamerasProvider = ({ children }: Props) => {
     viewType,
     setViewType,
     clear,
-    handleEditClick,
     handleSaveClick,
     handleCancelClick
   }

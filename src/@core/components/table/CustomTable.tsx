@@ -88,6 +88,7 @@ const CustomTable: FC<
             if (selectRowEvent) {
               if (selectedRow === row.id) {
                 handleSetSelectedRow(null)
+                selectRowEvent({})
               } else {
                 handleSetSelectedRow(row.id)
                 selectRowEvent(row.row)

@@ -125,7 +125,10 @@ export interface MCameraList {
   zonePoints?: IPoint
   markers?: IMarkers
   groupId: number | null
+
+  isEdit?: boolean // 프론트에서 사용
 }
+
 export interface MGroupList {
   id: number
   groupName: string

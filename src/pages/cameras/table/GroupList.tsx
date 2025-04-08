@@ -37,14 +37,13 @@ const GroupList: FC<IGroupList> = ({
 }) => {
   const {
     cameraGroupLinkDisplay,
-    handleEditClick,
     handleSaveClick,
     handleCancelClick,
-    tempClientCameraData,
     groupModifyId,
     setGroupModifyId,
     selectedCamera,
-    setSelectedCamera
+    setSelectedCamera,
+    updateClientCameraData
   } = useContext(CamerasContext)
 
   const { setSelectedRow } = useContext(TableContext)
@@ -60,20 +59,25 @@ const GroupList: FC<IGroupList> = ({
         }
       }
       if (column.field === 'modify') {
-        // console.log(column)
-
         return {
           ...column,
           renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
             return (
               <CameraModifyActions
                 row={row}
-                isModify={tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ?? false}
+                isModify={row.isEdit ?? false}
                 cameraGroupLinkDisplay={cameraGroupLinkDisplay}
-                handleEditClick={handleEditClick}
-                handleCancelClick={handleCancelClick}
-                handleSaveClick={handleSaveClick}
-                isGroupModify
+                handleEditClick={() => {
+                  updateClientCameraData(row.id, { isEdit: true })
+                }}
+                handleCancelClick={() => {
+                  handleCancelClick(row.id)
+                  updateClientCameraData(row.id, { isEdit: false })
+                }}
+                handleSaveClick={() => {
+                  handleSaveClick(row.id)
+                  updateClientCameraData(row.id, { isEdit: false })
+                }}
               />
             )
           }
@@ -131,9 +135,7 @@ const GroupList: FC<IGroupList> = ({
         }}
         onClick={() => {
           setSelectedRow({})
-
-          // 그룹 선택 시 첫번째 카메라만 선택 - 기획 변경
-          setSelectedCamera([cameraList[0]])
+          setSelectedCamera(cameraList)
         }}
       >
         <CustomTooltip title={groupOpen ? '접기' : '펼치기'} placement='top'>

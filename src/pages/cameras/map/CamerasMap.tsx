@@ -11,8 +11,17 @@ import { CamerasContext } from 'src/context/CamerasContext'
 import { defaultMapInfo } from 'src/enum/mapEnum'
 import { useLayout } from 'src/hooks/useLayout'
 import { useMap } from 'src/hooks/useMap'
+import { MClientCameraList } from 'src/model/cameras/CamerasModel'
 import CameraSelecter from './CameraSelecter'
 import MapControls from './MapControls'
+
+const INITIAL_DIALOG_PROPS = {
+  open: false,
+  title: '',
+  contents: '',
+  isSave: false,
+  isImageUpdate: false
+}
 
 interface ICamerasMap {
   height?: string
@@ -31,7 +40,9 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
     updateClientCameraData,
     setMapModifyModCameraId,
     setViewType,
-    setClientCameraData
+    setClientCameraData,
+    handleCancelClick,
+    handleSaveClick
   } = useContext(CamerasContext)
 
   const mapContainerRef = useRef<any>()
@@ -52,10 +63,6 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
   // 좌표값이 없을 시 이미지 추가 모드로 변경
   useEffect(() => {
     if (clientCameraData?.floorPlan?.zonePoints) {
-      // setMapInfo({
-      //   ...mapInfo,
-      //   center: { lat: clientCameraData?.zonePoints.lat ?? 0, lon: clientCameraData?.zonePoints.lon ?? 0 }
-      // })
       setNewImageAddMode(false)
     } else {
       setMapInfo(defaultMapInfo)
@@ -148,11 +155,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
     }
   }
 
-  const [simpleDialogModalProps, setSimpleDialogModalProps] = useState({
-    open: false,
-    title: '',
-    contents: ''
-  })
+  const [simpleDialogModalProps, setSimpleDialogModalProps] = useState(INITIAL_DIALOG_PROPS)
 
   const handleFileUpload = (file: File) => {
     const reader = new FileReader()
@@ -173,16 +176,21 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
   }
 
   const handleConfirm = () => {
-    if (clientCameraData?.floorPlan?.floorPlanImageUrl) {
+    if (simpleDialogModalProps.isSave && clientCameraData?.floorPlan?.floorPlanImageUrl) {
       // 이미지가 이미 있는 경우 위치만 업데이트
-      setSimpleDialogModalProps({
-        ...simpleDialogModalProps,
-        open: false
-      })
-    } else {
+      handleSaveClick(undefined)
+    } else if (
+      (simpleDialogModalProps.isSave && !clientCameraData?.floorPlan?.floorPlanImageUrl) ||
+      simpleDialogModalProps.isImageUpdate
+    ) {
       // 새로운 이미지 업로드 모드
       fileInputRef.current?.click()
+    } else if (!simpleDialogModalProps.isSave) {
+      // 취소 버튼 클릭 시
+      handleCancelClick(undefined)
     }
+
+    setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
   }
 
   return (
@@ -191,10 +199,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
       <SimpleDialogModal
         open={simpleDialogModalProps.open}
         onClose={() => {
-          setSimpleDialogModalProps({
-            ...simpleDialogModalProps,
-            open: false
-          })
+          setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
         }}
         onConfirm={handleConfirm}
         title={simpleDialogModalProps.title}
@@ -208,19 +213,17 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
           setViewType={setViewType}
           newImageAddMode={newImageAddMode}
           newImageAddModeFn={() => {
-            setClientCameraData(prevData => {
-              if (!prevData) return null
-
-              return {
-                ...prevData,
-                floorPlan: {
-                  floorPlanImageUrl: '',
-                  zonePoints: { lat: mapInfo.center.lat, lon: mapInfo.center.lon }
-                }
-              }
+            updateClientCameraData(undefined, {
+              floorPlan: {
+                floorPlanImageUrl: '',
+                zonePoints: { lat: mapInfo.center.lat, lon: mapInfo.center.lon }
+              } as MClientCameraList['floorPlan']
             })
             setIsDragging(true)
             setViewType({ type: 'map', size: 'half' })
+          }}
+          imageUpdateFn={() => {
+            fileInputRef.current?.click()
           }}
         />
       </Grid>
@@ -239,12 +242,25 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
                         lng: clientCameraData?.floorPlan?.zonePoints?.lon ?? 0
                       }}
                       onCancel={() => {
+                        setSimpleDialogModalProps({
+                          ...simpleDialogModalProps,
+                          open: true,
+                          isSave: false,
+                          title: clientCameraData?.floorPlan?.floorPlanImageUrl
+                            ? '평면도 위치변경 취소'
+                            : '평면도 등록 취소',
+                          contents: clientCameraData?.floorPlan?.floorPlanImageUrl
+                            ? '평면도 위치 변경을 취소하시겠습니까?'
+                            : '평면도 등록을 취소하시겠습니까?'
+                        })
+
                         setIsDragging(false)
                       }}
                       onSave={() => {
                         setSimpleDialogModalProps({
                           ...simpleDialogModalProps,
                           open: true,
+                          isSave: true,
                           title: clientCameraData?.floorPlan?.floorPlanImageUrl
                             ? '평면도 위치 변경'
                             : '평면도 위치 저장 및 평면도 이미지 선택',
@@ -268,15 +284,12 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
                       setIsDragging(true)
                       const lat = e.getPosition().getLat()
                       const lng = e.getPosition().getLng()
-                      setClientCameraData(prevData => {
-                        if (!prevData || !prevData.floorPlan) return null
 
-                        return {
-                          ...prevData,
-                          floorPlan: {
-                            ...prevData.floorPlan,
-                            zonePoints: { lat, lon: lng }
-                          }
+                      updateClientCameraData(undefined, {
+                        floorPlan: {
+                          ...clientCameraData.floorPlan,
+                          floorPlanImageUrl: clientCameraData.floorPlan?.floorPlanImageUrl || '',
+                          zonePoints: { lat, lon: lng }
                         }
                       })
                     }}
@@ -286,7 +299,27 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
               )}
             </MapComponent>
           ) : (
-            <ImageMap height={height} handleImageMapClick={handleImageMapClick} />
+            <ImageMap
+              height={height}
+              handleImageMapClick={handleImageMapClick}
+              imageUpdateFn={() => {
+                setSimpleDialogModalProps({
+                  ...simpleDialogModalProps,
+                  open: true,
+                  isImageUpdate: true,
+                  title: '평면도 이미지 파일 변경',
+                  contents:
+                    '현재 설정되어 있는 평면도 이미지가 대체됩니다. \r\n 계속 진행하시려면 아래 “확인" 버튼 클릭 후 대체하실 평면도 이미지를 선택하세요'
+                })
+              }}
+              floorplanLocation={() => {
+                setViewType({
+                  type: 'map',
+                  size: 'half'
+                })
+                setIsDragging(true)
+              }}
+            />
           )}
         </Box>
       </Grid>

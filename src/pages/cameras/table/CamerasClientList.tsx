@@ -34,14 +34,13 @@ const CamerasClientList: FC = () => {
     cameraGroupLinkDisplay,
     setCameraGroupLinkDisplay,
     updateClientCameraData,
-    handleEditClick,
     handleSaveClick,
     handleCancelClick,
-    tempClientCameraData,
     setSelectedCamera,
     mapModifyModCameraId,
     setMapModifyModCameraId,
-    viewType
+    viewType,
+    setClientCameraDataOrigin
   } = useContext(CamerasContext)
 
   const layoutContext = useLayout()
@@ -50,7 +49,17 @@ const CamerasClientList: FC = () => {
   const { data, refetch } = useClientCameraList(clientListReq)
 
   useEffect(() => {
-    setClientCameraData(data?.data || null)
+    if (data?.data) {
+      const processedData = {
+        ...data.data,
+        cameraList: data.data.cameraList.map((camera: MCameraList) => ({
+          ...camera,
+          isEdit: false
+        }))
+      }
+      setClientCameraData(processedData)
+      setClientCameraDataOrigin(processedData)
+    }
   }, [data?.data])
 
   const clientColumns: GridColDef[] = [
@@ -77,7 +86,7 @@ const CamerasClientList: FC = () => {
       renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
         return (
           <>
-            {tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ? (
+            {row.isEdit ? (
               <CustomTextFieldState
                 size='small'
                 value={row.cameraId}
@@ -102,7 +111,7 @@ const CamerasClientList: FC = () => {
       renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
         return (
           <>
-            {tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ? (
+            {row.isEdit ? (
               <CustomTextFieldState
                 size='small'
                 value={row.cameraName}
@@ -168,7 +177,7 @@ const CamerasClientList: FC = () => {
       align: 'center',
       flex: 0.5,
       renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
-        const isEditing = tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ?? false
+        const isEditing = row.isEdit ?? false
 
         return (
           <LatLonInput
@@ -222,11 +231,19 @@ const CamerasClientList: FC = () => {
         return (
           <CameraModifyActions
             row={row}
-            isModify={tempClientCameraData?.cameraList?.some(camera => camera.id === row.id) ?? false}
+            isModify={row.isEdit ?? false}
             cameraGroupLinkDisplay={cameraGroupLinkDisplay}
-            handleEditClick={handleEditClick}
-            handleCancelClick={handleCancelClick}
-            handleSaveClick={handleSaveClick}
+            handleEditClick={() => {
+              updateClientCameraData(row.id, { isEdit: true })
+            }}
+            handleCancelClick={() => {
+              handleCancelClick(row.id)
+              updateClientCameraData(row.id, { isEdit: false })
+            }}
+            handleSaveClick={() => {
+              handleSaveClick(row.id)
+              updateClientCameraData(row.id, { isEdit: false })
+            }}
           />
         )
       }
@@ -360,7 +377,13 @@ const CamerasClientList: FC = () => {
             showMoreButton={false}
             rows={clientCameraData?.cameraList?.filter(camera => camera.groupId === null) ?? []}
             columns={clientColumns}
-            selectRowEvent={(row: MCameraList) => setSelectedCamera([row])}
+            selectRowEvent={(row: MCameraList) => {
+              if (Object.keys(row).length === 0) {
+                setSelectedCamera([])
+              } else {
+                setSelectedCamera([row])
+              }
+            }}
             isAllView
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}

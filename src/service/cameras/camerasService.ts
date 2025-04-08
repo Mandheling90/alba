@@ -135,15 +135,15 @@ export const sampeCameraClientDetailList: MClientCameraList = {
       id: 2,
       groupName: '그룹2'
     }
-  ]
+  ],
 
-  // floorPlan: {
-  //   floorPlanImageUrl: '/images/sample.png',
-  //   zonePoints: {
-  //     lat: 37.517997924982076,
-  //     lon: 127.0267860525248
-  //   }
-  // }
+  floorPlan: {
+    floorPlanImageUrl: '/images/sample.png',
+    zonePoints: {
+      lat: 37.517997924982076,
+      lon: 127.0267860525248
+    }
+  }
 }
 
 export const useClientCameraList = (req: ICameraClientReq) => {
