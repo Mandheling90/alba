@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 
 // ** Full Calendar & it's Plugins
 import 'bootstrap-icons/font/bootstrap-icons.css'
@@ -9,27 +9,34 @@ import styled from 'styled-components'
 import { ScheduleContextProvider } from './contexts/scheduleContext'
 import CustomerSearcher from './templates/CustomerSearcher'
 import GateSelect from './templates/GateSelect'
+import ScheduleBatchConfig from './templates/ScheduleBatchConfig'
 import ScheduleCalendar from './templates/ScheduleCalendar'
 
 // ** Types
 
 const Index: FC = ({}): React.ReactElement => {
   const layoutContext = useLayout()
+  const [selectedGate, setSelectedGate] = useState<string>('')
 
   return (
     <ScheduleContextProvider>
       <StandardTemplate title={'스케쥴 설정'}>
         <SlidingLayout
           isOpen={layoutContext.layoutDisplay}
-          sideContent={
-            <Section>
-              <CustomerSearcher />
-            </Section>
-          }
+          sideContent={<CustomerSearcher />}
           mainContent={
             <Section>
-              <GateSelect />
-              <ScheduleCalendar />
+              <CalendarContainer>
+                <GateSelect
+                  value={selectedGate}
+                  onChange={event => setSelectedGate(event.target.value as string)}
+                  label='캘린더 표시장소'
+                />
+                <ScheduleCalendar />
+              </CalendarContainer>
+              <BatchConfigContainer>
+                <ScheduleBatchConfig />
+              </BatchConfigContainer>
             </Section>
           }
           maxHeight='85vh'
@@ -40,7 +47,15 @@ const Index: FC = ({}): React.ReactElement => {
 }
 
 const Section = styled.section`
-  margin: 8px;
+  margin-top: 96px;
+  display: flex;
+  gap: 16px;
+`
+const CalendarContainer = styled.div`
+  flex: 3;
+`
+const BatchConfigContainer = styled.div`
+  flex: 1;
 `
 
 export default Index
