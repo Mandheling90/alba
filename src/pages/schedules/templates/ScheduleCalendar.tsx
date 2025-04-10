@@ -124,9 +124,11 @@ const ScheduleCalendar = () => {
 }
 
 const CalendarContainer = styled.section<{ isLayoutDisplay: boolean }>`
-  margin: 8px;
   width: 100%;
-  padding: 24px 4px 4px 4px;
+  padding: 44px 12px 12px 12px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  background-color: #fff;
   .fc-daygrid-day-top {
     display: flex;
     flex-direction: column;
