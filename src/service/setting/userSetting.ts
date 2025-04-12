@@ -89,6 +89,12 @@ export const useModAuth = () => {
   }, {})
 }
 
+export const useDelAuth = () => {
+  return useMutation((params: { authId: number }) => {
+    return createDelete<MResult>([EPath.AUTH, params])
+  }, {})
+}
+
 export const useUserCompanyList = (params: { companyNo: number }) => {
   return useQuery<MResult<MUserCompanyList[]>>([EPath.USER_COMPANY_LIST + `/${params.companyNo}`], {})
 }

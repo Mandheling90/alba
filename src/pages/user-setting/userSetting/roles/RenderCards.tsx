@@ -68,7 +68,7 @@ const RenderCards: FC<IRolesCards> = ({ data, refetch }) => {
                     (item, index) =>
                       (item.fullAccess === 'Y' || item.readYn === 'Y') && (
                         <Typography key={index} variant='subtitle2' fontSize={12} sx={{ marginRight: '10px' }}>
-                          {item.viewName} :{' '}
+                          {/* {item.viewName} :{' '} */}
                           {item.fullAccess === 'Y' ? 'Full Access' : item.readYn === 'Y' ? 'read' : ''}
                         </Typography>
                       )

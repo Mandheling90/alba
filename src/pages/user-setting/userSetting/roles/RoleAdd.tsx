@@ -20,12 +20,15 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
   const { companyNo, selectedAuthList } = useUser()
 
   const [rows, setRows] = useState<MRole[]>([])
+  const [originalRows, setOriginalRows] = useState<MRole[]>([])
   const [selectedAuthListName, setSelectedAuthListName] = useState('')
+  const [originalAuthListName, setOriginalAuthListName] = useState('')
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false)
 
   useEffect(() => {
     if (data) {
       setRows(data.roles)
+      setOriginalRows(data.roles)
     }
   }, [data])
 
@@ -35,11 +38,18 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
 
   useEffect(() => {
     setSelectedAuthListName(selectedAuthList?.name ?? '')
+    setOriginalAuthListName(selectedAuthList?.name ?? '')
   }, [selectedAuthList.name])
 
   const { mutateAsync: authDuplicate } = useAuthDuplicate()
   const { mutateAsync: addAuth } = useAddAuth()
   const { mutateAsync: modAuth } = useModAuth()
+
+  const handleCancel = () => {
+    setRows(originalRows)
+    setSelectedAuthListName(originalAuthListName)
+    setIsDuplicate(selectedAuthList.authId === 0)
+  }
 
   const columns = [
     {
@@ -108,7 +118,7 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const isChecked = event.target.checked
               setRows(rows =>
-                rows.map(item => (item.menuId === row.menuId ? { ...item, readYn: isChecked ? YN.Y : YN.N } : item))
+                rows.map(item => (item.menuId === row.menuId ? { ...item, createYn: isChecked ? YN.Y : YN.N } : item))
               )
             }}
           />
@@ -267,14 +277,7 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
         >
           저장
         </Button>
-        <Button
-          size='large'
-          color='secondary'
-          variant='outlined'
-          onClick={() => {
-            // onClose()
-          }}
-        >
+        <Button size='large' color='secondary' variant='outlined' onClick={handleCancel}>
           취소
         </Button>
       </Box>

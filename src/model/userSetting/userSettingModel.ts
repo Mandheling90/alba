@@ -3,6 +3,7 @@ import { YN } from 'src/enum/commonEnum'
 export interface MRole {
   menuId: number
   menuName?: string
+  fullAccess?: YN
   createYn: YN
   updateYn: YN
   deleteYn: YN

@@ -38,11 +38,11 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
     }
   }, [data])
 
-  const userDeleteFn = async (id: string) => {
+  const userDeleteFn = async (id: number) => {
     const result = window.confirm('정말삭제 하시겠습니까?')
 
     if (result) {
-      await userDel({ idList: [id] })
+      await userDel({ userNos: [id] })
       refetch()
     }
   }

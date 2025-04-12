@@ -79,7 +79,7 @@ const TableHeader = (props: TableHeaderProps) => {
             const result = window.confirm('정말삭제 하시겠습니까?')
 
             if (result) {
-              await userDel({ idList: userCheck })
+              await userDel({ userNos: userCheck.map(Number) })
 
               refetch()
             }

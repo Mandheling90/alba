@@ -9,7 +9,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MAuthList } from 'src/model/userSetting/userSettingModel'
-import { useAuthStatusMod, useUserArrDel } from 'src/service/setting/userSetting'
+import { useAuthStatusMod, useDelAuth } from 'src/service/setting/userSetting'
 
 interface IUserList {
   data: MAuthList[]
@@ -17,7 +17,7 @@ interface IUserList {
 }
 
 const RoleList: FC<IUserList> = ({ data, refetch }) => {
-  const { mutateAsync: userDel } = useUserArrDel()
+  const { mutateAsync: authDel } = useDelAuth()
   const { mutateAsync: authStatusMod } = useAuthStatusMod()
 
   const { setSelectedAuthList } = useUser()
@@ -33,11 +33,11 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
     setUserData(data.map(obj => ({ ...obj, display: true })))
   }, [data])
 
-  const userDeleteFn = async (id: number) => {
+  const authDeleteFn = async (id: number) => {
     const result = window.confirm('정말삭제 하시겠습니까?')
 
     if (result) {
-      await userDel({ userNos: [id] })
+      await authDel({ authId: id })
       refetch()
     }
   }
@@ -89,7 +89,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
               sx={{ color: 'text.secondary' }}
               disabled={row.id === auth?.user?.userInfo?.authId}
               onClick={e => {
-                userDeleteFn(row.authId)
+                authDeleteFn(row.authId)
               }}
             >
               <IconCustom path='settingCard' icon='delete' />

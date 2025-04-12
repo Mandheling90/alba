@@ -30,7 +30,8 @@ export const defaultValue = {
   users: 0,
   roleList: [
     {
-      viewName: '고객사 관리',
+      menuId: 1,
+      menuName: '고객사 관리',
       fullAccess: YN.N,
       createYn: YN.N,
       updateYn: YN.N,
@@ -38,7 +39,8 @@ export const defaultValue = {
       readYn: YN.N
     },
     {
-      viewName: '사용자 관리',
+      menuId: 2,
+      menuName: '사용자 관리',
       fullAccess: YN.N,
       createYn: YN.N,
       updateYn: YN.N,
@@ -46,7 +48,8 @@ export const defaultValue = {
       readYn: YN.N
     },
     {
-      viewName: '키오스크 관리',
+      menuId: 3,
+      menuName: '키오스크 관리',
       fullAccess: YN.N,
       createYn: YN.N,
       updateYn: YN.N,
@@ -54,7 +57,8 @@ export const defaultValue = {
       readYn: YN.N
     },
     {
-      viewName: '통계 및 로그 관리',
+      menuId: 4,
+      menuName: '통계 및 로그 관리',
       fullAccess: YN.N,
       createYn: YN.N,
       updateYn: YN.N,
@@ -62,7 +66,8 @@ export const defaultValue = {
       readYn: YN.N
     },
     {
-      viewName: '모니터링',
+      menuId: 5,
+      menuName: '모니터링',
       fullAccess: YN.N,
       createYn: YN.N,
       updateYn: YN.N,
@@ -78,12 +83,12 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, groupInfo, onClose, refetc
 
   const [rows, setRows] = useState<MUserGroup & MRoleList>(groupInfo ? groupInfo : defaultValue)
 
-  const updateState = (viewName: string, roleType: string, checked: YN) => {
+  const updateState = (menuName: string, roleType: string, checked: YN) => {
     setRows(rows => ({
       ...rows,
       roleList: rows.roleList.map(role => {
         // fullAccess 변경 시 모든 권한을 동일하게 업데이트
-        if (role.viewName === viewName && roleType === 'fullAccess') {
+        if (role.menuName === menuName && roleType === 'fullAccess') {
           return {
             ...role,
             fullAccess: checked,
@@ -95,14 +100,14 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, groupInfo, onClose, refetc
         }
 
         // 개별 권한만 업데이트할 경우
-        return role.viewName === viewName ? { ...role, [roleType]: checked } : role
+        return role.menuName === menuName ? { ...role, [roleType]: checked } : role
       })
     }))
   }
 
   const columns = [
     {
-      field: 'viewName',
+      field: 'menuName',
       headerName: '메뉴',
       flex: 0.1,
       minWidth: 90
@@ -118,7 +123,7 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, groupInfo, onClose, refetc
             checked={row.fullAccess === YN.Y}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const isChecked = event.target.checked
-              updateState(row.viewName, 'fullAccess', isChecked ? YN.Y : YN.N)
+              updateState(row.menuName, 'fullAccess', isChecked ? YN.Y : YN.N)
             }}
           />
         )
@@ -130,7 +135,7 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, groupInfo, onClose, refetc
       flex: 0.1,
       minWidth: 90,
       renderCell: ({ row }: any) => {
-        if (row.viewName === '모니터링') return null // "모니터링"일 때 숨기기
+        if (row.menuName === '모니터링') return null // "모니터링"일 때 숨기기
 
         return (
           <Checkbox
@@ -138,7 +143,7 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, groupInfo, onClose, refetc
             checked={row.id === 1 ? true : row.readYn === YN.Y}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const isChecked = event.target.checked
-              updateState(row.viewName, 'readYn', isChecked ? YN.Y : YN.N)
+              updateState(row.menuName, 'readYn', isChecked ? YN.Y : YN.N)
             }}
           />
         )
@@ -150,14 +155,14 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, groupInfo, onClose, refetc
       flex: 0.1,
       minWidth: 90,
       renderCell: ({ row }: any) => {
-        if (row.viewName === '모니터링') return null
+        if (row.menuName === '모니터링') return null
 
         return (
           <Checkbox
             checked={row.createYn === YN.Y}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const isChecked = event.target.checked
-              updateState(row.viewName, 'createYn', isChecked ? YN.Y : YN.N)
+              updateState(row.menuName, 'createYn', isChecked ? YN.Y : YN.N)
             }}
           />
         )
@@ -169,14 +174,14 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, groupInfo, onClose, refetc
       flex: 0.1,
       minWidth: 90,
       renderCell: ({ row }: any) => {
-        if (row.viewName === '모니터링') return null
+        if (row.menuName === '모니터링') return null
 
         return (
           <Checkbox
             checked={row.updateYn === YN.Y}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const isChecked = event.target.checked
-              updateState(row.viewName, 'updateYn', isChecked ? YN.Y : YN.N)
+              updateState(row.menuName, 'updateYn', isChecked ? YN.Y : YN.N)
             }}
           />
         )
@@ -188,14 +193,14 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, groupInfo, onClose, refetc
       flex: 0.1,
       minWidth: 90,
       renderCell: ({ row }: any) => {
-        if (row.viewName === '모니터링') return null
+        if (row.menuName === '모니터링') return null
 
         return (
           <Checkbox
             checked={row.deleteYn === YN.Y}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const isChecked = event.target.checked
-              updateState(row.viewName, 'deleteYn', isChecked ? YN.Y : YN.N)
+              updateState(row.menuName, 'deleteYn', isChecked ? YN.Y : YN.N)
             }}
           />
         )
@@ -282,7 +287,7 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, groupInfo, onClose, refetc
               }
 
               const { users, ...restData } = rows
-              const newRoleList = restData.roleList.map(({ viewName, ...restRole }) => restRole)
+              const newRoleList = restData.roleList.map(({ menuName, ...restRole }) => restRole)
 
               const param = {
                 ...restData,
