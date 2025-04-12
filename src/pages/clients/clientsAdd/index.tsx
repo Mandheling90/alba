@@ -58,7 +58,7 @@ const CustomStepContent = styled(StepContent)<{ stepindex: number; activestep: n
 const Index: FC = ({}) => {
   const router = useRouter()
 
-  console.log(router.query.id)
+  // console.log(router.query.id)
 
   const { data, refetch } = useClientDetail(Number(router.query.id))
 

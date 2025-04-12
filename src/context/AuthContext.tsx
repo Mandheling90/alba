@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 // ** Config
 
 // ** Types
-import { EErrorMessage, ELocalStorageKey, EResultCode } from 'src/enum/commonEnum'
+import { EErrorMessage, ELocalStorageKey, EResultCode, ROLE } from 'src/enum/commonEnum'
 import { login, useComponentListInfo, useGenerateCode, useUserDetailInfo } from 'src/service/commonService'
 import { useUserGroup } from 'src/service/setting/userSetting'
 import { AuthValuesType, ErrCallbackType, LoginParams, SuccessCallbackType, UserDataType } from './types'
@@ -46,31 +46,23 @@ const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const initAuth = async (): Promise<void> => {
-      // const storedToken = window.localStorage.getItem(ELocalStorageKey.ACCESS_TOKEN)
-
       if (!user?.componentListInfo) {
         if (router.pathname.includes('login')) {
           handleLogout()
+
+          return
         }
 
         try {
           const result = await componentListInfoMutate()
           const userInfo = await userDetailInfoMutate()
 
-          // 프론트에서 그룹권한 체크하도록 처리
-          // const userGroup = await groupMutate({ id: userInfo?.data?.group?.id })
-
-          // const viewNamesWithY =
-          //   userGroup.data.roleList
-          //     .filter(role => Object.values(role).some(value => value === 'Y'))
-          //     .map(role => role.viewName) ?? []
-
-          if (result.data) {
+          if (result.data && userInfo.data) {
             setUser({
               ...user,
               componentListInfo: result.data,
               userInfo: userInfo.data,
-              role: userInfo.data.role,
+              role: ROLE.ADMIN,
               viewNamesWithY: []
             })
           } else {
@@ -85,8 +77,7 @@ const AuthProvider = ({ children }: Props) => {
     }
 
     initAuth()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [user?.componentListInfo, router.pathname])
 
   const handleLogin = async (params: LoginParams, errorCallback?: ErrCallbackType) => {
     try {
@@ -107,13 +98,7 @@ const AuthProvider = ({ children }: Props) => {
       const componentList = await componentListInfoMutate()
       const userInfo = await userDetailInfoMutate()
 
-      // 프론트에서 그룹권한 체크하도록 처리
-      // const userGroup = await groupMutate({ id: userInfo?.data?.group?.id })
-
-      // const viewNamesWithY =
-      //   userGroup.data.roleList
-      //     .filter(role => Object.values(role).some(value => value === 'Y'))
-      //     .map(role => role.viewName) ?? []
+      console.log(userInfo.data)
 
       if (result.code !== EResultCode.FAIL) {
         if (params.rememberMe) {
@@ -123,10 +108,8 @@ const AuthProvider = ({ children }: Props) => {
         }
         setUser({
           ...user,
-          role: userInfo.data.role,
-          userName: userInfo.data.name,
-          componentListInfo: componentList.data,
           userInfo: userInfo.data,
+          role: ROLE.ADMIN,
           viewNamesWithY: []
         })
 

@@ -5,15 +5,15 @@ import IconCustom from 'src/layouts/components/IconCustom'
 
 interface ILayoutControlPanel {
   menuName?: string
-  id?: string
-  selectedTarget?: string
+  companyId?: string
+  companyName?: string
   onClick?: () => void
 }
 
 const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
   menuName = '고객사',
-  id = '',
-  selectedTarget = '',
+  companyId = 'DAINS',
+  companyName = '다인스',
   onClick
 }) => {
   const [isHovered, setIsHovered] = React.useState(false)
@@ -99,7 +99,7 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
               padding: '0px 15px'
             }}
           >
-            <Typography variant='body1'>{id}</Typography>
+            <Typography variant='body1'>{companyId}</Typography>
           </Box>
 
           <Box
@@ -114,7 +114,7 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
               padding: '0px 15px'
             }}
           >
-            <Typography variant='body1'>{selectedTarget}</Typography>
+            <Typography variant='body1'>{companyName}</Typography>
           </Box>
         </Toolbar>
       </AppBar>

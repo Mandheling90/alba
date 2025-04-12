@@ -1,5 +1,4 @@
-import { ROLE, SORT } from 'src/enum/commonEnum'
-import { MUserGroup } from './userSetting/userSettingModel'
+import { SORT } from 'src/enum/commonEnum'
 
 export default interface MResult<T = any> {
   code?: string
@@ -39,13 +38,18 @@ export interface MComponentListInfo {
 }
 
 export interface MUserInfo {
-  id: string
+  userNo: number
+  userId: string
   name: string
-  mobile: string
-  status: number
-  role: ROLE
-  group: MUserGroup
-  email: string
+  mobileNo: string
+  mailAddress: string
+  authId: number
+  authName: string
+  userStatus: number
+  userStatusStr: string
+  companyNo: number
+  companyId: string
+  companyName: string
 }
 
 export interface MVerifyCodeReq {

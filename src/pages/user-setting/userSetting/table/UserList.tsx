@@ -5,12 +5,11 @@ import Grid from '@mui/material/Grid'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
-import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MUserCompanyList } from 'src/model/userSetting/userSettingModel'
-import { useUserArrDel } from 'src/service/setting/userSetting'
+import { useUserArrDel, useUserStateMod } from 'src/service/setting/userSetting'
 import UserAddModModal from '../modal/UserAddModModal'
 
 interface IUserList {
@@ -20,17 +19,12 @@ interface IUserList {
 
 const UserList: FC<IUserList> = ({ data, refetch }) => {
   const { mutateAsync: userDel } = useUserArrDel()
-
-  const { setUserGroupInfo } = useUser()
-
-  const layoutContext = useLayout()
-
+  const { selectedUser, setSelectedUser } = useUser()
+  const { layoutDisplay, setLayoutDisplay, companyId, companyName } = useLayout()
   const [userData, setUserData] = useState<MUserCompanyList[]>([])
-
   const [isOpen, setIsOpen] = useState(false)
   const [selectUser, setSelectUser] = useState<MUserCompanyList>()
-
-  const auth = useAuth()
+  const { mutateAsync: modStateUser } = useUserStateMod()
 
   useEffect(() => {
     if (data) {
@@ -38,11 +32,11 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
     }
   }, [data])
 
-  const userDeleteFn = async (id: string) => {
+  const userDeleteFn = async (id: number) => {
     const result = window.confirm('정말삭제 하시겠습니까?')
 
     if (result) {
-      await userDel({ idList: [id] })
+      await userDel({ userNos: [id] })
       refetch()
     }
   }
@@ -76,17 +70,16 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
           <Switch
             checked={row.userStatus === 1}
             onChange={event => {
-              // modUser({ id: row.id, userStatus: event.target.checked ? 1 : 0 })
-              // const updatedList = userData.map(user => {
-              //   if (user.id === row.id) {
-              //     return { ...user, userStatus: event.target.checked ? 1 : 0 }
-              //   }
-              //   return user
-              // })
-              // setUserData(updatedList)
-            }}
+              modStateUser({ userNo: row.userNo, userStatus: event.target.checked ? 1 : 0 })
+              const updatedList = userData.map(user => {
+                if (user.userId === row.userId) {
+                  return { ...user, userStatus: event.target.checked ? 1 : 0 }
+                }
 
-            // disabled={row.id === auth?.user?.userInfo?.id}
+                return user
+              })
+              setUserData(updatedList)
+            }}
           />
         )
       }
@@ -111,7 +104,7 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
             <IconButton
               sx={{ color: 'text.secondary' }}
               onClick={e => {
-                userDeleteFn(row.id)
+                userDeleteFn(row.userNo)
               }}
             >
               <IconCustom path='settingCard' icon='delete' />
@@ -124,7 +117,7 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
   ]
 
   const handleCheckboxSelection = (selectedRows: any[]) => {
-    setUserGroupInfo(selectedRows)
+    setSelectedUser(selectedRows)
   }
 
   return (
@@ -146,11 +139,11 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
         <Grid item xs={12}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', m: 3 }}>
             <LayoutControlPanel
-              menuName='사용자'
-              id='user'
-              selectedTarget='user'
+              menuName='고객사'
+              companyId={companyId}
+              companyName={companyName}
               onClick={() => {
-                layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
+                setLayoutDisplay(!layoutDisplay)
               }}
             />
 
@@ -173,8 +166,9 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
                   const result = window.confirm('정말삭제 하시겠습니까?')
 
                   if (result) {
-                    // await userDel({ idList: userCheck })
-                    // refetch()
+                    const userNos = selectedUser.map(user => user.userNo)
+                    await userDel({ userNos })
+                    refetch()
                   }
                 }}
               >
@@ -194,7 +188,6 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
                 // userContext.setSelectedGroupId(e.group.id)
               }}
             />
-
             <DividerBar />
           </Box>
         </Grid>

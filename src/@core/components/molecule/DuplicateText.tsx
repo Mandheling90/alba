@@ -1,21 +1,46 @@
 import { Button, InputAdornment, TextField } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface IDuplicateText {
   value: string
-  setValue: (e: React.ChangeEvent<HTMLInputElement>) => void
+  valueOrg: string
+  setValue: (value: string) => void
   placeholder: string
-  duplicateCheck: () => void
-  isDuplicate: boolean
+  duplicateCheck: () => Promise<boolean>
+  setDuplicateCheck: (value: boolean) => void
 }
 
-const DuplicateText: React.FC<IDuplicateText> = ({ value, setValue, placeholder, duplicateCheck, isDuplicate }) => {
+const DuplicateText: React.FC<IDuplicateText> = ({
+  value,
+  valueOrg,
+  setValue,
+  placeholder,
+  duplicateCheck,
+  setDuplicateCheck
+}) => {
+  const [isChange, setIsChange] = useState(false)
+
+  useEffect(() => {
+    setIsChange(false)
+  }, [valueOrg])
+
+  useEffect(() => {
+    if (isChange) {
+      setDuplicateCheck(true)
+    }
+  }, [isChange])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsChange(e.target.value !== valueOrg)
+    setValue(e.target.value)
+  }
+
   return (
     <TextField
       size='small'
       value={value}
       placeholder={placeholder}
-      onChange={setValue}
+      onChange={handleChange}
       InputProps={{
         endAdornment: (
           <InputAdornment position='end'>
@@ -35,8 +60,13 @@ const DuplicateText: React.FC<IDuplicateText> = ({ value, setValue, placeholder,
                   color: '#3A354142'
                 }
               }}
-              onClick={duplicateCheck}
-              disabled={isDuplicate}
+              onClick={async () => {
+                const res = await duplicateCheck()
+                if (res) {
+                  setIsChange(false)
+                }
+              }}
+              disabled={!isChange}
             >
               중복확인
             </Button>

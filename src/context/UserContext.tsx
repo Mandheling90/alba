@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useState } from 'react'
-import { MUserGroup } from 'src/model/userSetting/userSettingModel'
+import { MAuthList, MAuthMenuList, MUserCompanyList, MUserGroup } from 'src/model/userSetting/userSettingModel'
 
 export type UserValuesType = {
   companyNo: number
@@ -9,8 +9,22 @@ export type UserValuesType = {
   setLayoutDisplay: (layoutDisplay: boolean) => void
   userGroupInfo: MUserGroup[]
   setUserGroupInfo: (value: MUserGroup[]) => void
-  selectedGroupId: number | null | 'new'
-  setSelectedGroupId: (id: number | null | 'new') => void
+
+  userCompanyList: MUserCompanyList[]
+  setUserCompanyList: (value: MUserCompanyList[]) => void
+
+  authList: MAuthList[]
+  setAuthList: (value: MAuthList[]) => void
+
+  authMenuList: MAuthMenuList[]
+  setAuthMenuList: (value: MAuthMenuList[]) => void
+
+  selectedUser: MUserCompanyList[]
+  setSelectedUser: (value: MUserCompanyList[]) => void
+
+  selectedAuthList: MAuthList
+  setSelectedAuthList: (value: MAuthList) => void
+
   clear: () => void
 }
 
@@ -23,8 +37,21 @@ const defaultProvider: UserValuesType = {
   setLayoutDisplay: () => null,
   userGroupInfo: [],
   setUserGroupInfo: () => null,
-  selectedGroupId: null,
-  setSelectedGroupId: () => null,
+  selectedAuthList: { authId: 0, name: '', userAuthCount: 0 },
+  setSelectedAuthList: () => null,
+
+  userCompanyList: [],
+  setUserCompanyList: () => null,
+
+  authList: [],
+  setAuthList: () => null,
+
+  authMenuList: [],
+  setAuthMenuList: () => null,
+
+  selectedUser: [],
+  setSelectedUser: () => null,
+
   clear: () => null
 }
 
@@ -39,12 +66,20 @@ const UserProvider = ({ children }: Props) => {
 
   const [layoutDisplay, setLayoutDisplay] = useState(defaultProvider.layoutDisplay)
   const [userGroupInfo, setUserGroupInfo] = useState<MUserGroup[]>(defaultProvider.userGroupInfo)
-  const [selectedGroupId, setSelectedGroupId] = useState<number | null | 'new'>(defaultProvider.selectedGroupId)
+  const [selectedAuthList, setSelectedAuthList] = useState<MAuthList>(defaultProvider.selectedAuthList)
+  const [authList, setAuthList] = useState<MAuthList[]>(defaultProvider.authList)
+  const [authMenuList, setAuthMenuList] = useState<MAuthMenuList[]>(defaultProvider.authMenuList)
+  const [userCompanyList, setUserCompanyList] = useState<MUserCompanyList[]>(defaultProvider.userCompanyList)
+  const [selectedUser, setSelectedUser] = useState<MUserCompanyList[]>(defaultProvider.selectedUser)
 
   const clear = () => {
     setLayoutDisplay(defaultProvider.layoutDisplay)
     setUserGroupInfo(defaultProvider.userGroupInfo)
-    setSelectedGroupId(defaultProvider.selectedGroupId)
+    setSelectedAuthList(defaultProvider.selectedAuthList)
+    setAuthList(defaultProvider.authList)
+    setAuthMenuList(defaultProvider.authMenuList)
+    setUserCompanyList(defaultProvider.userCompanyList)
+    setSelectedUser(defaultProvider.selectedUser)
   }
 
   const values: UserValuesType = {
@@ -54,8 +89,16 @@ const UserProvider = ({ children }: Props) => {
     setLayoutDisplay,
     userGroupInfo,
     setUserGroupInfo,
-    selectedGroupId,
-    setSelectedGroupId,
+    selectedAuthList,
+    setSelectedAuthList,
+    userCompanyList,
+    setUserCompanyList,
+    authList,
+    setAuthList,
+    authMenuList,
+    setAuthMenuList,
+    selectedUser,
+    setSelectedUser,
     clear
   }
 

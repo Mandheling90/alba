@@ -4,11 +4,12 @@ import { Box, Button, IconButton, Switch, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomTable from 'src/@core/components/table/CustomTable'
+import { YN } from 'src/enum/commonEnum'
 import { useAuth } from 'src/hooks/useAuth'
 import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MAuthList } from 'src/model/userSetting/userSettingModel'
-import { useUserArrDel, useUserMod } from 'src/service/setting/userSetting'
+import { useAuthStatusMod, useUserArrDel } from 'src/service/setting/userSetting'
 
 interface IUserList {
   data: MAuthList[]
@@ -17,9 +18,9 @@ interface IUserList {
 
 const RoleList: FC<IUserList> = ({ data, refetch }) => {
   const { mutateAsync: userDel } = useUserArrDel()
-  const { mutateAsync: modUser } = useUserMod()
+  const { mutateAsync: authStatusMod } = useAuthStatusMod()
 
-  const userContext = useUser()
+  const { setSelectedAuthList } = useUser()
 
   const [userData, setUserData] = useState<MAuthList[]>([])
 
@@ -32,11 +33,11 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
     setUserData(data.map(obj => ({ ...obj, display: true })))
   }, [data])
 
-  const userDeleteFn = async (id: string) => {
+  const userDeleteFn = async (id: number) => {
     const result = window.confirm('정말삭제 하시겠습니까?')
 
     if (result) {
-      await userDel({ idList: [id] })
+      await userDel({ userNos: [id] })
       refetch()
     }
   }
@@ -51,16 +52,17 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
       renderCell: ({ row }: any) => {
         return (
           <Switch
-            checked={row.dataStatus === 'Y'}
+            checked={row.dataStatus === YN.Y}
             onChange={event => {
-              // modUser({ id: row.id, status: event.target.checked ? 1 : 0 })
-              // const updatedList = userData.map(user => {
-              //   if (user.authId === row.authId) {
-              //     return { ...user, status: event.target.checked ? 1 : 0 }
-              //   }
-              //   return user
-              // })
-              // setUserData(updatedList)
+              authStatusMod({ authId: row.authId, dataStatus: event.target.checked ? YN.Y : YN.N })
+              const updatedList = userData.map(user => {
+                if (user.authId === row.authId) {
+                  return { ...user, dataStatus: event.target.checked ? YN.Y : YN.N }
+                }
+
+                return user
+              })
+              setUserData(updatedList)
             }}
           />
         )
@@ -75,9 +77,9 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
           <>
             <IconButton
               sx={{ color: 'text.secondary' }}
-              disabled={row.id === auth?.user?.userInfo?.id}
+              disabled={row.id === auth?.user?.userInfo?.authId}
               onClick={e => {
-                userContext.setSelectedGroupId(row.id)
+                setSelectedAuthList({ authId: row.authId, name: row.name, userAuthCount: row.userAuthCount })
               }}
             >
               <IconCustom path='settingCard' icon='pen' />
@@ -85,9 +87,9 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
             </IconButton>
             <IconButton
               sx={{ color: 'text.secondary' }}
-              disabled={row.id === auth?.user?.userInfo?.id}
+              disabled={row.id === auth?.user?.userInfo?.authId}
               onClick={e => {
-                userDeleteFn(row.id)
+                userDeleteFn(row.authId)
               }}
             >
               <IconCustom path='settingCard' icon='delete' />
@@ -101,19 +103,6 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
 
   return (
     <>
-      {/* {isOpen && (
-        <UserAddModModal
-          isOpen={isOpen}
-          selectUser={selectUser}
-          onClose={() => {
-            setIsOpen(false)
-          }}
-          onSubmitAfter={() => {
-            refetch()
-          }}
-        />
-      )} */}
-
       <Card>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', m: 3 }}>
           <Box sx={{ display: 'flex', gap: 2 }}>
@@ -121,7 +110,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
               variant={'contained'}
               startIcon={<IconCustom isCommon icon='plus' />}
               onClick={() => {
-                userContext.setSelectedGroupId('new')
+                setSelectedAuthList({ authId: 0, name: '', userAuthCount: 0 })
               }}
               sx={{
                 clipPath: 'polygon(0 0, 80% 0, 95% 50%, 80% 100%, 0 100%, 0% 50%)',

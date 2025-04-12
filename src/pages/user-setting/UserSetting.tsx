@@ -1,11 +1,12 @@
 // ** MUI Imports
 import { Card, Grid, Typography } from '@mui/material'
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PageHeader from 'src/@core/components/page-header'
 
 import SlidingLayout from 'src/@core/components/layout/SlidingLayout'
+import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
 import { useAuthList, useAuthMenuList, useUserCompanyList } from 'src/service/setting/userSetting'
@@ -15,30 +16,35 @@ import RoleList from './userSetting/table/RoleList'
 import UserList from './userSetting/table/UserList'
 
 const UserSetting: FC = (): React.ReactElement => {
-  const layoutContext = useLayout()
-  const { layoutDisplay } = layoutContext
-
   const userContext = useUser()
-  const { companyNo, setCompanyNo } = userContext
+  const { companyNo, setCompanyNo, authList, setAuthList, selectedAuthList } = userContext
+  const { user } = useAuth()
+  const { layoutDisplay, setCompanyId, setCompanyName } = useLayout()
 
   const { data: UserCompanyList, refetch: UserCompanyListRefetch } = useUserCompanyList({ companyNo })
-  const { data: AuthList, refetch: AuthListRefetch } = useAuthList({ companyNo })
-  const { data: AuthMenuList, refetch: AuthMenuListRefetch } = useAuthMenuList({ companyNo })
+  const { data: AuthListData, refetch: AuthListRefetch } = useAuthList({ companyNo })
+  const { data: AuthMenuList, refetch: AuthMenuListRefetch } = useAuthMenuList({
+    authId: selectedAuthList.authId === 0 ? 1 : selectedAuthList.authId
+  })
 
-  // const { data: user, refetch: userRefetch } = useUserAll()
+  useEffect(() => {
+    if (user?.userInfo?.companyNo && user?.userInfo?.companyId && user?.userInfo?.companyName) {
+      setCompanyNo(user?.userInfo?.companyNo)
+      setCompanyId(user?.userInfo?.companyId)
+      setCompanyName(user?.userInfo?.companyName)
+    }
+  }, [])
 
-  // useEffect(() => {
-  //   if (AuthList?.data) {
-  //     // userContext.setUserGroupInfo(AuthList?.data ?? [])
-  //   }
-  // }, [userContext.setUserGroupInfo, AuthList])
-
-  // if (!user?.data || !AuthList?.data) {
-  //   return <></>
-  // }
+  useEffect(() => {
+    if (AuthListData?.data) {
+      setAuthList(AuthListData?.data ?? [])
+    }
+  }, [setAuthList, AuthListData])
 
   const handleSelectClientGrid = (row: any) => {
     setCompanyNo(row.companyNo)
+    setCompanyId(row.companyId)
+    setCompanyName(row.companyName)
   }
 
   const refetch = () => {
@@ -68,16 +74,10 @@ const UserSetting: FC = (): React.ReactElement => {
       <Grid item xs={12} sx={{ maxHeight: '42vh', overflow: 'auto' }}>
         <Grid container spacing={5}>
           <Grid item xs={5}>
-            <RoleList data={AuthList?.data ?? []} refetch={refetch} />
+            <RoleList data={authList ?? []} refetch={refetch} />
           </Grid>
           <Grid item xs={7}>
-            <RoleAdd
-              data={AuthMenuList?.data ?? []}
-              refetch={refetch}
-              onClose={function (): void {
-                throw new Error('Function not implemented.')
-              }}
-            />
+            <RoleAdd data={AuthMenuList?.data} refetch={refetch} />
           </Grid>
         </Grid>
       </Grid>

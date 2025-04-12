@@ -1,167 +1,153 @@
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import { Box, Button, Card, Checkbox, Typography } from '@mui/material'
+import { GridRenderCellParams } from '@mui/x-data-grid'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import DuplicateText from 'src/@core/components/molecule/DuplicateText'
 import CustomTable from 'src/@core/components/table/CustomTable'
-import { YN } from 'src/enum/commonEnum'
+import { EResultCode, YN } from 'src/enum/commonEnum'
 import { useUser } from 'src/hooks/useUser'
-import { MAuthMenuList } from 'src/model/userSetting/userSettingModel'
-import { useUserGroup, useUserGroupMod, useUserGroupSave } from 'src/service/setting/userSetting'
+import { MAuthMenu, MRole } from 'src/model/userSetting/userSettingModel'
+import { useAddAuth, useAuthDuplicate, useModAuth, useUserGroup } from 'src/service/setting/userSetting'
 
 interface IRoleAddModal {
-  data: MAuthMenuList[]
-  onClose: () => void
+  data?: MAuthMenu
   refetch: () => void
 }
 
-const RoleAdd: FC<IRoleAddModal> = ({ data, onClose, refetch }) => {
+const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
   const { mutateAsync: groupMutate } = useUserGroup()
-  const userContext = useUser()
+  const { companyNo, selectedAuthList } = useUser()
 
-  // const [groupData, setGroupData] = useState<any>(null)
-  // const [rows, setRows] = useState<MAuthMenuList & MRoleList>(data)
+  const [rows, setRows] = useState<MRole[]>([])
+  const [selectedAuthListName, setSelectedAuthListName] = useState('')
+  const [isDuplicate, setIsDuplicate] = useState<boolean>(false)
 
-  // useEffect(() => {
-  //   if (typeof userContext.selectedGroupId === 'number') {
-  //     const fetchData = async () => {
-  //       const res = await groupMutate({ id: userContext.selectedGroupId as number })
-  //       setRows(res.data)
-  //     }
-  //     fetchData()
-  //   } else {
-  //     setRows(defaultValue)
-  //   }
-  // }, [userContext.selectedGroupId])
+  useEffect(() => {
+    if (data) {
+      setRows(data.roles)
+    }
+  }, [data])
 
-  const { mutateAsync: saveGroup } = useUserGroupSave()
-  const { mutateAsync: modGroup } = useUserGroupMod()
+  useEffect(() => {
+    setIsDuplicate(selectedAuthList.authId === 0)
+  }, [selectedAuthList])
 
-  // const [rows, setRows] = useState<MUserGroup & MRoleList>(groupInfo ? groupInfo : defaultValue)
+  useEffect(() => {
+    setSelectedAuthListName(selectedAuthList?.name ?? '')
+  }, [selectedAuthList.name])
 
-  // const updateState = (viewName: string, roleType: string, checked: YN) => {
-  //   setRows(rows => ({
-  //     ...rows,
-  //     roleList: rows.roleList.map(role => {
-  //       // fullAccess 변경 시 모든 권한을 동일하게 업데이트
-  //       if (role.viewName === viewName && roleType === 'fullAccess') {
-  //         return {
-  //           ...role,
-  //           fullAccess: checked,
-  //           readYn: checked,
-  //           createYn: checked,
-  //           updateYn: checked,
-  //           deleteYn: checked
-  //         }
-  //       }
-
-  //       // 개별 권한만 업데이트할 경우
-  //       return role.viewName === viewName ? { ...role, [roleType]: checked } : role
-  //     })
-  //   }))
-  // }
+  const { mutateAsync: authDuplicate } = useAuthDuplicate()
+  const { mutateAsync: addAuth } = useAddAuth()
+  const { mutateAsync: modAuth } = useModAuth()
 
   const columns = [
     {
-      field: 'viewName',
+      field: 'menuName',
       headerName: '메뉴',
       flex: 0.1,
       minWidth: 90
     },
     {
-      field: 'fullAccess',
-      headerName: 'FULL ACCESS',
+      field: '전체권한',
+      headerName: '전체권한',
       flex: 0.1,
       minWidth: 90,
-      renderCell: ({ row }: any) => {
+      renderCell: ({ row }: GridRenderCellParams<MRole>) => {
         return (
           <Checkbox
-            checked={row.fullAccess === YN.Y}
+            checked={row.createYn === YN.Y && row.updateYn === YN.Y && row.deleteYn === YN.Y && row.readYn === YN.Y}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const isChecked = event.target.checked
-
-              // updateState(row.viewName, 'fullAccess', isChecked ? YN.Y : YN.N)
+              setRows(rows =>
+                rows.map(item =>
+                  item.menuId === row.menuId
+                    ? {
+                        ...item,
+                        createYn: isChecked ? YN.Y : YN.N,
+                        updateYn: isChecked ? YN.Y : YN.N,
+                        deleteYn: isChecked ? YN.Y : YN.N,
+                        readYn: isChecked ? YN.Y : YN.N
+                      }
+                    : item
+                )
+              )
             }}
           />
         )
       }
     },
     {
-      field: 'readYn',
-      headerName: 'Read',
+      field: '읽기',
+      headerName: '읽기',
       flex: 0.1,
       minWidth: 90,
-      renderCell: ({ row }: any) => {
-        // if (row.viewName === '모니터링') return null // "모니터링"일 때 숨기기
-
+      renderCell: ({ row }: GridRenderCellParams<MRole>) => {
         return (
           <Checkbox
-            disabled={row.id === 1}
-            checked={row.id === 1 ? true : row.readYn === YN.Y}
+            checked={row.readYn === YN.Y}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const isChecked = event.target.checked
-
-              // updateState(row.viewName, 'readYn', isChecked ? YN.Y : YN.N)
+              setRows(rows =>
+                rows.map(item => (item.menuId === row.menuId ? { ...item, readYn: isChecked ? YN.Y : YN.N } : item))
+              )
             }}
           />
         )
       }
     },
     {
-      field: 'createYn',
-      headerName: 'Add',
+      field: '추가',
+      headerName: '추가',
       flex: 0.1,
       minWidth: 90,
-      renderCell: ({ row }: any) => {
-        // if (row.viewName === '모니터링') return null
-
+      renderCell: ({ row }: GridRenderCellParams<MRole>) => {
         return (
           <Checkbox
             checked={row.createYn === YN.Y}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const isChecked = event.target.checked
-
-              // updateState(row.viewName, 'createYn', isChecked ? YN.Y : YN.N)
+              setRows(rows =>
+                rows.map(item => (item.menuId === row.menuId ? { ...item, readYn: isChecked ? YN.Y : YN.N } : item))
+              )
             }}
           />
         )
       }
     },
     {
-      field: 'updateYn',
-      headerName: 'Edit',
+      field: '수정',
+      headerName: '수정',
       flex: 0.1,
       minWidth: 90,
-      renderCell: ({ row }: any) => {
-        // if (row.viewName === '모니터링') return null
-
+      renderCell: ({ row }: GridRenderCellParams<MRole>) => {
         return (
           <Checkbox
             checked={row.updateYn === YN.Y}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const isChecked = event.target.checked
-
-              // updateState(row.viewName, 'updateYn', isChecked ? YN.Y : YN.N)
+              setRows(rows =>
+                rows.map(item => (item.menuId === row.menuId ? { ...item, updateYn: isChecked ? YN.Y : YN.N } : item))
+              )
             }}
           />
         )
       }
     },
     {
-      field: 'deleteYn',
-      headerName: 'Delete',
+      field: '삭제',
+      headerName: '삭제',
       flex: 0.1,
       minWidth: 90,
-      renderCell: ({ row }: any) => {
-        // if (row.viewName === '모니터링') return null
-
+      renderCell: ({ row }: GridRenderCellParams<MRole>) => {
         return (
           <Checkbox
             checked={row.deleteYn === YN.Y}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               const isChecked = event.target.checked
-
-              // updateState(row.viewName, 'deleteYn', isChecked ? YN.Y : YN.N)
+              setRows(rows =>
+                rows.map(item => (item.menuId === row.menuId ? { ...item, deleteYn: isChecked ? YN.Y : YN.N } : item))
+              )
             }}
           />
         )
@@ -177,38 +163,38 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, onClose, refetch }) => {
     <Card>
       <Box sx={{ display: 'flex', alignItems: 'center', m: 5 }}>
         <Typography variant='h5' component='span' mr={5}>
-          {userContext.selectedGroupId === 'new' ? '새로운 권한 이름' : '권한 이름'}
+          {selectedAuthList.authId === 0 ? '새로운 권한 이름' : '권한 이름'}
         </Typography>
         <DuplicateText
-          value={data[0].menuName}
-          setValue={e => (data[0].menuName = e.target.value)}
+          value={selectedAuthListName}
+          valueOrg={selectedAuthList.name}
+          setValue={value => setSelectedAuthListName(value)}
           placeholder='새로운 권한 이름 입력'
-          duplicateCheck={() => {
-            // TODO: 중복 확인 로직 구현
-            alert('중복 확인 기능이 구현될 예정입니다.')
+          setDuplicateCheck={value => setIsDuplicate(value)}
+          duplicateCheck={async () => {
+            try {
+              const res = await authDuplicate({ authName: selectedAuthListName, companyNo: companyNo })
+              if (res.data?.duplicateYn === YN.Y) {
+                alert('중복된 권한 이름입니다.')
+                setIsDuplicate(true)
+
+                return false
+              } else {
+                alert('사용가능한 권한 이름입니다.')
+                setIsDuplicate(false)
+
+                return true
+              }
+            } catch (err) {
+              return false
+            }
           }}
-          isDuplicate={false}
         />
       </Box>
 
       <Box sx={{ minHeight: '23vh', maxHeight: '23vh', overflow: 'auto' }}>
         <Box sx={{ overflow: 'auto' }}>
-          <CustomTable
-            id='menuId'
-            showMoreButton={true}
-            rows={
-              data
-
-              // rows.roleList
-              //   ? rows.roleList.map((item, index) => ({
-              //       ...item,
-              //       id: index + 1
-              //     }))
-              //   : []
-            }
-            columns={columns}
-            isAllView
-          />
+          <CustomTable id='menuId' showMoreButton={true} rows={rows} columns={columns} isAllView />
 
           <DividerBar />
         </Box>
@@ -220,47 +206,63 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, onClose, refetch }) => {
           type='submit'
           variant='contained'
           onClick={async () => {
-            if (data[0].menuName === '') {
+            if (selectedAuthListName === '') {
               alert('권한 이름을 입력해주세요')
+
+              return
+            } else if (isDuplicate) {
+              alert('중복체크를 해주세요.')
 
               return
             }
 
-            const { ...restData } = data
-
-            // const newRoleList = restData.roleList.map(({ viewName, ...restRole }) => restRole)
-
-            // const param = {
-            //   ...restData,
-            //   roleList: newRoleList
-            // }
-
-            try {
-              if (data[0].menuId > 0) {
-                // 권한 수정
-                // const res = await modGroup(param)
-                // console.log(res)
-                // if (res.code === EResultCode.FAIL) {
-                //   alert('권한 수정에 실패했습니다.')
-                //   return
-                // }
-              } else {
-                // 권한 추가
-                // const res = await saveGroup(param)
-                // console.log(res)
-                // if (res.code === EResultCode.FAIL) {
-                //   alert('권한 추가에 실패했습니다.')
-                //   return
-                // }
+            // 추가
+            if (selectedAuthList.authId === 0) {
+              const req = {
+                companyNo: companyNo,
+                authName: selectedAuthListName,
+                menuRoles: rows.map(item => ({
+                  menuId: item.menuId,
+                  createYn: item.createYn,
+                  updateYn: item.updateYn,
+                  readYn: item.readYn,
+                  deleteYn: item.deleteYn
+                }))
               }
 
-              refetch()
-              onClose()
-            } catch (err) {
-              onClose()
+              const res = await addAuth(req)
 
-              // alert(EErrorMessage.COMMON_ERROR)
+              if (res.code === EResultCode.FAIL) {
+                alert('권한 추가에 실패했습니다.')
+
+                return
+              }
+            } else {
+              // 수정
+              const req = {
+                authId: selectedAuthList.authId,
+                authName: selectedAuthListName,
+                roles: rows.map(item => ({
+                  menuId: item.menuId,
+                  createYn: item.createYn,
+                  updateYn: item.updateYn,
+                  readYn: item.readYn,
+                  deleteYn: item.deleteYn
+                }))
+              }
+
+              const res = await modAuth(req)
+
+              if (res.code === EResultCode.FAIL) {
+                alert('권한 수정에 실패했습니다.')
+
+                return
+              }
             }
+
+            refetch()
+
+            // onClose()
           }}
         >
           저장
@@ -270,7 +272,7 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, onClose, refetch }) => {
           color='secondary'
           variant='outlined'
           onClick={() => {
-            onClose()
+            // onClose()
           }}
         >
           취소

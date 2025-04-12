@@ -10,9 +10,19 @@ interface ISolutionRow {
   onAdd: () => void
   onTypeChange: (serviceId: string, newType: string) => void
   onUpdate: (serviceId: string, field: string, value: string) => void
+  showServiceType?: boolean
 }
 
-const SolutionList: FC<ISolutionRow> = ({ services, onDelete, onAdd, onTypeChange, onUpdate }) => {
+const SolutionList: FC<ISolutionRow> = ({
+  services,
+  onDelete,
+  onAdd,
+  onTypeChange,
+  onUpdate,
+  showServiceType = true
+}) => {
+  console.log(services)
+
   return (
     <Box>
       {services.map(service => (
@@ -22,6 +32,7 @@ const SolutionList: FC<ISolutionRow> = ({ services, onDelete, onAdd, onTypeChang
           onDelete={onDelete}
           onTypeChange={onTypeChange}
           onUpdate={onUpdate}
+          showServiceType={showServiceType}
         />
       ))}
 

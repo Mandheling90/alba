@@ -1,24 +1,20 @@
 import { useMutation, useQuery } from 'react-query'
+import { YN } from 'src/enum/commonEnum'
 import { EPath } from 'src/enum/userSettingEnum'
 
 import MResult from 'src/model/commonModel'
 import {
+  MAuthAdd,
+  MAuthDuplicate,
   MAuthList,
-  MAuthMenuList,
+  MAuthMenu,
   MRoleList,
   MUserArrDelete,
   MUserCompanyList,
-  MUserGroup,
-  MUserMod,
-  MUserSave,
-  UserListAll
+  MUserGroup
 } from 'src/model/userSetting/userSettingModel'
 import API from 'src/module/api'
-import { createDelete, createGet, createPatch, createPost } from 'src/module/reactQuery'
-
-export const useUserGroupList = () => {
-  return useQuery<MResult<MUserGroup[]>>([EPath.USER_GROUP], {})
-}
+import { createDelete, createGet, createPatch, createPost, createPut } from 'src/module/reactQuery'
 
 export const useUserGroup = () => {
   return useMutation((params: { id: number }) => {
@@ -37,6 +33,12 @@ export const useUserGroupMod = () => {
   }, {})
 }
 
+export const useAuthDuplicate = () => {
+  return useMutation((params: { authName: string; companyNo: number }) => {
+    return createGet<MAuthDuplicate>([EPath.AUTH_DUPLICATE, params])
+  }, {})
+}
+
 export const useUserGroupDel = () => {
   return useMutation((params: { groupId: number }) => {
     return API.delete<MResult>(EPath.USER_GROUP + `/${params.groupId}`, {})
@@ -44,17 +46,21 @@ export const useUserGroupDel = () => {
 }
 
 export const useUserSave = () => {
-  return useMutation((params: MUserSave) => {
+  return useMutation((params: MUserCompanyList) => {
     return createPost<MResult>([EPath.USER, params])
   }, {})
 }
+
 export const useUserMod = () => {
-  return useMutation((params: MUserMod) => {
-    return createPatch<MResult>([EPath.USER, params])
+  return useMutation((params: MUserCompanyList) => {
+    return createPut<MResult>([EPath.USER, params])
   }, {})
 }
-export const useUserAll = () => {
-  return useQuery<MResult<UserListAll[]>>([EPath.USER_ALL], {})
+
+export const useUserStateMod = () => {
+  return useMutation((params: { userNo: number; userStatus: number }) => {
+    return createPatch<MResult>([EPath.USER_STATUS, params])
+  }, {})
 }
 
 export const useUserArrDel = () => {
@@ -63,20 +69,32 @@ export const useUserArrDel = () => {
   }, {})
 }
 
-// export const useUserStatusSet = () => {
-//   return useMutation((params: MUserStatus) => {
-//     return API.post<MResult>(EPath.USER_STATUS, { ...params })
-//   }, {})
-// }
-
 export const useAuthList = (params: { companyNo: number }) => {
   return useQuery<MResult<MAuthList[]>>([EPath.AUTH_LIST, params], {})
 }
 
-export const useAuthMenuList = (params: { companyNo: number }) => {
-  return useQuery<MResult<MAuthMenuList[]>>([EPath.AUTH_MENU_LIST, params], {})
+export const useAuthMenuList = (params: { authId: number }) => {
+  return useQuery<MResult<MAuthMenu>>([EPath.AUTH + `/${params.authId}`], {})
+}
+
+export const useAddAuth = () => {
+  return useMutation((params: MAuthAdd) => {
+    return createPost<MResult>([EPath.AUTH, params])
+  }, {})
+}
+
+export const useModAuth = () => {
+  return useMutation((params: MAuthAdd) => {
+    return createPut<MResult>([EPath.AUTH, params])
+  }, {})
 }
 
 export const useUserCompanyList = (params: { companyNo: number }) => {
   return useQuery<MResult<MUserCompanyList[]>>([EPath.USER_COMPANY_LIST + `/${params.companyNo}`], {})
+}
+
+export const useAuthStatusMod = () => {
+  return useMutation((params: { authId: number; dataStatus: YN }) => {
+    return createPatch<MResult>([EPath.AUTH_STATUS, params])
+  }, {})
 }

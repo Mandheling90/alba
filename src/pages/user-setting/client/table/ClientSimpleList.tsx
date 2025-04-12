@@ -13,6 +13,8 @@ interface IClientList {
 }
 
 const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) => {
+  const { user } = useAuth()
+
   const { mutateAsync: userDel } = useUserArrDel()
   const { mutateAsync: modUser } = useUserMod()
 
@@ -83,6 +85,7 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
       isAllView
       selectRowEvent={selectRowEvent}
       enablePointer
+      initialSelectedRow={user?.userInfo?.companyId}
     />
   )
 }

@@ -17,14 +17,14 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { EResultCode, YN } from 'src/enum/commonEnum'
-import { MUserCompanyList, UserListAll } from 'src/model/userSetting/userSettingModel'
+import { EResultCode } from 'src/enum/commonEnum'
+import { MUserCompanyList } from 'src/model/userSetting/userSettingModel'
 
 // import { useUserSettingStore } from 'src/pages/user-setting'
 import { smallPlaceholderStyle } from 'src/@core/styles/TextFieldStyle'
 import { useUser } from 'src/hooks/useUser'
 import { useUserMod, useUserSave } from 'src/service/setting/userSetting'
-import { filterDifferentProperties, handlePhoneChange, isValidEmail, isValidPassword } from 'src/utils/CommonUtil'
+import { isValidPassword } from 'src/utils/CommonUtil'
 
 interface IRoleAddModal {
   isOpen: boolean
@@ -43,82 +43,104 @@ const defaultPassword = {
   password: '',
   passwordConfirm: ''
 }
-const defaultValue = {
-  id: '',
-  email: '',
-  mobile: '',
+
+const defaultValue: MUserCompanyList = {
+  userNo: 0,
+  userId: '',
   name: '',
-  role: '',
-  status: 1,
-  groupId: 0,
-  group: { dataStatus: YN.N, id: 0, name: '', description: '' },
-  ...defaultPassword
+  mobileNo: null,
+  mailAddress: null,
+  authId: 0,
+  authName: null,
+  userStatus: 1,
+  userStatusStr: ''
 }
 
 const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, selectUser, onClose, onSubmitAfter }) => {
-  const { userGroupInfo } = useUser()
+  const { authList, companyNo } = useUser()
 
   const { mutateAsync: saveUser } = useUserSave()
   const { mutateAsync: modUser } = useUserMod()
 
-  const [userInfo, setUserInfo] = useState<UserListAll & IUserInfoAdd>(defaultValue)
-
-  console.log(userGroupInfo)
-  console.log(userInfo)
+  const [userInfo, setUserInfo] = useState<MUserCompanyList>(defaultValue)
+  const [passwordInfo, setPasswordInfo] = useState<IUserInfoAdd>(defaultPassword)
 
   useEffect(() => {
     if (selectUser) {
-      // setUserInfo({ ...selectUser, ...defaultPassword })
+      const processedUser = {
+        ...selectUser,
+        mobileNo: selectUser.mobileNo ? selectUser.mobileNo.replace(/-/g, '') : null
+      }
+      setUserInfo(processedUser)
     }
   }, [selectUser])
 
-  const [errors, setErrors] = useState<Partial<UserListAll & IUserInfoAdd>>({})
+  const [errors, setErrors] = useState<Partial<MUserCompanyList & IUserInfoAdd>>({})
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserInfo({
-      ...userInfo,
-      [e.target.name]: e.target.name === 'mobile' ? handlePhoneChange(e.target.value) : e.target.value
-    })
+    const { name, value } = e.target
+    if (name === 'password' || name === 'passwordConfirm') {
+      setPasswordInfo(prev => ({
+        ...prev,
+        [name]: value
+      }))
+    } else {
+      const processedValue = name === 'mobileNo' ? value.replace(/-/g, '') : value
 
-    setErrors({
-      ...errors,
-      [e.target.name]: ''
-    })
+      setUserInfo(prev => ({
+        ...prev,
+        [name]: processedValue
+      }))
+    }
+
+    setErrors(prev => ({
+      ...prev,
+      [name]: ''
+    }))
   }
 
   const validate = (): boolean => {
     let isValid = true
-    const errors: Partial<UserListAll & IUserInfoAdd> = {}
+    const errors: Partial<MUserCompanyList & IUserInfoAdd> = {}
 
     if (!userInfo.name) {
       errors.name = '이름을 입력해주세요'
       isValid = false
     }
-    if (!userInfo.id) {
-      errors.id = '아이디를 입력해주세요'
+    if (!userInfo.userId) {
+      errors.userId = '아이디를 입력해주세요'
       isValid = false
-    } else if (!isValidEmail(userInfo?.id)) {
-      errors.id = '이메일 형식을 확인해주세요'
+    } else if (userInfo.userId.length > 20) {
+      errors.userId = '아이디는 20자 이하여야 합니다'
+      isValid = false
+    } else if (!/^[a-zA-Z0-9]+$/.test(userInfo.userId)) {
+      errors.userId = '아이디는 영문과 숫자만 사용 가능합니다'
+      isValid = false
+    } else if (!/[a-zA-Z]/.test(userInfo.userId) || !/[0-9]/.test(userInfo.userId)) {
+      errors.userId = '아이디는 영문과 숫자를 모두 포함해야 합니다'
       isValid = false
     }
 
-    // 비밀번호 유효성 검사 추가
-    if (!userInfo.password) {
+    if (!/^[0-9]+$/.test(userInfo.mobileNo ?? '')) {
+      errors.mobileNo = '모바일폰 번호는 숫자만 입력해주세요'
+      isValid = false
+    } else if (userInfo.mobileNo && userInfo.mobileNo.length !== 11) {
+      errors.mobileNo = '모바일폰 번호는 11자리여야 합니다'
+      isValid = false
+    }
+
+    if (!passwordInfo.password) {
       errors.password = '비밀번호를 입력해주세요'
       isValid = false
-    } else if (!isValidPassword(userInfo.password)) {
+    } else if (!isValidPassword(passwordInfo.password)) {
       errors.password = '대소문자, 숫자, 특수문자를 포함하여 8~16자리여야 합니다.'
       isValid = false
     }
-    if (!userInfo.passwordConfirm) {
+    if (!passwordInfo.passwordConfirm) {
       errors.passwordConfirm = '비밀번호를 입력해주세요'
       isValid = false
-    } else if (userInfo?.password !== userInfo?.passwordConfirm) {
+    } else if (passwordInfo?.password !== passwordInfo?.passwordConfirm) {
       errors.passwordConfirm = '비밀번호를 확인해주세요'
-      isValid = false
-    }
-    if (!userInfo.mobile) {
-      errors.mobile = '핸드폰 번호를 입력해주세요'
       isValid = false
     }
 
@@ -176,51 +198,54 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
           <Grid item xs={6}>
             <TextField
               size='small'
-              value={userInfo.mobile}
+              value={userInfo.mobileNo || ''}
               type='tel'
               label='모바일폰 번호'
               placeholder='선택항목 - 모바일 폰 번호 입력(연속숫자)'
               sx={{ width: '100%', ...smallPlaceholderStyle }}
-              name='mobile'
+              name='mobileNo'
               onChange={handleChange}
-              error={!!errors.mobile}
+              error={!!errors.mobileNo}
+              helperText={errors.mobileNo}
             />
           </Grid>
 
           <Grid item xs={6}>
             <TextField
               size='small'
-              value={userInfo.id}
-              type='email'
+              value={userInfo.userId}
               label='사용자 ID'
               placeholder='필수항목 - 국문,영문 및 숫자조합'
               sx={{ width: '100%', ...smallPlaceholderStyle }}
-              name='id'
+              name='userId'
               onChange={handleChange}
-              error={!!errors.id}
+              error={!!errors.userId}
+              helperText={errors.userId}
             />
           </Grid>
           <Grid item xs={6}>
             <TextField
               size='small'
-              value={userInfo.email}
+              value={userInfo.mailAddress || ''}
               type='email'
               label='이메일 주소'
               placeholder='선택항목 - 사용자 이메일 주소 입력'
               sx={{ width: '100%', ...smallPlaceholderStyle }}
-              name='email'
-              InputProps={{
-                readOnly: selectUser ? true : false
-              }}
+              name='mailAddress'
+              InputProps={
+                {
+                  // readOnly: selectUser ? true : false
+                }
+              }
               onChange={handleChange}
-              error={!!errors.email}
+              error={!!errors.mailAddress}
             />
           </Grid>
 
           <Grid item xs={6}>
             <TextField
               size='small'
-              value={userInfo.password}
+              value={passwordInfo.password}
               type='password'
               label='비밀번호'
               placeholder='필수항목 - 대소문자 알파벳, 숫자 및 특수문자 조합 8~16자리'
@@ -238,7 +263,7 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
           <Grid item xs={6}>
             <TextField
               size='small'
-              value={userInfo.passwordConfirm}
+              value={passwordInfo.passwordConfirm}
               type='password'
               label='비밀번호 확인'
               placeholder='필수항목 - 대소문자 알파벳, 숫자 및 특수문자 조합'
@@ -268,15 +293,15 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
                   사용권한
                 </InputLabel>
                 <Select
-                  value={userInfo.group.id.toString()}
+                  value={userInfo.authId.toString()}
                   label='사용권한'
                   size='small'
                   onChange={(event: SelectChangeEvent) => {
-                    setUserInfo({ ...userInfo, group: { ...userInfo.group, id: Number(event.target.value) } })
+                    setUserInfo({ ...userInfo, authId: Number(event.target.value) })
                   }}
                 >
-                  {userGroupInfo.map((item, index) => (
-                    <MenuItem key={index} value={item.id}>
+                  {authList.map((item, index) => (
+                    <MenuItem key={index} value={item.authId}>
                       {item.name}
                     </MenuItem>
                   ))}
@@ -291,9 +316,9 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
                 </Typography>
 
                 <Switch
-                  checked={userInfo.status === 1}
+                  checked={userInfo.userStatus === 1}
                   onChange={() => {
-                    setUserInfo({ ...userInfo, status: userInfo.status === 1 ? 0 : 1 })
+                    setUserInfo({ ...userInfo, userStatus: userInfo.userStatus === 1 ? 0 : 1 })
                   }}
                 />
               </div>
@@ -322,30 +347,26 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
               if (validate()) {
                 try {
                   if (selectUser) {
-                    const req = await filterDifferentProperties(
-                      { ...selectUser, groupId: selectUser.authId },
-                      {
-                        name: userInfo.name,
-                        mobile: userInfo.mobile,
-                        status: userInfo.status,
-                        groupId: userInfo.group.id
-                      }
-                    )
+                    const req = {
+                      ...userInfo,
+                      password: passwordInfo.password ?? '',
+                      mobileNo: userInfo.mobileNo ?? '',
+                      companyNo: companyNo
+                    }
 
-                    const res = await modUser({ id: selectUser.id, password: userInfo.password, ...req })
+                    const res = await modUser({ ...req })
 
                     if (res.code === EResultCode.SUCCESS) {
                       alert('사용자 수정에 성공했습니다.')
                     }
                   } else {
-                    const res = await saveUser({
-                      id: userInfo.id,
-                      name: userInfo.name,
-                      password: userInfo.password ?? '',
-                      mobile: userInfo.mobile,
-                      status: userInfo.status,
-                      groupId: userInfo.group.id
-                    })
+                    const req = {
+                      ...userInfo,
+                      password: passwordInfo.password ?? '',
+                      mobileNo: userInfo.mobileNo ?? '',
+                      companyNo: companyNo
+                    }
+                    const res = await saveUser({ ...req })
 
                     if (res.code === EResultCode.SUCCESS) {
                       alert('새로운 사용자 등록에 성공했습니다.')
@@ -355,8 +376,6 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
                   onClose()
                 } catch (e) {
                   console.log(e)
-
-                  // alert(EErrorMessage.COMMON_ERROR)
                 }
               }
             }}

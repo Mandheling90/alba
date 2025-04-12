@@ -1,8 +1,8 @@
 import { YN } from 'src/enum/commonEnum'
 
 export interface MRole {
-  viewName?: string
-  fullAccess: YN
+  menuId: number
+  menuName?: string
   createYn: YN
   updateYn: YN
   deleteYn: YN
@@ -63,30 +63,12 @@ export interface UserListAll {
   display?: boolean
 }
 
-export interface MUserSave {
-  id: string
-  name: string
-  password: string
-  mobile: string
-  groupId: number
-  status: number
-}
-
-export interface MUserMod {
-  id: string
-  name?: string
-  password?: string
-  mobile?: string
-  groupId?: number
-  status?: number
-}
-
 export interface MUserStatus {
   id: string
   status: number
 }
 export interface MUserArrDelete {
-  idList: string[]
+  userNos: number[]
 }
 
 export interface MAuthList {
@@ -104,8 +86,17 @@ export interface MAuthMenuList {
   readYn: YN
 }
 
+export interface MAuthMenu {
+  authId: number
+  authName: string
+  dataStatus: YN
+  dataStatusStr: string
+  roles: MRole[]
+}
+
 export interface MUserCompanyList {
-  id: string
+  userNo: number
+  userId: string
   name: string
   mobileNo: string | null
   mailAddress: string | null
@@ -113,4 +104,18 @@ export interface MUserCompanyList {
   authName: string | null
   userStatus: number
   userStatusStr: string
+}
+
+export interface MAuthDuplicate {
+  authName: string
+  duplicateYn: YN
+  message: string
+}
+
+export interface MAuthAdd {
+  companyNo?: number
+  authName: string
+  authId?: number
+  menuRoles?: MRole[]
+  roles?: MRole[]
 }

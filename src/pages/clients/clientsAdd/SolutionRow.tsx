@@ -10,6 +10,7 @@ interface ISolutionRow {
   onDelete: (serviceId: string) => void
   onTypeChange: (serviceId: string, newType: string) => void
   onUpdate: (serviceId: string, field: string, value: string) => void
+  showServiceType?: boolean
 }
 
 const serviceOptions = Object.entries(SERVICE_TYPE_LABELS).map(([value, label], index) => ({
@@ -18,18 +19,20 @@ const serviceOptions = Object.entries(SERVICE_TYPE_LABELS).map(([value, label], 
   label: label
 }))
 
-const SolutionRow: FC<ISolutionRow> = ({ service, onDelete, onTypeChange, onUpdate }) => {
+const SolutionRow: FC<ISolutionRow> = ({ service, onDelete, onTypeChange, onUpdate, showServiceType = true }) => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-      <CustomSelectBox
-        value={service.serviceType}
-        onChange={e => onTypeChange(service.id, e.target.value)}
-        options={serviceOptions}
-        width='300px'
+      {showServiceType && (
+        <CustomSelectBox
+          value={service.serviceType}
+          onChange={e => onTypeChange(service.id, e.target.value)}
+          options={serviceOptions}
+          width='300px'
 
-        // placeholder='분석 서비스 선택'
-        // placeholderColor='#757575'
-      />
+          // placeholder='분석 서비스 선택'
+          // placeholderColor='#757575'
+        />
+      )}
 
       <TextField
         size='small'

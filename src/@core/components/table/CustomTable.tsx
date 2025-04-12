@@ -10,6 +10,7 @@ interface IRowSelect {
   onCheckboxSelectionChange?: (selectedRows: any[]) => void
   onDragStart?: (row: any) => void
   onDragEnd?: () => void
+  initialSelectedRow?: any
 }
 
 interface IPageSizeSelect {
@@ -45,13 +46,14 @@ const CustomTable: FC<
   showHeader = true,
   combineTableId,
   onDragStart,
-  onDragEnd
+  onDragEnd,
+  initialSelectedRow
 }) => {
   const { selectedRow: combineselectedRows, setSelectedRowFn } = useContext(TableContext)
   const [pageSize, setPageSize] = useState(isAllView ? 100 : 25)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: isAllView ? 100 : 25 })
   const [selectedCheckboxes, setSelectedCheckboxes] = useState<any[]>([])
-  const [localSelectedRow, setLocalSelectedRow] = useState<any>(null)
+  const [localSelectedRow, setLocalSelectedRow] = useState<any>(initialSelectedRow)
 
   const selectedRow = combineTableId ? combineselectedRows[combineTableId] : localSelectedRow
 

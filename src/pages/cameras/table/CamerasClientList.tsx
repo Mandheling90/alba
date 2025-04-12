@@ -280,8 +280,8 @@ const CamerasClientList: FC = () => {
             <Box sx={{ display: 'flex', gap: 3 }}>
               <LayoutControlPanel
                 menuName='사용자'
-                id='user'
-                selectedTarget='user'
+                companyId='user'
+                companyName='user'
                 onClick={() => {
                   layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
                 }}

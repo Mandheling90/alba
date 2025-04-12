@@ -31,7 +31,7 @@ const WindowCard: FC<WindowCardProps> = ({ title, leftContent, rightContent, chi
         <Box sx={{ flex: 1 }} /> {/* 빈 공간을 만들어 오른쪽 컨텐츠를 우측 정렬 */}
         {rightContent && <Box>{rightContent}</Box>}
       </Box>
-      <CardContent>{children}</CardContent>
+      <CardContent sx={{ textAlign: 'center' }}>{children}</CardContent>
     </Card>
   )
 }

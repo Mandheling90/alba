@@ -153,7 +153,7 @@ const UserDropdown = (props: Props) => {
             <Box sx={{ display: 'flex', ml: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
               <Typography sx={{ fontWeight: 600 }}>{auth?.user?.userInfo?.name}</Typography>
               <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                {auth?.user?.userInfo?.group.name}
+                {auth?.user?.userInfo?.authName}
               </Typography>
             </Box>
           </Box>

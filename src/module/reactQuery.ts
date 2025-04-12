@@ -71,11 +71,12 @@ export const createPost = async <T>(queryKey: any): Promise<AxiosResponseCustom<
   }
 }
 
-export const createPut = async (queryKey: any) => {
+export const createPut = async <T>(queryKey: any): Promise<AxiosResponseCustom<T>> => {
   try {
     const [url, param] = queryKey as [string, any]
+    const res: AxiosResponseCustom<T> = await API.put(url, param ?? {})
 
-    return API.put(url, param ?? {})
+    return res
   } catch (err: any) {
     err.isAlert && alert(err.msg)
     throw err

@@ -5,7 +5,8 @@ export const EPath = {
   VERIFY_CODE: '/auth/verify/code',
   CHANGE_PASSWORD: '/auth/change/password',
   USER_DETAIL: '/user/detail',
-  LOG: '/log'
+  LOG: '/log',
+  USER_INFO: '/user/info'
 } as const
 
 export const ELocalStorageKey = {
