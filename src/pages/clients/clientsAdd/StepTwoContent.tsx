@@ -1,118 +1,100 @@
 import { Box, Button, IconButton, SelectChangeEvent, Typography } from '@mui/material'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
+import { YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { IClientDetail, ISolutionCard } from 'src/model/client/clientModel'
-import SolutionList from './SolutionList'
+import {
+  IAiSolutionCompanyList,
+  IClientDetail,
+  ISolutionList,
+  SOLUTION_USE_SERVER_TYPE
+} from 'src/model/client/clientModel'
+import { useAiSolutionCompanyList } from 'src/service/client/clientService'
+import SolutionServerList from './SolutionServerList'
 
 interface IStepTwoContent {
-  clientData: IClientDetail | null
+  aiData: IAiSolutionCompanyList | undefined
   onDataChange: (data: Partial<IClientDetail>) => void
   disabled: boolean
 }
 
-// 솔루션 타입별 템플릿 설정
-const SOLUTION_TEMPLATES = {
-  '1': {
-    // CVEDIA
-    showServerAdd: true,
-    showServiceType: true,
-    defaultServiceType: '1'
-  },
-  '2': {
-    // ProAI Edge
-    showServerAdd: false,
-    showServiceType: true,
-    defaultServiceType: '2'
-  },
-  '3': {
-    // Nex Real 3D
-    showServerAdd: true,
-    showServiceType: false,
-    defaultServiceType: ''
-  },
-  '4': {
-    // ProAi Server
-    showServerAdd: true,
-    showServiceType: true,
-    defaultServiceType: '4'
-  },
-  '5': {
-    // VCA
-    showServerAdd: false,
-    showServiceType: true,
-    defaultServiceType: '5'
-  },
-  '6': {
-    // SAFR
-    showServerAdd: true,
-    showServiceType: false,
-    defaultServiceType: ''
-  },
-  '7': {
-    // FA Signage
-    showServerAdd: false,
-    showServiceType: true,
-    defaultServiceType: '7'
-  },
-  '8': {
-    // FA Gate
-    showServerAdd: false,
-    showServiceType: true,
-    defaultServiceType: '8'
-  }
+export const isServerAddable = (solutionName: string) => {
+  return (
+    solutionName === SOLUTION_USE_SERVER_TYPE.CVEDIA ||
+    solutionName === SOLUTION_USE_SERVER_TYPE.NEXREALAIBOX ||
+    solutionName === SOLUTION_USE_SERVER_TYPE.SAFR ||
+    solutionName === SOLUTION_USE_SERVER_TYPE.FA_GATE ||
+    solutionName === SOLUTION_USE_SERVER_TYPE.PROAI_SERVER
+  )
 }
 
-// 첫 번째 스텝 컴포넌트
-const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange, disabled }) => {
-  const [solutionCards, setSolutionCards] = useState<ISolutionCard[]>(clientData?.solutions || [])
-
-  console.log(solutionCards)
-
-  useEffect(() => {
-    if (clientData?.solutions) {
-      setSolutionCards(clientData.solutions)
-    }
-  }, [clientData])
+const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled }) => {
+  const { data, refetch } = useAiSolutionCompanyList()
+  const [solutionList, setSolutionList] = useState<ISolutionList[]>([])
+  const originalAiData = useRef<IAiSolutionCompanyList | undefined>(undefined)
 
   useEffect(() => {
-    onDataChange({ solutions: solutionCards })
-  }, [solutionCards])
+    setSolutionList(aiData?.solutionList || [])
+    originalAiData.current = aiData
+  }, [aiData])
+
+  useEffect(() => {
+    onDataChange({ solutions: solutionList } as any)
+  }, [solutionList])
 
   const handleAddSolution = () => {
-    setSolutionCards(prev => [
+    setSolutionList(prev => [
       ...prev,
       {
-        id: prev.length,
-        selectedSolution: '0',
-        services: [{ id: '0', name: '', serviceType: '' }]
+        aiSolutionId: prev.length + 1,
+        aiSolutionName: 'CVEDIA',
+        companySolutionId: prev.length + 1,
+        serverList: []
       }
     ])
   }
 
   const handleDeleteSolution = (index: number) => {
-    setSolutionCards(prev => prev.filter((_, i) => i !== index))
+    setSolutionList(prev => prev.filter((_, i) => i !== index))
   }
 
-  const handleSelectChange = (index: number) => (event: SelectChangeEvent) => {
-    const newSolutionType = event.target.value
-    const template = SOLUTION_TEMPLATES[newSolutionType as keyof typeof SOLUTION_TEMPLATES]
+  const handleSelectChange = (companySolutionId: number) => (event: SelectChangeEvent) => {
+    const aiSolutionId = event.target.value
+    const aiSolutionName = data?.data?.find(item => item.id.toString() === aiSolutionId)?.name || ''
 
-    setSolutionCards(prev =>
-      prev.map((card, i) => {
-        if (i === index) {
-          return {
-            ...card,
-            selectedSolution: newSolutionType,
-            services: [
-              {
-                id: '0',
-                name: '',
-                serviceType: template?.defaultServiceType || ''
-              }
-            ]
+    setSolutionList(prev =>
+      prev.map(card => {
+        if (card.companySolutionId === companySolutionId) {
+          console.log('Updating solution with companySolutionId:', companySolutionId)
+
+          if (isServerAddable(aiSolutionName)) {
+            return {
+              ...card,
+              aiSolutionId: parseInt(aiSolutionId),
+              aiSolutionName: aiSolutionName,
+              serverList: []
+            }
+          } else {
+            return {
+              ...card,
+              aiSolutionId: parseInt(aiSolutionId),
+              aiSolutionName: aiSolutionName,
+              serverList: [
+                {
+                  serverId: 0,
+                  serverName: '',
+                  serverIp: '',
+                  aiBoxId: null,
+                  aiBoxPassword: null,
+                  safrEventUrl: null,
+                  safrId: null,
+                  safrPassword: null,
+                  instanceList: []
+                }
+              ]
+            }
           }
         }
 
@@ -121,13 +103,202 @@ const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange, disable
     )
   }
 
-  // 필수값 체크 함수 추가
+  const handleAddServer = (solutionIndex: number) => {
+    setSolutionList(prev =>
+      prev.map((solution, i) => {
+        if (i === solutionIndex) {
+          const newServerId =
+            solution.serverList.length > 0 ? Math.max(...solution.serverList.map(s => s.serverId)) + 1 : 1
+
+          return {
+            ...solution,
+            serverList: [
+              ...solution.serverList,
+              {
+                serverId: newServerId,
+                serverName: '',
+                serverIp: '',
+                aiBoxId: null,
+                aiBoxPassword: null,
+                safrEventUrl: null,
+                safrId: null,
+                safrPassword: null,
+                instanceList: []
+              }
+            ]
+          }
+        }
+
+        return solution
+      })
+    )
+  }
+
+  const handleAddInstance = (solutionIndex: number, serverId: number) => {
+    setSolutionList(prev =>
+      prev.map((solution, i) => {
+        if (i === solutionIndex) {
+          return {
+            ...solution,
+            serverList: solution.serverList.map(server => {
+              if (server.serverId === serverId) {
+                const newInstanceId =
+                  server.instanceList.length > 0
+                    ? Math.max(...server.instanceList.map(inst => inst.instanceId || 0)) + 1
+                    : 1
+
+                return {
+                  ...server,
+                  instanceList: [
+                    ...server.instanceList,
+                    {
+                      instanceId: newInstanceId,
+                      instanceName: '',
+                      aiServiceId: 0,
+                      aiServiceName: '',
+                      cameraGroupId: '',
+                      cameraNo: 0,
+                      cameraId: '',
+                      cameraName: '',
+                      cameraIp: '',
+                      areaNameList: []
+                    }
+                  ]
+                }
+              }
+
+              return server
+            })
+          }
+        }
+
+        return solution
+      })
+    )
+  }
+
+  const handleDeleteInstance = (solutionIndex: number, serverId: number, instanceId: number) => {
+    setSolutionList(prev =>
+      prev.map((solution, i) => {
+        if (i === solutionIndex) {
+          return {
+            ...solution,
+            serverList: solution.serverList.map(server => {
+              if (server.serverId === serverId) {
+                return {
+                  ...server,
+                  instanceList: server.instanceList.filter(instance => instance.instanceId !== instanceId)
+                }
+              }
+
+              return server
+            })
+          }
+        }
+
+        return solution
+      })
+    )
+  }
+
+  const handleUpdateInstance = (
+    companySolutionId: number,
+    serverId: number,
+    instanceId: number,
+    field: string,
+    value: any
+  ) => {
+    setSolutionList(prev =>
+      prev.map(solution => {
+        if (solution.companySolutionId === companySolutionId) {
+          return {
+            ...solution,
+            serverList: solution.serverList.map(server => {
+              if (server.serverId === serverId) {
+                return {
+                  ...server,
+                  instanceList: server.instanceList.map(instance => {
+                    if (instance.instanceId === instanceId) {
+                      return {
+                        ...instance,
+                        [field]: value
+                      }
+                    }
+
+                    return instance
+                  })
+                }
+              }
+
+              return server
+            })
+          }
+        }
+
+        return solution
+      })
+    )
+  }
+
+  const handleUpdateServer = (companySolutionId: number, serverId: number, field: string, value: any) => {
+    setSolutionList(prev =>
+      prev.map(solution => {
+        if (solution.companySolutionId === companySolutionId) {
+          return {
+            ...solution,
+            serverList: solution.serverList.map(server => {
+              if (server.serverId === serverId) {
+                return {
+                  ...server,
+                  [field]: value
+                }
+              }
+
+              return server
+            })
+          }
+        }
+
+        return solution
+      })
+    )
+  }
+
+  const handleRevertToOriginalState = (companySolutionId: number) => {
+    const originalSolution = originalAiData.current?.solutionList?.find(
+      solution => solution.companySolutionId === companySolutionId
+    )
+
+    if (originalSolution) {
+      setSolutionList(prev =>
+        prev.map(card => (card.companySolutionId === companySolutionId ? { ...originalSolution } : card))
+      )
+    } else {
+      setSolutionList(prev =>
+        prev.map(card =>
+          card.companySolutionId === companySolutionId
+            ? {
+                ...card,
+                aiSolutionId: 0,
+                serverList: []
+              }
+            : card
+        )
+      )
+    }
+  }
+
   const isValidSolution = (index: number) => {
-    const card = solutionCards[index]
+    const card = solutionList[index]
     if (!card) return false
 
-    // 모든 서비스의 name과 serviceType이 입력되었는지 확인
-    return card.services.every(service => service.name.trim() !== '' && service.serviceType.trim() !== '')
+    if (card.aiSolutionId === 0) return false
+
+    if (card.serverList.length === 0) return false
+
+    return card.serverList.every(server => {
+      return true
+    })
   }
 
   return (
@@ -141,13 +312,13 @@ const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange, disable
       <Box mb={5}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Typography variant='h5'>
-            {clientData?.solutions?.length === 0 ? (
+            {solutionList?.length === 0 ? (
               '해당 고객사에 등록된 솔루션이 없습니다'
             ) : (
               <>
-                총 {clientData?.solutions?.length || 0}개의 분석 솔루션과
-                {clientData?.solutions?.reduce((acc, sol) => acc + sol.services.length, 0) || 0}개의 서비스가 등록되어
-                있습니다.
+                총 {solutionList?.length || 0}개의 분석 솔루션과
+                {solutionList?.reduce((acc: number, sol: ISolutionList) => acc + sol.serverList.length, 0) || 0}
+                개의 서비스가 등록되어 있습니다.
               </>
             )}
           </Typography>
@@ -160,43 +331,48 @@ const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange, disable
         </Box>
         <Box>
           <Typography>
-            {clientData?.solutions?.length === 0
+            {solutionList?.length === 0
               ? '해당 고객사에 등록된 서비스가 없습니다'
               : 'ProAI Edge는 카운팅 서비스에, CVEDIA는 밀집도분석 서비스에 사용됩니다.'}
           </Typography>
         </Box>
       </Box>
 
-      {solutionCards.map((card, index) => (
-        <Box key={card.id} mb={10}>
+      {solutionList.map((card, index) => (
+        <Box key={`${card.companySolutionId}_${index}`} mb={10}>
           <WindowCard
             leftContent={
-              <CustomSelectBox
-                value={card.selectedSolution}
-                onChange={handleSelectChange(index)}
-                options={[
-                  { key: '0', value: '0', label: '분석솔루션선택' },
-                  { key: '1', value: '1', label: 'CVEDIA' },
-                  { key: '2', value: '2', label: 'ProAI Edge' },
-                  { key: '3', value: '3', label: 'Nex Real 3D' },
-                  { key: '4', value: '4', label: 'ProAi Server' },
-                  { key: '5', value: '5', label: 'VCA' },
-                  { key: '6', value: '6', label: 'SAFR' },
-                  { key: '7', value: '7', label: 'FA Signage' },
-                  { key: '8', value: '8', label: 'FA Gate' }
-                ]}
-              />
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                <Box>
+                  <CustomSelectBox
+                    value={card.aiSolutionId.toString()}
+                    onChange={handleSelectChange(card.companySolutionId)}
+                    options={
+                      data?.data
+                        ?.filter(item => item.dataStatus === YN.Y)
+                        .map(item => ({
+                          key: `${item.id}_${item.name}`,
+                          value: item.id.toString(),
+                          label: item.name
+                        })) || []
+                    }
+                  />
+                </Box>
+                <Box>
+                  <Typography>총 1대의 카메라 항목이 있습니다.</Typography>
+                </Box>
+              </Box>
             }
             rightContent={
               <>
-                {SOLUTION_TEMPLATES[card.selectedSolution as keyof typeof SOLUTION_TEMPLATES]?.showServerAdd && (
+                {isServerAddable(card.aiSolutionName) && (
                   <Button
                     variant='contained'
                     startIcon={<IconCustom isCommon icon='plus' />}
-                    onClick={handleAddSolution}
+                    onClick={() => handleAddServer(index)}
                     sx={{ height: '20px', padding: '12px', mr: 1 }}
                   >
-                    서버 추가
+                    {card.aiSolutionName === SOLUTION_USE_SERVER_TYPE.NEXREALAIBOX ? 'AIBOX 추가' : '서버 추가'}
                   </Button>
                 )}
                 <IconButton onClick={() => handleDeleteSolution(index)}>
@@ -205,65 +381,29 @@ const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange, disable
               </>
             }
           >
-            {card.selectedSolution === '0' ? (
+            {card.aiSolutionId === 0 ? (
               <Typography>분석솔루션을 선택해주세요.</Typography>
             ) : (
-              <SolutionList
-                services={card.services}
-                showServiceType={
-                  SOLUTION_TEMPLATES[card.selectedSolution as keyof typeof SOLUTION_TEMPLATES]?.showServiceType
-                }
+              <SolutionServerList
+                solutionList={card}
                 onDelete={serviceId => {
-                  setSolutionCards(prev =>
+                  setSolutionList(prev =>
                     prev.map((c, i) =>
-                      i === index ? { ...c, services: c.services.filter(s => s.id !== serviceId) } : c
+                      i === index ? { ...c, serverList: c.serverList.filter(s => s.serverId !== serviceId) } : c
                     )
                   )
                 }}
-                onAdd={() => {
-                  const template = SOLUTION_TEMPLATES[card.selectedSolution as keyof typeof SOLUTION_TEMPLATES]
-                  setSolutionCards(prev =>
-                    prev.map((c, i) =>
-                      i === index
-                        ? {
-                            ...c,
-                            services: [
-                              ...c.services,
-                              {
-                                id: String(c.services.length + 1),
-                                name: ``,
-                                serviceType: template?.defaultServiceType || ''
-                              }
-                            ]
-                          }
-                        : c
-                    )
-                  )
-                }}
-                onTypeChange={(serviceId, newType) => {
-                  setSolutionCards(prev =>
-                    prev.map((c, i) =>
-                      i === index
-                        ? {
-                            ...c,
-                            services: c.services.map(s => (s.id === serviceId ? { ...s, serviceType: newType } : s))
-                          }
-                        : c
-                    )
-                  )
-                }}
-                onUpdate={(serviceId, field, value) => {
-                  setSolutionCards(prev =>
-                    prev.map((c, i) =>
-                      i === index
-                        ? {
-                            ...c,
-                            services: c.services.map(s => (s.id === serviceId ? { ...s, [field]: value } : s))
-                          }
-                        : c
-                    )
-                  )
-                }}
+                onAdd={() => handleAddServer(index)}
+                onAddInstance={(serverId: number) => handleAddInstance(index, serverId)}
+                onDeleteInstance={(serverId: number, instanceId: number) =>
+                  handleDeleteInstance(index, serverId, instanceId)
+                }
+                onUpdateInstance={(serverId, instanceId, field, value) =>
+                  handleUpdateInstance(card.companySolutionId, serverId, instanceId, field, value)
+                }
+                onUpdateServer={(serverId, field, value) =>
+                  handleUpdateServer(card.companySolutionId, serverId, field, value)
+                }
               />
             )}
           </WindowCard>
@@ -290,19 +430,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ clientData, onDataChange, disable
                 size='medium'
                 color='secondary'
                 variant='outlined'
-                onClick={() => {
-                  setSolutionCards(prev =>
-                    prev.map((c, i) =>
-                      i === index
-                        ? {
-                            ...c,
-                            selectedSolution: '0',
-                            services: [{ id: '1', name: '', serviceType: '' }]
-                          }
-                        : c
-                    )
-                  )
-                }}
+                onClick={() => handleRevertToOriginalState(card.companySolutionId)}
                 disabled={false}
               >
                 취소

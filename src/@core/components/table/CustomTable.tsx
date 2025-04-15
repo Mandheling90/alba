@@ -1,5 +1,5 @@
 import { Box, Button, Typography } from '@mui/material'
-import { DataGrid } from '@mui/x-data-grid'
+import { DataGrid } from 'custom_modules/@mui_custom/x-data-grid'
 import { FC, useContext, useState } from 'react'
 import { TableContext } from 'src/context/TableContext'
 import styled from 'styled-components'

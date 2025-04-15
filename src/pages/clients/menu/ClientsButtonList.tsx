@@ -3,13 +3,16 @@ import { useRouter } from 'next/router'
 import { FC } from 'react'
 import { useClients } from 'src/hooks/useClients'
 import IconCustom from 'src/layouts/components/IconCustom'
+import { useClientDelete } from 'src/service/client/clientService'
 
 interface IKioskButtonList {
   refetch: () => void
 }
 
 const ClientsButtonList: FC<IKioskButtonList> = ({ refetch }) => {
-  const clients = useClients()
+  const { mutateAsync: deleteClient } = useClientDelete()
+
+  const { selectClientData } = useClients()
   const router = useRouter()
 
   return (
@@ -32,10 +35,8 @@ const ClientsButtonList: FC<IKioskButtonList> = ({ refetch }) => {
         sx={{ ml: 3 }}
         startIcon={<IconCustom isCommon path='clients' icon='userDelete' />}
         onClick={async () => {
-          // await kiosk.kioskDelete(kiosk.checkedKioskIds, undefined, errorCallback => {
-          //   alert(errorCallback.message)
-          // })
-          // refetch()
+          await deleteClient({ companyNos: selectClientData.map(client => client.companyNo) })
+          refetch()
         }}
       >
         고객사 삭제

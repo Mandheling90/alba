@@ -107,12 +107,6 @@ export interface MUserCompanyList {
   userStatusStr: string
 }
 
-export interface MAuthDuplicate {
-  authName: string
-  duplicateYn: YN
-  message: string
-}
-
 export interface MAuthAdd {
   companyNo?: number
   authName: string

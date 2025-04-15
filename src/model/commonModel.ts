@@ -1,4 +1,4 @@
-import { SORT } from 'src/enum/commonEnum'
+import { SORT, YN } from 'src/enum/commonEnum'
 
 export default interface MResult<T = any> {
   code?: string
@@ -79,4 +79,10 @@ interface MSubComponents {
 
 export interface MOrder {
   sort: SORT
+}
+
+export interface MAuthDuplicate {
+  authName: string
+  duplicateYn: YN
+  message: string
 }

@@ -1,19 +1,21 @@
 import { Box, Button, Grid, SelectChangeEvent, TextField, Typography, useTheme } from '@mui/material'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { ReactDatePickerProps } from 'react-datepicker'
 import PickersRange from 'src/@core/components/atom/PickersRange'
 import SwitchCustom from 'src/@core/components/atom/SwitchCustom'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 import { grayTextBackground, grayTextFieldStyle, requiredTextFieldStyle } from 'src/@core/styles/TextFieldStyle'
-import { IClient, IClientDetail } from 'src/model/client/clientModel'
+import { YN } from 'src/enum/commonEnum'
+import { IClientDetail } from 'src/model/client/clientModel'
 
 interface IStepOneContentProps {
   clientData: IClientDetail | null
-  onDataChange: (data: Partial<IClient>) => void
+  onDataChange: (data: Partial<IClientDetail>) => void
   onNext: () => void
   onReset: () => void
   onValidationChange?: (isValid: boolean) => void
+  onDuplicateCheck: () => Promise<boolean>
 }
 
 // 첫 번째 스텝 컴포넌트
@@ -22,7 +24,8 @@ const StepOneContent: FC<IStepOneContentProps> = ({
   onDataChange,
   onNext,
   onReset,
-  onValidationChange
+  onValidationChange,
+  onDuplicateCheck
 }) => {
   const handleChange = (field: keyof IClientDetail) => (event: React.ChangeEvent<HTMLInputElement>) => {
     onDataChange({ [field]: event.target.value })
@@ -37,7 +40,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
   }
 
   const handleDateChange = (start: string, end: string) => {
-    onDataChange({ contractPeriod: `${start} ~ ${end}` })
+    onDataChange({ expireDate: `${start} ~ ${end}` })
   }
 
   const theme = useTheme()
@@ -48,11 +51,26 @@ const StepOneContent: FC<IStepOneContentProps> = ({
   const checkRequiredFields = (): boolean => {
     if (!clientData) return false
 
-    const isValid = Boolean(clientData.clientId && clientData.clientName && clientData.reportReceiver)
+    const isValid = Boolean(clientData.companyId && clientData.companyName && clientData.reportEmail)
     onValidationChange?.(isValid)
 
     return isValid
   }
+
+  const [companyIdOrg, setCompanyIdOrg] = useState(clientData?.companyId || '')
+  const [clientDataOrg, setClientDataOrg] = useState<IClientDetail | null>(null)
+
+  useEffect(() => {
+    if ((clientData?.companyNo ?? 0) > 0) {
+      if (!clientDataOrg) {
+        setClientDataOrg(clientData)
+      }
+
+      if (companyIdOrg === '') {
+        setCompanyIdOrg(clientData?.companyId || '')
+      }
+    }
+  }, [clientData])
 
   return (
     <>
@@ -66,12 +84,23 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                 </Typography>
                 <TextField
                   size='small'
-                  value={clientData?.clientId || ''}
-                  onChange={handleChange('clientId')}
+                  value={clientData?.companyId || ''}
+                  onChange={handleChange('companyId')}
                   placeholder='필수입력'
                   sx={{ ...requiredTextFieldStyle, ...grayTextFieldStyle }}
                 />
-                <Button size='medium' variant='contained'>
+                <Button
+                  size='medium'
+                  variant='contained'
+                  disabled={companyIdOrg === clientData?.companyId}
+                  onClick={async () => {
+                    const isDuplicate = await onDuplicateCheck()
+
+                    if (!isDuplicate) {
+                      setCompanyIdOrg(clientData?.companyId || '')
+                    }
+                  }}
+                >
                   중복확인
                 </Button>
               </Box>
@@ -85,8 +114,8 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                 <TextField
                   size='small'
                   sx={{ width: '100%', ...requiredTextFieldStyle, ...grayTextFieldStyle }}
-                  value={clientData?.clientName || ''}
-                  onChange={handleChange('clientName')}
+                  value={clientData?.companyName || ''}
+                  onChange={handleChange('companyName')}
                   placeholder='필수입력'
                 />
               </Box>
@@ -115,8 +144,8 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                 <TextField
                   size='small'
                   sx={{ width: '100%', ...grayTextFieldStyle }}
-                  value={clientData?.businessNumber || ''}
-                  onChange={handleChange('businessNumber')}
+                  value={clientData?.brn || ''}
+                  onChange={handleChange('brn')}
                   placeholder='선택입력'
                 />
               </Box>
@@ -128,14 +157,14 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   사업자 현재 상태
                 </Typography>
                 <CustomSelectBox
-                  value={clientData?.businessStatus || ''}
-                  onChange={handleSelectChange('businessStatus')}
+                  value={String(clientData?.companyStatus || '')}
+                  onChange={handleSelectChange('companyStatus')}
                   options={[
-                    { key: '1', value: '1', label: '계속사업자' },
-                    { key: '2', value: '2', label: '휴업' },
-                    { key: '3', value: '3', label: '폐업' },
-                    { key: '4', value: '4', label: '말소' },
-                    { key: '5', value: '5', label: '간주폐업' }
+                    { key: '1', value: '0', label: '계속사업자' },
+                    { key: '2', value: '1', label: '휴업' },
+                    { key: '3', value: '2', label: '폐업' },
+                    { key: '4', value: '3', label: '말소' },
+                    { key: '5', value: '4', label: '간주폐업' }
                   ]}
                   backgroundColor={grayTextBackground}
                   placeholder='상태를 선택하세요'
@@ -170,7 +199,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                 <SwitchCustom
                   width={100}
                   switchName={['사용', '미사용']}
-                  selected={clientData?.reportGeneration || false}
+                  selected={clientData?.reportGeneration === YN.Y}
                   onChange={handleSwitchChange('reportGeneration')}
                   activeColor={['#9155FD', '#696969']}
                 />
@@ -185,8 +214,8 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                 <TextField
                   size='small'
                   sx={{ width: '100%', ...requiredTextFieldStyle, ...grayTextFieldStyle }}
-                  value={clientData?.reportReceiver || ''}
-                  onChange={handleChange('reportReceiver')}
+                  value={clientData?.reportEmail || ''}
+                  onChange={handleChange('reportEmail')}
                   placeholder='이메일 주소입력 필수'
                 />
               </Box>
@@ -200,7 +229,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                 <SwitchCustom
                   width={100}
                   switchName={['활성', '비활성']}
-                  selected={clientData?.accountStatus || false}
+                  selected={clientData?.accountStatus === YN.Y}
                   onChange={handleSwitchChange('accountStatus')}
                   activeColor={['#9155FD', '#F57A52']}
                 />
@@ -212,7 +241,21 @@ const StepOneContent: FC<IStepOneContentProps> = ({
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <div className='button-wrapper'>
-          <Button size='medium' variant='contained' onClick={onNext} sx={{ mr: 4 }} disabled={!checkRequiredFields()}>
+          <Button
+            size='medium'
+            variant='contained'
+            onClick={() => {
+              if (companyIdOrg !== clientData?.companyId) {
+                alert('중복확인을 해주세요')
+
+                return
+              }
+
+              onNext()
+            }}
+            sx={{ mr: 4 }}
+            disabled={!checkRequiredFields()}
+          >
             등록
           </Button>
 
@@ -221,7 +264,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
             color='secondary'
             variant='outlined'
             onClick={() => {
-              onReset()
+              clientDataOrg && onDataChange(clientDataOrg)
             }}
           >
             취소

@@ -2,10 +2,9 @@ import { useMutation, useQuery } from 'react-query'
 import { YN } from 'src/enum/commonEnum'
 import { EPath } from 'src/enum/userSettingEnum'
 
-import MResult from 'src/model/commonModel'
+import MResult, { MAuthDuplicate } from 'src/model/commonModel'
 import {
   MAuthAdd,
-  MAuthDuplicate,
   MAuthList,
   MAuthMenu,
   MRoleList,

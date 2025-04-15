@@ -184,13 +184,12 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
           duplicateCheck={async () => {
             try {
               const res = await authDuplicate({ authName: selectedAuthListName, companyNo: companyNo })
+              alert(res.data.message)
               if (res.data?.duplicateYn === YN.Y) {
-                alert('중복된 권한 이름입니다.')
                 setIsDuplicate(true)
 
                 return false
               } else {
-                alert('사용가능한 권한 이름입니다.')
                 setIsDuplicate(false)
 
                 return true

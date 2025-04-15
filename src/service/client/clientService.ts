@@ -1,415 +1,72 @@
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { EPath } from 'src/enum/clientEnum'
 
-import { IClient, IClientDetail, MCompanySearch, SERVICE_TYPE, SOLUTION_TYPE } from 'src/model/client/clientModel'
-import MResult from 'src/model/commonModel'
+import {
+  IAiSolutionCompanyList,
+  IAiSolutionService,
+  IClientDetail,
+  MAiSolutionCompanyList,
+  MClientList,
+  MClientListReq,
+  MCompanySearch
+} from 'src/model/client/clientModel'
+import MResult, { MAuthDuplicate } from 'src/model/commonModel'
+import { createDelete, createGet, createPost, createPut } from 'src/module/reactQuery'
 
-// 샘플 데이터
-export const sampleClientsList: IClient[] = [
-  {
-    clientId: 'CLIENT001',
-    clientName: '고객사 1',
-    address: '서울시 강남구 테헤란로 1',
-    serviceTypes: [SERVICE_TYPE.COUNTING],
-    solutionTypes: [SOLUTION_TYPE.CVEDIA],
-    analysisChannels: 1,
-    reportGeneration: true,
-    reportEmail: 'client1@example.com',
-    accountStatus: true,
-    businessNumber: '111-11-11111',
-    businessStatus: '1',
-    contractPeriod: '2024-01-01 ~ 2025-01-01',
-    reportReceiver: 'receiver1@example.com',
-    clientAccount: 'account1',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT002',
-    clientName: '고객사 2',
-    address: '서울시 강남구 테헤란로 2',
-    serviceTypes: [SERVICE_TYPE.MONITORING],
-    solutionTypes: [SOLUTION_TYPE.PROAI_EDGE],
-    analysisChannels: 2,
-    reportGeneration: false,
-    reportEmail: 'client2@example.com',
-    accountStatus: false,
-    businessNumber: '222-22-22222',
-    businessStatus: '2',
-    contractPeriod: '2024-02-01 ~ 2025-02-01',
-    reportReceiver: 'receiver2@example.com',
-    clientAccount: 'account2',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT003',
-    clientName: '고객사 3',
-    address: '서울시 강남구 테헤란로 3',
-    serviceTypes: [SERVICE_TYPE.COUNTING, SERVICE_TYPE.MONITORING],
-    solutionTypes: [SOLUTION_TYPE.CVEDIA, SOLUTION_TYPE.PROAI_EDGE],
-    analysisChannels: 3,
-    reportGeneration: true,
-    reportEmail: 'client3@example.com',
-    accountStatus: true,
-    businessNumber: '333-33-33333',
-    businessStatus: '1',
-    contractPeriod: '2024-03-01 ~ 2025-03-01',
-    reportReceiver: 'receiver3@example.com',
-    clientAccount: 'account3',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT004',
-    clientName: '고객사 4',
-    address: '서울시 강남구 테헤란로 4',
-    serviceTypes: [SERVICE_TYPE.COUNTING],
-    solutionTypes: [SOLUTION_TYPE.CVEDIA],
-    analysisChannels: 4,
-    reportGeneration: false,
-    reportEmail: 'client4@example.com',
-    accountStatus: false,
-    businessNumber: '444-44-44444',
-    businessStatus: '2',
-    contractPeriod: '2024-04-01 ~ 2025-04-01',
-    reportReceiver: 'receiver4@example.com',
-    clientAccount: 'account4',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT005',
-    clientName: '고객사 5',
-    address: '서울시 강남구 테헤란로 5',
-    serviceTypes: [SERVICE_TYPE.MONITORING],
-    solutionTypes: [SOLUTION_TYPE.PROAI_EDGE],
-    analysisChannels: 5,
-    reportGeneration: true,
-    reportEmail: 'client5@example.com',
-    accountStatus: true,
-    businessNumber: '555-55-55555',
-    businessStatus: '1',
-    contractPeriod: '2024-05-01 ~ 2025-05-01',
-    reportReceiver: 'receiver5@example.com',
-    clientAccount: 'account5',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT006',
-    clientName: '고객사 6',
-    address: '서울시 강남구 테헤란로 6',
-    serviceTypes: [SERVICE_TYPE.COUNTING],
-    solutionTypes: [SOLUTION_TYPE.CVEDIA],
-    analysisChannels: 6,
-    reportGeneration: false,
-    reportEmail: 'client6@example.com',
-    accountStatus: false,
-    businessNumber: '666-66-66666',
-    businessStatus: '2',
-    contractPeriod: '2024-06-01 ~ 2025-06-01',
-    reportReceiver: 'receiver6@example.com',
-    clientAccount: 'account6',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT007',
-    clientName: '고객사 7',
-    address: '서울시 강남구 테헤란로 7',
-    serviceTypes: [SERVICE_TYPE.MONITORING],
-    solutionTypes: [SOLUTION_TYPE.PROAI_EDGE],
-    analysisChannels: 7,
-    reportGeneration: true,
-    reportEmail: 'client7@example.com',
-    accountStatus: true,
-    businessNumber: '777-77-77777',
-    businessStatus: '1',
-    contractPeriod: '2024-07-01 ~ 2025-07-01',
-    reportReceiver: 'receiver7@example.com',
-    clientAccount: 'account7',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT008',
-    clientName: '고객사 8',
-    address: '서울시 강남구 테헤란로 8',
-    serviceTypes: [SERVICE_TYPE.COUNTING],
-    solutionTypes: [SOLUTION_TYPE.CVEDIA],
-    analysisChannels: 8,
-    reportGeneration: false,
-    reportEmail: 'client8@example.com',
-    accountStatus: false,
-    businessNumber: '888-88-88888',
-    businessStatus: '2',
-    contractPeriod: '2024-08-01 ~ 2025-08-01',
-    reportReceiver: 'receiver8@example.com',
-    clientAccount: 'account8',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT009',
-    clientName: '고객사 9',
-    address: '서울시 강남구 테헤란로 9',
-    serviceTypes: [SERVICE_TYPE.MONITORING],
-    solutionTypes: [SOLUTION_TYPE.PROAI_EDGE],
-    analysisChannels: 9,
-    reportGeneration: true,
-    reportEmail: 'client9@example.com',
-    accountStatus: true,
-    businessNumber: '999-99-99999',
-    businessStatus: '1',
-    contractPeriod: '2024-09-01 ~ 2025-09-01',
-    reportReceiver: 'receiver9@example.com',
-    clientAccount: 'account9',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT010',
-    clientName: '고객사 10',
-    address: '서울시 강남구 테헤란로 10',
-    serviceTypes: [SERVICE_TYPE.COUNTING],
-    solutionTypes: [SOLUTION_TYPE.CVEDIA],
-    analysisChannels: 10,
-    reportGeneration: false,
-    reportEmail: 'client10@example.com',
-    accountStatus: false,
-    businessNumber: '101-01-10101',
-    businessStatus: '2',
-    contractPeriod: '2024-10-01 ~ 2025-10-01',
-    reportReceiver: 'receiver10@example.com',
-    clientAccount: 'account10',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT011',
-    clientName: '고객사 11',
-    address: '서울시 강남구 테헤란로 11',
-    serviceTypes: [SERVICE_TYPE.MONITORING],
-    solutionTypes: [SOLUTION_TYPE.PROAI_EDGE],
-    analysisChannels: 11,
-    reportGeneration: true,
-    reportEmail: 'client11@example.com',
-    accountStatus: true,
-    businessNumber: '111-11-11111',
-    businessStatus: '1',
-    contractPeriod: '2024-11-01 ~ 2025-11-01',
-    reportReceiver: 'receiver11@example.com',
-    clientAccount: 'account11',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT012',
-    clientName: '고객사 12',
-    address: '서울시 강남구 테헤란로 12',
-    serviceTypes: [SERVICE_TYPE.COUNTING],
-    solutionTypes: [SOLUTION_TYPE.CVEDIA],
-    analysisChannels: 12,
-    reportGeneration: false,
-    reportEmail: 'client12@example.com',
-    accountStatus: false,
-    businessNumber: '121-21-12121',
-    businessStatus: '2',
-    contractPeriod: '2024-12-01 ~ 2025-12-01',
-    reportReceiver: 'receiver12@example.com',
-    clientAccount: 'account12',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT013',
-    clientName: '고객사 13',
-    address: '서울시 강남구 테헤란로 13',
-    serviceTypes: [SERVICE_TYPE.MONITORING],
-    solutionTypes: [SOLUTION_TYPE.PROAI_EDGE],
-    analysisChannels: 13,
-    reportGeneration: true,
-    reportEmail: 'client13@example.com',
-    accountStatus: true,
-    businessNumber: '131-31-13131',
-    businessStatus: '1',
-    contractPeriod: '2025-01-01 ~ 2026-01-01',
-    reportReceiver: 'receiver13@example.com',
-    clientAccount: 'account13',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT014',
-    clientName: '고객사 14',
-    address: '서울시 강남구 테헤란로 14',
-    serviceTypes: [SERVICE_TYPE.COUNTING],
-    solutionTypes: [SOLUTION_TYPE.CVEDIA],
-    analysisChannels: 14,
-    reportGeneration: false,
-    reportEmail: 'client14@example.com',
-    accountStatus: false,
-    businessNumber: '141-41-14141',
-    businessStatus: '2',
-    contractPeriod: '2025-02-01 ~ 2026-02-01',
-    reportReceiver: 'receiver14@example.com',
-    clientAccount: 'account14',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT015',
-    clientName: '고객사 15',
-    address: '서울시 강남구 테헤란로 15',
-    serviceTypes: [SERVICE_TYPE.MONITORING],
-    solutionTypes: [SOLUTION_TYPE.PROAI_EDGE],
-    analysisChannels: 15,
-    reportGeneration: true,
-    reportEmail: 'client15@example.com',
-    accountStatus: true,
-    businessNumber: '151-51-15151',
-    businessStatus: '1',
-    contractPeriod: '2025-03-01 ~ 2026-03-01',
-    reportReceiver: 'receiver15@example.com',
-    clientAccount: 'account15',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT016',
-    clientName: '고객사 16',
-    address: '서울시 강남구 테헤란로 16',
-    serviceTypes: [SERVICE_TYPE.COUNTING],
-    solutionTypes: [SOLUTION_TYPE.CVEDIA],
-    analysisChannels: 16,
-    reportGeneration: false,
-    reportEmail: 'client16@example.com',
-    accountStatus: false,
-    businessNumber: '161-61-16161',
-    businessStatus: '2',
-    contractPeriod: '2025-04-01 ~ 2026-04-01',
-    reportReceiver: 'receiver16@example.com',
-    clientAccount: 'account16',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT017',
-    clientName: '고객사 17',
-    address: '서울시 강남구 테헤란로 17',
-    serviceTypes: [SERVICE_TYPE.MONITORING],
-    solutionTypes: [SOLUTION_TYPE.PROAI_EDGE],
-    analysisChannels: 17,
-    reportGeneration: true,
-    reportEmail: 'client17@example.com',
-    accountStatus: true,
-    businessNumber: '171-71-17171',
-    businessStatus: '1',
-    contractPeriod: '2025-05-01 ~ 2026-05-01',
-    reportReceiver: 'receiver17@example.com',
-    clientAccount: 'account17',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT018',
-    clientName: '고객사 18',
-    address: '서울시 강남구 테헤란로 18',
-    serviceTypes: [SERVICE_TYPE.COUNTING],
-    solutionTypes: [SOLUTION_TYPE.CVEDIA],
-    analysisChannels: 18,
-    reportGeneration: false,
-    reportEmail: 'client18@example.com',
-    accountStatus: false,
-    businessNumber: '181-81-18181',
-    businessStatus: '2',
-    contractPeriod: '2025-06-01 ~ 2026-06-01',
-    reportReceiver: 'receiver18@example.com',
-    clientAccount: 'account18',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT019',
-    clientName: '고객사 19',
-    address: '서울시 강남구 테헤란로 19',
-    serviceTypes: [SERVICE_TYPE.MONITORING],
-    solutionTypes: [SOLUTION_TYPE.PROAI_EDGE],
-    analysisChannels: 19,
-    reportGeneration: true,
-    reportEmail: 'client19@example.com',
-    accountStatus: true,
-    businessNumber: '191-91-19191',
-    businessStatus: '1',
-    contractPeriod: '2025-07-01 ~ 2026-07-01',
-    reportReceiver: 'receiver19@example.com',
-    clientAccount: 'account19',
-    solutions: []
-  },
-  {
-    clientId: 'CLIENT020',
-    clientName: '고객사 20',
-    address: '서울시 강남구 테헤란로 20',
-    serviceTypes: [SERVICE_TYPE.COUNTING],
-    solutionTypes: [SOLUTION_TYPE.CVEDIA],
-    analysisChannels: 20,
-    reportGeneration: false,
-    reportEmail: 'client20@example.com',
-    accountStatus: false,
-    businessNumber: '202-02-20202',
-    businessStatus: '2',
-    contractPeriod: '2025-08-01 ~ 2026-08-01',
-    reportReceiver: 'receiver20@example.com',
-    clientAccount: 'account20',
-    solutions: []
-  }
-]
-
-export const sampleClientDetail: IClientDetail = {
-  clientId: 'CLIENT001',
-  clientName: '테스트 고객사',
-  address: '서울시 강남구 테헤란로 123',
-  serviceTypes: [SERVICE_TYPE.COUNTING, SERVICE_TYPE.MONITORING],
-  solutionTypes: [SOLUTION_TYPE.CVEDIA, SOLUTION_TYPE.PROAI_EDGE],
-  analysisChannels: 2,
-  reportGeneration: true,
-  reportEmail: 'test@example.com',
-  accountStatus: true,
-  businessNumber: '123-45-67890',
-  businessStatus: '1',
-  contractPeriod: '2024-03-20 ~ 2025-03-19',
-  reportReceiver: 'receiver@example.com',
-  clientAccount: 'testaccount',
-  solutions: [
-    {
-      id: 0,
-      selectedSolution: '1',
-      services: [
-        {
-          id: '1',
-          name: '정문 카메라',
-          serviceType: '1',
-          address: '192.168.0.100',
-          rtsAddress: 'rtsp://192.168.0.100:554/stream',
-          description: '정문 출입구 모니터링'
-        },
-        {
-          id: '2',
-          name: '주차장 카메라',
-          serviceType: '2',
-          address: '192.168.0.101',
-          rtsAddress: 'rtsp://192.168.0.101:554/stream',
-          description: '주차장 차량 카운팅'
-        }
-      ]
-    }
-  ]
-}
-
-export const useClientList = (req?: any) => {
-  // 실제 API 호출 대신 샘플 데이터 반환
-  return useQuery<MResult<IClient[]>>([EPath.CONTENTS, req], () => {
-    return Promise.resolve({
-      code: '0',
-      msg: '성공',
-      data: sampleClientsList
-    })
-  })
+export const useClientList = (params: MClientListReq) => {
+  return useQuery<MResult<MClientList>>([EPath.COMPANY_LIST, params], {})
 }
 
 export const useCompanySearchList = (params: { keyword: string }) => {
   return useQuery<MResult<MCompanySearch[]>>([EPath.COMPANY_SEARCH, params], {})
 }
 
-export const useClientDetail = (id?: number) => {
-  return useQuery<MResult<IClientDetail>>([EPath.CONTENTS, id], () => {
-    return Promise.resolve({
-      code: '0',
-      msg: '성공',
-      data: sampleClientDetail
-    })
+export const useClientDetail = (companyNo?: number) => {
+  return useQuery<MResult<IClientDetail>>([EPath.COMPANY + `/${companyNo}`], {
+    enabled: !!companyNo
   })
+}
+
+export const useAiCompanyDetail = (companyNo?: number) => {
+  return useQuery<MResult<IAiSolutionCompanyList>>([EPath.AI_COMPANY + `/${companyNo}`], {
+    enabled: !!companyNo
+  })
+}
+
+export const useAiSolutionCompanySave = () => {
+  return useMutation((params: IAiSolutionCompanyList) => {
+    return createPost<MResult>([EPath.AI_COMPANY, params])
+  }, {})
+}
+
+export const useAiSolutionCompanyList = () => {
+  return useQuery<MResult<MAiSolutionCompanyList[]>>([EPath.AI_SOLUTION_COMPANY_LIST])
+}
+
+export const useClientDuplicateCheck = () => {
+  return useMutation((companyId?: string) => {
+    return createGet<MAuthDuplicate>([EPath.COMPANY_DUPLICATE_CHECK + `/${companyId}`])
+  }, {})
+}
+
+export const useClientSave = () => {
+  return useMutation((params: IClientDetail) => {
+    return createPost<MResult>([EPath.COMPANY, params])
+  }, {})
+}
+
+export const useClientUpdate = () => {
+  return useMutation((params: IClientDetail) => {
+    return createPut<MResult>([EPath.COMPANY, params])
+  }, {})
+}
+
+export const useClientDelete = () => {
+  return useMutation((params: { companyNos: number[] }) => {
+    return createDelete<MResult>([EPath.COMPANY, params])
+  }, {})
+}
+
+export const useAiSolutionService = (solutionId: number) => {
+  return useQuery<MResult<IAiSolutionService[]>>([EPath.AI_SOLUTION_SERVICE + `/${solutionId}`])
 }

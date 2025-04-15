@@ -11,26 +11,23 @@ import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import SimpleDialogModal from 'src/@core/components/molecule/SimpleDialogModal'
 import CustomTable from 'src/@core/components/table/CustomTable'
 
+import { useClients } from 'src/hooks/useClients'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { IClient, SERVICE_TYPE, SERVICE_TYPE_LABELS } from 'src/model/client/clientModel'
-
-import styled from 'styled-components'
+import { MList } from 'src/model/client/clientModel'
+import { useClientDelete } from 'src/service/client/clientService'
 
 interface IClientList {
-  data: IClient[]
+  data: MList[]
   refetch: () => void
-}
-
-interface IKioskListInfo {
-  count: number
-  kioskList: string
 }
 
 const ClientList: FC<IClientList> = ({ data, refetch }) => {
   const router = useRouter()
 
-  const [clientData, setclientData] = useState<IClient[]>([])
-
+  const { mutateAsync: deleteClient } = useClientDelete()
+  const [clientData, setclientData] = useState<MList[]>([])
+  const [analysisChannels, setAnalysisChannels] = useState(0)
+  const { setSelectClientData } = useClients()
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
@@ -41,7 +38,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
     (val: string) => {
       if (val !== '') {
         const newData = clientData.map(obj => {
-          const shouldDisplay = !obj.clientId || obj.clientId.toLowerCase().includes(val)
+          const shouldDisplay = !obj.companyId || obj.companyId.toLowerCase().includes(val)
 
           return { ...obj, display: shouldDisplay }
         })
@@ -55,32 +52,36 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
     [clientData]
   )
 
+  const handleCheckboxSelection = (selectedRows: any[]) => {
+    setSelectClientData(selectedRows)
+  }
+
   const columns: GridColDef[] = [
     {
-      field: 'clientId',
+      field: 'companyId',
       headerName: '고객사ID',
       headerAlign: 'center',
       flex: 0.5,
-      renderCell: ({ row }: GridRenderCellParams<IClient>) => {
+      renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant='inherit' noWrap>
-              {row.clientId}
+              {row.companyId}
             </Typography>
           </Box>
         )
       }
     },
     {
-      field: 'clientName',
+      field: 'companyName',
       headerName: '고객사명',
       headerAlign: 'center',
       flex: 0.7,
-      renderCell: ({ row }: GridRenderCellParams<IClient>) => {
+      renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant='inherit' noWrap>
-              {row.clientName}
+              {row.companyName}
             </Typography>
           </Box>
         )
@@ -91,7 +92,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       headerName: '주소',
       headerAlign: 'center',
       flex: 1,
-      renderCell: ({ row }: GridRenderCellParams<IClient>) => {
+      renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant='inherit' noWrap>
@@ -107,7 +108,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       headerAlign: 'center',
       align: 'center',
       flex: 0.5,
-      renderCell: ({ row }: GridRenderCellParams<IClient>) => {
+      renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box
             sx={{
@@ -120,18 +121,18 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
             {row.serviceTypes.map((serviceType: string, index: number) =>
               row.serviceTypes.length <= 1 ? (
                 <Box
-                  key={`single-${row.clientId}-${serviceType}-${index}`}
+                  key={`single-${row.companyId}-${serviceType}-${index}`}
                   sx={{ display: 'flex', alignItems: 'center' }}
                 >
-                  <IconCustom isCommon path='clients' icon={serviceType} />
+                  <IconCustom isCommon path='clients' icon={row.serviceIcons[index]} />
                   <Typography component='span' variant='inherit' noWrap>
-                    {SERVICE_TYPE_LABELS[serviceType as SERVICE_TYPE]}
+                    {serviceType}
                   </Typography>
                 </Box>
               ) : (
                 <CustomTooltip
-                  title={SERVICE_TYPE_LABELS[serviceType as SERVICE_TYPE]}
-                  key={`multi-${row.clientId}-${serviceType}-${index}`}
+                  title={serviceType}
+                  key={`multi-${row.companyId}-${serviceType}-${index}`}
                   placement='top'
                 >
                   <Box
@@ -141,7 +142,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
                       justifyContent: 'center'
                     }}
                   >
-                    <IconCustom isCommon path='clients' icon={serviceType} />
+                    <IconCustom isCommon path='clients' icon={row.serviceIcons[index]} />
                   </Box>
                 </CustomTooltip>
               )
@@ -156,7 +157,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       headerAlign: 'center',
       align: 'center',
       flex: 0.7,
-      renderCell: ({ row }: GridRenderCellParams<IClient>) => {
+      renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
             <Typography variant='inherit' noWrap>
@@ -172,7 +173,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       headerAlign: 'center',
       align: 'center',
       flex: 0.4,
-      renderCell: ({ row }: GridRenderCellParams<IClient>) => {
+      renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', px: 2 }}>
             <Typography variant='inherit' noWrap sx={{ flex: 1, textAlign: 'center' }}>
@@ -183,6 +184,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
                 cursor: 'pointer'
               }}
               onClick={() => {
+                setAnalysisChannels(row.analysisChannels)
                 setIsOpen(true)
               }}
             >
@@ -197,11 +199,11 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       headerName: '리포트 생성',
       headerAlign: 'center',
       flex: 0.4,
-      renderCell: ({ row }: GridRenderCellParams<IClient>) => {
+      renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
             <Switch
-              checked={row.reportGeneration}
+              checked={row.reportGeneration === 'Y'}
               onChange={event => {
                 console.log(row.reportGeneration)
               }}
@@ -215,7 +217,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       headerName: '리포트 수신',
       headerAlign: 'center',
       flex: 0.8,
-      renderCell: ({ row }: GridRenderCellParams<IClient>) => {
+      renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant='inherit' noWrap>
@@ -230,7 +232,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       headerName: '계정 상태',
       headerAlign: 'center',
       flex: 0.4,
-      renderCell: ({ row }: GridRenderCellParams<IClient>) => {
+      renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
             <BorderNameTag
@@ -256,7 +258,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
                   pathname: '/clients/clientsAdd',
                   query: {
                     mode: 'edit',
-                    id: row.clientId
+                    id: row.companyNo
                   }
                 })
               }}
@@ -265,8 +267,9 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
             </IconButton>
             <IconButton
               sx={{ color: 'text.secondary' }}
-              onClick={e => {
-                console.log(e)
+              onClick={async () => {
+                await deleteClient({ companyNos: [row.companyNo] })
+                refetch()
               }}
             >
               <IconCustom isCommon icon='DeleteOutline' />
@@ -284,39 +287,25 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
         onClose={() => {
           setIsOpen(false)
         }}
-        title={`선택된 컨텐츠는 아래 총 2곳의 키오스크에 게시되어 있습니다`}
+        title={`선택된 컨텐츠는 아래 총 ${analysisChannels}곳에 게시되어 있습니다`}
         contents={''}
       />
-
-      {/* {contents.selectedContentIds.length > 0 && (
-        <ContentsDeleteModal
-          open={isDeleteModalOpen}
-          onClose={() => {
-            contents.setSelectedContentIds([])
-            setIsDeleteModalOpen(false)
-            refetch()
-          }}
-        />
-      )} */}
 
       <Grid container>
         <Grid item xs={12}>
           <Card>
-            <CustomTable showMoreButton={true} rows={clientData} columns={columns} id='clientId' />
+            <CustomTable
+              onCheckboxSelectionChange={handleCheckboxSelection}
+              showMoreButton={true}
+              rows={clientData}
+              columns={columns}
+              id='companyNo'
+            />
           </Card>
         </Grid>
       </Grid>
     </>
   )
 }
-
-const TableWrapper = styled.div`
-  .MuiTablePagination-root {
-    display: none;
-  }
-  .MuiDataGrid-footerContainer {
-    display: none;
-  }
-`
 
 export default ClientList

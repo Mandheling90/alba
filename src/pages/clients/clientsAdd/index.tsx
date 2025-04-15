@@ -5,28 +5,33 @@ import { FC, useEffect, useState } from 'react'
 import StepperCustomDot from 'src/@core/components/atom/StepperCustomDot'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import StepperWrapper from 'src/@core/styles/mui/stepper'
+import { EResultCode, YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { IClientDetail } from 'src/model/client/clientModel'
-import { useClientDetail } from 'src/service/client/clientService'
+import {
+  useAiCompanyDetail,
+  useClientDetail,
+  useClientDuplicateCheck,
+  useClientSave,
+  useClientUpdate
+} from 'src/service/client/clientService'
 import StepOneContent from './StepOneContent'
 import StepTwoContent from './StepTwoContent'
 
 export const DEFAULT_CLIENT_DATA: IClientDetail = {
-  clientId: '',
-  clientName: '',
+  companyNo: 0,
+  companyId: '',
+  companyName: '',
   address: '',
-  serviceTypes: [],
-  solutionTypes: [],
-  analysisChannels: 0,
-  reportGeneration: false,
+  brn: '',
+  expireDate: '',
+  companyStatus: 0,
+  companyStatusStr: '',
+  reportGeneration: YN.Y,
+  reportGenerationStr: '',
   reportEmail: '',
-  accountStatus: false,
-  businessNumber: '',
-  businessStatus: '',
-  contractPeriod: '',
-  reportReceiver: '',
-  clientAccount: '',
-  solutions: []
+  accountStatus: YN.Y,
+  accountStatusStr: ''
 }
 
 // StepContent 커스텀
@@ -58,16 +63,16 @@ const CustomStepContent = styled(StepContent)<{ stepindex: number; activestep: n
 const Index: FC = ({}) => {
   const router = useRouter()
 
-  // console.log(router.query.id)
-
-  const { data, refetch } = useClientDetail(Number(router.query.id))
-
   const [activeStep, setActiveStep] = useState<number>(0)
   const [clientData, setClientData] = useState<IClientDetail | null>(DEFAULT_CLIENT_DATA)
-
   const [expandedSteps, setExpandedSteps] = useState<boolean[]>([true, true])
-
   const [isStepOneValid, setIsStepOneValid] = useState<boolean>(true)
+
+  const { data, refetch } = useClientDetail(Number(router.query.id))
+  const { data: aiData, refetch: refetchAi } = useAiCompanyDetail(Number(router.query.id))
+  const { mutateAsync: duplicateCheck } = useClientDuplicateCheck()
+  const { mutateAsync: saveClient } = useClientSave()
+  const { mutateAsync: updateClient } = useClientUpdate()
 
   useEffect(() => {
     if (router.query.id && data?.data) {
@@ -105,17 +110,49 @@ const Index: FC = ({}) => {
         <StepOneContent
           clientData={clientData}
           onDataChange={handleStepOneDataChange}
-          onNext={() => {
-            activeStep === 0 && handleNext()
+          onNext={async () => {
+            if (clientData) {
+              if (clientData?.companyNo === 0) {
+                const res = await saveClient(clientData)
+                if (res.data.code !== EResultCode.SUCCESS) {
+                  alert(res.data.msg)
+
+                  return
+                }
+              } else {
+                const res = await updateClient(clientData)
+                if (res.data.code !== EResultCode.SUCCESS) {
+                  alert(res.data.msg)
+
+                  return
+                }
+              }
+
+              activeStep === 0 && handleNext()
+            }
           }}
           onReset={() => {
             setClientData({
-              ...DEFAULT_CLIENT_DATA,
-              solutions: clientData?.solutions || []
+              ...DEFAULT_CLIENT_DATA
+
+              // solutions: clientData?.solutions || []
             })
           }}
           onValidationChange={(isValid: boolean) => {
             setIsStepOneValid(isValid)
+          }}
+          onDuplicateCheck={async () => {
+            try {
+              const res = await duplicateCheck(clientData?.companyId)
+              alert(res.data.message)
+              if (res.data.duplicateYn === YN.N) {
+                return false
+              } else {
+                return true
+              }
+            } catch (error) {
+              return true
+            }
           }}
         />
       )
@@ -123,7 +160,7 @@ const Index: FC = ({}) => {
     {
       title: '분석 솔루션 및 카메라 정보 등록',
       content: (
-        <StepTwoContent clientData={clientData} onDataChange={handleStepOneDataChange} disabled={activeStep === 0} />
+        <StepTwoContent aiData={aiData?.data} onDataChange={handleStepOneDataChange} disabled={activeStep === 0} />
       )
     }
   ]
@@ -155,7 +192,7 @@ const Index: FC = ({}) => {
                 <CustomStepContent stepindex={index} activestep={activeStep}>
                   <Box sx={{ py: 3, display: expandedSteps[index] ? 'block' : 'none' }}>
                     <Grid container spacing={1}>
-                      <Grid item xs={7}>
+                      <Grid item xs={8}>
                         {step.content}
                       </Grid>
                     </Grid>
@@ -166,14 +203,6 @@ const Index: FC = ({}) => {
           })}
         </Stepper>
       </StepperWrapper>
-      {/* {activeStep === steps.length && (
-        <Box sx={{ mt: 2 }}>
-          <Typography>All steps are completed!</Typography>
-          <Button size='small' sx={{ mt: 2 }} variant='contained' onClick={handleReset}>
-            Reset
-          </Button>
-        </Box>
-      )} */}
     </StandardTemplate>
   )
 }

@@ -1,13 +1,17 @@
+import { YN } from 'src/enum/commonEnum'
+
 // 서비스 형태 enum
 export enum SERVICE_TYPE {
   COUNTING = 'COUNTING',
   CAR_COUNT = 'CAR_COUNT',
   FEATURE_ANALYSIS = 'FEATURE_ANALYSIS',
-  MONITORING = 'MONITORING'
+  MONITORING = 'MONITORING',
+  OCCUPANCY = 'OCCUPANCY'
 }
 
 export const SERVICE_TYPE_LABELS: Record<SERVICE_TYPE, string> = {
   [SERVICE_TYPE.COUNTING]: '카운팅',
+  [SERVICE_TYPE.OCCUPANCY]: '밀집도 분석',
   [SERVICE_TYPE.CAR_COUNT]: '차량카운트',
   [SERVICE_TYPE.FEATURE_ANALYSIS]: '특성분석',
   [SERVICE_TYPE.MONITORING]: '모니터링'
@@ -17,7 +21,57 @@ export const SERVICE_TYPE_LABELS: Record<SERVICE_TYPE, string> = {
 export enum SOLUTION_TYPE {
   CVEDIA = 'CVEDIA',
   SAFR = 'SAFR',
-  PROAI_EDGE = 'PROAI_EDGE'
+  NEXREALAIBOX = 'NexRealAIBox',
+  PROAI_EDGE = 'PROAI_EDGE',
+  FA_GATE = 'FA Gate',
+  PROAI_SERVER = 'ProAI Server'
+}
+
+export enum SOLUTION_USE_SERVER_TYPE {
+  CVEDIA = 'CVEDIA',
+  NEXREALAIBOX = 'NexRealAIBox',
+  SAFR = 'SAFR',
+  FA_GATE = 'FA Gate',
+  PROAI_SERVER = 'ProAI Server'
+}
+
+// 검색 타입 enum
+export enum SEARCH_TYPE {
+  COMPANY_NAME = 'companyName',
+  COMPANY_ADDRESS = 'companyAddress',
+  ACCOUNT_USE_TYPE = 'accountUseType',
+  ALL = ''
+}
+
+export interface MClientListReq {
+  searchType: SEARCH_TYPE
+  keyword: string
+  offset: number
+  size: number
+}
+
+export interface MClientList {
+  listSize: number
+  page: number
+  size: number
+  totalCount: number
+  list: MList[]
+}
+
+export interface MList {
+  companyNo: number
+  companyId: string
+  companyName: string
+  address: string
+  serviceTypes: SERVICE_TYPE[]
+  serviceIcons: string[]
+  solutionTypes: SOLUTION_TYPE[]
+  analysisChannels: number
+  reportGeneration: YN
+  reportGenerationStr: string
+  reportEmail: string
+  accountStatus: YN
+  accountStatusStr: string
 }
 
 // 공통 고객사 정보 인터페이스
@@ -43,8 +97,71 @@ export interface IClientBase {
 export type IClient = IClientBase
 
 // 상세 고객사 정보 인터페이스
-export interface IClientDetail extends IClientBase {
-  solutions?: ISolutionCard[]
+// export interface IClientDetail extends IClientBase {
+//   solutions?: ISolutionCard[]
+// }
+
+export interface IClientDetail {
+  companyNo: number
+  companyId: string
+  companyName: string
+  address: string
+  brn: string
+  expireDate: string
+  companyStatus: number
+  companyStatusStr: string
+  reportGeneration: YN
+  reportGenerationStr: string
+  reportEmail: string
+  accountStatus: YN
+  accountStatusStr: string
+}
+
+export interface ISolutionList {
+  aiSolutionId: number
+  aiSolutionName: string
+  companySolutionId: number
+  serverList: IServerList[]
+}
+
+export interface IServerList {
+  serverId: number
+  serverName: string
+  serverIp: string
+  aiBoxId: string | null
+  aiBoxPassword: string | null
+  safrEventUrl: string | null
+  safrId: string | null
+  safrPassword: string | null
+  instanceList: IInstanceList[]
+}
+
+export interface IInstanceList {
+  instanceId: number | null
+  instanceName: string
+  aiServiceId: number
+  aiServiceName: string
+  cameraGroupId: string
+  cameraNo: number
+  cameraId: string
+  cameraName: string
+  cameraIp: string
+  areaNameList: IAreaNameList[]
+}
+
+interface IAreaNameList {
+  instanceModelId: number
+  instanceModelName: string
+}
+
+export interface IAiSolutionCompanyList {
+  serviceNames: string
+  analysisTotalCount: number
+  solutionSummaryList: {
+    aiSolutionType: string
+    solutionCount: number
+  }[]
+  solutionList: ISolutionList[]
 }
 
 export interface IService {
@@ -70,13 +187,6 @@ export interface IService {
   address?: string
   rtsAddress?: string
   description?: string
-}
-
-// 솔루션 카드 인터페이스
-export interface ISolutionCard {
-  id: number
-  selectedSolution: string
-  services: IService[]
 }
 
 // 샘플 데이터
@@ -124,4 +234,28 @@ export const sampleClientData: IClient = {
 export interface MCompanySearch {
   companyId: string
   companyName: string
+}
+
+export interface MAiSolutionCompanyList {
+  id: number
+  name: string
+  dataStatus: string
+  dataStatusStr: string
+}
+
+export interface ISolutionServerProps {
+  solutionId: number
+  server: IServerList
+  onDelete: (serviceId: number) => void
+  onDeleteInstance: (serverId: number, instanceId: number) => void
+  onUpdateInstance: (serverId: number, instanceId: number, field: string, value: string) => void
+  onUpdateServer: (serverId: number, field: string, value: string) => void
+}
+
+export interface IAiSolutionService {
+  aiServiceId: number
+  aiServiceName: string
+  iconName: string
+  dataStatus: string
+  dataStatusStr: string
 }
