@@ -129,6 +129,7 @@ const CalendarContainer = styled.section<{ isLayoutDisplay: boolean }>`
   border-radius: 8px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
   background-color: #fff;
+  min-width: 1000px;
   .fc-daygrid-day-top {
     display: flex;
     flex-direction: column;

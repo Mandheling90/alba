@@ -27,11 +27,13 @@ const Index: FC = ({}): React.ReactElement => {
           mainContent={
             <Section>
               <CalendarContainer>
-                <GateSelect
-                  value={selectedGate}
-                  onChange={event => setSelectedGate(event.target.value as string)}
-                  label='캘린더 표시장소'
-                />
+                <GateSelectContainer>
+                  <GateSelect
+                    value={selectedGate}
+                    onChange={event => setSelectedGate(event.target.value as string)}
+                    label='캘린더 표시장소'
+                  />
+                </GateSelectContainer>
                 <ScheduleCalendar />
               </CalendarContainer>
               <BatchConfigContainer>
@@ -45,6 +47,10 @@ const Index: FC = ({}): React.ReactElement => {
     </ScheduleContextProvider>
   )
 }
+
+const GateSelectContainer = styled.div`
+  margin-bottom: -84px;
+`
 
 const Section = styled.section`
   margin-top: 96px;

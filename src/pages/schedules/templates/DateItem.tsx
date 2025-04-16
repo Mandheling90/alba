@@ -35,6 +35,7 @@ const DateItem = ({ dayNumberText, isOther }: IDateItem) => {
           <WorkTimeFont>영업시간</WorkTimeFont>
           <TimeInputContainer>
             <select value={startTime} onChange={e => setStartTime(e.target.value)}>
+              <option value=''>-</option>
               {timeOptions.map(option => {
                 const startTimeNumber = parseInt(option)
                 const endTimeNumber = endTime ? parseInt(endTime) : 0
@@ -50,6 +51,7 @@ const DateItem = ({ dayNumberText, isOther }: IDateItem) => {
             </select>
             ~
             <select value={endTime} onChange={e => setEndTime(e.target.value)}>
+              <option value=''>-</option>
               {timeOptions.map(option => {
                 const endTimeNumber = parseInt(option)
                 const startTimeNumber = startTime ? parseInt(startTime) : 0
