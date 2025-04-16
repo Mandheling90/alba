@@ -5,8 +5,8 @@ import IconCustom from 'src/layouts/components/IconCustom'
 
 import styled from '@emotion/styled'
 import CustomTable from 'src/@core/components/table/CustomTable'
+import { useCustomerList } from '../../../service/schedule/scheduleService'
 import ScheduleContext from '../contexts/scheduleContext'
-import { useCustomerList } from '../queries'
 
 interface ICustomerSearcherHandle {
   refetch: () => void

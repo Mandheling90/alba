@@ -2,7 +2,7 @@ import { Checkbox, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mu
 import Image from 'next/image'
 import { FC, useMemo } from 'react'
 import styled from 'styled-components'
-import { useGateList } from '../queries'
+import { useGateList } from '../../../service/schedule/scheduleService'
 
 interface IGateSelect<T = string | string[]> {
   value: T
