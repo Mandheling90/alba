@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { EPath } from 'src/enum/commonEnum'
 import MResult from 'src/model/commonModel'
 
@@ -130,4 +130,36 @@ export const useGateList = () => {
       data: sampleGateList
     }
   })
+}
+
+export type WorkType = 'work' | 'holiday'
+export interface IScheduleBatchConfig {
+  gateIds: string[]
+  days: string[]
+  repeatPeriod?: {
+    workType: WorkType
+    startDate: string
+    endDate: string
+    startTime: string
+    endTime: string
+  }
+  specialPeriod?: {
+    workType: WorkType
+    startDate: string
+    endDate: string
+    startTime: string
+    endTime: string
+  }
+}
+
+export const useScheduleBatchConfig = () => {
+  return useMutation((params: IScheduleBatchConfig) => {
+    return new Promise((resolve, reject) => {
+      resolve({
+        code: '0',
+        msg: '성공',
+        data: []
+      })
+    })
+  }, {})
 }

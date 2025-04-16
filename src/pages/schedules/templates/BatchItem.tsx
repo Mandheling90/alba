@@ -1,45 +1,69 @@
+import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { ReactNode, useState } from 'react'
-import { BatchItemProvider, useBatchItem } from '../contexts/batchItemContext'
+import { ReactNode } from 'react'
+import { ApplyStatusType, BatchItemProvider, useBatchItem } from '../contexts/batchItemContext'
+import DateRangePicker from './DateRangePicker'
+import DaySelect from './DaySelect'
+import WorkTimeSelect from './WorkTimeSelect'
+import WorkTypeRadio from './WorkTypeRadio'
 
 interface IBatchItem {
   children: ReactNode
-  number: string
-  title: string
 }
 
-const BatchItem = ({ children, number, title }: IBatchItem) => {
-  const [isApplied, setIsApplied] = useState(false)
-
+const BatchItem = ({ children }: IBatchItem) => {
   return (
-    <BatchItemProvider isApplied={isApplied} setIsApplied={setIsApplied}>
-      <Container>
-        <TitleContainer>
-          <Circle isApplied={isApplied} />
-          <NumberFont>{number}</NumberFont>
-          <TitleFont>{title}</TitleFont>
-        </TitleContainer>
-        <ContentContainer>
-          <VerticalLine isApplied={isApplied} />
-          <Content>{children}</Content>
-        </ContentContainer>
-      </Container>
+    <BatchItemProvider>
+      <Container>{children}</Container>
     </BatchItemProvider>
   )
 }
 
+interface IBatchTitle {
+  number?: string
+  title?: string
+}
+const BatchTitle = ({ number, title }: IBatchTitle) => {
+  const { applyStatus } = useBatchItem()
+
+  return (
+    <TitleContainer>
+      <Circle applyStatus={applyStatus} />
+      <NumberFont>{number}</NumberFont>
+      <TitleFont>{title}</TitleFont>
+    </TitleContainer>
+  )
+}
+
+const BatchContent = ({ children }: IBatchItem) => {
+  const { applyStatus } = useBatchItem()
+
+  return (
+    <ContentContainer>
+      <VerticalLine applyStatus={applyStatus} />
+      <Content>{children}</Content>
+    </ContentContainer>
+  )
+}
+
 const BatchHandler = () => {
-  const { setIsApplied } = useBatchItem()
+  const { setApplyStatus } = useBatchItem()
 
   return (
     <BatchHandlerContainer>
-      <BatchHandlerButtonApply onClick={() => setIsApplied(true)}></BatchHandlerButtonApply>
-      <BatchHandlerButtonCancel onClick={() => setIsApplied(false)}></BatchHandlerButtonCancel>
+      <BatchHandlerButtonApply onClick={() => setApplyStatus('applied')}></BatchHandlerButtonApply>
+      <BatchHandlerButtonCancel onClick={() => setApplyStatus('notApplied')}></BatchHandlerButtonCancel>
     </BatchHandlerContainer>
   )
 }
 
+BatchItem.Title = BatchTitle
+BatchItem.Content = BatchContent
 BatchItem.Handler = BatchHandler
+BatchItem.DaySelect = DaySelect
+BatchItem.DateRangePicker = DateRangePicker
+BatchItem.WorkTypeRadio = WorkTypeRadio
+BatchItem.WorkTimeSelect = WorkTimeSelect
 
 const TitleContainer = styled.div`
   display: flex;
@@ -49,15 +73,47 @@ const TitleContainer = styled.div`
   padding: 12px 4px 12px 0px;
 `
 
-const Circle = styled.span<{ isApplied: boolean }>`
+const Circle = styled.span<{ applyStatus: ApplyStatusType }>`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: 5px solid #9155fd;
-  opacity: ${({ isApplied }) => (isApplied ? 1 : 0.12)};
+  background: #9155fd;
+  :after {
+    content: '';
+  }
+  opacity: ${({ applyStatus }) => (applyStatus !== 'notApplied' ? 1 : 0.12)};
+  ${({ applyStatus }) =>
+    applyStatus === 'notApplied'
+      ? css`
+          :after {
+            display: block;
+            width: 70%;
+            height: 70%;
+            background: #fff;
+            border-radius: 50%;
+          }
+        `
+      : applyStatus === 'writing'
+      ? css`
+          :after {
+            display: block;
+            width: 50%;
+            height: 50%;
+            background: #fff;
+            border-radius: 50%;
+          }
+        `
+      : applyStatus === 'applied'
+      ? css`
+          background-image: url('/images/check-white.svg');
+          background-size: 16px 16px;
+          background-position: center;
+          background-repeat: no-repeat;
+        `
+      : null}
 `
 
 const Container = styled.div`
@@ -85,13 +141,16 @@ const ContentContainer = styled.div`
 const Content = styled.div`
   padding: 4px 11px 23px 0px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 `
 
-const VerticalLine = styled.section<{ isApplied: boolean }>`
+const VerticalLine = styled.section<{ applyStatus: ApplyStatusType }>`
   width: 3px;
   height: 100%;
   background-color: #9155fd;
-  opacity: ${({ isApplied }) => (isApplied ? 1 : 0.12)};
+  opacity: ${({ applyStatus }) => (applyStatus !== 'notApplied' ? 1 : 0.12)};
   border-radius: 20px;
   margin: 0 12px;
 `
@@ -99,7 +158,7 @@ const VerticalLine = styled.section<{ isApplied: boolean }>`
 const BatchHandlerContainer = styled.div`
   display: flex;
   gap: 8px;
-  justify-self: end;
+  height: fit-content;
 `
 
 const BatchHandlerButton = styled.button`
@@ -111,8 +170,8 @@ const BatchHandlerButton = styled.button`
   font-weight: 600;
   cursor: pointer;
   min-width: 36px;
-  min-height: 36px;
-  padding: 6px 18px;
+  min-height: 20px;
+  padding: 4px 8px;
 `
 
 const BatchHandlerButtonApply = styled(BatchHandlerButton)`

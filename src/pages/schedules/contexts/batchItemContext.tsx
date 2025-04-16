@@ -1,20 +1,22 @@
-import { createContext, ReactNode, useContext } from 'react'
+import { createContext, ReactNode, useContext, useState } from 'react'
+
+export type ApplyStatusType = 'applied' | 'notApplied' | 'writing'
 
 interface BatchItemContextType {
-  isApplied: boolean
-  setIsApplied: (value: boolean) => void
+  applyStatus: ApplyStatusType
+  setApplyStatus: (value: ApplyStatusType) => void
 }
 
 const BatchItemContext = createContext<BatchItemContextType | undefined>(undefined)
 
 interface BatchItemProviderProps {
   children: ReactNode
-  isApplied: boolean
-  setIsApplied: (value: boolean) => void
 }
 
-export const BatchItemProvider = ({ children, isApplied, setIsApplied }: BatchItemProviderProps) => {
-  return <BatchItemContext.Provider value={{ isApplied, setIsApplied }}>{children}</BatchItemContext.Provider>
+export const BatchItemProvider = ({ children }: BatchItemProviderProps) => {
+  const [applyStatus, setApplyStatus] = useState<ApplyStatusType>('notApplied')
+
+  return <BatchItemContext.Provider value={{ applyStatus, setApplyStatus }}>{children}</BatchItemContext.Provider>
 }
 
 export const useBatchItem = () => {
