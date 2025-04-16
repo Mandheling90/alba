@@ -1,13 +1,9 @@
-import { Box, IconButton, TextareaAutosize } from '@mui/material'
+import { Box, IconButton, TextareaAutosize, TextField } from '@mui/material'
 import { FC } from 'react'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { IServerList, ISolutionList, SOLUTION_USE_SERVER_TYPE } from 'src/model/client/clientModel'
 import SolutionRow from './SolutionRow'
-import CVEDIA from './solutionTemplate/CVEDIA'
-import FAGate from './solutionTemplate/FAGate'
-import NexRealAIBox from './solutionTemplate/NexRealAIBox'
-import ProAIServer from './solutionTemplate/ProAIServer'
-import SAFR from './solutionTemplate/SAFR'
+import SolutionTemplate from './solutionTemplate/SolutionTemplate'
 import { isServerAddable } from './StepTwoContent'
 
 interface ISolutionRow {
@@ -33,60 +29,199 @@ const SolutionServerList: FC<ISolutionRow> = ({
     switch (solutionList.aiSolutionName) {
       case SOLUTION_USE_SERVER_TYPE.CVEDIA:
         return (
-          <CVEDIA
+          <SolutionTemplate
             solutionId={solutionList.aiSolutionId}
             server={server}
             onDelete={onDelete}
             onDeleteInstance={onDeleteInstance}
             onUpdateInstance={onUpdateInstance}
             onUpdateServer={onUpdateServer}
-          />
+            onAddInstance={onAddInstance}
+          >
+            <TextField
+              size='small'
+              value={server.serverName}
+              label='CVEDIA 서버명'
+              variant='outlined'
+              placeholder={`CVEDIA 서버명`}
+              onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
+            />
+
+            <TextField
+              size='small'
+              value={server.serverIp}
+              label='CVEDIA 서버주소'
+              variant='outlined'
+              placeholder={`CVEDIA 서버주소`}
+              onChange={e => onUpdateServer(server.serverId, 'serverIp', e.target.value)}
+            />
+          </SolutionTemplate>
         )
       case SOLUTION_USE_SERVER_TYPE.NEXREALAIBOX:
         return (
-          <NexRealAIBox
+          <SolutionTemplate
             solutionId={solutionList.aiSolutionId}
             server={server}
             onDelete={onDelete}
             onDeleteInstance={onDeleteInstance}
             onUpdateInstance={onUpdateInstance}
             onUpdateServer={onUpdateServer}
-          />
+            onAddInstance={onAddInstance}
+          >
+            <TextField
+              size='small'
+              value={server.serverName}
+              label='AIBox 명'
+              variant='outlined'
+              placeholder={`AIBox 명`}
+              onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
+            />
+
+            <TextField
+              size='small'
+              value={server.serverIp}
+              label='AIBox 주소'
+              variant='outlined'
+              placeholder={`AIBox 주소`}
+              onChange={e => onUpdateServer(server.serverId, 'serverIp', e.target.value)}
+            />
+
+            <TextField
+              size='small'
+              value={server.aiBoxId}
+              label='AIBox ID'
+              variant='outlined'
+              placeholder={`AIBox ID`}
+              onChange={e => onUpdateServer(server.serverId, 'aiBoxId', e.target.value)}
+            />
+            <TextField
+              size='small'
+              value={server.aiBoxPassword}
+              label='AIBox PassWord'
+              variant='outlined'
+              placeholder={`AIBox PassWord`}
+              type='password'
+              onChange={e => onUpdateServer(server.serverId, 'aiBoxPassword', e.target.value)}
+            />
+          </SolutionTemplate>
         )
       case SOLUTION_USE_SERVER_TYPE.SAFR:
         return (
-          <SAFR
+          <SolutionTemplate
             solutionId={solutionList.aiSolutionId}
             server={server}
             onDelete={onDelete}
             onDeleteInstance={onDeleteInstance}
             onUpdateInstance={onUpdateInstance}
             onUpdateServer={onUpdateServer}
-          />
+            onAddInstance={onAddInstance}
+          >
+            <TextField
+              size='small'
+              value={server.serverName}
+              label='SAFR 서버명'
+              variant='outlined'
+              placeholder={`SAFR 서버명`}
+              onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
+            />
+
+            <TextField
+              size='small'
+              value={server.serverIp}
+              label='SAFR 서버주소'
+              variant='outlined'
+              placeholder={`SAFR 서버주소`}
+              onChange={e => onUpdateServer(server.serverId, 'serverIp', e.target.value)}
+            />
+
+            <TextField
+              size='small'
+              value={server.safrEventUrl}
+              label='SAFR 이벤트 서버주소'
+              variant='outlined'
+              placeholder={`SAFR 이벤트 서버주소`}
+              onChange={e => onUpdateServer(server.serverId, 'safrEventUrl', e.target.value)}
+            />
+
+            <TextField
+              size='small'
+              value={server.safrId}
+              label='SAFR ID'
+              variant='outlined'
+              placeholder={`SAFR ID`}
+              onChange={e => onUpdateServer(server.serverId, 'safrId', e.target.value)}
+            />
+            <TextField
+              size='small'
+              value={server.safrPassword}
+              label='SAFR PassWord'
+              variant='outlined'
+              placeholder={`SAFR PassWord`}
+              type='password'
+              onChange={e => onUpdateServer(server.serverId, 'safrPassword', e.target.value)}
+            />
+          </SolutionTemplate>
         )
       case SOLUTION_USE_SERVER_TYPE.FA_GATE:
         return (
-          <FAGate
+          <SolutionTemplate
             solutionId={solutionList.aiSolutionId}
             server={server}
             onDelete={onDelete}
             onDeleteInstance={onDeleteInstance}
             onUpdateInstance={onUpdateInstance}
             onUpdateServer={onUpdateServer}
-          />
+            onAddInstance={onAddInstance}
+          >
+            <TextField
+              size='small'
+              value={server.serverName}
+              label='FA Gate 서버명'
+              variant='outlined'
+              placeholder={`FA Gate 서버명`}
+              onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
+            />
+
+            <TextField
+              size='small'
+              value={server.serverIp}
+              label='FA Gate 서버주소'
+              variant='outlined'
+              placeholder={`FA Gate 서버주소`}
+              onChange={e => onUpdateServer(server.serverId, 'serverIp', e.target.value)}
+            />
+          </SolutionTemplate>
         )
       case SOLUTION_USE_SERVER_TYPE.PROAI_SERVER:
         return (
-          <ProAIServer
+          <SolutionTemplate
             solutionId={solutionList.aiSolutionId}
             server={server}
             onDelete={onDelete}
             onDeleteInstance={onDeleteInstance}
             onUpdateInstance={onUpdateInstance}
             onUpdateServer={onUpdateServer}
-          />
-        )
+            onAddInstance={onAddInstance}
+          >
+            <TextField
+              size='small'
+              value={server.serverName}
+              label='ProAI Server 서버명'
+              variant='outlined'
+              placeholder={`ProAI Server 서버명`}
+              onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
+            />
 
+            <TextField
+              size='small'
+              value={server.serverIp}
+              label='ProAI Server 서버주소'
+              variant='outlined'
+              placeholder={`ProAI Server 서버주소`}
+              onChange={e => onUpdateServer(server.serverId, 'serverIp', e.target.value)}
+            />
+          </SolutionTemplate>
+        )
       default:
         return (
           <>
@@ -105,6 +240,12 @@ const SolutionServerList: FC<ISolutionRow> = ({
                 />
               </Box>
             ))}
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
+              <IconButton onClick={() => onAddInstance(server.serverId)}>
+                <IconCustom isCommon icon={'add-button'} />
+              </IconButton>
+            </Box>
           </>
         )
     }
@@ -138,12 +279,6 @@ const SolutionServerList: FC<ISolutionRow> = ({
           {solutionList.serverList.map(server => (
             <Box sx={{ width: '100%' }} key={server.serverId}>
               {renderSolutionComponent(server)}
-
-              <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
-                <IconButton onClick={() => onAddInstance(server.serverId)}>
-                  <IconCustom isCommon icon={'add-button'} />
-                </IconButton>
-              </Box>
             </Box>
           ))}
         </>

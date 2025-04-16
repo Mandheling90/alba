@@ -1,5 +1,5 @@
 import { Box, IconButton, TextField, Typography } from '@mui/material'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { ISolutionServerProps } from 'src/model/client/clientModel'
@@ -11,11 +11,23 @@ const CVEDIA: FC<ISolutionServerProps> = ({
   onDeleteInstance,
   onUpdateInstance,
   onUpdateServer,
-  onDelete
+  onDelete,
+  children
 }) => {
+  const [isFold, setIsFold] = useState(false)
+
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+        <IconButton onClick={() => setIsFold(!isFold)}>
+          <IconCustom
+            isCommon
+            path='clients'
+            icon={isFold ? 'status_spread_default' : 'status_fold_default'}
+            hoverIcon={isFold ? 'status_spread_hovering' : 'status_fold_hovering'}
+          />
+        </IconButton>
+
         <TextField
           size='small'
           value={server.serverName}
@@ -43,20 +55,21 @@ const CVEDIA: FC<ISolutionServerProps> = ({
 
       <DividerBar />
 
-      {server.instanceList.map(instance => (
-        <Box sx={{ mt: 2, mb: 2 }} key={instance.instanceId}>
-          <SolutionRow
-            solutionId={solutionId}
-            useCameraId
-            useInstance
-            serverId={server.serverId}
-            onDeleteInstance={onDeleteInstance}
-            key={instance.instanceId}
-            instance={instance}
-            onUpdateInstance={onUpdateInstance}
-          />
-        </Box>
-      ))}
+      {!isFold &&
+        server.instanceList.map(instance => (
+          <Box sx={{ mt: 2, mb: 2 }} key={instance.instanceId}>
+            <SolutionRow
+              solutionId={solutionId}
+              useCameraId
+              useInstance
+              serverId={server.serverId}
+              onDeleteInstance={onDeleteInstance}
+              key={instance.instanceId}
+              instance={instance}
+              onUpdateInstance={onUpdateInstance}
+            />
+          </Box>
+        ))}
     </>
   )
 }

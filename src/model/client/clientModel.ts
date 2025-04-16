@@ -215,6 +215,8 @@ export interface ISolutionServerProps {
   onDeleteInstance: (serverId: number, instanceId: number) => void
   onUpdateInstance: (serverId: number, instanceId: number, field: string, value: string) => void
   onUpdateServer: (serverId: number, field: string, value: string) => void
+  onAddInstance: (serverId: number) => void
+  children?: React.ReactNode
 }
 
 export interface IAiSolutionService {
