@@ -86,7 +86,7 @@ const TitleContainer = styled.div`
   align-items: flex-start;
   width: 100%;
 `
-const TimeInputContainer = styled.div`
+export const TimeInputContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -94,7 +94,7 @@ const TimeInputContainer = styled.div`
   gap: 4px;
   > select {
     flex: 1;
-    height: 30px;
+    height: 24px;
     border-radius: 4px;
     border: 1px solid #ccc;
     padding: 0 8px;

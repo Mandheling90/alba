@@ -48,7 +48,9 @@ const GateSelect: FC<IGateSelect> = ({ value, onChange, multiple = false, label,
           renderValue={selected => {
             const selectedValues = selected as string[]
             const labels = options.filter(option => selectedValues.includes(option.value)).map(option => option.label)
-            const renderMultipleLabel = `${labels[0]}${labels.length > 1 ? ` 외 ${labels.length - 1}곳` : ''}`
+            const renderMultipleLabel = `${labels.slice(0, 4).join(', ')}${
+              labels.length > 4 ? ` 외 ${labels.length - 4}곳` : ''
+            }`
 
             return multiple ? renderMultipleLabel : labels[0]
           }}
