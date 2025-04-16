@@ -9,9 +9,10 @@ interface IGateSelect<T = string | string[]> {
   onChange: (event: SelectChangeEvent<T>) => void
   multiple?: boolean
   label?: string
+  fullWidth?: boolean
 }
 
-const GateSelect: FC<IGateSelect> = ({ value, onChange, multiple = false, label }) => {
+const GateSelect: FC<IGateSelect> = ({ value, onChange, multiple = false, label, fullWidth = false }) => {
   const { data } = useGateList()
   const options = useMemo(() => {
     return (
@@ -28,13 +29,13 @@ const GateSelect: FC<IGateSelect> = ({ value, onChange, multiple = false, label 
   return (
     <Wrapper>
       <Label>{label}</Label>
-      <Container>
+      <Container fullWidth={fullWidth}>
         <Select
           value={value}
           onChange={onChange}
           multiple={multiple}
           sx={{
-            width: '200px',
+            width: fullWidth ? '100%' : '200px',
             height: '40px',
             paddingLeft: 8,
             fontSize: 12
@@ -70,8 +71,8 @@ const GateSelect: FC<IGateSelect> = ({ value, onChange, multiple = false, label 
   )
 }
 
-const Container = styled.div`
-  width: 200px;
+const Container = styled.div<{ fullWidth?: boolean }>`
+  width: ${props => (props.fullWidth ? '100%' : '200px')};
   height: 40px;
 `
 const Wrapper = styled.div`
@@ -80,7 +81,6 @@ const Wrapper = styled.div`
   gap: 8px;
   margin-right: 12px;
   align-items: flex-end;
-  margin-bottom: -84px;
   font-weight: 400;
   font-size: 14px;
   line-height: 24px;
