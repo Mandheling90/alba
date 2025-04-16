@@ -1,4 +1,4 @@
-import { Box, IconButton } from '@mui/material'
+import { Box, IconButton, TextareaAutosize } from '@mui/material'
 import { FC } from 'react'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { IServerList, ISolutionList, SOLUTION_USE_SERVER_TYPE } from 'src/model/client/clientModel'
@@ -111,27 +111,44 @@ const SolutionServerList: FC<ISolutionRow> = ({
   }
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-      {!isServerAddable(solutionList.aiSolutionName) && solutionList.serverList.length === 0 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
-          <IconButton onClick={() => onAddInstance(0)}>
-            <IconCustom isCommon icon={'add-button'} />
-          </IconButton>
-        </Box>
+    <>
+      {solutionList.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE ? (
+        <TextareaAutosize
+          style={{
+            width: '100%',
+            height: '100px',
+            resize: 'none',
+            border: '1px solid rgba(58, 53, 65, 0.26)',
+            borderRadius: '5px',
+            padding: '10px'
+          }}
+          value={solutionList.serverList[0].remark}
+          onChange={e => onUpdateServer(solutionList.serverList[0].serverId, 'remark', e.target.value)}
+        />
+      ) : (
+        <>
+          {isServerAddable(solutionList.aiSolutionName) && solutionList.serverList.length === 0 && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
+              <IconButton onClick={() => onAddInstance(0)}>
+                <IconCustom isCommon icon={'add-button'} />
+              </IconButton>
+            </Box>
+          )}
+
+          {solutionList.serverList.map(server => (
+            <Box sx={{ width: '100%' }} key={server.serverId}>
+              {renderSolutionComponent(server)}
+
+              <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
+                <IconButton onClick={() => onAddInstance(server.serverId)}>
+                  <IconCustom isCommon icon={'add-button'} />
+                </IconButton>
+              </Box>
+            </Box>
+          ))}
+        </>
       )}
-
-      {solutionList.serverList.map(server => (
-        <Box sx={{ width: '100%' }} key={server.serverId}>
-          {renderSolutionComponent(server)}
-
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
-            <IconButton onClick={() => onAddInstance(server.serverId)}>
-              <IconCustom isCommon icon={'add-button'} />
-            </IconButton>
-          </Box>
-        </Box>
-      ))}
-    </Box>
+    </>
   )
 }
 

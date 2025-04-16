@@ -5,6 +5,7 @@ import {
   IAiSolutionCompanyList,
   IAiSolutionService,
   IClientDetail,
+  ISolutionList,
   MAiSolutionCompanyList,
   MClientList,
   MClientListReq,
@@ -34,8 +35,18 @@ export const useAiCompanyDetail = (companyNo?: number) => {
 }
 
 export const useAiSolutionCompanySave = () => {
-  return useMutation((params: IAiSolutionCompanyList) => {
+  return useMutation((params: ISolutionList & { companyNo: number; remark?: string }) => {
     return createPost<MResult>([EPath.AI_COMPANY, params])
+  }, {})
+}
+export const useAiSolutionCompanyUpdate = () => {
+  return useMutation((params: ISolutionList & { companyNo: number; remark?: string }) => {
+    return createPut<MResult>([EPath.AI_COMPANY, params])
+  }, {})
+}
+export const useAiSolutionCompanyDelete = () => {
+  return useMutation((params: { companySolutionId: number }) => {
+    return createDelete<MResult>([EPath.AI_COMPANY, params])
   }, {})
 }
 

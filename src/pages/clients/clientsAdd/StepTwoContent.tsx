@@ -9,16 +9,16 @@ import {
   IAiSolutionCompanyList,
   IClientDetail,
   ISolutionList,
+  MAiSolutionCompanyList,
   SOLUTION_USE_SERVER_TYPE
 } from 'src/model/client/clientModel'
-import { useAiSolutionCompanyList } from 'src/service/client/clientService'
+import {
+  useAiSolutionCompanyDelete,
+  useAiSolutionCompanyList,
+  useAiSolutionCompanySave,
+  useAiSolutionCompanyUpdate
+} from 'src/service/client/clientService'
 import SolutionServerList from './SolutionServerList'
-
-interface IStepTwoContent {
-  aiData: IAiSolutionCompanyList | undefined
-  onDataChange: (data: Partial<IClientDetail>) => void
-  disabled: boolean
-}
 
 export const isServerAddable = (solutionName: string) => {
   return (
@@ -30,14 +30,60 @@ export const isServerAddable = (solutionName: string) => {
   )
 }
 
-const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled }) => {
-  const { data, refetch } = useAiSolutionCompanyList()
+export const DefaultPackageSolution = (PackageSolution?: MAiSolutionCompanyList, remark?: string): ISolutionList => {
+  return {
+    aiSolutionId: PackageSolution?.id ?? 0,
+    aiSolutionName: PackageSolution?.name ?? '',
+    companySolutionId: 999,
+    serverList: [
+      {
+        serverId: 999,
+        serverName: '',
+        serverIp: '',
+        aiBoxId: '',
+        aiBoxPassword: '',
+        safrEventUrl: '',
+        safrId: '',
+        safrPassword: '',
+        instanceList: [],
+        remark: remark ?? ''
+      }
+    ]
+  }
+}
+
+interface IStepTwoContent {
+  aiData: IAiSolutionCompanyList | undefined
+  onDataChange: (data: Partial<IClientDetail>) => void
+  disabled: boolean
+  companyNo: number
+  refetch: () => void
+}
+
+const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, companyNo, refetch }) => {
+  const { data } = useAiSolutionCompanyList()
+  const { mutateAsync: saveAiSolutionCompany } = useAiSolutionCompanySave()
+  const { mutateAsync: updateAiSolutionCompany } = useAiSolutionCompanyUpdate()
+  const { mutateAsync: deleteAiSolutionCompany } = useAiSolutionCompanyDelete()
+
   const [solutionList, setSolutionList] = useState<ISolutionList[]>([])
   const originalAiData = useRef<IAiSolutionCompanyList | undefined>(undefined)
 
   useEffect(() => {
-    setSolutionList(aiData?.solutionList || [])
-    originalAiData.current = aiData
+    if (aiData?.packageInfo?.packageYn === 'P') {
+      const Package = data?.data?.find(item => item.name === SOLUTION_USE_SERVER_TYPE.PACKAGE)
+      const PackageSolution = DefaultPackageSolution(Package, aiData.packageInfo.remark)
+      const tempAiData = {
+        ...aiData,
+        solutionList: [...aiData.solutionList, PackageSolution]
+      }
+
+      originalAiData.current = tempAiData
+      setSolutionList(tempAiData.solutionList)
+    } else {
+      originalAiData.current = aiData
+      setSolutionList(aiData?.solutionList || [])
+    }
   }, [aiData])
 
   useEffect(() => {
@@ -56,13 +102,25 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled })
     ])
   }
 
-  const handleDeleteSolution = (index: number) => {
-    setSolutionList(prev => prev.filter((_, i) => i !== index))
+  const handleDeleteSolution = async (companySolutionId: number) => {
+    await deleteAiSolutionCompany({ companySolutionId: companySolutionId })
+    refetch()
+
+    // setSolutionList(prev => prev.filter(item => item.companySolutionId !== companySolutionId))
   }
 
   const handleSelectChange = (companySolutionId: number) => (event: SelectChangeEvent) => {
     const aiSolutionId = event.target.value
     const aiSolutionName = data?.data?.find(item => item.id.toString() === aiSolutionId)?.name || ''
+
+    if (
+      aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE &&
+      solutionList.find(item => item.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE)
+    ) {
+      alert('패키지 솔루션은 1개만 등록할 수 있습니다.')
+
+      return
+    }
 
     setSolutionList(prev =>
       prev.map(card => {
@@ -359,7 +417,12 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled })
                   />
                 </Box>
                 <Box>
-                  <Typography>총 1대의 카메라 항목이 있습니다.</Typography>
+                  {card.aiSolutionName !== SOLUTION_USE_SERVER_TYPE.PACKAGE && (
+                    <Typography>
+                      총 {card.serverList.reduce((acc, server) => acc + server.instanceList.length, 0)}대의 카메라
+                      항목이 있습니다.
+                    </Typography>
+                  )}
                 </Box>
               </Box>
             }
@@ -375,7 +438,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled })
                     {card.aiSolutionName === SOLUTION_USE_SERVER_TYPE.NEXREALAIBOX ? 'AIBOX 추가' : '서버 추가'}
                   </Button>
                 )}
-                <IconButton onClick={() => handleDeleteSolution(index)}>
+                <IconButton onClick={() => handleDeleteSolution(card.companySolutionId)}>
                   <IconCustom isCommon icon={'DeleteOutline'} />
                 </IconButton>
               </>
@@ -413,11 +476,37 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled })
               <Button
                 size='medium'
                 variant='contained'
-                onClick={() => {
-                  if (isValidSolution(index)) {
-                    console.log('등록')
-                  } else {
+                onClick={async () => {
+                  if (!isValidSolution(index)) {
                     alert('서비스 이름과 타입을 모두 입력해주세요.')
+
+                    return
+                  }
+
+                  try {
+                    const isNewCard = !originalAiData.current?.solutionList?.some(
+                      solution => solution.companySolutionId === card.companySolutionId
+                    )
+                    const remark =
+                      solutionList.find(solution => solution.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE)
+                        ?.serverList[0].remark ?? ''
+
+                    const solutionData = {
+                      ...card,
+                      companyNo,
+                      remark,
+                      ...(card.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE && { serverList: [] })
+                    }
+
+                    if (isNewCard) {
+                      await saveAiSolutionCompany(solutionData)
+                    } else {
+                      await updateAiSolutionCompany(solutionData)
+                    }
+
+                    refetch()
+                  } catch (error) {
+                    console.error('솔루션 등록 오류:', error)
                   }
                 }}
                 sx={{ mr: 4 }}

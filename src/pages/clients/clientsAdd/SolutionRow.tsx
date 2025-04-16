@@ -1,5 +1,5 @@
-import { Box, IconButton, TextField } from '@mui/material'
-import { FC } from 'react'
+import { Box, Chip, IconButton, InputAdornment, Stack, TextField } from '@mui/material'
+import { FC, KeyboardEvent, useRef, useState } from 'react'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import { YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
@@ -13,7 +13,7 @@ interface ISolutionRow {
   useInstance?: boolean
   instance: IInstanceList
   onDeleteInstance: (serverId: number, instanceId: number) => void
-  onUpdateInstance: (serverId: number, instanceId: number, field: string, value: string) => void
+  onUpdateInstance: (serverId: number, instanceId: number, field: string, value: any) => void
 }
 
 const SolutionRow: FC<ISolutionRow> = ({
@@ -26,6 +26,8 @@ const SolutionRow: FC<ISolutionRow> = ({
   onUpdateInstance
 }) => {
   const { data, refetch } = useAiSolutionService(solutionId)
+  const [newTag, setNewTag] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const serviceOptions = data?.data
     ?.filter(item => item.dataStatus === YN.Y)
@@ -34,6 +36,42 @@ const SolutionRow: FC<ISolutionRow> = ({
       value: item.aiServiceId.toString(),
       label: item.aiServiceName
     }))
+
+  const handleAddTag = () => {
+    if (newTag.trim()) {
+      const currentTags = Array.isArray(instance.areaNameList) ? instance.areaNameList : []
+
+      const newTagObj = {
+        instanceModelId: 0,
+        instanceModelName: newTag.trim()
+      }
+
+      onUpdateInstance(serverId, instance.instanceId ?? 0, 'areaNameList', [...currentTags, newTagObj])
+      setNewTag('')
+    }
+  }
+
+  const handleDeleteTag = (tagToDelete: string) => {
+    const currentTags = Array.isArray(instance.areaNameList) ? instance.areaNameList : []
+
+    const updatedTags = currentTags.filter(tag => tag.instanceModelName !== tagToDelete)
+
+    onUpdateInstance(serverId, instance.instanceId ?? 0, 'areaNameList', updatedTags)
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleAddTag()
+    } else if (e.key === 'Backspace' && !newTag) {
+      const currentTags = Array.isArray(instance.areaNameList) ? instance.areaNameList : []
+
+      if (currentTags.length > 0) {
+        const lastTag = currentTags[currentTags.length - 1]
+        handleDeleteTag(lastTag.instanceModelName)
+      }
+    }
+  }
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
@@ -94,14 +132,50 @@ const SolutionRow: FC<ISolutionRow> = ({
         variant='outlined'
         placeholder={`카메라주소`}
       />
-      <TextField
-        size='small'
-        value={instance.areaNameList}
-        onChange={e => onUpdateInstance(serverId, instance.instanceId ?? 0, 'areaNameList', e.target.value)}
-        label='분석영역명 '
-        variant='outlined'
-        placeholder={`분석영역명`}
-      />
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, minWidth: '200px' }}>
+        <TextField
+          size='small'
+          value={newTag}
+          onChange={e => setNewTag(e.target.value)}
+          onKeyDown={handleKeyDown}
+          label='분석영역명'
+          variant='outlined'
+          placeholder='새로운 분석영역명 입력'
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position='start'>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    overflowX: 'auto',
+                    '&::-webkit-scrollbar': {
+                      height: '4px'
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      backgroundColor: 'rgba(0,0,0,0.2)',
+                      borderRadius: '4px'
+                    },
+                    maxWidth: '300px'
+                  }}
+                >
+                  <Stack direction='row' spacing={1} sx={{ flexWrap: 'nowrap' }}>
+                    {Array.isArray(instance.areaNameList) &&
+                      instance.areaNameList.map((tag, index) => (
+                        <Chip
+                          key={index}
+                          label={tag.instanceModelName}
+                          onDelete={() => handleDeleteTag(tag.instanceModelName)}
+                          size='small'
+                        />
+                      ))}
+                  </Stack>
+                </Box>
+              </InputAdornment>
+            )
+          }}
+          inputRef={inputRef}
+        />
+      </Box>
 
       <IconButton onClick={() => onDeleteInstance(serverId, instance.instanceId ?? 0)}>
         <IconCustom isCommon icon={'DeleteOutline'} />

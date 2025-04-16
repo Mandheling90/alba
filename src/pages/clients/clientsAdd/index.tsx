@@ -160,7 +160,13 @@ const Index: FC = ({}) => {
     {
       title: '분석 솔루션 및 카메라 정보 등록',
       content: (
-        <StepTwoContent aiData={aiData?.data} onDataChange={handleStepOneDataChange} disabled={activeStep === 0} />
+        <StepTwoContent
+          aiData={aiData?.data}
+          companyNo={data?.data?.companyNo ?? 0}
+          onDataChange={handleStepOneDataChange}
+          disabled={activeStep === 0}
+          refetch={refetchAi}
+        />
       )
     }
   ]
