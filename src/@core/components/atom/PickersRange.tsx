@@ -28,7 +28,8 @@ const PickersRange = ({
   placeholder,
   placeholderColor,
   inputStyle,
-  useNotDefaultStyle = false
+  useNotDefaultStyle = false,
+  isSingleDate = false
 }: {
   label?: string
   width?: number
@@ -43,6 +44,7 @@ const PickersRange = ({
   placeholderColor?: string
   inputStyle?: React.CSSProperties
   useNotDefaultStyle?: boolean
+  isSingleDate?: boolean
 }) => {
   const theme = useTheme()
   const { direction } = theme
@@ -62,20 +64,25 @@ const PickersRange = ({
       }
     }
 
-    if (selectedEndDate) {
+    if (selectedEndDate && !isSingleDate) {
       const validEndDate = new Date(selectedEndDate)
       if (!isNaN(validEndDate.getTime())) {
         setEndDate(validEndDate)
       }
     }
-  }, [selectedStartDate, selectedEndDate])
+  }, [selectedStartDate, selectedEndDate, isSingleDate])
 
   const handleOnChange = (dates: any) => {
-    const [start, end] = dates
-    setStartDate(start)
-    setEndDate(end)
-
-    if (start && end) onChange(format(start, returnFormat), format(end, returnFormat))
+    if (isSingleDate) {
+      const date = dates
+      setStartDate(date)
+      if (date) onChange(format(date, returnFormat), '')
+    } else {
+      const [start, end] = dates
+      setStartDate(start)
+      setEndDate(end)
+      if (start && end) onChange(format(start, returnFormat), format(end, returnFormat))
+    }
   }
 
   const handleIconClick = () => {
@@ -120,19 +127,27 @@ const PickersRange = ({
       )}
 
       <DatePicker
-        ref={datePickerRef} // Attach the ref to the DatePicker
-        selectsRange
+        ref={datePickerRef}
+        selectsRange={!isSingleDate}
         isClearable={!isDisabled}
-        endDate={endDate}
+        endDate={isSingleDate ? undefined : endDate}
         selected={startDate}
-        startDate={startDate}
+        startDate={isSingleDate ? undefined : startDate}
         id='date-range-picker'
         onChange={handleOnChange}
-        shouldCloseOnSelect={false}
+        shouldCloseOnSelect={isSingleDate}
         popperPlacement={popperPlacement}
         customInput={
           <PickersComponent
-            label={placeholder && !startDate && !endDate ? placeholder : label ? label : '기간설정'}
+            label={
+              placeholder && !startDate && !endDate
+                ? placeholder
+                : label
+                ? label
+                : isSingleDate
+                ? '날짜 선택'
+                : '기간설정'
+            }
             start={startDate as Date | number}
             end={endDate as Date | number}
             useIcon={useIcon}

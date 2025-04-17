@@ -40,7 +40,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
   }
 
   const handleDateChange = (start: string, end: string) => {
-    onDataChange({ expireDate: `${start} ~ ${end}` })
+    onDataChange({ expireDate: start })
   }
 
   const theme = useTheme()
@@ -186,6 +186,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                     onChange={handleDateChange}
                     inputStyle={{ backgroundColor: grayTextBackground, border: 'none' }}
                     useNotDefaultStyle
+                    isSingleDate={true}
                   />
                 </Box>
               </Box>

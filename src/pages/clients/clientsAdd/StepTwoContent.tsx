@@ -2,11 +2,13 @@ import { Box, Button, IconButton, SelectChangeEvent, Typography } from '@mui/mat
 import { FC, useEffect, useRef, useState } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
+import SimpleDialogModal from 'src/@core/components/molecule/SimpleDialogModal'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 import { YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
 import {
   IAiSolutionCompanyList,
+  IAiSolutionCompanyPackageParam,
   IClientDetail,
   ISolutionList,
   MAiSolutionCompanyList,
@@ -15,8 +17,13 @@ import {
 import {
   useAiSolutionCompanyDelete,
   useAiSolutionCompanyList,
+  useAiSolutionCompanyPackageDelete,
+  useAiSolutionCompanyPackageSave,
+  useAiSolutionCompanyPackageUpdate,
   useAiSolutionCompanySave,
-  useAiSolutionCompanyUpdate
+  useAiSolutionCompanyUpdate,
+  useAiSolutionInstanceDelete,
+  useAiSolutionServerDelete
 } from 'src/service/client/clientService'
 import SolutionServerList from './SolutionServerList'
 
@@ -65,9 +72,20 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
   const { mutateAsync: saveAiSolutionCompany } = useAiSolutionCompanySave()
   const { mutateAsync: updateAiSolutionCompany } = useAiSolutionCompanyUpdate()
   const { mutateAsync: deleteAiSolutionCompany } = useAiSolutionCompanyDelete()
+  const { mutateAsync: saveAiSolutionCompanyPackage } = useAiSolutionCompanyPackageSave()
+  const { mutateAsync: updateAiSolutionCompanyPackage } = useAiSolutionCompanyPackageUpdate()
+  const { mutateAsync: deleteAiSolutionCompanyPackage } = useAiSolutionCompanyPackageDelete()
+  const { mutateAsync: deleteAiSolutionServer } = useAiSolutionServerDelete()
+  const { mutateAsync: deleteAiSolutionInstance } = useAiSolutionInstanceDelete()
 
   const [solutionList, setSolutionList] = useState<ISolutionList[]>([])
   const originalAiData = useRef<IAiSolutionCompanyList | undefined>(undefined)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [selectedSolutionId, setSelectedSolutionId] = useState<number | null>(null)
+  const [deleteType, setDeleteType] = useState<'solution' | 'server' | 'instance' | 'warning'>('solution')
+  const [selectedServerId, setSelectedServerId] = useState<number | null>(null)
+  const [selectedInstanceId, setSelectedInstanceId] = useState<number | null>(null)
+  const [warningMessage, setWarningMessage] = useState<string>('')
 
   useEffect(() => {
     if (aiData?.packageInfo?.packageYn === 'P') {
@@ -103,10 +121,169 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
   }
 
   const handleDeleteSolution = async (companySolutionId: number) => {
-    await deleteAiSolutionCompany({ companySolutionId: companySolutionId })
-    refetch()
+    // 솔루션 정보 찾기
+    const solution = solutionList.find(item => item.companySolutionId === companySolutionId)
 
-    // setSolutionList(prev => prev.filter(item => item.companySolutionId !== companySolutionId))
+    if (!solution) return
+
+    // 패키지는 그대로 삭제
+    if (solution.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE) {
+      await deleteAiSolutionCompanyPackage({ companyNo: companyNo })
+      refetch()
+
+      return
+    }
+
+    // 서버를 사용하는 솔루션인지 확인
+    const isServerSolution = isServerAddable(solution.aiSolutionName)
+
+    if (isServerSolution) {
+      // 서버를 사용하는 솔루션인 경우, 서버가 있는지 확인
+      if (solution.serverList && solution.serverList.length > 0) {
+        setWarningMessage('서버를 사용하는 솔루션은 모든 서버를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.')
+        setDeleteType('warning')
+        setDeleteModalOpen(true)
+
+        return
+      }
+    } else {
+      // 서버를 사용하지 않는 솔루션인 경우, 인스턴스가 있는지 확인
+      const hasInstances = solution.serverList.some(server => server.instanceList && server.instanceList.length > 0)
+
+      if (hasInstances) {
+        setWarningMessage('모든 인스턴스를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.')
+        setDeleteType('warning')
+        setDeleteModalOpen(true)
+
+        return
+      }
+    }
+
+    // 삭제 가능한 경우 삭제 모달 표시
+    setSelectedSolutionId(companySolutionId)
+    setDeleteType('solution')
+    setDeleteModalOpen(true)
+  }
+
+  const handleDeleteServer = async (serverId: number) => {
+    // 서버에 연결된 인스턴스가 있는지 확인
+    const server = solutionList.flatMap(solution => solution.serverList).find(server => server.serverId === serverId)
+
+    if (server && server.instanceList && server.instanceList.length > 0) {
+      // 인스턴스가 있는 경우 경고 메시지 표시
+      setWarningMessage(`서버를 삭제하기 전에 모든 인스턴스를 먼저 삭제해주세요.`)
+      setDeleteType('warning')
+      setDeleteModalOpen(true)
+
+      return
+    }
+
+    setSelectedServerId(serverId)
+    setDeleteType('server')
+    setDeleteModalOpen(true)
+  }
+
+  const handleDeleteInstance = async (solutionIndex: number, serverId: number, instanceId: number) => {
+    setSelectedServerId(serverId)
+    setSelectedInstanceId(instanceId)
+    setDeleteType('instance')
+    setDeleteModalOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    try {
+      switch (deleteType) {
+        case 'solution':
+          if (selectedSolutionId) {
+            const isExistingSolution = originalAiData.current?.solutionList?.some(
+              solution => solution.companySolutionId === selectedSolutionId
+            )
+
+            if (isExistingSolution) {
+              await deleteAiSolutionCompany({ companySolutionId: selectedSolutionId })
+              refetch()
+            } else {
+              setSolutionList(prev => prev.filter(solution => solution.companySolutionId !== selectedSolutionId))
+            }
+          }
+          break
+        case 'server':
+          if (selectedServerId) {
+            const isExistingServer = originalAiData.current?.solutionList?.some(solution =>
+              solution.serverList.some(server => server.serverId === selectedServerId)
+            )
+
+            if (isExistingServer) {
+              await deleteAiSolutionServer({ serverId: selectedServerId })
+              refetch()
+            } else {
+              setSolutionList(prev =>
+                prev.map(solution => ({
+                  ...solution,
+                  serverList: solution.serverList.filter(server => server.serverId !== selectedServerId)
+                }))
+              )
+            }
+          }
+          break
+        case 'instance':
+          if (selectedServerId && selectedInstanceId) {
+            const isExistingInstance = originalAiData.current?.solutionList?.some(solution =>
+              solution.serverList.some(server =>
+                server.instanceList.some(instance => instance.instanceId === selectedInstanceId)
+              )
+            )
+
+            if (isExistingInstance) {
+              await deleteAiSolutionInstance({ instanceId: selectedInstanceId })
+              refetch()
+            } else {
+              setSolutionList(prev =>
+                prev.map(solution => ({
+                  ...solution,
+                  serverList: solution.serverList.map(server => {
+                    if (server.serverId === selectedServerId) {
+                      return {
+                        ...server,
+                        instanceList: server.instanceList.filter(instance => instance.instanceId !== selectedInstanceId)
+                      }
+                    }
+
+                    return server
+                  })
+                }))
+              )
+            }
+          }
+          break
+        case 'warning':
+          // 경고 메시지의 경우 아무 작업도 수행하지 않음
+          break
+      }
+    } catch (error) {
+      console.error('삭제 중 오류 발생:', error)
+    } finally {
+      setDeleteModalOpen(false)
+      setSelectedSolutionId(null)
+      setSelectedServerId(null)
+      setSelectedInstanceId(null)
+      setWarningMessage('')
+    }
+  }
+
+  const getDeleteModalContent = () => {
+    switch (deleteType) {
+      case 'solution':
+        return '정말로 이 솔루션을 삭제하시겠습니까?'
+      case 'server':
+        return '정말로 이 서버를 삭제하시겠습니까?'
+      case 'instance':
+        return '정말로 이 인스턴스를 삭제하시겠습니까?'
+      case 'warning':
+        return warningMessage
+      default:
+        return ''
+    }
   }
 
   const handleSelectChange = (companySolutionId: number) => (event: SelectChangeEvent) => {
@@ -235,30 +412,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
     )
   }
 
-  const handleDeleteInstance = (solutionIndex: number, serverId: number, instanceId: number) => {
-    setSolutionList(prev =>
-      prev.map((solution, i) => {
-        if (i === solutionIndex) {
-          return {
-            ...solution,
-            serverList: solution.serverList.map(server => {
-              if (server.serverId === serverId) {
-                return {
-                  ...server,
-                  instanceList: server.instanceList.filter(instance => instance.instanceId !== instanceId)
-                }
-              }
-
-              return server
-            })
-          }
-        }
-
-        return solution
-      })
-    )
-  }
-
   const handleUpdateInstance = (
     companySolutionId: number,
     serverId: number,
@@ -360,175 +513,204 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
   }
 
   return (
-    <Box
-      sx={{
-        pointerEvents: disabled ? 'none' : 'auto',
-        opacity: disabled ? 0.5 : 1,
-        transition: 'opacity 0.3s'
-      }}
-    >
-      <Box mb={5}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant='h5'>
-            {solutionList?.length === 0 ? (
-              '해당 고객사에 등록된 솔루션이 없습니다'
-            ) : (
-              <>
-                총 {solutionList?.length || 0}개의 분석 솔루션과
-                {solutionList?.reduce((acc: number, sol: ISolutionList) => acc + sol.serverList.length, 0) || 0}
-                개의 서비스가 등록되어 있습니다.
-              </>
-            )}
-          </Typography>
-          <Button variant='contained' startIcon={<IconCustom isCommon icon='plus' />} onClick={handleAddSolution}>
-            분석솔루션 추가
-          </Button>
-        </Box>
-        <Box sx={{ my: 3 }}>
-          <DividerBar />
-        </Box>
-        <Box>
-          <Typography>
-            {solutionList?.length === 0
-              ? '해당 고객사에 등록된 서비스가 없습니다'
-              : 'ProAI Edge는 카운팅 서비스에, CVEDIA는 밀집도분석 서비스에 사용됩니다.'}
-          </Typography>
-        </Box>
-      </Box>
-
-      {solutionList.map((card, index) => (
-        <Box key={`${card.companySolutionId}_${index}`} mb={10}>
-          <WindowCard
-            leftContent={
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <Box>
-                  <CustomSelectBox
-                    value={card.aiSolutionId.toString()}
-                    onChange={handleSelectChange(card.companySolutionId)}
-                    options={
-                      data?.data
-                        ?.filter(item => item.dataStatus === YN.Y)
-                        .map(item => ({
-                          key: `${item.id}_${item.name}`,
-                          value: item.id.toString(),
-                          label: item.name
-                        })) || []
-                    }
-                  />
-                </Box>
-                <Box>
-                  {card.aiSolutionName !== SOLUTION_USE_SERVER_TYPE.PACKAGE && (
-                    <Typography>
-                      총 {card.serverList.reduce((acc, server) => acc + server.instanceList.length, 0)}대의 카메라
-                      항목이 있습니다.
-                    </Typography>
-                  )}
-                </Box>
-              </Box>
-            }
-            rightContent={
-              <>
-                {isServerAddable(card.aiSolutionName) && (
-                  <Button
-                    variant='contained'
-                    startIcon={<IconCustom isCommon icon='plus' />}
-                    onClick={() => handleAddServer(index)}
-                    sx={{ height: '20px', padding: '12px', mr: 1 }}
-                  >
-                    {card.aiSolutionName === SOLUTION_USE_SERVER_TYPE.NEXREALAIBOX ? 'AIBOX 추가' : '서버 추가'}
-                  </Button>
-                )}
-                <IconButton onClick={() => handleDeleteSolution(card.companySolutionId)}>
-                  <IconCustom isCommon icon={'DeleteOutline'} />
-                </IconButton>
-              </>
-            }
-          >
-            {card.aiSolutionId === 0 ? (
-              <Typography>분석솔루션을 선택해주세요.</Typography>
-            ) : (
-              <SolutionServerList
-                solutionList={card}
-                onDelete={serviceId => {
-                  setSolutionList(prev =>
-                    prev.map((c, i) =>
-                      i === index ? { ...c, serverList: c.serverList.filter(s => s.serverId !== serviceId) } : c
-                    )
-                  )
-                }}
-                onAdd={() => handleAddServer(index)}
-                onAddInstance={(serverId: number) => handleAddInstance(index, serverId)}
-                onDeleteInstance={(serverId: number, instanceId: number) =>
-                  handleDeleteInstance(index, serverId, instanceId)
-                }
-                onUpdateInstance={(serverId, instanceId, field, value) =>
-                  handleUpdateInstance(card.companySolutionId, serverId, instanceId, field, value)
-                }
-                onUpdateServer={(serverId, field, value) =>
-                  handleUpdateServer(card.companySolutionId, serverId, field, value)
-                }
-              />
-            )}
-          </WindowCard>
-
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <div className='button-wrapper'>
-              <Button
-                size='medium'
-                variant='contained'
-                onClick={async () => {
-                  if (!isValidSolution(index)) {
-                    alert('서비스 이름과 타입을 모두 입력해주세요.')
-
-                    return
-                  }
-
-                  try {
-                    const isNewCard = !originalAiData.current?.solutionList?.some(
-                      solution => solution.companySolutionId === card.companySolutionId
-                    )
-                    const remark =
-                      solutionList.find(solution => solution.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE)
-                        ?.serverList[0].remark ?? ''
-
-                    const solutionData = {
-                      ...card,
-                      companyNo,
-                      remark,
-                      ...(card.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE && { serverList: [] })
-                    }
-
-                    if (isNewCard) {
-                      await saveAiSolutionCompany(solutionData)
-                    } else {
-                      await updateAiSolutionCompany(solutionData)
-                    }
-
-                    refetch()
-                  } catch (error) {
-                    console.error('솔루션 등록 오류:', error)
-                  }
-                }}
-                sx={{ mr: 4 }}
-                disabled={!isValidSolution(index)}
-              >
-                등록
-              </Button>
-
-              <Button
-                size='medium'
-                color='secondary'
-                variant='outlined'
-                onClick={() => handleRevertToOriginalState(card.companySolutionId)}
-                disabled={false}
-              >
-                취소
-              </Button>
-            </div>
+    <>
+      <Box
+        sx={{
+          pointerEvents: disabled ? 'none' : 'auto',
+          opacity: disabled ? 0.5 : 1,
+          transition: 'opacity 0.3s'
+        }}
+      >
+        <Box mb={5}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Typography variant='h5'>
+              {solutionList?.length === 0 ? (
+                '해당 고객사에 등록된 솔루션이 없습니다'
+              ) : (
+                <>
+                  총 {solutionList?.length || 0}개의 분석 솔루션과
+                  {solutionList?.reduce((acc: number, sol: ISolutionList) => acc + sol.serverList.length, 0) || 0}
+                  개의 서비스가 등록되어 있습니다.
+                </>
+              )}
+            </Typography>
+            <Button variant='contained' startIcon={<IconCustom isCommon icon='plus' />} onClick={handleAddSolution}>
+              분석솔루션 추가
+            </Button>
+          </Box>
+          <Box sx={{ my: 3 }}>
+            <DividerBar />
+          </Box>
+          <Box>
+            <Typography>
+              {solutionList?.length === 0
+                ? '해당 고객사에 등록된 서비스가 없습니다'
+                : 'ProAI Edge는 카운팅 서비스에, CVEDIA는 밀집도분석 서비스에 사용됩니다.'}
+            </Typography>
           </Box>
         </Box>
-      ))}
-    </Box>
+
+        {solutionList.map((card, index) => (
+          <Box key={`${card.companySolutionId}_${index}`} mb={10}>
+            <WindowCard
+              leftContent={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <Box>
+                    <CustomSelectBox
+                      value={card.aiSolutionId.toString()}
+                      onChange={handleSelectChange(card.companySolutionId)}
+                      options={
+                        data?.data
+                          ?.filter(item => item.dataStatus === YN.Y)
+                          .map(item => ({
+                            key: `${item.id}_${item.name}`,
+                            value: item.id.toString(),
+                            label: item.name
+                          })) || []
+                      }
+                    />
+                  </Box>
+                  <Box>
+                    {card.aiSolutionName !== SOLUTION_USE_SERVER_TYPE.PACKAGE && (
+                      <Typography>
+                        총 {card.serverList.reduce((acc, server) => acc + server.instanceList.length, 0)}대의 카메라
+                        항목이 있습니다.
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+              }
+              rightContent={
+                <>
+                  {isServerAddable(card.aiSolutionName) && (
+                    <Button
+                      variant='contained'
+                      startIcon={<IconCustom isCommon icon='plus' />}
+                      onClick={() => handleAddServer(index)}
+                      sx={{ height: '20px', padding: '12px', mr: 1 }}
+                    >
+                      {card.aiSolutionName === SOLUTION_USE_SERVER_TYPE.NEXREALAIBOX ? 'AIBOX 추가' : '서버 추가'}
+                    </Button>
+                  )}
+                  <IconButton onClick={() => handleDeleteSolution(card.companySolutionId)}>
+                    <IconCustom isCommon icon={'DeleteOutline'} />
+                  </IconButton>
+                </>
+              }
+            >
+              {card.aiSolutionId === 0 ? (
+                <Typography>분석솔루션을 선택해주세요.</Typography>
+              ) : (
+                <SolutionServerList
+                  solutionList={card}
+                  onDelete={handleDeleteServer}
+                  onAdd={() => handleAddServer(index)}
+                  onAddInstance={(serverId: number) => handleAddInstance(index, serverId)}
+                  onDeleteInstance={(serverId: number, instanceId: number) =>
+                    handleDeleteInstance(index, serverId, instanceId)
+                  }
+                  onUpdateInstance={(serverId, instanceId, field, value) =>
+                    handleUpdateInstance(card.companySolutionId, serverId, instanceId, field, value)
+                  }
+                  onUpdateServer={(serverId, field, value) =>
+                    handleUpdateServer(card.companySolutionId, serverId, field, value)
+                  }
+                />
+              )}
+            </WindowCard>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <div className='button-wrapper'>
+                <Button
+                  size='medium'
+                  variant='contained'
+                  onClick={async () => {
+                    if (!isValidSolution(index)) {
+                      alert('서비스 이름과 타입을 모두 입력해주세요.')
+
+                      return
+                    }
+
+                    try {
+                      if (card.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE) {
+                        const isPackageExists = originalAiData.current?.solutionList?.some(
+                          solution => solution.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE
+                        )
+
+                        const packageSolutionData: IAiSolutionCompanyPackageParam = {
+                          companyNo: companyNo,
+                          remark: card.serverList[0].remark ?? ''
+                        }
+
+                        if (isPackageExists) {
+                          await updateAiSolutionCompanyPackage(packageSolutionData)
+                        } else {
+                          await saveAiSolutionCompanyPackage(packageSolutionData)
+                        }
+                      } else {
+                        const isNewCard = !originalAiData.current?.solutionList?.some(
+                          solution => solution.companySolutionId === card.companySolutionId
+                        )
+
+                        // const remark =
+                        //   solutionList.find(solution => solution.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE)
+                        //     ?.serverList[0].remark ?? ''
+
+                        const solutionData = {
+                          ...card,
+                          companyNo,
+                          ...(card.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE && { serverList: [] })
+                        }
+
+                        if (isNewCard) {
+                          await saveAiSolutionCompany(solutionData)
+                        } else {
+                          await updateAiSolutionCompany(solutionData)
+                        }
+                      }
+
+                      refetch()
+                    } catch (error) {
+                      console.error('솔루션 등록 오류:', error)
+                    }
+                  }}
+                  sx={{ mr: 4 }}
+                  disabled={!isValidSolution(index)}
+                >
+                  등록
+                </Button>
+
+                <Button
+                  size='medium'
+                  color='secondary'
+                  variant='outlined'
+                  onClick={() => handleRevertToOriginalState(card.companySolutionId)}
+                  disabled={false}
+                >
+                  취소
+                </Button>
+              </div>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+      <SimpleDialogModal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title={`${
+          deleteType === 'solution'
+            ? '솔루션'
+            : deleteType === 'server'
+            ? '서버'
+            : deleteType === 'instance'
+            ? '인스턴스'
+            : '경고'
+        } ${deleteType === 'warning' ? '' : '삭제'}`}
+        contents={getDeleteModalContent()}
+        isConfirm={deleteType !== 'warning'}
+      />
+    </>
   )
 }
 

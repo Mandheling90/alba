@@ -231,7 +231,9 @@ const SolutionServerList: FC<ISolutionRow> = ({
                   serverId={server.serverId}
                   solutionId={solutionList.aiSolutionId}
                   useCameraId={
-                    solutionList.aiSolutionName === 'ProAIEdge' || solutionList.aiSolutionName === 'ProAIServer'
+                    solutionList.aiSolutionName === 'ProAIEdge' ||
+                    solutionList.aiSolutionName === 'ProAIServer' ||
+                    solutionList.aiSolutionName === 'VCA'
                   }
                   key={instance.instanceId}
                   instance={instance}

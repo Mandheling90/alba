@@ -3,6 +3,7 @@ import { EPath } from 'src/enum/clientEnum'
 
 import {
   IAiSolutionCompanyList,
+  IAiSolutionCompanyPackageParam,
   IAiSolutionService,
   IClientDetail,
   ISolutionList,
@@ -35,18 +36,47 @@ export const useAiCompanyDetail = (companyNo?: number) => {
 }
 
 export const useAiSolutionCompanySave = () => {
-  return useMutation((params: ISolutionList & { companyNo: number; remark?: string }) => {
+  return useMutation((params: ISolutionList & { companyNo: number }) => {
     return createPost<MResult>([EPath.AI_COMPANY, params])
   }, {})
 }
 export const useAiSolutionCompanyUpdate = () => {
-  return useMutation((params: ISolutionList & { companyNo: number; remark?: string }) => {
+  return useMutation((params: ISolutionList & { companyNo: number }) => {
     return createPut<MResult>([EPath.AI_COMPANY, params])
   }, {})
 }
 export const useAiSolutionCompanyDelete = () => {
   return useMutation((params: { companySolutionId: number }) => {
     return createDelete<MResult>([EPath.AI_COMPANY, params])
+  }, {})
+}
+
+export const useAiSolutionCompanyPackageSave = () => {
+  return useMutation((params: IAiSolutionCompanyPackageParam) => {
+    return createPost<MResult>([EPath.AI_COMPANY_PACKAGE, params])
+  }, {})
+}
+
+export const useAiSolutionCompanyPackageUpdate = () => {
+  return useMutation((params: IAiSolutionCompanyPackageParam) => {
+    return createPut<MResult>([EPath.AI_COMPANY_PACKAGE, params])
+  }, {})
+}
+export const useAiSolutionCompanyPackageDelete = () => {
+  return useMutation((params: { companyNo: number }) => {
+    return createDelete<MResult>([EPath.AI_COMPANY_PACKAGE, params])
+  }, {})
+}
+
+export const useAiSolutionServerDelete = () => {
+  return useMutation((params: { serverId: number }) => {
+    return createDelete<MResult>([EPath.AI_COMPANY_SERVER, params])
+  }, {})
+}
+
+export const useAiSolutionInstanceDelete = () => {
+  return useMutation((params: { instanceId: number }) => {
+    return createDelete<MResult>([EPath.AI_COMPANY_INSTANCE, params])
   }, {})
 }
 
@@ -62,7 +92,7 @@ export const useClientDuplicateCheck = () => {
 
 export const useClientSave = () => {
   return useMutation((params: IClientDetail) => {
-    return createPost<MResult>([EPath.COMPANY, params])
+    return createPost<MResult & IClientDetail>([EPath.COMPANY, params])
   }, {})
 }
 

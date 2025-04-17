@@ -67,12 +67,20 @@ const Index: FC = ({}) => {
   const [clientData, setClientData] = useState<IClientDetail | null>(DEFAULT_CLIENT_DATA)
   const [expandedSteps, setExpandedSteps] = useState<boolean[]>([true, true])
   const [isStepOneValid, setIsStepOneValid] = useState<boolean>(true)
+  const [companyNo, setCompanyNo] = useState<number>()
 
-  const { data, refetch } = useClientDetail(Number(router.query.id))
-  const { data: aiData, refetch: refetchAi } = useAiCompanyDetail(Number(router.query.id))
+  const { data, refetch } = useClientDetail(companyNo)
+  const { data: aiData, refetch: refetchAi } = useAiCompanyDetail(companyNo)
   const { mutateAsync: duplicateCheck } = useClientDuplicateCheck()
   const { mutateAsync: saveClient } = useClientSave()
   const { mutateAsync: updateClient } = useClientUpdate()
+
+  useEffect(() => {
+    if (router.query.id) {
+      setCompanyNo(Number(router.query.id))
+      setActiveStep(1)
+    }
+  }, [router])
 
   useEffect(() => {
     if (router.query.id && data?.data) {
@@ -83,7 +91,7 @@ const Index: FC = ({}) => {
 
   // 스텝 1에서 필수값 누락시 스텝 뒤로 돌아가기
   useEffect(() => {
-    if (!isStepOneValid) {
+    if (!isStepOneValid && !companyNo) {
       setActiveStep(0)
     }
   }, [isStepOneValid])
@@ -114,14 +122,18 @@ const Index: FC = ({}) => {
             if (clientData) {
               if (clientData?.companyNo === 0) {
                 const res = await saveClient(clientData)
-                if (res.data.code !== EResultCode.SUCCESS) {
+
+                if (res.code !== EResultCode.SUCCESS) {
                   alert(res.data.msg)
 
                   return
+                } else {
+                  setCompanyNo(res.data.companyNo)
                 }
               } else {
                 const res = await updateClient(clientData)
-                if (res.data.code !== EResultCode.SUCCESS) {
+
+                if (res.code !== EResultCode.SUCCESS) {
                   alert(res.data.msg)
 
                   return

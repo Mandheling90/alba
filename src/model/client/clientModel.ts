@@ -156,13 +156,15 @@ interface IAreaNameList {
   instanceModelName: string
 }
 
+export interface IAiSolutionCompanyPackage {
+  packageYn: string
+  packageYnStr: string
+  remark: string
+}
+
 export interface IAiSolutionCompanyList {
   serviceNames: string
-  packageInfo: {
-    packageYn: string
-    packageYnStr: string
-    remark: string
-  }
+  packageInfo: IAiSolutionCompanyPackage
   analysisTotalCount: number
   solutionSummaryList: {
     aiSolutionType: string
@@ -225,4 +227,9 @@ export interface IAiSolutionService {
   iconName: string
   dataStatus: string
   dataStatusStr: string
+}
+
+export interface IAiSolutionCompanyPackageParam {
+  companyNo: number
+  remark: string
 }
