@@ -3,6 +3,7 @@ export const EPath = {
   COMPANY_SEARCH: '/company/search/list',
   COMPANY_LIST: '/company/list',
   COMPANY_DUPLICATE_CHECK: '/company/duplicate/check',
+  COMPANY_STATUS: '/company/status',
 
   AI_COMPANY: '/ai/company',
   AI_COMPANY_PACKAGE: '/ai/company/package',

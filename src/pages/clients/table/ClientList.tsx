@@ -11,10 +11,11 @@ import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import SimpleDialogModal from 'src/@core/components/molecule/SimpleDialogModal'
 import CustomTable from 'src/@core/components/table/CustomTable'
 
+import { YN } from 'src/enum/commonEnum'
 import { useClients } from 'src/hooks/useClients'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MList } from 'src/model/client/clientModel'
-import { useClientDelete } from 'src/service/client/clientService'
+import { useClientDelete, useClientReportGenerationStatusUpdate } from 'src/service/client/clientService'
 
 interface IClientList {
   data: MList[]
@@ -25,6 +26,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
   const router = useRouter()
 
   const { mutateAsync: deleteClient } = useClientDelete()
+  const { mutateAsync: updateReportGenerationStatus } = useClientReportGenerationStatusUpdate()
   const [clientData, setclientData] = useState<MList[]>([])
   const [analysisChannels, setAnalysisChannels] = useState(0)
   const { setSelectClientData } = useClients()
@@ -203,9 +205,13 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
             <Switch
-              checked={row.reportGeneration === 'Y'}
+              checked={row.reportGeneration === YN.Y}
               onChange={event => {
-                console.log(row.reportGeneration)
+                updateReportGenerationStatus({
+                  companyNo: row.companyNo,
+                  reportGeneration: event.target.checked ? YN.Y : YN.N
+                })
+                refetch()
               }}
             />
           </Box>

@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from 'react-query'
 import { EPath } from 'src/enum/clientEnum'
+import { YN } from 'src/enum/commonEnum'
 
 import {
   IAiSolutionCompanyList,
@@ -13,7 +14,7 @@ import {
   MCompanySearch
 } from 'src/model/client/clientModel'
 import MResult, { MAuthDuplicate } from 'src/model/commonModel'
-import { createDelete, createGet, createPost, createPut } from 'src/module/reactQuery'
+import { createDelete, createGet, createPatch, createPost, createPut } from 'src/module/reactQuery'
 
 export const useClientList = (params: MClientListReq) => {
   return useQuery<MResult<MClientList>>([EPath.COMPANY_LIST, params], {})
@@ -105,6 +106,12 @@ export const useClientUpdate = () => {
 export const useClientDelete = () => {
   return useMutation((params: { companyNos: number[] }) => {
     return createDelete<MResult>([EPath.COMPANY, params])
+  }, {})
+}
+
+export const useClientReportGenerationStatusUpdate = () => {
+  return useMutation((params: { companyNo: number; reportGeneration: YN }) => {
+    return createPatch<MResult>([EPath.COMPANY_STATUS, params])
   }, {})
 }
 
