@@ -17,9 +17,9 @@ import UserList from './userSetting/table/UserList'
 
 const UserSetting: FC = (): React.ReactElement => {
   const userContext = useUser()
-  const { companyNo, setCompanyNo, authList, setAuthList, selectedAuthList } = userContext
+  const { authList, setAuthList, selectedAuthList } = userContext
   const { user } = useAuth()
-  const { layoutDisplay, setCompanyId, setCompanyName } = useLayout()
+  const { layoutDisplay, setCompanyId, setCompanyName, companyNo, setCompanyNo } = useLayout()
 
   const { data: UserCompanyList, refetch: UserCompanyListRefetch } = useUserCompanyList({ companyNo })
   const { data: AuthListData, refetch: AuthListRefetch } = useAuthList({ companyNo })

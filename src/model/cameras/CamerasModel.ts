@@ -1,5 +1,5 @@
-import { SORT } from 'src/enum/commonEnum'
-import { SERVICE_TYPE } from '../client/clientModel'
+import { SORT, YN } from 'src/enum/commonEnum'
+import { IAiSolutionService, SERVICE_TYPE } from '../client/clientModel'
 
 export interface ICameraClientReq {
   id?: number
@@ -135,11 +135,37 @@ export interface MGroupList {
 }
 
 export interface MClientCameraList {
-  cameraList: MCameraList[]
-  groupList: MGroupList[]
+  cameraNo: number
+  cameraId: string
+  cameraName: string
+  aiSolutionServiceResDtoList: IAiSolutionService[]
+  lon: number
+  lat: number
+  flowPlanX: number | null
+  flowPlanY: number | null
+  flowPlanBindingYN: YN
+  cameraStatus: YN
 
-  floorPlan?: {
-    floorPlanImageUrl: string
-    zonePoints?: IPoint
-  }
+  groupItemId?: number
+  isEdit?: boolean // 프론트에서 사용
+}
+
+export interface MClientGroupCameraList {
+  groupId: number
+  userNo: number
+  name: string
+  groupItemList: MClientCameraList[]
+}
+
+export interface MClientGroupList {
+  groupId: number
+  userNo: number
+  name: string
+}
+
+export interface MFlowPlan {
+  cameraFlowPlanNo: number
+  flowPlanImgUrl: string
+  lon: number
+  lat: number
 }

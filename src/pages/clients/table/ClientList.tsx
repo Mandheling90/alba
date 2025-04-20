@@ -211,7 +211,14 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
                   companyNo: row.companyNo,
                   reportGeneration: event.target.checked ? YN.Y : YN.N
                 })
-                refetch()
+
+                setclientData(prev =>
+                  prev.map(client =>
+                    client.companyNo === row.companyNo
+                      ? { ...client, reportGeneration: event.target.checked ? YN.Y : YN.N }
+                      : client
+                  )
+                )
               }}
             />
           </Box>

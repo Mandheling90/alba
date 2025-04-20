@@ -4,16 +4,16 @@ import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
 import { CamerasContext } from 'src/context/CamerasContext'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { MCameraList } from 'src/model/cameras/CamerasModel'
+import { MClientCameraList } from 'src/model/cameras/CamerasModel'
 
 interface CameraModifyActionsProps {
-  row: MCameraList
+  row: MClientCameraList
   isModify: boolean
   isGroupModify?: boolean
-  cameraGroupLinkDisplay: boolean
-  handleEditClick: (row: MCameraList) => void
-  handleCancelClick: (id: number) => void
-  handleSaveClick: (id: number) => void
+  isGroupModifyMode: boolean
+  handleEditClick: (row: MClientCameraList) => void
+  handleCancelClick: (cameraNo: number) => void
+  handleSaveClick: (cameraNo: number) => void
 
   // addCameraToGroup: (groupIndex: number) => void
 }
@@ -22,22 +22,20 @@ const CameraModifyActions: React.FC<CameraModifyActionsProps> = ({
   row,
   isModify,
   isGroupModify = false,
-  cameraGroupLinkDisplay,
+  isGroupModifyMode,
   handleEditClick,
   handleCancelClick,
   handleSaveClick
-
-  // addCameraToGroup
 }) => {
-  const { groupModifyId, updateClientCameraData } = useContext(CamerasContext)
+  const { groupModifyId, addGroupCamera, deleteGroupCamera } = useContext(CamerasContext)
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: 3 }}>
       {isModify ? (
         <Box sx={{ display: 'flex', gap: 2 }}>
           <CustomAddCancelButton
-            onCancelClick={() => handleCancelClick(row.id)}
-            onSaveClick={() => handleSaveClick(row.id)}
+            onCancelClick={() => handleCancelClick(row.cameraNo)}
+            onSaveClick={() => handleSaveClick(row.cameraNo)}
           />
         </Box>
       ) : (
@@ -46,16 +44,16 @@ const CameraModifyActions: React.FC<CameraModifyActionsProps> = ({
         </Box>
       )}
 
-      {cameraGroupLinkDisplay && (
+      {isGroupModifyMode && (
         <CustomTooltip title={isGroupModify ? '연결 해제' : '그룹 추가'} placement='top'>
           <Box
             sx={{ color: 'text.secondary', cursor: 'pointer' }}
             onClick={() => {
-              if (isGroupModify) {
-                updateClientCameraData(row.id, { groupId: null })
-              } else {
-                if (groupModifyId) {
-                  updateClientCameraData(row.id, { groupId: groupModifyId })
+              if (groupModifyId) {
+                if (isGroupModify) {
+                  deleteGroupCamera(groupModifyId, row.cameraNo)
+                } else {
+                  addGroupCamera(groupModifyId, row)
                 }
               }
             }}

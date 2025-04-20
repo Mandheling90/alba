@@ -3,9 +3,12 @@
 import { Box, Card, IconButton } from '@mui/material'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { CamerasContext } from 'src/context/CamerasContext'
+import { YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
+import { MFlowPlan } from 'src/model/cameras/CamerasModel'
 
 interface IImageMap {
+  flowPlanData?: MFlowPlan
   height: string
   handleImageMapClick: (x: number, y: number) => void
   imageUpdateFn: () => void
@@ -14,12 +17,15 @@ interface IImageMap {
 }
 
 const ImageMap = ({
+  flowPlanData,
   height,
   handleImageMapClick,
   imageUpdateFn,
   floorplanLocation,
   resizeing
 }: IImageMap): React.ReactElement => {
+  console.log(flowPlanData)
+
   const { clientCameraData, selectedCamera } = useContext(CamerasContext)
 
   const [displaySize, setDisplaySize] = useState({ width: 0, height: 0 })
@@ -35,8 +41,8 @@ const ImageMap = ({
   useEffect(() => {
     if (selectedCamera && selectedCamera.length === 1) {
       const camera = selectedCamera[0]
-      const x = camera.markers?.x ?? 0
-      const y = camera.markers?.y ?? 0
+      const x = camera.flowPlanX ?? 0
+      const y = camera.flowPlanY ?? 0
 
       // 컨테이너와 이미지 크기 계산
       const container = containerRef.current
@@ -227,7 +233,7 @@ const ImageMap = ({
         >
           <img
             ref={imageRef}
-            src='/images/sample.png'
+            src={`${process.env.NEXT_PUBLIC_FLOWPLAN_PATH}/${flowPlanData?.flowPlanImgUrl}`}
             alt='map'
             style={{
               width: '100%',
@@ -240,21 +246,15 @@ const ImageMap = ({
             }}
             draggable={false}
           />
-          {clientCameraData?.cameraList
-            .filter(camera => {
-              // 선택된 카메라가 없거나 빈 배열인 경우 모든 카메라 표시
-              if (!selectedCamera || selectedCamera.length === 0) return true
-
-              // 선택된 카메라 배열에 현재 카메라가 포함되어 있는지 확인
-              return selectedCamera.some(selected => selected.id === camera.id)
-            })
+          {clientCameraData
+            ?.filter(camera => camera.flowPlanBindingYN === YN.Y)
             .map(camera => {
-              const x = camera.markers?.x ?? 0
-              const y = camera.markers?.y ?? 0
+              const x = camera.flowPlanX ?? 0
+              const y = camera.flowPlanY ?? 0
 
               return (
                 <IconButton
-                  key={camera.id}
+                  key={camera.cameraNo}
                   onClick={() => {
                     console.log('')
                   }}

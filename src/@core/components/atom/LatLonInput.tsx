@@ -13,6 +13,15 @@ interface LatLonInputProps {
   isMapActive?: boolean
 }
 
+const formatLatLon = (value: number): string => {
+  const decimalPart = value.toString().split('.')[1] || ''
+  if (decimalPart.length <= 6) {
+    return value.toString()
+  }
+
+  return value.toFixed(6)
+}
+
 const LatLonInput: FC<LatLonInputProps> = ({
   lat,
   lon,
@@ -53,9 +62,9 @@ const LatLonInput: FC<LatLonInputProps> = ({
         </>
       ) : (
         <>
-          <span>{lat !== null ? lat.toFixed(5) : 'N/A'}</span>
+          <span>{lat !== null ? formatLatLon(lat) : 'N/A'}</span>
           <span>|</span>
-          <span>{lon !== null ? lon.toFixed(5) : 'N/A'}</span>
+          <span>{lon !== null ? formatLatLon(lon) : 'N/A'}</span>
         </>
       )}
     </Box>

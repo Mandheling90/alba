@@ -1,6 +1,7 @@
 import { Box, Collapse, IconButton, TextField, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC, useContext, useEffect, useState } from 'react'
+import CustomTextFieldState from 'src/@core/components/atom/CustomTextFieldState'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
@@ -8,25 +9,25 @@ import CustomTable from 'src/@core/components/table/CustomTable'
 import PipeLine from 'src/@core/components/table/PipeLine'
 import { CamerasContext } from 'src/context/CamerasContext'
 import { TableContext } from 'src/context/TableContext'
+import { YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { MCameraList, MGroupList } from 'src/model/cameras/CamerasModel'
+import { MClientCameraList, MClientGroupCameraList } from 'src/model/cameras/CamerasModel'
+import { useClientGroupDelete } from 'src/service/cameras/camerasService'
 import CameraModifyActions from './CameraModifyActions'
 
 interface IGroupList {
-  group: MGroupList
-  cameraList: MCameraList[]
+  group: MClientGroupCameraList
   clientColumns: GridColDef[]
   handleClose: () => void
   handleGroupModifyId: (groupId: number) => void
   onDrop: () => void
-  onDragStart: (row: MCameraList) => void
+  onDragStart: (row: MClientCameraList) => void
   onDragEnd: () => void
-  selectRowEvent: (row: MCameraList) => void
+  selectRowEvent: (row: MClientCameraList) => void
 }
 
 const GroupList: FC<IGroupList> = ({
   group,
-  cameraList,
   clientColumns,
   handleClose,
   handleGroupModifyId,
@@ -36,19 +37,25 @@ const GroupList: FC<IGroupList> = ({
   selectRowEvent
 }) => {
   const {
-    cameraGroupLinkDisplay,
+    isGroupModifyMode,
     handleSaveClick,
     handleCancelClick,
     groupModifyId,
     setGroupModifyId,
     selectedCamera,
     setSelectedCamera,
+    updateGroupCameraData,
+    setIsGroupModifyMode,
+    handleGroupCancelClick,
+    handleGroupSaveClick,
+    deleteGroupCamera,
     updateClientCameraData
   } = useContext(CamerasContext)
 
   const { setSelectedRow } = useContext(TableContext)
   const [groupOpen, setGroupOpen] = useState(true)
   const [selectGroup, setSelectGroup] = useState(false)
+  const { mutateAsync: clientGroupDelete } = useClientGroupDelete()
 
   const updatedClientColumns = (clientColumns: GridColDef[]): GridColDef[] => {
     return clientColumns.map(column => {
@@ -58,25 +65,61 @@ const GroupList: FC<IGroupList> = ({
           renderCell: () => null
         }
       }
+
+      if (column.field === 'cameraId') {
+        return {
+          ...column,
+          renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <IconCustom
+                  isCommon
+                  path='camera'
+                  style={{ width: '30px', height: '30px' }}
+                  icon={row.flowPlanBindingYN === YN.Y ? 'image-mode' : 'map-mode-full'}
+                />
+
+                {row.isEdit ? (
+                  <CustomTextFieldState
+                    size='small'
+                    value={row.cameraId}
+                    onChange={e => {
+                      updateGroupCameraData(group.groupId, row.cameraNo, { cameraId: e.target.value })
+                    }}
+                  />
+                ) : (
+                  <Typography component='span' variant='inherit'>
+                    {row.cameraId}
+                  </Typography>
+                )}
+              </Box>
+            )
+          }
+        }
+      }
       if (column.field === 'modify') {
         return {
           ...column,
-          renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
+          renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
             return (
               <CameraModifyActions
                 row={row}
                 isModify={row.isEdit ?? false}
-                cameraGroupLinkDisplay={cameraGroupLinkDisplay}
+                isGroupModifyMode={isGroupModifyMode}
+                isGroupModify={groupModifyId === group.groupId}
                 handleEditClick={() => {
-                  updateClientCameraData(row.id, { isEdit: true })
+                  updateClientCameraData(row.cameraNo, { isEdit: true })
+                  updateGroupCameraData(group.groupId, row.cameraNo, { isEdit: true })
                 }}
                 handleCancelClick={() => {
-                  handleCancelClick(row.id)
-                  updateClientCameraData(row.id, { isEdit: false })
+                  handleCancelClick(row.cameraNo)
+                  updateClientCameraData(row.cameraNo, { isEdit: false })
+                  updateGroupCameraData(group.groupId, row.cameraNo, { isEdit: false })
                 }}
                 handleSaveClick={() => {
-                  handleSaveClick(row.id)
-                  updateClientCameraData(row.id, { isEdit: false })
+                  handleSaveClick(row.cameraNo)
+                  updateClientCameraData(row.cameraNo, { isEdit: false })
+                  updateGroupCameraData(group.groupId, row.cameraNo, { isEdit: false })
                 }}
               />
             )
@@ -88,18 +131,13 @@ const GroupList: FC<IGroupList> = ({
     })
   }
 
-  const handleCloseModify = () => {
-    setGroupModifyId(null)
-    handleClose()
-  }
-
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
   }
 
   const handleDrop = (e: React.DragEvent) => {
-    if (groupModifyId === group.id) {
+    if (groupModifyId === group.groupId) {
       e.preventDefault()
       e.stopPropagation()
       onDrop()
@@ -107,12 +145,22 @@ const GroupList: FC<IGroupList> = ({
   }
 
   useEffect(() => {
-    if (JSON.stringify(selectedCamera) === JSON.stringify(cameraList)) {
-      setSelectGroup(true)
-    } else {
-      setSelectGroup(false)
+    return () => {
+      handleClose()
     }
-  }, [selectedCamera])
+  }, [])
+
+  // useEffect(() => {
+  //   if (JSON.stringify(selectedCamera) === JSON.stringify(group.groupItemList)) {
+  //     setSelectGroup(true)
+  //   } else {
+  //     setSelectGroup(false)
+  //   }
+  // }, [selectedCamera])
+
+  if (isGroupModifyMode && group.groupId !== groupModifyId) {
+    return null
+  }
 
   return (
     <Box>
@@ -135,7 +183,6 @@ const GroupList: FC<IGroupList> = ({
         }}
         onClick={() => {
           setSelectedRow({})
-          setSelectedCamera(cameraList)
         }}
       >
         <CustomTooltip title={groupOpen ? '접기' : '펼치기'} placement='top'>
@@ -147,25 +194,47 @@ const GroupList: FC<IGroupList> = ({
           </Box>
         </CustomTooltip>
 
-        {groupModifyId === group.id ? (
-          <TextField size='small' value={group.groupName} />
+        {groupModifyId === group.groupId ? (
+          <TextField
+            size='small'
+            value={group.name}
+            onChange={e => {
+              updateGroupCameraData(group.groupId, undefined, { name: e.target.value })
+            }}
+          />
         ) : (
           <Typography component='span' variant='inherit' sx={{ minWidth: '150px', textAlign: 'center' }}>
-            {group.groupName}
+            {group.name}
           </Typography>
         )}
         <PipeLine />
         <Typography component='span' variant='inherit' sx={{ minWidth: '150px', textAlign: 'center' }}>
-          {cameraList.length}대의 카메라
+          {group.groupItemList.length}대의 카메라
         </Typography>
 
-        {groupModifyId === group.id ? (
+        {groupModifyId === group.groupId ? (
           <Box display='flex' alignItems='center' gap={3} ml={5}>
-            <CustomAddCancelButton onSaveClick={handleCloseModify} onCancelClick={handleCloseModify} />
+            <CustomAddCancelButton
+              onSaveClick={() => {
+                handleGroupSaveClick(group.groupId)
+                handleClose()
+              }}
+              onCancelClick={() => {
+                handleGroupCancelClick(group.groupId)
+                handleClose()
+              }}
+            />
             <Box
               sx={{ display: 'flex', cursor: 'pointer' }}
-              onClick={() => {
-                //   console.log(row)
+              onClick={async () => {
+                try {
+                  await clientGroupDelete({ groupId: group.groupId })
+                  deleteGroupCamera(group.groupId, undefined)
+                  handleGroupSaveClick(group.groupId)
+                  handleClose()
+                } catch (error) {
+                  console.log(error)
+                }
               }}
             >
               <IconCustom isCommon path='camera' icon='trash-blank' hoverIcon='trash-fill' />
@@ -175,8 +244,8 @@ const GroupList: FC<IGroupList> = ({
           <Box display='flex' alignItems='center'>
             <IconButton
               onClick={() => {
-                handleGroupModifyId(group.id)
-                setGroupModifyId(group.id)
+                handleGroupModifyId(group.groupId)
+                setGroupModifyId(group.groupId)
               }}
             >
               <IconCustom isCommon path='camera' icon='group-mod-blank' hoverIcon='group-mod-fill' />
@@ -197,7 +266,7 @@ const GroupList: FC<IGroupList> = ({
           combineTableId={'camera'}
           id='cameraId'
           showMoreButton={false}
-          rows={cameraList || []}
+          rows={group.groupItemList || []}
           columns={updatedClientColumns(clientColumns)}
           selectRowEvent={selectRowEvent}
           isAllView
@@ -209,7 +278,7 @@ const GroupList: FC<IGroupList> = ({
       </Collapse>
       <DividerBar />
 
-      {groupModifyId === group.id && (
+      {groupModifyId === group.groupId && (
         <>
           <Box
             display='flex'

@@ -7,12 +7,13 @@ import ClientListGrid from '../user-setting/client/ClientListGrid'
 import CamerasDetail from './CamerasDetail'
 
 const Cameras: FC = (): React.ReactElement => {
-  const layoutContext = useLayout()
   const [selectClient, setSelectClient] = useState<ICameraClient | null>(null)
+  const { layoutDisplay, setCompanyId, setCompanyName, setCompanyNo } = useLayout()
 
-  const handleSelectClientGrid = (row: ICameraClient) => {
-    console.log(row)
-    setSelectClient(row)
+  const handleSelectClientGrid = (row: any) => {
+    setCompanyNo(row.companyNo)
+    setCompanyId(row.companyId)
+    setCompanyName(row.companyName)
   }
 
   const sideContent = <ClientListGrid selectRowEvent={handleSelectClientGrid} />
@@ -21,12 +22,7 @@ const Cameras: FC = (): React.ReactElement => {
 
   return (
     <StandardTemplate title={'카메라 관리'}>
-      <SlidingLayout
-        isOpen={layoutContext.layoutDisplay}
-        sideContent={sideContent}
-        mainContent={mainContent}
-        maxHeight='85vh'
-      />
+      <SlidingLayout isOpen={layoutDisplay} sideContent={sideContent} mainContent={mainContent} maxHeight='85vh' />
     </StandardTemplate>
   )
 }

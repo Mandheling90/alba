@@ -1,19 +1,21 @@
 import { Box, Button, Card, Grid, Switch, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { FC, useContext, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import ButtonHover from 'src/@core/components/atom/ButtonHover'
 import CustomTextFieldState from 'src/@core/components/atom/CustomTextFieldState'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
-import DividerBar from 'src/@core/components/atom/DividerBar'
 import LatLonInput from 'src/@core/components/atom/LatLonInput'
+import SwitchCustom from 'src/@core/components/atom/SwitchCustom'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
-import { CamerasContext } from 'src/context/CamerasContext'
+import { YN } from 'src/enum/commonEnum'
+import { useAuth } from 'src/hooks/useAuth'
+import { useCameras } from 'src/hooks/useCameras'
 import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { MCameraList } from 'src/model/cameras/CamerasModel'
-import { SERVICE_TYPE, SERVICE_TYPE_LABELS } from 'src/model/client/clientModel'
-import { useClientCameraList } from 'src/service/cameras/camerasService'
+import { MClientCameraList, MClientGroupCameraList } from 'src/model/cameras/CamerasModel'
+import { IAiSolutionService } from 'src/model/client/clientModel'
+import { useClientGroupAdd } from 'src/service/cameras/camerasService'
 import styled from 'styled-components'
 import CameraModifyActions from './CameraModifyActions'
 import GroupList from './GroupList'
@@ -29,10 +31,14 @@ const CamerasClientList: FC = () => {
     clientListReq,
     clientCameraData,
     setClientCameraData,
+    clientGroupCameraData,
+    setClientGroupCameraData,
+    clientGroupCameraDataOrigin,
+    setClientGroupCameraDataOrigin,
     groupModifyId,
     setGroupModifyId,
-    cameraGroupLinkDisplay,
-    setCameraGroupLinkDisplay,
+    isGroupModifyMode,
+    setIsGroupModifyMode,
     updateClientCameraData,
     handleSaveClick,
     handleCancelClick,
@@ -40,40 +46,60 @@ const CamerasClientList: FC = () => {
     mapModifyModCameraId,
     setMapModifyModCameraId,
     viewType,
-    setClientCameraDataOrigin
-  } = useContext(CamerasContext)
+    clientCameraDataOrigin,
+    setClientCameraDataOrigin,
+    fetchData,
+    removeDuplicateCameras,
+    handleGroupCameraItemAdd,
+    addGroupCamera
+  } = useCameras()
+
+  const { companyNo, companyId, companyName } = useLayout()
+  const { user } = useAuth()
 
   const layoutContext = useLayout()
-  const [draggedRow, setDraggedRow] = useState<MCameraList | null>(null)
+  const [draggedRow, setDraggedRow] = useState<MClientCameraList | null>(null)
+  const [isGroupMode, setIsGroupMode] = useState<boolean>(false)
 
-  const { data, refetch } = useClientCameraList(clientListReq)
+  const { mutateAsync: clientGroupAdd } = useClientGroupAdd()
+
+  //GroupModifyId
 
   useEffect(() => {
-    if (data?.data) {
-      const processedData = {
-        ...data.data,
-        cameraList: data.data.cameraList.map((camera: MCameraList) => ({
-          ...camera,
-          isEdit: false
-        }))
-      }
-      setClientCameraData(processedData)
-      setClientCameraDataOrigin(processedData)
-    }
-  }, [data?.data])
+    fetchData()
+  }, [companyNo])
 
   const clientColumns: GridColDef[] = [
     {
       field: 'group',
-      headerName: '그룹',
       headerAlign: 'center',
       disableColumnMenu: true,
       hideable: true,
-      flex: 0.5,
-      renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
+      flex: 0.2,
+      sortable: false,
+      align: 'center',
+      renderHeader: () => {
+        return (
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <SwitchCustom
+              width={50}
+              switchName={['개별', '그룹']}
+              selected={!isGroupMode}
+              onChange={() => setIsGroupMode(!isGroupMode)}
+              activeColor={['#9155FD', '#9155FD']}
+            />
+          </Box>
+        )
+      },
+      renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconCustom isCommon path='camera' icon='group-off' />
+            <IconCustom
+              isCommon
+              path='camera'
+              style={{ width: '30px', height: '30px' }}
+              icon={row.flowPlanBindingYN === YN.Y ? 'image-mode' : 'map-mode-full'}
+            />
           </Box>
         )
       }
@@ -82,8 +108,9 @@ const CamerasClientList: FC = () => {
       field: 'cameraId',
       headerName: '카메라ID',
       headerAlign: 'center',
-      flex: 0.5,
-      renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
+      flex: 0.3,
+      align: 'center',
+      renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
         return (
           <>
             {row.isEdit ? (
@@ -91,7 +118,7 @@ const CamerasClientList: FC = () => {
                 size='small'
                 value={row.cameraId}
                 onChange={e => {
-                  updateClientCameraData(row.id, { cameraId: e.target.value })
+                  updateClientCameraData(row.cameraNo, { cameraId: e.target.value })
                 }}
               />
             ) : (
@@ -107,8 +134,9 @@ const CamerasClientList: FC = () => {
       field: 'cameraName',
       headerName: '카메라명',
       headerAlign: 'center',
-      flex: 0.5,
-      renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
+      flex: 0.3,
+      align: 'center',
+      renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
         return (
           <>
             {row.isEdit ? (
@@ -116,7 +144,7 @@ const CamerasClientList: FC = () => {
                 size='small'
                 value={row.cameraName}
                 onChange={e => {
-                  updateClientCameraData(row.id, { cameraName: e.target.value })
+                  updateClientCameraData(row.cameraNo, { cameraName: e.target.value })
                 }}
               />
             ) : (
@@ -133,8 +161,8 @@ const CamerasClientList: FC = () => {
       headerName: '서비스명',
       headerAlign: 'center',
       align: 'center',
-      flex: 0.5,
-      renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
+      flex: 0.3,
+      renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
         return (
           <Box
             sx={{
@@ -144,16 +172,16 @@ const CamerasClientList: FC = () => {
               width: '100%'
             }}
           >
-            {row.serviceTypes.map((serviceType: string, index: number) =>
-              row.serviceTypes.length <= 1 ? (
+            {row.aiSolutionServiceResDtoList.map((serviceType: IAiSolutionService, index: number) =>
+              row.aiSolutionServiceResDtoList.length <= 1 ? (
                 <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
-                  <IconCustom isCommon path='clients' icon={serviceType} />
+                  <IconCustom isCommon path='clients' icon={serviceType.iconName} />
                   <Typography component='span' variant='inherit' noWrap>
-                    {SERVICE_TYPE_LABELS[serviceType as SERVICE_TYPE]}
+                    {serviceType.aiServiceName}
                   </Typography>
                 </Box>
               ) : (
-                <CustomTooltip title={SERVICE_TYPE_LABELS[serviceType as SERVICE_TYPE]} key={index} placement='top'>
+                <CustomTooltip title={serviceType.aiServiceName} key={index} placement='top'>
                   <Box
                     sx={{
                       display: 'flex',
@@ -161,7 +189,7 @@ const CamerasClientList: FC = () => {
                       justifyContent: 'center'
                     }}
                   >
-                    <IconCustom isCommon path='clients' icon={serviceType} />
+                    <IconCustom isCommon path='clients' icon={serviceType.iconName} />
                   </Box>
                 </CustomTooltip>
               )
@@ -176,46 +204,51 @@ const CamerasClientList: FC = () => {
       headerAlign: 'center',
       align: 'center',
       flex: 0.5,
-      renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
+      renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
         const isEditing = row.isEdit ?? false
+
+        const x = row.flowPlanBindingYN === YN.Y ? row.flowPlanX ?? 0 : row.lat ?? 0
+        const y = row.flowPlanBindingYN === YN.Y ? row.flowPlanY ?? 0 : row.lon ?? 0
 
         return (
           <LatLonInput
-            lat={row.markers?.x ?? 0}
-            lon={row.markers?.y ?? 0}
+            lat={x}
+            lon={y}
             isEditing={isEditing}
             onLatChange={value => {
               viewType.type === 'image' &&
-                updateClientCameraData(row.id, {
-                  markers: { x: value ?? 0, y: row.markers?.y ?? 0 }
+                updateClientCameraData(row.cameraNo, {
+                  lat: value ?? 0,
+                  lon: y
                 })
             }}
             onLonChange={value => {
               viewType.type === 'image' &&
-                updateClientCameraData(row.id, {
-                  markers: { x: row.markers?.x ?? 0, y: value ?? 0 }
+                updateClientCameraData(row.cameraNo, {
+                  lat: x,
+                  lon: value ?? 0
                 })
             }}
             onMapClick={() => {
-              viewType.type === 'image' && setMapModifyModCameraId(row.id)
+              viewType.type === 'image' && setMapModifyModCameraId(row.cameraNo)
             }}
-            isMapActive={mapModifyModCameraId === row.id}
+            isMapActive={mapModifyModCameraId === row.cameraNo}
           />
         )
       }
     },
     {
-      field: 'isUse',
+      field: 'cameraStatus',
       headerName: '사용여부',
       headerAlign: 'center',
-      flex: 0.4,
-      renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
+      flex: 0.2,
+      renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
             <Switch
-              checked={row.isUse}
+              checked={row.cameraStatus === YN.Y}
               onChange={event => {
-                updateClientCameraData(row.id, { isUse: event.target.checked })
+                updateClientCameraData(row.cameraNo, { cameraStatus: event.target.checked ? YN.Y : YN.N })
               }}
             />
           </Box>
@@ -226,23 +259,23 @@ const CamerasClientList: FC = () => {
       field: 'modify',
       headerName: '편집',
       headerAlign: 'center',
-      flex: 0.4,
-      renderCell: ({ row }: GridRenderCellParams<MCameraList>) => {
+      flex: 0.2,
+      renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
         return (
           <CameraModifyActions
             row={row}
             isModify={row.isEdit ?? false}
-            cameraGroupLinkDisplay={cameraGroupLinkDisplay}
+            isGroupModifyMode={isGroupModifyMode}
             handleEditClick={() => {
-              updateClientCameraData(row.id, { isEdit: true })
+              updateClientCameraData(row.cameraNo, { isEdit: true })
             }}
             handleCancelClick={() => {
-              handleCancelClick(row.id)
-              updateClientCameraData(row.id, { isEdit: false })
+              handleCancelClick(row.cameraNo)
+              updateClientCameraData(row.cameraNo, { isEdit: false })
             }}
             handleSaveClick={() => {
-              handleSaveClick(row.id)
-              updateClientCameraData(row.id, { isEdit: false })
+              handleSaveClick(row.cameraNo)
+              updateClientCameraData(row.cameraNo, { isEdit: false })
             }}
           />
         )
@@ -250,7 +283,7 @@ const CamerasClientList: FC = () => {
     }
   ]
 
-  const handleDragStart = (row: MCameraList) => {
+  const handleDragStart = (row: MClientCameraList) => {
     setDraggedRow(row)
   }
 
@@ -260,13 +293,15 @@ const CamerasClientList: FC = () => {
 
   const handleDrop = () => {
     if (draggedRow && clientCameraData && groupModifyId) {
-      updateClientCameraData(draggedRow.id, { groupId: groupModifyId })
+      addGroupCamera(groupModifyId, draggedRow)
+
+      // handleGroupCameraItemAdd(groupModifyId, draggedRow.cameraNo)
     }
   }
 
-  const selectRowEvent = (row: MCameraList) => {
+  const selectRowEvent = (row: MClientCameraList) => {
     if (Object.keys(row).length === 0) {
-      setSelectedCamera([])
+      setSelectedCamera(null)
     } else {
       setSelectedCamera([row])
     }
@@ -279,9 +314,9 @@ const CamerasClientList: FC = () => {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', m: 3, gap: 3 }}>
             <Box sx={{ display: 'flex', gap: 3 }}>
               <LayoutControlPanel
-                menuName='사용자'
-                companyId='user'
-                companyName='user'
+                menuName='고객사'
+                companyId={companyId}
+                companyName={companyName}
                 onClick={() => {
                   layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
                 }}
@@ -338,19 +373,36 @@ const CamerasClientList: FC = () => {
                     variant={'contained'}
                     startIcon={<IconCustom isCommon path='camera' icon='group-open-blank' />}
                     onClick={async () => {
-                      setCameraGroupLinkDisplay(true)
+                      if (!clientGroupCameraData) return
 
-                      setClientCameraData(prevData => {
-                        if (!prevData) return null
+                      try {
+                        const res = await clientGroupAdd({ userNo: user?.userInfo?.userNo ?? 0, name: '새로운 그룹' })
+                        console.log(res.data.groupId)
 
-                        const id = prevData.groupList.length + 1
-                        setGroupModifyId(id)
+                        // 새로운 그룹 ID 생성 (기존 그룹 ID 중 최대값 + 1)
+                        const newGroupId = res.data.groupId
 
-                        return {
-                          ...prevData,
-                          groupList: [...prevData.groupList, { id: id, groupName: '새로운 그룹' }]
+                        // 새로운 그룹 생성
+                        const newGroup: MClientGroupCameraList = {
+                          groupId: newGroupId,
+                          userNo: user?.userInfo?.userNo ?? 0,
+                          name: '새로운 그룹',
+                          groupItemList: []
                         }
-                      })
+
+                        // 그룹 데이터 업데이트
+                        setClientGroupCameraData(prevData => {
+                          if (!prevData) return [newGroup]
+
+                          return [...prevData, newGroup]
+                        })
+
+                        // 그룹 수정 모드 활성화
+                        setGroupModifyId(newGroupId)
+                        setIsGroupModifyMode(true)
+                      } catch (error) {
+                        console.log(error)
+                      }
                     }}
                   >
                     그룹생성
@@ -371,7 +423,7 @@ const CamerasClientList: FC = () => {
               <Button
                 variant={'outlined'}
                 onClick={() => {
-                  setSelectedCamera([])
+                  setSelectedCamera(null)
                   handleCancelClick(undefined)
                 }}
               >
@@ -379,38 +431,45 @@ const CamerasClientList: FC = () => {
               </Button>
             </Box>
           </Box>
+
           <CustomTable
             combineTableId={'camera'}
             id='cameraId'
             showMoreButton={false}
-            rows={clientCameraData?.cameraList?.filter(camera => camera.groupId === null) ?? []}
+            rows={isGroupModifyMode ? removeDuplicateCameras() : clientCameraData ?? []}
             columns={clientColumns}
             selectRowEvent={selectRowEvent}
             isAllView
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
             enablePointer
+            showHeader
+            hideRows={isGroupModifyMode ? false : isGroupMode}
           />
 
-          <DividerBar />
-          {clientCameraData?.groupList?.map((group, index) => (
-            <GroupList
-              key={index}
-              group={group}
-              cameraList={clientCameraData?.cameraList?.filter(camera => camera.groupId === group.id) ?? []}
-              clientColumns={clientColumns}
-              handleClose={() => {
-                setCameraGroupLinkDisplay(false)
-              }}
-              handleGroupModifyId={() => {
-                setCameraGroupLinkDisplay(true)
-              }}
-              onDrop={() => handleDrop()}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              selectRowEvent={selectRowEvent}
-            />
-          ))}
+          {isGroupMode &&
+            clientGroupCameraData?.map((group, index) => (
+              <>
+                <GroupList
+                  key={index}
+                  group={group}
+                  clientColumns={clientColumns}
+                  handleClose={() => {
+                    setIsGroupModifyMode(false)
+                    setClientCameraData(clientCameraDataOrigin ?? [])
+                    setGroupModifyId(null)
+                  }}
+                  handleGroupModifyId={() => {
+                    setIsGroupModifyMode(true)
+                    setGroupModifyId(group.groupId)
+                  }}
+                  onDrop={() => handleDrop()}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                  selectRowEvent={selectRowEvent}
+                />
+              </>
+            ))}
         </Card>
       </Grid>
     </Grid>

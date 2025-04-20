@@ -17,6 +17,14 @@ export const SERVICE_TYPE_LABELS: Record<SERVICE_TYPE, string> = {
   [SERVICE_TYPE.MONITORING]: '모니터링'
 } as const
 
+export const SERVICE_TYPE_ICONS: Record<SERVICE_TYPE, string> = {
+  [SERVICE_TYPE.COUNTING]: 'COUNTING',
+  [SERVICE_TYPE.OCCUPANCY]: 'OCCUPANCY',
+  [SERVICE_TYPE.CAR_COUNT]: 'CAR_PEOPLE',
+  [SERVICE_TYPE.FEATURE_ANALYSIS]: 'FEATURE',
+  [SERVICE_TYPE.MONITORING]: 'MONITORING'
+} as const
+
 // 솔루션 분석 enum
 export enum SOLUTION_TYPE {
   CVEDIA = 'CVEDIA',
@@ -225,11 +233,17 @@ export interface IAiSolutionService {
   aiServiceId: number
   aiServiceName: string
   iconName: string
-  dataStatus: string
-  dataStatusStr: string
+  dataStatus?: string
+  dataStatusStr?: string
 }
 
 export interface IAiSolutionCompanyPackageParam {
   companyNo: number
   remark: string
 }
+
+export const createAiSolutionService = (type: SERVICE_TYPE): IAiSolutionService => ({
+  aiServiceId: 0, // 실제 ID는 서버에서 할당
+  aiServiceName: SERVICE_TYPE_LABELS[type],
+  iconName: SERVICE_TYPE_ICONS[type]
+})

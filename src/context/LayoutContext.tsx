@@ -4,6 +4,8 @@ export type LayoutValuesType = {
   layoutDisplay: boolean
   setLayoutDisplay: (layoutDisplay: boolean) => void
 
+  companyNo: number
+  setCompanyNo: (companyNo: number) => void
   companyId: string
   setCompanyId: (companyId: string) => void
   companyName: string
@@ -15,6 +17,8 @@ const defaultProvider: LayoutValuesType = {
   layoutDisplay: true,
   setLayoutDisplay: () => null,
 
+  companyNo: 0,
+  setCompanyNo: () => null,
   companyId: '',
   setCompanyId: () => null,
   companyName: '',
@@ -31,11 +35,13 @@ const LayoutProvider = ({ children }: Props) => {
   const [layoutDisplay, setLayoutDisplay] = useState(defaultProvider.layoutDisplay)
   const [companyId, setCompanyId] = useState(defaultProvider.companyId)
   const [companyName, setCompanyName] = useState(defaultProvider.companyName)
-
+  const [companyNo, setCompanyNo] = useState(defaultProvider.companyNo)
   const values: LayoutValuesType = {
     layoutDisplay,
     setLayoutDisplay,
 
+    companyNo,
+    setCompanyNo,
     companyId,
     setCompanyId,
     companyName,

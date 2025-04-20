@@ -3,7 +3,6 @@ import React, { useContext } from 'react'
 import CustomAccordion from 'src/@core/components/atom/CustomAccordion'
 import { CamerasContext } from 'src/context/CamerasContext'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { MCameraList, MGroupList } from 'src/model/cameras/CamerasModel'
 
 const CameraSelecter: React.FC = ({}) => {
   const { clientCameraData, setSelectedCamera } = useContext(CamerasContext)
@@ -20,10 +19,12 @@ const CameraSelecter: React.FC = ({}) => {
           </Box>
         }
         expanded={false}
-        onClick={() => setSelectedCamera(clientCameraData?.cameraList || null)}
+        onClick={() => {
+          // setSelectedCamera(clientCameraData?.cameraList || null)
+        }}
       />
 
-      {clientCameraData?.cameraList
+      {/* {clientCameraData?.cameraList
         .filter((camera: MCameraList) => camera.groupId === null)
         .map((camera: MCameraList) => (
           <CustomAccordion
@@ -33,9 +34,9 @@ const CameraSelecter: React.FC = ({}) => {
             expanded={false}
             onClick={() => setSelectedCamera([camera])}
           />
-        ))}
+        ))} */}
 
-      {clientCameraData?.groupList.map((group: MGroupList) => (
+      {/* {clientCameraData?.groupList.map((group: MGroupList) => (
         <CustomAccordion
           key={group.id}
           id={group.id}
@@ -63,7 +64,7 @@ const CameraSelecter: React.FC = ({}) => {
               </Box>
             ))}
         />
-      ))}
+      ))} */}
     </Box>
   )
 }

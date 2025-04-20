@@ -29,6 +29,7 @@ interface IGridOptions {
   enablePointer?: boolean
   showHeader?: boolean
   combineTableId?: string
+  hideRows?: boolean
 }
 
 const CustomTable: FC<
@@ -47,7 +48,8 @@ const CustomTable: FC<
   combineTableId,
   onDragStart,
   onDragEnd,
-  initialSelectedRow
+  initialSelectedRow,
+  hideRows = false
 }) => {
   const { selectedRow: combineselectedRows, setSelectedRowFn } = useContext(TableContext)
   const [pageSize, setPageSize] = useState(isAllView ? 100 : 25)
@@ -68,6 +70,10 @@ const CustomTable: FC<
   const getSelectedRows = (selectedIds: any[]) => {
     return rows.filter(row => selectedIds.includes(row[id ?? 'id']))
   }
+
+  // if (hideNoRows && rows.length === 0) {
+  //   return null
+  // }
 
   return (
     <>
@@ -118,7 +124,8 @@ const CustomTable: FC<
                 '&:active': {
                   cursor: 'grabbing'
                 }
-              }
+              },
+              display: hideRows ? 'none' : 'flex'
             },
             '& .MuiDataGrid-row.Mui-selected': {
               backgroundColor: 'rgba(145, 85, 253, 0.08)',
@@ -146,6 +153,13 @@ const CustomTable: FC<
             },
             '& .MuiDataGrid-columnHeaders': {
               display: showHeader ? 'block' : 'none'
+            },
+            '& .MuiDataGrid-virtualScroller': {
+              visibility: hideRows ? 'hidden' : 'visible',
+              height: hideRows ? '0px' : 'auto'
+            },
+            '& .MuiDataGrid-footerContainer': {
+              display: hideRows ? 'none' : 'block'
             }
           }}
           componentsProps={{
