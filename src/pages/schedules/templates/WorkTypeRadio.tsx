@@ -4,7 +4,7 @@ import { WorkType } from 'src/service/schedule/scheduleService'
 import { useBatchItem } from '../contexts/batchItemContext'
 
 interface IWorkTypeRadio {
-  workType: WorkType
+  workType?: WorkType
   onChange: (workType: WorkType) => void
 }
 

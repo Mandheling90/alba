@@ -9,14 +9,7 @@ const ScheduleConfig = () => {
   const [selectedGates, setSelectedGates] = useState<string[]>([])
   const methods = useForm<IScheduleBatchConfig>()
 
-  const {
-    control,
-    watch,
-    setValue,
-    handleSubmit,
-    getFieldState,
-    formState: { errors }
-  } = methods
+  const { control, watch, setValue, handleSubmit } = methods
 
   console.log(watch())
 
@@ -31,7 +24,7 @@ const ScheduleConfig = () => {
           onChange={event => setSelectedGates(event.target.value as string[])}
         />
         <BatchItem>
-          <BatchItem.Container>
+          <BatchItem.Container onChangeApplyStatus={status => status === 'notApplied' && setValue('days', [])}>
             <BatchItem.Title number='01' title='매주 휴업 요일 지정' />
             <BatchItem.Content>
               <SpaceBetween>
@@ -63,7 +56,15 @@ const ScheduleConfig = () => {
           </BatchItem.Container>
         </BatchItem>
         <BatchItem>
-          <BatchItem.Container>
+          <BatchItem.Container
+            onChangeApplyStatus={status => {
+              if (status === 'notApplied') {
+                setValue('repeatPeriod.startDate', '')
+                setValue('repeatPeriod.endDate', '')
+                setValue('repeatPeriod.workType', undefined)
+              }
+            }}
+          >
             <BatchItem.Title number='02' title='비정기 휴업 및 영업일 지정' />
             <BatchItem.Content>
               <Controller
@@ -118,7 +119,15 @@ const ScheduleConfig = () => {
           </BatchItem.Container>
         </BatchItem>
         <BatchItem>
-          <BatchItem.Container isDisabled={watch('repeatPeriod.workType') === 'holiday'}>
+          <BatchItem.Container
+            isDisabled={watch('repeatPeriod.workType') === 'holiday'}
+            onChangeApplyStatus={status => {
+              if (status === 'notApplied') {
+                setValue('repeatPeriod.startTime', '')
+                setValue('repeatPeriod.endTime', '')
+              }
+            }}
+          >
             <BatchItem.Title number='03' title='전체 영업시간 일괄 적용' />
             <BatchItem.Content>
               <SpaceBetween>
@@ -172,7 +181,16 @@ const ScheduleConfig = () => {
           </BatchItem.Container>
         </BatchItem>
         <BatchItem>
-          <BatchItem.Container>
+          <BatchItem.Container
+            onChangeApplyStatus={status => {
+              if (status === 'notApplied') {
+                setValue('specialPeriod.startDate', '')
+                setValue('specialPeriod.endDate', '')
+                setValue('specialPeriod.startTime', '')
+                setValue('specialPeriod.endTime', '')
+              }
+            }}
+          >
             <BatchItem.Title number='04' title='특정 기간 영업시간 일괄 적용' />
             <BatchItem.Content>
               <Controller

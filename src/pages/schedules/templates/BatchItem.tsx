@@ -10,14 +10,21 @@ import WorkTypeRadio from './WorkTypeRadio'
 interface IBatchItem {
   children: ReactNode
   isDisabled?: boolean
+  onChangeApplyStatus?: (status: ApplyStatusType) => void
 }
 
-const BatchItem = ({ children }: IBatchItem) => {
+const BatchItem = ({ children }: { children: ReactNode }) => {
   return <BatchItemProvider>{children}</BatchItemProvider>
 }
 
-const BatchItemContainer = ({ children, isDisabled }: IBatchItem) => {
-  const { setIsDisabled } = useBatchItem()
+const BatchItemContainer = ({ children, isDisabled, onChangeApplyStatus }: IBatchItem) => {
+  const { setIsDisabled, applyStatus } = useBatchItem()
+  useEffect(() => {
+    if (onChangeApplyStatus) {
+      onChangeApplyStatus(applyStatus)
+    }
+  }, [applyStatus])
+
   useEffect(() => {
     setIsDisabled(!!isDisabled)
   }, [isDisabled, setIsDisabled])

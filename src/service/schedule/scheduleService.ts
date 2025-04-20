@@ -135,7 +135,7 @@ export const useGateList = () => {
 export type WorkType = 'work' | 'holiday'
 
 interface IWorkTime {
-  workType: WorkType
+  workType?: WorkType
   startDate: string
   endDate: string
   startTime: string

@@ -14,6 +14,8 @@ const DateRangePicker = ({ onChange, selectedStartDate, selectedEndDate }: IDate
     onChange(start, end)
   }
 
+  console.log('selectedDates', selectedStartDate, selectedEndDate)
+
   return (
     <PickersRange onChange={handleChange} selectedStartDate={selectedStartDate} selectedEndDate={selectedEndDate} />
   )
