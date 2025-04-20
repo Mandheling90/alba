@@ -19,8 +19,6 @@ const DaySelect = ({ onChange, selectedDays = [] }: IDaySelect) => {
     }
   }
 
-  console.log('selectedDays', selectedDays)
-
   return (
     <Container>
       <DaySelectItem

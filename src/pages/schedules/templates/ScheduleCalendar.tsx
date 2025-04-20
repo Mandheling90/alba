@@ -57,8 +57,7 @@ const ScheduleCalendar = () => {
     },
     titleFormat: { year: 'numeric', month: 'short' },
     navLinkDayClick(date, jsEvent) {
-      console.log('date', date)
-      console.log('jsEvent', jsEvent)
+      return void 0
     },
     editable: true,
 

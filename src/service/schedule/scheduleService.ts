@@ -133,23 +133,19 @@ export const useGateList = () => {
 }
 
 export type WorkType = 'work' | 'holiday'
+
+interface IWorkTime {
+  workType: WorkType
+  startDate: string
+  endDate: string
+  startTime: string
+  endTime: string
+}
 export interface IScheduleBatchConfig {
   gateIds: string[]
   days: string[]
-  repeatPeriod?: {
-    workType: WorkType
-    startDate: string
-    endDate: string
-    startTime: string
-    endTime: string
-  }
-  specialPeriod?: {
-    workType: WorkType
-    startDate: string
-    endDate: string
-    startTime: string
-    endTime: string
-  }
+  repeatPeriod?: IWorkTime
+  specialPeriod?: IWorkTime
 }
 
 export const useScheduleBatchConfig = () => {
@@ -162,4 +158,28 @@ export const useScheduleBatchConfig = () => {
       })
     })
   }, {})
+}
+
+export const useScheduleUpdate = () => {
+  const setSchedule = ({
+    customerId,
+    gateId,
+    scheduleDate,
+    scheduleList
+  }: {
+    customerId: string
+    gateId: string
+    scheduleDate: string
+    scheduleList: Omit<IWorkTime, 'startDate' | 'endDate'>[]
+  }) => {
+    return new Promise(resolve => {
+      resolve({
+        code: '0',
+        msg: '성공',
+        data: []
+      })
+    })
+  }
+
+  return useMutation(setSchedule)
 }

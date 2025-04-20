@@ -9,7 +9,14 @@ const ScheduleConfig = () => {
   const [selectedGates, setSelectedGates] = useState<string[]>([])
   const methods = useForm<IScheduleBatchConfig>()
 
-  const { control, watch, setValue } = methods
+  const {
+    control,
+    watch,
+    setValue,
+    handleSubmit,
+    getFieldState,
+    formState: { errors }
+  } = methods
 
   console.log(watch())
 
@@ -24,114 +31,218 @@ const ScheduleConfig = () => {
           onChange={event => setSelectedGates(event.target.value as string[])}
         />
         <BatchItem>
-          <BatchItem.Title number='01' title='매주 휴업 요일 지정' />
-          <BatchItem.Content>
-            <SpaceBetween>
-              <Controller
-                control={control}
-                render={({ field }) => (
-                  <BatchItem.DaySelect onChange={days => field.onChange(days)} selectedDays={field.value} />
-                )}
-                name='days'
-              />
-              <BatchItem.Handler />
-            </SpaceBetween>
-          </BatchItem.Content>
+          <BatchItem.Container>
+            <BatchItem.Title number='01' title='매주 휴업 요일 지정' />
+            <BatchItem.Content>
+              <SpaceBetween>
+                <Controller
+                  rules={{
+                    required: {
+                      value: true,
+                      message: '요일을 선택해 주세요'
+                    }
+                  }}
+                  control={control}
+                  render={({ field }) => (
+                    <BatchItem.DaySelect onChange={days => field.onChange(days)} selectedDays={field.value} />
+                  )}
+                  name='days'
+                />
+                <BatchItem.Handler
+                  validCheck={async () => {
+                    return new Promise(resolve => {
+                      handleSubmit(
+                        () => resolve(undefined),
+                        error => resolve(error.days?.message)
+                      )()
+                    })
+                  }}
+                />
+              </SpaceBetween>
+            </BatchItem.Content>
+          </BatchItem.Container>
         </BatchItem>
         <BatchItem>
-          <BatchItem.Title number='02' title='비정기 휴업 및 영업일 지정' />
-          <BatchItem.Content>
-            <Controller
-              control={control}
-              render={({ field }) => {
-                return (
-                  <BatchItem.DateRangePicker
-                    onChange={(startDate, endDate) => {
-                      field.onChange(startDate)
-                      setValue('repeatPeriod.endDate', endDate)
-                    }}
-                    selectedStartDate={field.value}
-                    selectedEndDate={watch('repeatPeriod.endDate')}
-                  />
-                )
-              }}
-              name='repeatPeriod.startDate'
-            />
-            <SpaceBetween>
+          <BatchItem.Container>
+            <BatchItem.Title number='02' title='비정기 휴업 및 영업일 지정' />
+            <BatchItem.Content>
               <Controller
                 control={control}
-                render={({ field }) => (
-                  <BatchItem.WorkTypeRadio workType={field.value} onChange={workType => field.onChange(workType)} />
-                )}
-                name='repeatPeriod.workType'
+                rules={{
+                  required: {
+                    value: true,
+                    message: '날짜를 선택해 주세요'
+                  }
+                }}
+                render={({ field }) => {
+                  return (
+                    <BatchItem.DateRangePicker
+                      onChange={(startDate, endDate) => {
+                        field.onChange(startDate)
+                        setValue('repeatPeriod.endDate', endDate)
+                      }}
+                      selectedStartDate={field.value}
+                      selectedEndDate={watch('repeatPeriod.endDate')}
+                    />
+                  )
+                }}
+                name='repeatPeriod.startDate'
               />
-              <BatchItem.Handler />
-            </SpaceBetween>
-          </BatchItem.Content>
+              <SpaceBetween>
+                <Controller
+                  rules={{
+                    required: {
+                      value: true,
+                      message: '영업일 휴업일 여부를 선택해 주세요.'
+                    }
+                  }}
+                  control={control}
+                  render={({ field }) => (
+                    <BatchItem.WorkTypeRadio workType={field.value} onChange={workType => field.onChange(workType)} />
+                  )}
+                  name='repeatPeriod.workType'
+                />
+                <BatchItem.Handler
+                  validCheck={() => {
+                    return new Promise(resolve => {
+                      handleSubmit(
+                        () => resolve(undefined),
+                        error =>
+                          resolve(error.repeatPeriod?.startDate?.message || error.repeatPeriod?.workType?.message)
+                      )()
+                    })
+                  }}
+                />
+              </SpaceBetween>
+            </BatchItem.Content>
+          </BatchItem.Container>
         </BatchItem>
         <BatchItem>
-          <BatchItem.Title number='03' title='전체 영업시간 일괄 적용' />
-          <BatchItem.Content>
-            <SpaceBetween>
-              <Controller
-                control={control}
-                render={({ field }) => (
-                  <BatchItem.WorkTimeSelect
-                    onChangeStartTime={startTime => {
-                      field.onChange(startTime)
-                    }}
-                    onChangeEndTime={endTime => {
-                      setValue('repeatPeriod.endTime', endTime)
-                    }}
-                    selectedStartTime={field.value}
-                    selectedEndTime={watch('repeatPeriod.endTime')}
-                  />
-                )}
-                name='repeatPeriod.startTime'
-              />
-              <BatchItem.Handler />
-            </SpaceBetween>
-          </BatchItem.Content>
+          <BatchItem.Container isDisabled={watch('repeatPeriod.workType') === 'holiday'}>
+            <BatchItem.Title number='03' title='전체 영업시간 일괄 적용' />
+            <BatchItem.Content>
+              <SpaceBetween>
+                <Controller
+                  control={control}
+                  rules={
+                    watch('repeatPeriod.workType') === 'work'
+                      ? {
+                          required: {
+                            value: true,
+                            message: '영업 시작시간을 선택해 주세요'
+                          },
+                          validate: {
+                            endTime: (value, context) => {
+                              if (!context.repeatPeriod?.endTime) {
+                                return '영업 종료시간을 선택해 주세요'
+                              } else {
+                                return true
+                              }
+                            }
+                          }
+                        }
+                      : {}
+                  }
+                  render={({ field }) => (
+                    <BatchItem.WorkTimeSelect
+                      onChangeStartTime={startTime => {
+                        field.onChange(startTime)
+                      }}
+                      onChangeEndTime={endTime => {
+                        setValue('repeatPeriod.endTime', endTime)
+                      }}
+                      selectedStartTime={field.value}
+                      selectedEndTime={watch('repeatPeriod.endTime')}
+                    />
+                  )}
+                  name='repeatPeriod.startTime'
+                />
+                <BatchItem.Handler
+                  validCheck={() => {
+                    return new Promise(resolve => {
+                      handleSubmit(
+                        () => resolve(undefined),
+                        error => resolve(error.repeatPeriod?.startTime?.message || error.repeatPeriod?.endTime?.message)
+                      )()
+                    })
+                  }}
+                />
+              </SpaceBetween>
+            </BatchItem.Content>
+          </BatchItem.Container>
         </BatchItem>
         <BatchItem>
-          <BatchItem.Title number='04' title='특정 기간 영업시간 일괄 적용' />
-          <BatchItem.Content>
-            <Controller
-              control={control}
-              render={({ field }) => {
-                return (
-                  <BatchItem.DateRangePicker
-                    onChange={(startDate, endDate) => {
-                      field.onChange(startDate)
-                      setValue('specialPeriod.endDate', endDate)
-                    }}
-                    selectedStartDate={field.value}
-                    selectedEndDate={watch('repeatPeriod.endDate')}
-                  />
-                )
-              }}
-              name='specialPeriod.startDate'
-            />
-            <SpaceBetween>
+          <BatchItem.Container>
+            <BatchItem.Title number='04' title='특정 기간 영업시간 일괄 적용' />
+            <BatchItem.Content>
               <Controller
                 control={control}
-                render={({ field }) => (
-                  <BatchItem.WorkTimeSelect
-                    onChangeStartTime={startTime => {
-                      field.onChange(startTime)
-                    }}
-                    onChangeEndTime={endTime => {
-                      setValue('specialPeriod.endTime', endTime)
-                    }}
-                    selectedStartTime={field.value}
-                    selectedEndTime={watch('specialPeriod.endTime')}
-                  />
-                )}
-                name='specialPeriod.startTime'
+                rules={{
+                  required: {
+                    value: true,
+                    message: '날짜를 선택해 주세요'
+                  }
+                }}
+                render={({ field }) => {
+                  return (
+                    <BatchItem.DateRangePicker
+                      onChange={(startDate, endDate) => {
+                        field.onChange(startDate)
+                        setValue('specialPeriod.endDate', endDate)
+                      }}
+                      selectedStartDate={field.value}
+                      selectedEndDate={watch('repeatPeriod.endDate')}
+                    />
+                  )
+                }}
+                name='specialPeriod.startDate'
               />
-              <BatchItem.Handler />
-            </SpaceBetween>
-          </BatchItem.Content>
+              <SpaceBetween>
+                <Controller
+                  control={control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: '특정기간 영업 시작시간을 선택해 주세요'
+                    },
+                    validate: {
+                      endTime: (value, context) => {
+                        if (!context.specialPeriod?.endTime) {
+                          return '특정기간 영업 종료시간을 선택해 주세요'
+                        } else {
+                          return true
+                        }
+                      }
+                    }
+                  }}
+                  render={({ field }) => (
+                    <BatchItem.WorkTimeSelect
+                      onChangeStartTime={startTime => {
+                        field.onChange(startTime)
+                      }}
+                      onChangeEndTime={endTime => {
+                        setValue('specialPeriod.endTime', endTime)
+                      }}
+                      selectedStartTime={field.value}
+                      selectedEndTime={watch('specialPeriod.endTime')}
+                    />
+                  )}
+                  name='specialPeriod.startTime'
+                />
+                <BatchItem.Handler
+                  validCheck={() => {
+                    return new Promise(resolve => {
+                      handleSubmit(
+                        () => resolve(undefined),
+                        error =>
+                          resolve(error.specialPeriod?.startTime?.message || error.specialPeriod?.endTime?.message)
+                      )()
+                    })
+                  }}
+                />
+              </SpaceBetween>
+            </BatchItem.Content>
+          </BatchItem.Container>
         </BatchItem>
       </Container>
     </FormProvider>

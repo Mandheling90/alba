@@ -1,4 +1,5 @@
 import { createContext, Dispatch, SetStateAction, useContext, useState } from 'react'
+import { WorkType } from 'src/service/schedule/scheduleService'
 
 type CustomerInfo = {
   customerId: string
@@ -10,12 +11,15 @@ type GateInfo = {
   gateName: string
 }
 
-const ScheduleContext = createContext<{
+interface ScheduleState {
   selectedCustomerInfo: CustomerInfo
   selectedGateInfo: GateInfo
   setSelectedCustomerInfo: Dispatch<SetStateAction<CustomerInfo>>
   setSelectedGateInfo: Dispatch<SetStateAction<GateInfo>>
-}>({
+  tempStore: TempMockDataStoreInterface
+  setTempStore: Dispatch<SetStateAction<TempMockDataStoreInterface>>
+}
+const ScheduleContext = createContext<ScheduleState>({
   selectedCustomerInfo: {
     customerId: '',
     customerName: ''
@@ -29,11 +33,29 @@ const ScheduleContext = createContext<{
   },
   setSelectedGateInfo: () => {
     return void 0
+  },
+  tempStore: {},
+  setTempStore: () => {
+    return void 0
   }
 })
 
 export const useScheduleContext = () => {
   return useContext(ScheduleContext)
+}
+
+interface TempMockDataStoreInterface {
+  [key: string]: {
+    [key: string]: {
+      [key: string]: TempModaDataScheduleInterface[]
+    }
+  }
+}
+
+interface TempModaDataScheduleInterface {
+  workType: WorkType
+  startTime: string
+  endTime: string
 }
 
 export const ScheduleContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -46,9 +68,18 @@ export const ScheduleContextProvider = ({ children }: { children: React.ReactNod
     gateName: ''
   })
 
+  const [tempStore, setTempStore] = useState<TempMockDataStoreInterface>({})
+
   return (
     <ScheduleContext.Provider
-      value={{ selectedCustomerInfo, setSelectedCustomerInfo, selectedGateInfo, setSelectedGateInfo }}
+      value={{
+        selectedCustomerInfo,
+        setSelectedCustomerInfo,
+        selectedGateInfo,
+        setSelectedGateInfo,
+        tempStore,
+        setTempStore
+      }}
     >
       {children}
     </ScheduleContext.Provider>

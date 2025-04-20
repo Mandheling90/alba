@@ -5,6 +5,8 @@ export type ApplyStatusType = 'applied' | 'notApplied' | 'writing'
 interface BatchItemContextType {
   applyStatus: ApplyStatusType
   setApplyStatus: (value: ApplyStatusType) => void
+  isDisabled: boolean
+  setIsDisabled: (value: boolean) => void
 }
 
 const BatchItemContext = createContext<BatchItemContextType | undefined>(undefined)
@@ -15,8 +17,13 @@ interface BatchItemProviderProps {
 
 export const BatchItemProvider = ({ children }: BatchItemProviderProps) => {
   const [applyStatus, setApplyStatus] = useState<ApplyStatusType>('notApplied')
+  const [isDisabled, setIsDisabled] = useState(false)
 
-  return <BatchItemContext.Provider value={{ applyStatus, setApplyStatus }}>{children}</BatchItemContext.Provider>
+  return (
+    <BatchItemContext.Provider value={{ applyStatus, setApplyStatus, isDisabled, setIsDisabled }}>
+      {children}
+    </BatchItemContext.Provider>
+  )
 }
 
 export const useBatchItem = () => {

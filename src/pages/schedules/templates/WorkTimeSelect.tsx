@@ -17,7 +17,7 @@ const WorkTimeSelect = ({
 }: IWorkTimeSelect) => {
   const timeOptions = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'))
 
-  const { setApplyStatus } = useBatchItem()
+  const { setApplyStatus, isDisabled } = useBatchItem()
   const handleChange = (type: 'startTime' | 'endTime', value: string) => {
     setApplyStatus('writing')
     if (type === 'startTime') {
@@ -32,7 +32,11 @@ const WorkTimeSelect = ({
       <Image src={'/images/time/time.svg'} alt='work-time-input' width={18} height={18} />
       <span>영업시간</span>
       <TimeInputContainer>
-        <select value={selectedStartTime} onChange={e => handleChange('startTime', e.target.value)}>
+        <select
+          disabled={!!isDisabled}
+          value={selectedStartTime}
+          onChange={e => handleChange('startTime', e.target.value)}
+        >
           <option value=''>-</option>
           {timeOptions.map(option => {
             const startTimeNumber = parseInt(option)
@@ -48,7 +52,7 @@ const WorkTimeSelect = ({
           })}
         </select>
         ~
-        <select value={selectedEndTime} onChange={e => handleChange('endTime', e.target.value)}>
+        <select disabled={!!isDisabled} value={selectedEndTime} onChange={e => handleChange('endTime', e.target.value)}>
           <option value=''>-</option>
           {timeOptions.map(option => {
             const endTimeNumber = parseInt(option)

@@ -1,6 +1,6 @@
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { ApplyStatusType, BatchItemProvider, useBatchItem } from '../contexts/batchItemContext'
 import DateRangePicker from './DateRangePicker'
 import DaySelect from './DaySelect'
@@ -9,16 +9,21 @@ import WorkTypeRadio from './WorkTypeRadio'
 
 interface IBatchItem {
   children: ReactNode
+  isDisabled?: boolean
 }
 
 const BatchItem = ({ children }: IBatchItem) => {
-  return (
-    <BatchItemProvider>
-      <Container>{children}</Container>
-    </BatchItemProvider>
-  )
+  return <BatchItemProvider>{children}</BatchItemProvider>
 }
 
+const BatchItemContainer = ({ children, isDisabled }: IBatchItem) => {
+  const { setIsDisabled } = useBatchItem()
+  useEffect(() => {
+    setIsDisabled(!!isDisabled)
+  }, [isDisabled, setIsDisabled])
+
+  return <Container>{children}</Container>
+}
 interface IBatchTitle {
   number?: string
   title?: string
@@ -46,17 +51,31 @@ const BatchContent = ({ children }: IBatchItem) => {
   )
 }
 
-const BatchHandler = () => {
-  const { setApplyStatus } = useBatchItem()
+const BatchHandler = ({ validCheck }: { validCheck: () => Promise<string | undefined> }) => {
+  const { setApplyStatus, isDisabled } = useBatchItem()
 
   return (
     <BatchHandlerContainer>
-      <BatchHandlerButtonApply onClick={() => setApplyStatus('applied')}></BatchHandlerButtonApply>
-      <BatchHandlerButtonCancel onClick={() => setApplyStatus('notApplied')}></BatchHandlerButtonCancel>
+      <BatchHandlerButtonApply
+        onClick={async () => {
+          const message = await validCheck()
+          if (message) {
+            alert(message)
+          } else {
+            setApplyStatus('applied')
+          }
+        }}
+        disabled={!!isDisabled}
+      ></BatchHandlerButtonApply>
+      <BatchHandlerButtonCancel
+        onClick={() => setApplyStatus('notApplied')}
+        disabled={!!isDisabled}
+      ></BatchHandlerButtonCancel>
     </BatchHandlerContainer>
   )
 }
 
+BatchItem.Container = BatchItemContainer
 BatchItem.Title = BatchTitle
 BatchItem.Content = BatchContent
 BatchItem.Handler = BatchHandler
@@ -172,10 +191,14 @@ const BatchHandlerButton = styled.button`
   min-width: 36px;
   min-height: 20px;
   padding: 4px 8px;
+  :disabled {
+    background: #9155fd8a;
+    cursor: not-allowed;
+  }
 `
 
 const BatchHandlerButtonApply = styled(BatchHandlerButton)`
-  :hover {
+  :hover:not(:disabled) {
     background: url('/images/apply.svg') no-repeat center center / 100% 100%;
     :after {
       content: '';
@@ -187,7 +210,7 @@ const BatchHandlerButtonApply = styled(BatchHandlerButton)`
 `
 
 const BatchHandlerButtonCancel = styled(BatchHandlerButton)`
-  :hover {
+  :hover:not(:disabled) {
     background: url('/images/cancel.svg') no-repeat center center / 100% 100%;
     :after {
       content: '';
