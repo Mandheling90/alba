@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 
-export default function MapCustomTilesetComponent() {
+export default function MapCustomTilesetComponent(flowPlanData) {
   const Main = () => {
-    const domain = 'https://i1.daumcdn.net'
-    const path = '/dmaps/apis/openapi/sampleimg/'
+    const domain = `${process.env.NEXT_PUBLIC_FLOWPLAN_PATH}`
+    const path = `/${flowPlanData?.flowPlanImgUrl}`
 
     const plan = (x, y, z) => {
       y = -y - 1

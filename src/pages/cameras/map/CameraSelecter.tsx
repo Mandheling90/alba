@@ -3,9 +3,11 @@ import React, { useContext } from 'react'
 import CustomAccordion from 'src/@core/components/atom/CustomAccordion'
 import { CamerasContext } from 'src/context/CamerasContext'
 import IconCustom from 'src/layouts/components/IconCustom'
+import { MClientCameraList, MClientGroupCameraList } from 'src/model/cameras/CamerasModel'
 
 const CameraSelecter: React.FC = ({}) => {
-  const { clientCameraData, setSelectedCamera } = useContext(CamerasContext)
+  const { clientCameraData, clientGroupCameraData, setSelectedCamera, removeDuplicateCameras } =
+    useContext(CamerasContext)
 
   return (
     <Box sx={{ position: 'absolute', width: '300px', zIndex: 9, m: 3 }}>
@@ -24,47 +26,45 @@ const CameraSelecter: React.FC = ({}) => {
         }}
       />
 
-      {/* {clientCameraData?.cameraList
-        .filter((camera: MCameraList) => camera.groupId === null)
-        .map((camera: MCameraList) => (
-          <CustomAccordion
-            key={camera.id}
-            id={camera.id}
-            title={camera.cameraName}
-            expanded={false}
-            onClick={() => setSelectedCamera([camera])}
-          />
-        ))} */}
-
-      {/* {clientCameraData?.groupList.map((group: MGroupList) => (
+      {removeDuplicateCameras()?.map((camera: MClientCameraList) => (
         <CustomAccordion
-          key={group.id}
-          id={group.id}
-          title={group.groupName}
-          onClick={() => setSelectedCamera(clientCameraData?.cameraList.filter(c => c.groupId === group.id))}
-          AccordionDetails={clientCameraData?.cameraList
-            .filter((camera: MCameraList) => camera.groupId === group.id)
-            .map((camera: MCameraList) => (
-              <Box
-                key={camera.id}
-                onClick={() => setSelectedCamera([camera])}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  minHeight: '48px',
-                  height: '48px',
-                  pl: 10,
-                  cursor: 'pointer',
-                  '&:hover': {
-                    backgroundColor: 'rgba(145, 85, 253, 0.1)'
-                  }
-                }}
-              >
-                <Typography>{camera.cameraName}</Typography>
-              </Box>
-            ))}
+          key={camera.cameraNo}
+          id={camera.cameraNo}
+          title={camera.cameraName}
+          expanded={false}
+          onClick={() => setSelectedCamera([camera])}
         />
-      ))} */}
+      ))}
+
+      {clientGroupCameraData?.map((group: MClientGroupCameraList) => (
+        <CustomAccordion
+          key={group.groupId}
+          id={group.groupId}
+          title={group.name}
+          onClick={() => {
+            // setSelectedCamera(clientCameraData?.cameraList.filter(c => c.groupId === group.id))
+          }}
+          AccordionDetails={group.groupItemList.map((camera: MClientCameraList) => (
+            <Box
+              key={camera.cameraNo}
+              onClick={() => setSelectedCamera([camera])}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                minHeight: '48px',
+                height: '48px',
+                pl: 10,
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: 'rgba(145, 85, 253, 0.1)'
+                }
+              }}
+            >
+              <Typography>{camera.cameraName}</Typography>
+            </Box>
+          ))}
+        />
+      ))}
     </Box>
   )
 }

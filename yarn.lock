@@ -2879,7 +2879,7 @@ clipboard-copy@4.0.1:
   resolved "https://registry.npmjs.org/clipboard-copy/-/clipboard-copy-4.0.1.tgz"
   integrity sha512-wOlqdqziE/NNTUJsfSgXmBMIrYmfd5V0HCGsR8uAKHcg+h9NENWINcfRjtWGU77wDHC8B8ijV4hMTGYbrKovng==
 
-clsx@1.2.1, clsx@^1.2.1:
+clsx@1.2.1, clsx@^1.1.1, clsx@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/clsx/-/clsx-1.2.1.tgz"
   integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
@@ -5579,6 +5579,14 @@ react-draft-wysiwyg@1.15.0:
     linkify-it "^2.2.0"
     prop-types "^15.7.2"
 
+react-draggable@^4.4.6:
+  version "4.4.6"
+  resolved "https://registry.yarnpkg.com/react-draggable/-/react-draggable-4.4.6.tgz#63343ee945770881ca1256a5b6fa5c9f5983fe1e"
+  integrity sha512-LtY5Xw1zTPqHkVmtM3X8MUOxNDOUhv/khTgBgrUvwaS064bwVvxT+q5El0uUFNx5IEPKXuRejr7UqLwBIg5pdw==
+  dependencies:
+    clsx "^1.1.1"
+    prop-types "^15.8.1"
+
 react-dropzone@14.2.3:
   version "14.2.3"
   resolved "https://registry.npmjs.org/react-dropzone/-/react-dropzone-14.2.3.tgz"
@@ -5745,6 +5753,11 @@ react-video@^1.5.3:
   version "1.5.3"
   resolved "https://registry.npmjs.org/react-video/-/react-video-1.5.3.tgz"
   integrity sha512-xz5/XsYz/bYsH9bY21s5feiCR+Nswk7NLPvHKe9wIF4yIPDLWXAgseiNf8Nh8iEAGGRznIYZ01+/0Se+9KwtQw==
+
+react-zoom-pan-pinch@^3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/react-zoom-pan-pinch/-/react-zoom-pan-pinch-3.7.0.tgz#7db4d2ec49c316eb20f71c56e9012eeb3ef4b504"
+  integrity sha512-UmReVZ0TxlKzxSbYiAj+LeGRW8s8LraAFTXRAxzMYnNRgGPsxCudwZKVkjvGmjtx7SW/hZamt69NUmGf4xrkXA==
 
 react@18.2.0:
   version "18.2.0"

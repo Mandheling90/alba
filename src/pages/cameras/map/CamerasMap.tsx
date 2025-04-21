@@ -2,6 +2,7 @@ import { Box, Grid } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import MapComponent from 'src/@core/components/map/MapComponent'
 import FileUploader from 'src/@core/components/molecule/FileUploader'
+import MapControlOverlay from 'src/@core/components/molecule/MapControlOverlay'
 
 import ImageMap from 'src/@core/components/map/ImageMap'
 import SimpleDialogModal from 'src/@core/components/molecule/SimpleDialogModal'
@@ -239,6 +240,41 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
     setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
   }
 
+  const resizeing = () => {
+    setViewType({
+      ...viewType,
+      size: viewType.size === 'full' ? 'half' : 'full'
+    })
+  }
+
+  const mapControlButtons = [
+    {
+      icon: viewType.size === 'half' ? 'zoomIn_default' : 'zoomOut_default',
+      hoverIcon: viewType.size === 'half' ? 'zoomIn_hovering' : 'zoomOut_hovering',
+      onClick: resizeing
+    },
+    {
+      icon: 'zoomIn_map_default',
+      hoverIcon: 'zoomIn_map_hovering',
+      onClick: () => {
+        setMapInfo({
+          ...mapInfo,
+          mapLevel: mapInfo.mapLevel - 1
+        })
+      }
+    },
+    {
+      icon: 'zoomOut_map_default',
+      hoverIcon: 'zoomOut_map_hovering',
+      onClick: () => {
+        setMapInfo({
+          ...mapInfo,
+          mapLevel: mapInfo.mapLevel + 1
+        })
+      }
+    }
+  ]
+
   return (
     <Grid container>
       <FileUploader ref={fileInputRef} onFileSelect={handleFileUpload} accept='image/*' style={{ display: 'none' }} />
@@ -274,18 +310,22 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
         />
       </Grid>
       <Grid item xs={12}>
-        <Box style={{ width: '100%', height: height }}>
+        <Box style={{ width: '100%', height: height, position: 'relative' }}>
           {viewType.size === 'full' && <CameraSelecter />}
 
           {viewType.type === 'map' ? (
-            <MapComponent
-              mapContainerRef={mapContainerRef}
+            <>
+              <MapComponent
+                mapContainerRef={mapContainerRef}
 
-              // onClick={handleMapClick}
-            >
-              <FlowPlanMapMarker flowPlanData={flowPlanData?.data} />
-              <CameraMapMarker />
-            </MapComponent>
+                // onClick={handleMapClick}
+              >
+                <FlowPlanMapMarker flowPlanData={flowPlanData?.data} />
+                <CameraMapMarker />
+              </MapComponent>
+
+              <MapControlOverlay buttons={mapControlButtons} />
+            </>
           ) : (
             <ImageMap
               flowPlanData={flowPlanData?.data}
@@ -298,7 +338,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
                   isImageUpdate: true,
                   title: '평면도 이미지 파일 변경',
                   contents:
-                    '현재 설정되어 있는 평면도 이미지가 대체됩니다. \r\n 계속 진행하시려면 아래 “확인" 버튼 클릭 후 대체하실 평면도 이미지를 선택하세요'
+                    '현재 설정되어 있는 평면도 이미지가 대체됩니다. \r\n 계속 진행하시려면 아래 "확인" 버튼 클릭 후 대체하실 평면도 이미지를 선택하세요'
                 })
               }}
               floorplanLocation={() => {
@@ -307,13 +347,18 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
                   size: 'half'
                 })
                 setIsDragging(true)
+
+                setTimeout(() => {
+                  setMapInfo({
+                    ...mapInfo,
+                    center: {
+                      lat: flowPlanData?.data?.lat ?? defaultMapInfo.center.lat,
+                      lon: flowPlanData?.data?.lon ?? defaultMapInfo.center.lon
+                    }
+                  })
+                }, 100)
               }}
-              resizeing={() => {
-                setViewType({
-                  ...viewType,
-                  size: viewType.size === 'full' ? 'half' : 'full'
-                })
-              }}
+              resizeing={resizeing}
             />
           )}
         </Box>

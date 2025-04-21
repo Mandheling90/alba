@@ -147,6 +147,7 @@ export interface MClientCameraList {
   cameraStatus: YN
 
   groupItemId?: number
+  groupId?: number
   isEdit?: boolean // 프론트에서 사용
 }
 

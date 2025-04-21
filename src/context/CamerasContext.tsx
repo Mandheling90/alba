@@ -101,7 +101,7 @@ const defaultProvider: CamerasValuesType = {
   mapModifyModCameraId: null,
   setMapModifyModCameraId: () => null,
 
-  viewType: { type: 'map', size: 'full' },
+  viewType: { type: 'map', size: 'half' },
   setViewType: () => null,
 
   clear: () => null,
@@ -367,19 +367,27 @@ const CamerasProvider = ({ children }: Props) => {
       isEdit: false
     }))
 
-    // if (isGroupModifyMode) {
-    //   const allGroupItems = clientGroupCameraListItems?.flatMap(group => group.groupItemList)
-    //   const filteredCameraList = removeDuplicateCameras(clientCameraListItems ?? [], allGroupItems ?? [])
+    // 각 카메라에 대해 groupId 설정
+    const updatedClientCameraListItems = clientCameraListItems.map(camera => {
+      let foundGroupId: number | undefined = undefined
 
-    //   setClientCameraData(filteredCameraList)
-    // } else {
-    //   setClientCameraData(clientCameraListItems)
-    // }
+      // 모든 그룹을 순회하면서 해당 카메라가 속한 그룹을 찾습니다
+      for (const group of clientGroupCameraListItems) {
+        const isInGroup = group.groupItemList.some(item => item.cameraNo === camera.cameraNo)
+        if (isInGroup) {
+          foundGroupId = group.groupId
+          break
+        }
+      }
 
-    setClientCameraData(clientCameraListItems)
+      return {
+        ...camera,
+        groupId: foundGroupId
+      }
+    })
 
-    setClientCameraDataOrigin(clientCameraListItems)
-
+    setClientCameraData(updatedClientCameraListItems)
+    setClientCameraDataOrigin(updatedClientCameraListItems)
     setClientGroupCameraData(clientGroupCameraListItems)
     setClientGroupCameraDataOrigin(clientGroupCameraListItems)
   }
