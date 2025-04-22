@@ -170,3 +170,8 @@ export interface MFlowPlan {
   lon: number
   lat: number
 }
+
+export interface MFlowPlanUpdate {
+  lon: number
+  lat: number
+}

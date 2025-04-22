@@ -3,6 +3,7 @@ import { SORT } from 'src/enum/commonEnum'
 import { useLayout } from 'src/hooks/useLayout'
 import { ICameraClientReq, MClientCameraList, MClientGroupCameraList } from 'src/model/cameras/CamerasModel'
 import {
+  useClientCameraAdditionalInfo,
   useClientCameraList,
   useClientGroupCameraItemAdd,
   useClientGroupCameraItemDelete,
@@ -140,6 +141,7 @@ const CamerasProvider = ({ children }: Props) => {
   const { mutateAsync: getClientGroupCameraList } = useClientGroupCameraList()
   const { mutateAsync: clientGroupCameraItemDelete } = useClientGroupCameraItemDelete()
   const { mutateAsync: clientGroupCameraItemAdd } = useClientGroupCameraItemAdd()
+  const { mutateAsync: clientCameraAdditionalInfo } = useClientCameraAdditionalInfo()
 
   const [clientCameraData, setClientCameraData] = useState<MClientCameraList[] | null>(defaultProvider.clientCameraData)
   const [clientCameraDataOrigin, setClientCameraDataOrigin] = useState<MClientCameraList[] | null>(
@@ -230,32 +232,53 @@ const CamerasProvider = ({ children }: Props) => {
     })
   }
 
-  const handleSaveClick = (cameraNo: number | undefined) => {
+  const handleSaveClick = async (cameraNo: number | undefined) => {
     if (!clientCameraData) return
 
+    // 전체 저장의 경우
     if (!cameraNo) {
-      // 전체 저장의 경우 현재 데이터를 origin으로 저장
-      setClientCameraDataOrigin(clientCameraData)
+      try {
+        const res = await clientCameraAdditionalInfo({ companyNo: companyNo, cameraList: clientCameraData })
 
-      return
+        console.log(res)
+        fetchData()
+
+        return
+      } catch (error) {
+        console.error('추가 정보 저장 오류:', error)
+
+        return
+      }
     }
 
     // 특정 카메라 저장의 경우
-    setClientCameraDataOrigin(prevData => {
-      if (!prevData) return clientCameraData
-
-      const existingIndex = prevData.findIndex((camera: MClientCameraList) => camera.cameraNo === cameraNo)
-      if (existingIndex === -1) return prevData
-
-      const updatedCameraList = [...prevData]
+    try {
       const updatedCamera = clientCameraData.find((camera: MClientCameraList) => camera.cameraNo === cameraNo)
+      if (!updatedCamera) return
 
-      if (updatedCamera) {
+      const res = await clientCameraAdditionalInfo({
+        companyNo: companyNo,
+        cameraList: [updatedCamera]
+      })
+
+      console.log(res)
+
+      setClientCameraDataOrigin(prevData => {
+        if (!prevData) return clientCameraData
+
+        const existingIndex = prevData.findIndex((camera: MClientCameraList) => camera.cameraNo === cameraNo)
+        if (existingIndex === -1) return prevData
+
+        const updatedCameraList = [...prevData]
         updatedCameraList[existingIndex] = updatedCamera
-      }
 
-      return updatedCameraList
-    })
+        return updatedCameraList
+      })
+    } catch (error) {
+      console.error('추가 정보 저장 오류:', error)
+
+      return
+    }
   }
 
   const handleCancelClick = (cameraNo: number | undefined) => {
@@ -351,8 +374,8 @@ const CamerasProvider = ({ children }: Props) => {
   }
 
   const fetchData = async () => {
-    const clientGroupCameraList = await getClientGroupCameraList({ companyNo: 28 })
-    const clientCameraList = await getClientCameraList({ companyNo: 28 })
+    const clientGroupCameraList = await getClientGroupCameraList({ companyNo: companyNo })
+    const clientCameraList = await getClientCameraList({ companyNo: companyNo })
 
     const clientGroupCameraListItems: MClientGroupCameraList[] = clientGroupCameraList.data.map(item => ({
       ...item,

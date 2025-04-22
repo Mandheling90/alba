@@ -11,8 +11,8 @@ import { defaultMapInfo } from 'src/enum/mapEnum'
 import { useCameras } from 'src/hooks/useCameras'
 import { useLayout } from 'src/hooks/useLayout'
 import { useMap } from 'src/hooks/useMap'
-import { MClientCameraList } from 'src/model/cameras/CamerasModel'
-import { useClientCameraList, useFlowPlan } from 'src/service/cameras/camerasService'
+import { MClientCameraList, MFlowPlan } from 'src/model/cameras/CamerasModel'
+import { useClientCameraList, useFlowPlan, useFlowPlanUpdate } from 'src/service/cameras/camerasService'
 import CameraMapMarker from './CameraMapMarker'
 import CameraSelecter from './CameraSelecter'
 import FlowPlanMapMarker from './FlowPlanMapMarker'
@@ -45,7 +45,10 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
   const { companyNo } = useLayout()
 
   const { mutateAsync: getClientCameraList } = useClientCameraList()
-  const { data: flowPlanData } = useFlowPlan({ companyNo: 28 })
+  const { data: flowPlanData } = useFlowPlan({ companyNo: companyNo })
+  const { mutateAsync: flowPlanUpdate } = useFlowPlanUpdate()
+
+  const [flowPlan, setFlowPlan] = useState<MFlowPlan | undefined>()
 
   const { mapInfo, setMapInfo } = useMap()
   const layoutContext = useLayout()
@@ -87,6 +90,8 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
 
   // 좌표값이 없을 시 이미지 추가 모드로 변경
   useEffect(() => {
+    setFlowPlan(flowPlanData?.data ?? undefined)
+
     if (flowPlanData?.data?.flowPlanImgUrl) {
       setNewImageAddMode(false)
     } else {
@@ -124,10 +129,8 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
       // }
     } else {
       const markerPositions = selectedCamera?.map(camera => {
-        const lat =
-          camera.flowPlanBindingYN === YN.N ? camera.lat ?? defaultMapInfo.center.lat : flowPlanData?.data?.lat ?? 0
-        const lon =
-          camera.flowPlanBindingYN === YN.N ? camera.lon ?? defaultMapInfo.center.lon : flowPlanData?.data?.lon ?? 0
+        const lat = camera.flowPlanBindingYN === YN.N ? camera.lat ?? defaultMapInfo.center.lat : flowPlan?.lat ?? 0
+        const lon = camera.flowPlanBindingYN === YN.N ? camera.lon ?? defaultMapInfo.center.lon : flowPlan?.lon ?? 0
 
         return {
           lat,
@@ -203,33 +206,44 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
 
   const [simpleDialogModalProps, setSimpleDialogModalProps] = useState(INITIAL_DIALOG_PROPS)
 
-  const handleFileUpload = (file: File) => {
-    const reader = new FileReader()
+  const handleFileUpload = async (file: File) => {
+    try {
+      // 파일 유효성 검사
+      if (!file.type.startsWith('image/')) {
+        alert('이미지 파일만 업로드 가능합니다.')
 
-    // reader.onloadend = () => {
-    //   setClientCameraData(prevData => {
-    //     if (!prevData) return null
+        return
+      }
 
-    //     return {
-    //       ...prevData,
-    //       floorPlan: {
-    //         ...prevData.floorPlan,
-    //         floorPlanImageUrl: reader.result as string
-    //       }
-    //     }
-    //   })
-    // }
-    reader.readAsDataURL(file)
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB 제한 예시
+        alert('파일 크기가 너무 큽니다.')
+
+        return
+      }
+
+      await flowPlanUpdate({
+        companyNo: companyNo,
+        flowPlan: {
+          lon: flowPlan?.lon ?? 0,
+          lat: flowPlan?.lat ?? 0
+        },
+        file: file
+      })
+
+      // 성공 시 처리
+      alert('파일이 성공적으로 업로드되었습니다.')
+    } catch (error) {
+      console.error('파일 업로드 실패:', error)
+      alert('파일 업로드에 실패했습니다. 다시 시도해주세요.')
+    }
   }
 
   const handleConfirm = () => {
-    if (simpleDialogModalProps.isSave && flowPlanData?.data?.flowPlanImgUrl) {
+    if (simpleDialogModalProps.isSave && flowPlan?.flowPlanImgUrl) {
       // 이미지가 이미 있는 경우 위치만 업데이트
       handleSaveClick(undefined)
-    } else if (
-      (simpleDialogModalProps.isSave && !flowPlanData?.data?.flowPlanImgUrl) ||
-      simpleDialogModalProps.isImageUpdate
-    ) {
+    } else if ((simpleDialogModalProps.isSave && !flowPlan?.flowPlanImgUrl) || simpleDialogModalProps.isImageUpdate) {
       // 새로운 이미지 업로드 모드
       fileInputRef.current?.click()
     } else if (!simpleDialogModalProps.isSave) {
@@ -295,12 +309,13 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
           setViewType={setViewType}
           newImageAddMode={newImageAddMode}
           newImageAddModeFn={() => {
-            // updateClientCameraData(undefined, {
-            //   floorPlan: {
-            //     floorPlanImageUrl: '',
-            //     zonePoints: { lat: mapInfo.center.lat, lon: mapInfo.center.lon }
-            //   } as MClientCameraList['floorPlan']
-            // })
+            setFlowPlan({
+              lat: mapInfo.center.lat,
+              lon: mapInfo.center.lon,
+              flowPlanImgUrl: '',
+              cameraFlowPlanNo: 0
+            })
+
             setIsDragging(true)
             setViewType({ type: 'map', size: 'half' })
           }}
@@ -320,7 +335,12 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
 
                 // onClick={handleMapClick}
               >
-                <FlowPlanMapMarker flowPlanData={flowPlanData?.data} />
+                <FlowPlanMapMarker
+                  flowPlanData={flowPlan}
+                  imageUpdateFn={() => {
+                    fileInputRef.current?.click()
+                  }}
+                />
                 <CameraMapMarker />
               </MapComponent>
 
@@ -328,7 +348,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
             </>
           ) : (
             <ImageMap
-              flowPlanData={flowPlanData?.data}
+              flowPlanData={flowPlan}
               height={height}
               handleImageMapClick={handleImageMapClick}
               imageUpdateFn={() => {

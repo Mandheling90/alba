@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from 'react-query'
 import { EPath } from 'src/enum/camerasEnum'
-import { MClientCameraList, MClientGroupCameraList, MFlowPlan } from 'src/model/cameras/CamerasModel'
+import { MClientCameraList, MClientGroupCameraList, MFlowPlan, MFlowPlanUpdate } from 'src/model/cameras/CamerasModel'
 import MResult from 'src/model/commonModel'
-import { createDelete, createGet, createPost } from 'src/module/reactQuery'
+import { createDelete, createFilePatch, createGet, createPatch, createPost } from 'src/module/reactQuery'
 
 // export const sampeCameraClientDetailList: MClientCameraList = {
 //   cameraList: [
@@ -156,6 +156,14 @@ export const useFlowPlan = (req: { companyNo: number }) => {
   return useQuery<MResult<MFlowPlan>>([url])
 }
 
+export const useFlowPlanUpdate = () => {
+  return useMutation((req: { companyNo: number; flowPlan: MFlowPlanUpdate; file?: File | null }) => {
+    const url = EPath.CAMERAS_CLIENT_OF_COMPANY_FLOW_PLAN_IMAGE.replace('{companyNo}', req.companyNo.toString())
+
+    return createFilePatch<MResult>([url, req.flowPlan])
+  }, {})
+}
+
 export const useClientCameraList = () => {
   return useMutation((req: { companyNo: number }) => {
     return createGet<MClientCameraList[]>([`${EPath.CAMERAS_CLIENT_OF_COMPANY}/${req.companyNo}`])
@@ -199,5 +207,13 @@ export const useClientGroupDelete = () => {
     const url = EPath.CAMERAS_GROUP_GROUP.replace('{groupId}', req.groupId.toString())
 
     return createDelete<MResult>([url])
+  }, {})
+}
+
+export const useClientCameraAdditionalInfo = () => {
+  return useMutation((req: { companyNo: number; cameraList: MClientCameraList[] }) => {
+    const url = EPath.CAMERAS_CLIENT_OF_COMPANY_ADDITIONAL_INFO.replace('{companyNo}', req.companyNo.toString())
+
+    return createPatch<MResult>([url, req.cameraList])
   }, {})
 }

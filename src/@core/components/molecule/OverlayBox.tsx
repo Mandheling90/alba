@@ -5,9 +5,16 @@ interface OverlayBoxProps extends BoxProps {
   children: ReactNode
   color?: string
   opacity?: number
+  marginTop?: string
 }
 
-const OverlayBox: React.FC<OverlayBoxProps> = ({ children, color = '#9155FD', opacity = 0.2, ...props }) => {
+const OverlayBox: React.FC<OverlayBoxProps> = ({
+  children,
+  color = '#9155FD',
+  opacity = 0.2,
+  marginTop = '-93px',
+  ...props
+}) => {
   return (
     <Box
       sx={{
@@ -18,7 +25,7 @@ const OverlayBox: React.FC<OverlayBoxProps> = ({ children, color = '#9155FD', op
           .match(/.{2}/g)
           ?.map(hex => parseInt(hex, 16))
           .join(', ')}, ${opacity})`,
-        marginTop: '-93px',
+        marginTop: marginTop,
         color: '#000',
         display: 'flex',
         p: 2,

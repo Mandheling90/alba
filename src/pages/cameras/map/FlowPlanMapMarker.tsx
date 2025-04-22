@@ -17,7 +17,10 @@ const INITIAL_DIALOG_PROPS = {
   isImageUpdate: false
 }
 
-const FlowPlanMapMarker: React.FC<{ flowPlanData?: MFlowPlan }> = ({ flowPlanData }) => {
+const FlowPlanMapMarker: React.FC<{ flowPlanData?: MFlowPlan; imageUpdateFn: () => void }> = ({
+  flowPlanData,
+  imageUpdateFn
+}) => {
   const [flowPlan, setFlowPlan] = useState<MFlowPlan>()
   const [flowPlanOriginal, setFlowPlanOriginal] = useState<MFlowPlan>()
 
@@ -85,7 +88,8 @@ const FlowPlanMapMarker: React.FC<{ flowPlanData?: MFlowPlan }> = ({ flowPlanDat
       // handleSaveClick(undefined)
     } else if ((simpleDialogModalProps.isSave && !flowPlan?.flowPlanImgUrl) || simpleDialogModalProps.isImageUpdate) {
       // 새로운 이미지 업로드 모드
-      fileInputRef.current?.click()
+      // fileInputRef.current?.click()
+      imageUpdateFn()
     } else if (!simpleDialogModalProps.isSave) {
       // 취소 버튼 클릭 시
       setFlowPlan(flowPlanOriginal)

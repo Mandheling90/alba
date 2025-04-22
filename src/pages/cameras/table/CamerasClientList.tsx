@@ -300,6 +300,10 @@ const CamerasClientList: FC = () => {
   }
 
   const selectRowEvent = (row: MClientCameraList) => {
+    if (viewType.type === 'image' && row.flowPlanBindingYN === YN.N) {
+      return
+    }
+
     if (Object.keys(row).length === 0) {
       setSelectedCamera(null)
     } else {
