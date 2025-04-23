@@ -17,17 +17,21 @@ const INITIAL_DIALOG_PROPS = {
   isImageUpdate: false
 }
 
-const FlowPlanMapMarker: React.FC<{ flowPlanData?: MFlowPlan; imageUpdateFn: () => void }> = ({
-  flowPlanData,
-  imageUpdateFn
-}) => {
-  const [flowPlan, setFlowPlan] = useState<MFlowPlan>()
-  const [flowPlanOriginal, setFlowPlanOriginal] = useState<MFlowPlan>()
+const FlowPlanMapMarker: React.FC<{
+  flowPlan?: MFlowPlan
+  setFlowPlan: (flowPlan: MFlowPlan) => void
+  flowPlanOriginal?: MFlowPlan
+  setFlowPlanOriginal: (flowPlan: MFlowPlan) => void
+  imageUpdateFn: () => void
+  locationUpdateFn: (flowPlan: MFlowPlan) => void
+}> = ({ flowPlan, setFlowPlan, flowPlanOriginal, setFlowPlanOriginal, imageUpdateFn, locationUpdateFn }) => {
+  // const [flowPlan, setFlowPlan] = useState<MFlowPlan>()
+  // const [flowPlanOriginal, setFlowPlanOriginal] = useState<MFlowPlan>()
 
-  useEffect(() => {
-    setFlowPlan(flowPlanData)
-    setFlowPlanOriginal(flowPlanData)
-  }, [flowPlanData])
+  // useEffect(() => {
+  //   setFlowPlan(flowPlanData)
+  //   setFlowPlanOriginal(flowPlanData)
+  // }, [flowPlanData])
 
   const { mapInfo, setMapInfo } = useMap()
 
@@ -86,13 +90,16 @@ const FlowPlanMapMarker: React.FC<{ flowPlanData?: MFlowPlan; imageUpdateFn: () 
     if (simpleDialogModalProps.isSave && flowPlan?.flowPlanImgUrl) {
       // 이미지가 이미 있는 경우 위치만 업데이트
       // handleSaveClick(undefined)
+      locationUpdateFn(flowPlan)
     } else if ((simpleDialogModalProps.isSave && !flowPlan?.flowPlanImgUrl) || simpleDialogModalProps.isImageUpdate) {
       // 새로운 이미지 업로드 모드
       // fileInputRef.current?.click()
       imageUpdateFn()
     } else if (!simpleDialogModalProps.isSave) {
       // 취소 버튼 클릭 시
-      setFlowPlan(flowPlanOriginal)
+      if (flowPlanOriginal) {
+        setFlowPlan(flowPlanOriginal)
+      }
     }
 
     setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
@@ -111,17 +118,21 @@ const FlowPlanMapMarker: React.FC<{ flowPlanData?: MFlowPlan; imageUpdateFn: () 
         isConfirm
       />
 
-      {(isHovering || selectedCamera?.find(c => c.flowPlanBindingYN === YN.Y)) && !isDragging && (
-        <MapOverlay
-          title={`${flowPlanInfo?.cameraId} | ${flowPlanInfo?.cameraName}`}
-          position={{
-            lat: flowPlan?.lat ?? 0,
-            lng: flowPlan?.lon ?? 0
-          }}
-        />
-      )}
+      {(isHovering || selectedCamera?.find(c => c.flowPlanBindingYN === YN.Y)) &&
+        !isDragging &&
+        flowPlan?.flowPlanImgUrl &&
+        flowPlanInfo?.cameraId &&
+        flowPlanInfo?.cameraName && (
+          <MapOverlay
+            title={`${flowPlanInfo?.cameraId} | ${flowPlanInfo?.cameraName}`}
+            position={{
+              lat: flowPlan?.lat ?? 0,
+              lng: flowPlan?.lon ?? 0
+            }}
+          />
+        )}
 
-      {isDragging && (
+      {(isDragging || !flowPlan?.flowPlanImgUrl) && (
         <MapOverlay
           title={'평면도 위치 저장'}
           position={{
@@ -167,16 +178,10 @@ const FlowPlanMapMarker: React.FC<{ flowPlanData?: MFlowPlan; imageUpdateFn: () 
           setIsDragging(true)
           const lat = e.getPosition().getLat()
           const lng = e.getPosition().getLng()
-
-          setFlowPlan(prev => {
-            if (!prev) return { lat, lon: lng, cameraFlowPlanNo: 0, flowPlanImgUrl: '' }
-
-            return {
-              ...prev,
-              lat,
-              lon: lng
-            }
-          })
+          const newFlowPlan: MFlowPlan = flowPlan
+            ? { ...flowPlan, lat, lon: lng }
+            : { lat, lon: lng, cameraFlowPlanNo: 0, flowPlanImgUrl: '' }
+          setFlowPlan(newFlowPlan)
         }}
         image={{ src: '/images/common/map/FlowPlan-map-point.svg', size: { width: 40, height: 40 } }}
         onMouseOver={() => {

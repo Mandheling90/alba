@@ -2,7 +2,14 @@ import { useMutation, useQuery } from 'react-query'
 import { EPath } from 'src/enum/camerasEnum'
 import { MClientCameraList, MClientGroupCameraList, MFlowPlan, MFlowPlanUpdate } from 'src/model/cameras/CamerasModel'
 import MResult from 'src/model/commonModel'
-import { createDelete, createFilePatch, createGet, createPatch, createPost } from 'src/module/reactQuery'
+import {
+  createDelete,
+  createFilePatch,
+  createFilePost,
+  createGet,
+  createPatch,
+  createPost
+} from 'src/module/reactQuery'
 
 // export const sampeCameraClientDetailList: MClientCameraList = {
 //   cameraList: [
@@ -156,11 +163,26 @@ export const useFlowPlan = (req: { companyNo: number }) => {
   return useQuery<MResult<MFlowPlan>>([url])
 }
 
-export const useFlowPlanUpdate = () => {
-  return useMutation((req: { companyNo: number; flowPlan: MFlowPlanUpdate; file?: File | null }) => {
-    const url = EPath.CAMERAS_CLIENT_OF_COMPANY_FLOW_PLAN_IMAGE.replace('{companyNo}', req.companyNo.toString())
+export const useFlowPlanAdd = () => {
+  return useMutation((req: { companyNo: number; CameraFlowPlanReq: MFlowPlanUpdate; file?: File | null }) => {
+    const url = EPath.CAMERAS_CLIENT_OF_COMPANY_FLOW_PLAN.replace('{companyNo}', req.companyNo.toString())
 
-    return createFilePatch<MResult>([url, req.flowPlan])
+    return createFilePost<MResult>([url, { CameraFlowPlanReq: req.CameraFlowPlanReq, file: req.file }])
+  }, {})
+}
+export const useFlowPlanUpdate = () => {
+  return useMutation((req: { companyNo: number; CameraFlowPlanReq: MFlowPlanUpdate; file?: File | null }) => {
+    const url = EPath.CAMERAS_CLIENT_OF_COMPANY_FLOW_PLAN.replace('{companyNo}', req.companyNo.toString())
+
+    return createFilePatch<MResult>([url, { CameraFlowPlanReq: req.CameraFlowPlanReq, file: req.file }])
+  }, {})
+}
+
+export const useFlowPlanCoordinate = () => {
+  return useMutation((req: { companyNo: number; CameraFlowPlanReq: MFlowPlanUpdate }) => {
+    const url = EPath.CAMERAS_CLIENT_OF_COMPANY_FLOW_PLAN_COORDINATE.replace('{companyNo}', req.companyNo.toString())
+
+    return createPatch<MResult>([url, req.CameraFlowPlanReq])
   }, {})
 }
 

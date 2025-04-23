@@ -12,7 +12,12 @@ import { useCameras } from 'src/hooks/useCameras'
 import { useLayout } from 'src/hooks/useLayout'
 import { useMap } from 'src/hooks/useMap'
 import { MClientCameraList, MFlowPlan } from 'src/model/cameras/CamerasModel'
-import { useClientCameraList, useFlowPlan, useFlowPlanUpdate } from 'src/service/cameras/camerasService'
+import {
+  useFlowPlan,
+  useFlowPlanAdd,
+  useFlowPlanCoordinate,
+  useFlowPlanUpdate
+} from 'src/service/cameras/camerasService'
 import CameraMapMarker from './CameraMapMarker'
 import CameraSelecter from './CameraSelecter'
 import FlowPlanMapMarker from './FlowPlanMapMarker'
@@ -44,11 +49,13 @@ const removeDuplicateCameras = (data: MClientCameraList[]): MClientCameraList[] 
 const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
   const { companyNo } = useLayout()
 
-  const { mutateAsync: getClientCameraList } = useClientCameraList()
-  const { data: flowPlanData } = useFlowPlan({ companyNo: companyNo })
+  const { data: flowPlanData, refetch } = useFlowPlan({ companyNo: companyNo })
   const { mutateAsync: flowPlanUpdate } = useFlowPlanUpdate()
+  const { mutateAsync: flowPlanAdd } = useFlowPlanAdd()
+  const { mutateAsync: flowPlanCoordinate } = useFlowPlanCoordinate()
 
-  const [flowPlan, setFlowPlan] = useState<MFlowPlan | undefined>()
+  const [flowPlan, setFlowPlan] = useState<MFlowPlan>()
+  const [flowPlanOriginal, setFlowPlanOriginal] = useState<MFlowPlan>()
 
   const { mapInfo, setMapInfo } = useMap()
   const layoutContext = useLayout()
@@ -56,8 +63,6 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
 
   const mapContainerRef = useRef<any>()
   const [isDragging, setIsDragging] = useState(false)
-  const [newImageAddMode, setNewImageAddMode] = useState(false)
-  const [uniqueCameras, setUniqueCameras] = useState<MClientCameraList[]>([])
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
@@ -74,11 +79,6 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
   } = useCameras()
 
   useEffect(() => {
-    const uniqueCameras = removeDuplicateCameras(clientCameraData ?? [])
-    setUniqueCameras(uniqueCameras)
-  }, [clientCameraData])
-
-  useEffect(() => {
     setTimeout(() => {
       const relayout = () => {
         mapContainerRef.current?.relayout()
@@ -88,15 +88,12 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
     }, 500)
   }, [height, layoutDisplay, isDragging])
 
-  // 좌표값이 없을 시 이미지 추가 모드로 변경
   useEffect(() => {
     setFlowPlan(flowPlanData?.data ?? undefined)
+    setFlowPlanOriginal(flowPlanData?.data ?? undefined)
 
-    if (flowPlanData?.data?.flowPlanImgUrl) {
-      setNewImageAddMode(false)
-    } else {
+    if (!flowPlanData?.data?.flowPlanImgUrl) {
       setMapInfo(defaultMapInfo)
-      setNewImageAddMode(true)
     }
   }, [flowPlanData])
 
@@ -222,20 +219,29 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
         return
       }
 
-      await flowPlanUpdate({
-        companyNo: companyNo,
-        flowPlan: {
-          lon: flowPlan?.lon ?? 0,
-          lat: flowPlan?.lat ?? 0
-        },
-        file: file
-      })
-
-      // 성공 시 처리
-      alert('파일이 성공적으로 업로드되었습니다.')
+      if (flowPlan?.flowPlanImgUrl) {
+        await flowPlanUpdate({
+          companyNo: companyNo,
+          CameraFlowPlanReq: {
+            lon: flowPlan?.lon ?? 0,
+            lat: flowPlan?.lat ?? 0
+          },
+          file: file
+        })
+      } else {
+        await flowPlanAdd({
+          companyNo: companyNo,
+          CameraFlowPlanReq: {
+            lon: flowPlan?.lon ?? 0,
+            lat: flowPlan?.lat ?? 0
+          },
+          file: file
+        })
+      }
+      refetch()
     } catch (error) {
-      console.error('파일 업로드 실패:', error)
       alert('파일 업로드에 실패했습니다. 다시 시도해주세요.')
+      console.error('파일 업로드 실패:', error)
     }
   }
 
@@ -307,7 +313,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
         <MapControls
           viewType={viewType}
           setViewType={setViewType}
-          newImageAddMode={newImageAddMode}
+          newImageAddMode={!flowPlan?.flowPlanImgUrl}
           newImageAddModeFn={() => {
             setFlowPlan({
               lat: mapInfo.center.lat,
@@ -336,9 +342,23 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
                 // onClick={handleMapClick}
               >
                 <FlowPlanMapMarker
-                  flowPlanData={flowPlan}
+                  flowPlan={flowPlan}
+                  setFlowPlan={setFlowPlan}
+                  flowPlanOriginal={flowPlanOriginal}
+                  setFlowPlanOriginal={setFlowPlanOriginal}
                   imageUpdateFn={() => {
                     fileInputRef.current?.click()
+                  }}
+                  locationUpdateFn={async flowPlan => {
+                    await flowPlanCoordinate({
+                      companyNo: companyNo,
+                      CameraFlowPlanReq: {
+                        lat: flowPlan.lat,
+                        lon: flowPlan.lon
+                      }
+                    })
+
+                    refetch()
                   }}
                 />
                 <CameraMapMarker />

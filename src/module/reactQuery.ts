@@ -113,7 +113,6 @@ export const createPatch = async <T>(queryKey: any): Promise<AxiosResponseCustom
 
 export const createformData = async <T>(param: any): Promise<FormData> => {
   const formData = new FormData()
-  const dto: Record<string, any> = {}
 
   if (param && typeof param === 'object') {
     for (const key in param) {
@@ -121,13 +120,11 @@ export const createformData = async <T>(param: any): Promise<FormData> => {
         if (param[key] instanceof File || param[key] instanceof Blob) {
           formData.append('file', param[key])
         } else {
-          dto[key] = param[key]
+          formData.append(key, JSON.stringify(param[key]))
         }
       }
     }
   }
-
-  formData.append('dto', new Blob([JSON.stringify(dto)], { type: 'application/json' }))
 
   return formData
 }
@@ -135,9 +132,7 @@ export const createformData = async <T>(param: any): Promise<FormData> => {
 export const createFilePatch = async <T>(queryKey: any): Promise<AxiosResponseCustom<T>> => {
   try {
     const [url, param] = queryKey as [string, any]
-
     const formData = await createformData(param)
-
     const res: AxiosResponseCustom<T> = await API.patch(url, formData, { timeout: 1800000 })
 
     return res
@@ -150,9 +145,7 @@ export const createFilePatch = async <T>(queryKey: any): Promise<AxiosResponseCu
 export const createFilePost = async <T>(queryKey: any): Promise<AxiosResponseCustom<T>> => {
   try {
     const [url, param] = queryKey as [string, any]
-
     const formData = await createformData(param)
-
     const res: AxiosResponseCustom<T> = await API.post(url, formData, { timeout: 1800000 })
 
     return res

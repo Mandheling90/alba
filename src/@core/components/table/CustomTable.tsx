@@ -30,6 +30,7 @@ interface IGridOptions {
   showHeader?: boolean
   combineTableId?: string
   hideRows?: boolean
+  requireSingleSelection?: boolean
 }
 
 const CustomTable: FC<
@@ -49,7 +50,8 @@ const CustomTable: FC<
   onDragStart,
   onDragEnd,
   initialSelectedRow,
-  hideRows = false
+  hideRows = false,
+  requireSingleSelection = false
 }) => {
   const { selectedRow: combineselectedRows, setSelectedRowFn } = useContext(TableContext)
   const [pageSize, setPageSize] = useState(isAllView ? 100 : 25)
@@ -94,7 +96,7 @@ const CustomTable: FC<
           }}
           onRowClick={(row: any) => {
             if (selectRowEvent) {
-              if (selectedRow === row.id) {
+              if (selectedRow === row.id && !requireSingleSelection) {
                 handleSetSelectedRow(null)
                 selectRowEvent({})
               } else {
