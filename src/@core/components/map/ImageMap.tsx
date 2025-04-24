@@ -1,6 +1,6 @@
 // interface IImageMap {}
 
-import { Box, Card, IconButton, Typography } from '@mui/material'
+import { Box, Card, Typography } from '@mui/material'
 import { useContext, useEffect, useRef, useState } from 'react'
 import { DndProvider, useDrag } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
@@ -33,6 +33,7 @@ const Marker = ({
   const x = camera.flowPlanX ?? 0
   const y = camera.flowPlanY ?? 0
   const [showOverlay, setShowOverlay] = useState(false)
+  const [onMouseDownMarker, setOnMouseDownMarker] = useState(false)
   const dragRef = useRef<HTMLDivElement>(null)
 
   const [{ isDragging }, drag] = useDrag<any, any, { isDragging: boolean }>(
@@ -60,9 +61,7 @@ const Marker = ({
           updateClientCameraData(camera.cameraNo, { flowPlanX: clampedX, flowPlanY: clampedY })
         }
         setShowOverlay(false)
-      },
-      previewOptions: {
-        captureDraggingState: true
+        setOnMouseDownMarker(false)
       }
     }),
     [isDraggable, camera.cameraNo, imageRef, updateClientCameraData, selectedCamera]
@@ -104,7 +103,7 @@ const Marker = ({
         transform: 'translate(-50%, -50%)',
         opacity: isDragging ? 0.5 : 1,
         cursor: 'move',
-        zIndex: 1000,
+        zIndex: isDragging ? 2000 : 1000,
         touchAction: 'none',
         userSelect: 'none',
         WebkitUserSelect: 'none',
@@ -116,20 +115,10 @@ const Marker = ({
       onMouseDown={e => e.stopPropagation()}
       onTouchStart={e => e.stopPropagation()}
     >
-      {/* <div ref={dragRef} style={{ display: 'none' }}>
-        <IconButton
-          sx={{
-            '& img': {
-              pointerEvents: 'none'
-            }
-          }}
-        >
-          <IconCustom isCommon path='camera' icon='map-point' />
-        </IconButton>
-      </div> */}
-      {(selectedCamera?.find(camera => camera.cameraNo === camera.cameraNo) || showOverlay) && (
+      {!isDragging && (selectedCamera?.find(camera => camera.cameraNo === camera.cameraNo) || showOverlay) && (
         <div
           style={{
+            display: onMouseDownMarker ? 'none' : 'block',
             position: 'absolute',
             bottom: '100%',
             left: '50%',
@@ -137,20 +126,22 @@ const Marker = ({
             pointerEvents: 'none'
           }}
         >
-          <OverlayBox marginTop='-45px'>
+          <OverlayBox marginTop='-55px'>
             <Typography>{`${camera.cameraId} | ${camera.cameraName}`}</Typography>
           </OverlayBox>
         </div>
       )}
-      <IconButton
-        sx={{
-          '& img': {
-            pointerEvents: 'none'
+
+      <div
+        ref={dragRef}
+        onMouseDown={e => {
+          if (e.button === 0) {
+            setOnMouseDownMarker(true)
           }
         }}
       >
         <IconCustom isCommon path='camera' icon='map-point' />
-      </IconButton>
+      </div>
     </div>
   )
 }

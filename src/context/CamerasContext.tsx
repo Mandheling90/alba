@@ -1,5 +1,6 @@
 import { ReactNode, createContext, useState } from 'react'
 import { SORT } from 'src/enum/commonEnum'
+import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
 import { ICameraClientReq, MClientCameraList, MClientGroupCameraList } from 'src/model/cameras/CamerasModel'
 import {
@@ -7,7 +8,8 @@ import {
   useClientCameraList,
   useClientGroupCameraItemAdd,
   useClientGroupCameraItemDelete,
-  useClientGroupCameraList
+  useClientGroupCameraList,
+  useClientGroupUpdate
 } from 'src/service/cameras/camerasService'
 
 export interface IViewType {
@@ -136,12 +138,14 @@ type Props = {
 
 const CamerasProvider = ({ children }: Props) => {
   const { companyNo } = useLayout()
+  const { user } = useAuth()
 
   const { mutateAsync: getClientCameraList } = useClientCameraList()
   const { mutateAsync: getClientGroupCameraList } = useClientGroupCameraList()
   const { mutateAsync: clientGroupCameraItemDelete } = useClientGroupCameraItemDelete()
   const { mutateAsync: clientGroupCameraItemAdd } = useClientGroupCameraItemAdd()
   const { mutateAsync: clientCameraAdditionalInfo } = useClientCameraAdditionalInfo()
+  const { mutateAsync: clientGroupUpdate } = useClientGroupUpdate()
 
   const [clientCameraData, setClientCameraData] = useState<MClientCameraList[] | null>(defaultProvider.clientCameraData)
   const [clientCameraDataOrigin, setClientCameraDataOrigin] = useState<MClientCameraList[] | null>(
@@ -312,39 +316,67 @@ const CamerasProvider = ({ children }: Props) => {
     })
   }
 
-  const handleGroupSaveClick = (groupId: number | undefined) => {
+  const handleGroupSaveClick = async (groupId: number | undefined) => {
     if (!clientGroupCameraData) return
 
     if (!groupId) {
       // 전체 저장의 경우 현재 데이터를 origin으로 저장
-      setClientGroupCameraDataOrigin(clientGroupCameraData)
+      const modifiedGroupList = clientGroupCameraData.map(group => {
+        const isExistingGroup = clientGroupCameraDataOrigin?.some(originGroup => originGroup.groupId === group.groupId)
+
+        return {
+          ...group,
+          groupId: isExistingGroup ? group.groupId : 0
+        }
+      })
+
+      const res = await clientGroupUpdate({ userNo: user?.userInfo?.userNo ?? 0, groupList: modifiedGroupList })
+      fetchData()
 
       return
     }
 
     // 특정 그룹 저장의 경우
-    setClientGroupCameraDataOrigin(prevData => {
-      if (!prevData) return clientGroupCameraData
-
-      const existingIndex = prevData.findIndex((group: MClientGroupCameraList) => group.groupId === groupId)
-      if (existingIndex === -1) return prevData
-
-      const updatedGroupList = [...prevData]
+    try {
       const updatedGroup = clientGroupCameraData.find((group: MClientGroupCameraList) => group.groupId === groupId)
+      if (!updatedGroup) return
 
-      if (updatedGroup) {
-        updatedGroupList[existingIndex] = updatedGroup
+      const isExistingGroup = clientGroupCameraDataOrigin?.some(originGroup => originGroup.groupId === groupId)
+      const modifiedGroup = {
+        ...updatedGroup,
+        groupId: isExistingGroup ? updatedGroup.groupId : 0
       }
 
-      return updatedGroupList
-    })
+      const res = await clientGroupUpdate({
+        userNo: user?.userInfo?.userNo ?? 0,
+        groupList: [modifiedGroup]
+      })
+
+      console.log(res)
+
+      setClientGroupCameraDataOrigin(prevData => {
+        if (!prevData) return clientGroupCameraData
+
+        const existingIndex = prevData.findIndex((group: MClientGroupCameraList) => group.groupId === groupId)
+        if (existingIndex === -1) return prevData
+
+        const updatedGroupList = [...prevData]
+        updatedGroupList[existingIndex] = updatedGroup
+
+        return updatedGroupList
+      })
+    } catch (error) {
+      console.error('그룹 정보 저장 오류:', error)
+
+      return
+    }
   }
 
   const handleGroupCancelClick = (groupId: number | undefined) => {
     if (!clientGroupCameraDataOrigin) return
 
     if (!groupId) {
-      // 전체 취소의 경우 origin 데이터로 복원
+      // 전체 취소
       setClientGroupCameraData(clientGroupCameraDataOrigin)
 
       return
@@ -354,17 +386,17 @@ const CamerasProvider = ({ children }: Props) => {
     setClientGroupCameraData(prevData => {
       if (!prevData) return null
 
-      // 현재 데이터에서 해당 그룹의 인덱스 찾기
-      const existingIndex = prevData.findIndex((group: MClientGroupCameraList) => group.groupId === groupId)
-      if (existingIndex === -1) return prevData
-
       // origin 데이터에서 해당 그룹 찾기
       const originalGroup = clientGroupCameraDataOrigin.find(
         (group: MClientGroupCameraList) => group.groupId === groupId
       )
-      if (!originalGroup) return prevData
 
-      // 새로운 배열 생성 및 업데이트
+      // origin에 없는 그룹인 경우 해당 그룹을 제외
+      if (!originalGroup) {
+        return prevData.filter(group => group.groupId !== groupId)
+      }
+
+      // origin에 있는 그룹인 경우 원래 데이터로 복원
       const updatedGroupList = prevData.map((group: MClientGroupCameraList) =>
         group.groupId === groupId ? originalGroup : group
       )

@@ -28,13 +28,10 @@ const ButtonHoverIconList = styled(Box)`
 
 const CamerasClientList: FC = () => {
   const {
-    clientListReq,
     clientCameraData,
     setClientCameraData,
     clientGroupCameraData,
     setClientGroupCameraData,
-    clientGroupCameraDataOrigin,
-    setClientGroupCameraDataOrigin,
     groupModifyId,
     setGroupModifyId,
     isGroupModifyMode,
@@ -47,11 +44,11 @@ const CamerasClientList: FC = () => {
     setMapModifyModCameraId,
     viewType,
     clientCameraDataOrigin,
-    setClientCameraDataOrigin,
     fetchData,
     removeDuplicateCameras,
-    handleGroupCameraItemAdd,
-    addGroupCamera
+    handleGroupSaveClick,
+    addGroupCamera,
+    handleGroupCancelClick
   } = useCameras()
 
   const { companyNo, companyId, companyName } = useLayout()
@@ -380,11 +377,11 @@ const CamerasClientList: FC = () => {
                       if (!clientGroupCameraData) return
 
                       try {
-                        const res = await clientGroupAdd({ userNo: user?.userInfo?.userNo ?? 0, name: '새로운 그룹' })
-                        console.log(res.data.groupId)
+                        // const res = await clientGroupAdd({ userNo: user?.userInfo?.userNo ?? 0, name: '새로운 그룹' })
+                        // console.log(res.data.groupId)
 
                         // 새로운 그룹 ID 생성 (기존 그룹 ID 중 최대값 + 1)
-                        const newGroupId = res.data.groupId
+                        const newGroupId = clientGroupCameraData.length + 1
 
                         // 새로운 그룹 생성
                         const newGroup: MClientGroupCameraList = {
@@ -419,7 +416,11 @@ const CamerasClientList: FC = () => {
               <Button
                 variant={'outlined'}
                 onClick={async () => {
-                  handleSaveClick(undefined)
+                  if (!isGroupMode) {
+                    handleSaveClick(undefined)
+                  } else {
+                    handleGroupSaveClick(undefined)
+                  }
                 }}
               >
                 저장
@@ -428,7 +429,12 @@ const CamerasClientList: FC = () => {
                 variant={'outlined'}
                 onClick={() => {
                   setSelectedCamera(null)
-                  handleCancelClick(undefined)
+
+                  if (!isGroupMode) {
+                    handleCancelClick(undefined)
+                  } else {
+                    handleGroupCancelClick(undefined)
+                  }
                 }}
               >
                 취소

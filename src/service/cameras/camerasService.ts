@@ -8,7 +8,8 @@ import {
   createFilePost,
   createGet,
   createPatch,
-  createPost
+  createPost,
+  createPut
 } from 'src/module/reactQuery'
 
 // export const sampeCameraClientDetailList: MClientCameraList = {
@@ -237,5 +238,13 @@ export const useClientCameraAdditionalInfo = () => {
     const url = EPath.CAMERAS_CLIENT_OF_COMPANY_ADDITIONAL_INFO.replace('{companyNo}', req.companyNo.toString())
 
     return createPatch<MResult>([url, req.cameraList])
+  }, {})
+}
+
+export const useClientGroupUpdate = () => {
+  return useMutation((req: { userNo: number; groupList: MClientGroupCameraList[] }) => {
+    const url = EPath.CAMERAS_GROUP_OF_USER.replace('{userNo}', req.userNo.toString())
+
+    return createPut<MResult>([url, req.groupList])
   }, {})
 }

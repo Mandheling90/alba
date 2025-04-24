@@ -18,7 +18,6 @@ const OverlayBox: React.FC<OverlayBoxProps> = ({
   return (
     <Box
       sx={{
-        width: '205px',
         position: 'relative',
         backgroundColor: `rgba(${color
           .replace('#', '')
@@ -31,6 +30,8 @@ const OverlayBox: React.FC<OverlayBoxProps> = ({
         p: 2,
         border: `1px solid ${color}`,
         borderRadius: '5px',
+        whiteSpace: 'nowrap',
+        textOverflow: 'ellipsis',
         '&::after': {
           content: '""',
           position: 'absolute',

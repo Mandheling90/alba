@@ -251,8 +251,14 @@ const GroupList: FC<IGroupList> = ({
               <IconCustom isCommon path='camera' icon='group-mod-blank' hoverIcon='group-mod-fill' />
             </IconButton>
             <IconButton
-              onClick={() => {
-                //   console.log(row)
+              onClick={async () => {
+                try {
+                  await clientGroupDelete({ groupId: group.groupId })
+                  deleteGroupCamera(group.groupId, undefined)
+                  handleGroupSaveClick(group.groupId)
+                } catch (error) {
+                  console.log(error)
+                }
               }}
             >
               <IconCustom isCommon path='camera' icon='trash-blank' hoverIcon='trash-fill' />
