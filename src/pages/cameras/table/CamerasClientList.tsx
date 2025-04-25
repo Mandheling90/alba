@@ -387,7 +387,7 @@ const CamerasClientList: FC = () => {
                         const newGroup: MClientGroupCameraList = {
                           groupId: newGroupId,
                           userNo: user?.userInfo?.userNo ?? 0,
-                          name: '새로운 그룹',
+                          groupName: '새로운 그룹',
                           groupItemList: []
                         }
 

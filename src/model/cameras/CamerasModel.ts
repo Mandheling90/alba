@@ -154,14 +154,14 @@ export interface MClientCameraList {
 export interface MClientGroupCameraList {
   groupId: number
   userNo: number
-  name: string
+  groupName: string
   groupItemList: MClientCameraList[]
 }
 
 export interface MClientGroupList {
   groupId: number
   userNo: number
-  name: string
+  groupName: string
 }
 
 export interface MFlowPlan {

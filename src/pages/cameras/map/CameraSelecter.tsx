@@ -40,7 +40,7 @@ const CameraSelecter: React.FC = ({}) => {
         <CustomAccordion
           key={group.groupId}
           id={group.groupId}
-          title={group.name}
+          title={group.groupName}
           onClick={() => {
             // setSelectedCamera(clientCameraData?.cameraList.filter(c => c.groupId === group.id))
           }}

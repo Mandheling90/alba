@@ -197,14 +197,14 @@ const GroupList: FC<IGroupList> = ({
         {groupModifyId === group.groupId ? (
           <TextField
             size='small'
-            value={group.name}
+            value={group.groupName}
             onChange={e => {
-              updateGroupCameraData(group.groupId, undefined, { name: e.target.value })
+              updateGroupCameraData(group.groupId, undefined, { groupName: e.target.value })
             }}
           />
         ) : (
           <Typography component='span' variant='inherit' sx={{ minWidth: '150px', textAlign: 'center' }}>
-            {group.name}
+            {group.groupName}
           </Typography>
         )}
         <PipeLine />
