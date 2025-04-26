@@ -19,7 +19,7 @@ const UserSetting: FC = (): React.ReactElement => {
   const userContext = useUser()
   const { authList, setAuthList, selectedAuthList } = userContext
   const { user } = useAuth()
-  const { layoutDisplay, setCompanyId, setCompanyName, companyNo, setCompanyNo } = useLayout()
+  const { layoutDisplay, setCompanyId, setCompanyName, companyId, companyName, companyNo, setCompanyNo } = useLayout()
 
   const { data: UserCompanyList, refetch: UserCompanyListRefetch } = useUserCompanyList({ companyNo })
   const { data: AuthListData, refetch: AuthListRefetch } = useAuthList({ companyNo })
@@ -28,24 +28,10 @@ const UserSetting: FC = (): React.ReactElement => {
   })
 
   useEffect(() => {
-    if (user?.userInfo?.companyNo && user?.userInfo?.companyId && user?.userInfo?.companyName) {
-      setCompanyNo(user?.userInfo?.companyNo)
-      setCompanyId(user?.userInfo?.companyId)
-      setCompanyName(user?.userInfo?.companyName)
-    }
-  }, [])
-
-  useEffect(() => {
     if (AuthListData?.data) {
       setAuthList(AuthListData?.data ?? [])
     }
   }, [setAuthList, AuthListData])
-
-  const handleSelectClientGrid = (row: any) => {
-    setCompanyNo(row.companyNo)
-    setCompanyId(row.companyId)
-    setCompanyName(row.companyName)
-  }
 
   const refetch = () => {
     UserCompanyListRefetch()
@@ -53,7 +39,7 @@ const UserSetting: FC = (): React.ReactElement => {
     AuthMenuListRefetch()
   }
 
-  const sideContent = <ClientListGrid selectRowEvent={handleSelectClientGrid} />
+  const sideContent = <ClientListGrid />
 
   const mainContent = (
     <Grid container>

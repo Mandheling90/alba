@@ -1,5 +1,6 @@
 import { Box, Button, Card, Grid, Switch, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
 import ButtonHover from 'src/@core/components/atom/ButtonHover'
 import CustomTextFieldState from 'src/@core/components/atom/CustomTextFieldState'
@@ -15,7 +16,7 @@ import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MClientCameraList, MClientGroupCameraList } from 'src/model/cameras/CamerasModel'
 import { IAiSolutionService } from 'src/model/client/clientModel'
-import { useClientGroupAdd } from 'src/service/cameras/camerasService'
+import { useClientGroupAdd, useClientGroupStatus } from 'src/service/cameras/camerasService'
 import styled from 'styled-components'
 import CameraModifyActions from './CameraModifyActions'
 import GroupList from './GroupList'
@@ -59,6 +60,8 @@ const CamerasClientList: FC = () => {
   const [isGroupMode, setIsGroupMode] = useState<boolean>(false)
 
   const { mutateAsync: clientGroupAdd } = useClientGroupAdd()
+  const { mutateAsync: clientGroupStatus } = useClientGroupStatus()
+  const router = useRouter()
 
   //GroupModifyId
 
@@ -244,7 +247,12 @@ const CamerasClientList: FC = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
             <Switch
               checked={row.cameraStatus === YN.Y}
-              onChange={event => {
+              onChange={async event => {
+                await clientGroupStatus({
+                  cameraNo: row.cameraNo,
+                  companyNo: companyNo,
+                  cameraStatus: event.target.checked ? YN.Y : YN.N
+                })
                 updateClientCameraData(row.cameraNo, { cameraStatus: event.target.checked ? YN.Y : YN.N })
               }}
             />
@@ -337,25 +345,37 @@ const CamerasClientList: FC = () => {
                   <Button
                     variant={'contained'}
                     sx={{ width: '160px', height: '40px', display: 'flex', justifyContent: 'space-between' }}
+                    onClick={() => {
+                      router.push({
+                        pathname: '/clients/clientsAdd',
+                        query: {
+                          mode: 'edit',
+                          id: companyNo
+                        }
+                      })
+                    }}
                   >
                     <ButtonHoverIconList
-                      onClick={() => {
-                        console.log('add')
-                      }}
+
+                    // onClick={() => {
+                    //   console.log('add')
+                    // }}
                     >
                       <IconCustom isCommon path='camera' icon='cameraAdd' />
                     </ButtonHoverIconList>
                     <ButtonHoverIconList
-                      onClick={() => {
-                        console.log('del')
-                      }}
+
+                    // onClick={() => {
+                    //   console.log('del')
+                    // }}
                     >
                       <IconCustom isCommon path='camera' icon='cameraDel' />
                     </ButtonHoverIconList>
                     <ButtonHoverIconList
-                      onClick={() => {
-                        console.log('mod')
-                      }}
+
+                    // onClick={() => {
+                    //   console.log('mod')
+                    // }}
                     >
                       <IconCustom isCommon path='camera' icon='cameraMod' />
                     </ButtonHoverIconList>

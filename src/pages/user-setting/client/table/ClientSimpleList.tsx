@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react'
 
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { useAuth } from 'src/hooks/useAuth'
+import { useLayout } from 'src/hooks/useLayout'
 import { MCompanySearch } from 'src/model/client/clientModel'
 
 interface IClientList {
@@ -11,6 +12,7 @@ interface IClientList {
 }
 
 const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) => {
+  const { companyId } = useLayout()
   const { user } = useAuth()
 
   const [userData, setUserData] = useState<(MCompanySearch & { display: boolean })[]>([])
@@ -35,7 +37,7 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
       isAllView
       selectRowEvent={selectRowEvent}
       enablePointer
-      initialSelectedRow={user?.userInfo?.companyId}
+      initialSelectedRow={companyId ? companyId : user?.userInfo?.companyId}
       requireSingleSelection
     />
   )

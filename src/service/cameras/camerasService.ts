@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from 'react-query'
 import { EPath } from 'src/enum/camerasEnum'
+import { YN } from 'src/enum/commonEnum'
 import { MClientCameraList, MClientGroupCameraList, MFlowPlan, MFlowPlanUpdate } from 'src/model/cameras/CamerasModel'
 import MResult from 'src/model/commonModel'
 import {
@@ -198,6 +199,17 @@ export const useClientGroupCameraList = () => {
     const url = EPath.CAMERAS_CLIENT_OF_COMPANY_GROUP.replace('{companyNo}', req.companyNo.toString())
 
     return createGet<MClientGroupCameraList[]>([url])
+  }, {})
+}
+
+export const useClientGroupStatus = () => {
+  return useMutation((req: { cameraNo: number; companyNo: number; cameraStatus: YN }) => {
+    const url = EPath.CAMERAS_GROUP_GROUP_STATUS.replace('{cameraNo}', req.cameraNo.toString()).replace(
+      '{companyNo}',
+      req.companyNo.toString()
+    )
+
+    return createPatch<MResult>([url, { cameraStatus: req.cameraStatus }])
   }, {})
 }
 

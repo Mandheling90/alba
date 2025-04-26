@@ -228,9 +228,7 @@ const GroupList: FC<IGroupList> = ({
               sx={{ display: 'flex', cursor: 'pointer' }}
               onClick={async () => {
                 try {
-                  await clientGroupDelete({ groupId: group.groupId })
                   deleteGroupCamera(group.groupId, undefined)
-                  handleGroupSaveClick(group.groupId)
                   handleClose()
                 } catch (error) {
                   console.log(error)
@@ -253,9 +251,7 @@ const GroupList: FC<IGroupList> = ({
             <IconButton
               onClick={async () => {
                 try {
-                  await clientGroupDelete({ groupId: group.groupId })
                   deleteGroupCamera(group.groupId, undefined)
-                  handleGroupSaveClick(group.groupId)
                 } catch (error) {
                   console.log(error)
                 }
