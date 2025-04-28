@@ -254,8 +254,8 @@ export const useClientCameraAdditionalInfo = () => {
 }
 
 export const useClientGroupUpdate = () => {
-  return useMutation((req: { userNo: number; groupList: MClientGroupCameraList[] }) => {
-    const url = EPath.CAMERAS_GROUP_OF_USER.replace('{userNo}', req.userNo.toString())
+  return useMutation((req: { companyNo: number; groupList: MClientGroupCameraList[] }) => {
+    const url = EPath.CAMERAS_GROUP_OF_COMPANY.replace('{companyNo}', req.companyNo.toString())
 
     return createPut<MResult>([url, req.groupList])
   }, {})

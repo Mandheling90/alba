@@ -330,7 +330,7 @@ const CamerasProvider = ({ children }: Props) => {
         }
       })
 
-      const res = await clientGroupUpdate({ userNo: user?.userInfo?.userNo ?? 0, groupList: modifiedGroupList })
+      const res = await clientGroupUpdate({ companyNo: companyNo, groupList: modifiedGroupList })
       fetchData()
 
       return
@@ -347,10 +347,7 @@ const CamerasProvider = ({ children }: Props) => {
         groupId: isExistingGroup ? updatedGroup.groupId : 0
       }
 
-      const res = await clientGroupUpdate({
-        userNo: user?.userInfo?.userNo ?? 0,
-        groupList: [modifiedGroup]
-      })
+      const res = await clientGroupUpdate({ companyNo: companyNo, groupList: [modifiedGroup] })
 
       console.log(res)
 
