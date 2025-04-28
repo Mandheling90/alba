@@ -3,6 +3,9 @@ import { EPath } from 'src/enum/statisticsEnum'
 
 import MResult from 'src/model/commonModel'
 import {
+  ICardInfo,
+  ICountLineChart,
+  IHeatMapResponse,
   MBarChart,
   MChartNavReq,
   MChartReq,
@@ -102,4 +105,22 @@ export const useOccupancyTable = () => {
   return useMutation(({ params, isGroup }: { params: MChartReq; isGroup: boolean }) => {
     return createGet<MTable[]>([isGroup ? EPath.STATS_AREA_TABLE_GROUP : EPath.STATS_AREA_TABLE, params])
   }, {})
+}
+
+export const useCountLineChart = () => {
+  return useMutation(() => {
+    return createGet<ICountLineChart>([EPath.STATS_DASHBOARD_COUNT_LINE_CHART])
+  }, {})
+}
+
+export const useCountCardInfo = () => {
+  return useQuery<MResult<ICardInfo[]>>([EPath.STATS_DASHBOARD_COUNT_CARD_INFO], {})
+
+  // return useMutation(() => {
+  //   return createGet<ICardInfo>([EPath.STATS_DASHBOARD_COUNT_CARD_INFO])
+  // }, {})
+}
+
+export const useHeatMapData = () => {
+  return useQuery<MResult<IHeatMapResponse>>([EPath.STATS_HEATMAP_DATA], {})
 }

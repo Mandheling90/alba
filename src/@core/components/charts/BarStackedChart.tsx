@@ -21,6 +21,8 @@ const BarStackedChart: React.FC = () => {
     const entranceData = generateHourlyData()
     const exitData = generateHourlyData()
 
+    console.log(entranceData, exitData)
+
     // 0시부터 23시까지 카테고리 배열 생성
     const hourCategories = Array.from({ length: 24 }, (_, i) => i + '시')
 

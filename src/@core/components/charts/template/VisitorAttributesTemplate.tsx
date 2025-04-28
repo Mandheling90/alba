@@ -9,15 +9,15 @@ import { VisitorChartExample } from 'src/@core/components/charts/StackedBarChart
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
 import IconCustom from 'src/layouts/components/IconCustom'
-import DashboardMenu from '../menu/DashboardMenu'
-import ChartDetailSwiper from '../swiper/ChartDetailSwiper'
+import DashboardMenu from 'src/pages/dashboard/menu/DashboardMenu'
+import ChartDetailSwiper from 'src/pages/dashboard/swiper/ChartDetailSwiper'
 
 // import HeatMapChart from 'src/@core/components/charts/HeatMapChart'
 const HeatMapChart = dynamic(() => import('src/@core/components/charts/HeatMapChart'), {
   ssr: false
 })
 
-const VisitorAttributesByHour: FC = ({}): React.ReactElement => {
+const VisitorAttributesTemplate: FC = ({}): React.ReactElement => {
   return (
     <StandardTemplate title={'방문자 특성 통계'}>
       <Grid container spacing={5} alignItems={'flex-end'}>
@@ -86,4 +86,4 @@ const VisitorAttributesByHour: FC = ({}): React.ReactElement => {
   )
 }
 
-export default VisitorAttributesByHour
+export default VisitorAttributesTemplate

@@ -57,17 +57,107 @@ export const EComponentList = [
         title: '방문자수 통계',
         path: '/dashboard/visitors'
       },
-      {
-        title: '방문자수 통계 - 시간별',
-        path: '/dashboard/visitorsByHour'
-      },
+
+      // {
+      //   title: '방문자수 통계 - 시간별',
+      //   path: '/dashboard/visitorsByHour'
+      // },
       {
         title: '방문자 특성 통계',
         path: '/dashboard/visitorAttributes'
+      }
+
+      // {
+      //   title: '방문자 특성 통계 - 시간별',
+      //   path: '/dashboard/visitorAttributesByHour'
+      // }
+    ]
+  },
+  {
+    title: '방문자수 통계',
+    icon: 'visitor-report',
+    children: [
+      {
+        title: '시간대별',
+        path: '/visitor-report/hourly'
       },
       {
-        title: '방문자 특성 통계 - 시간별',
-        path: '/dashboard/visitorAttributesByHour'
+        title: '일별',
+        path: '/visitor-report/daily'
+      },
+      {
+        title: '요일별',
+        path: '/visitor-report/weekly'
+      },
+      {
+        title: '월별',
+        path: '/visitor-report/monthly'
+      }
+    ]
+  },
+  {
+    title: '방문자 특성 통계',
+    icon: 'visitor-attributes-statistics',
+    children: [
+      {
+        title: '시간대별',
+        path: '/visitor-attributes-statistics/hourly'
+      },
+      {
+        title: '일별',
+        path: '/visitor-attributes-statistics/daily'
+      },
+      {
+        title: '요일별',
+        path: '/visitor-attributes-statistics/weekly'
+      },
+      {
+        title: '월별',
+        path: '/visitor-attributes-statistics/monthly'
+      }
+    ]
+  },
+  {
+    title: '혼잡도 분석 통계',
+    icon: 'congestion-analysis-statistics',
+    children: [
+      {
+        title: '시간대별',
+        path: '/congestion-analysis-statistics/hourly'
+      },
+      {
+        title: '일별',
+        path: '/congestion-analysis-statistics/daily'
+      },
+      {
+        title: '요일별',
+        path: '/congestion-analysis-statistics/weekly'
+      },
+      {
+        title: '월별',
+        path: '/congestion-analysis-statistics/monthly'
+      }
+    ]
+  },
+  {
+    title: '차량수 통계',
+    icon: 'vehicle-statistics',
+    children: [
+      {
+        title: '시간대별',
+        path: '/vehicle-statistics/hourly'
+      },
+      {
+        title: '일별',
+        path: '/vehicle-statistics/daily'
+      },
+      {
+        title: '요일별',
+        path: '/vehicle-statistics/weekly'
+      },
+      {
+        title: '월별',
+        path: '/vehicle-statistics/monthly'
       }
     ]
   },

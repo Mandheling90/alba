@@ -1,5 +1,6 @@
 import { Box, Paper } from '@mui/material'
 import { FC } from 'react'
+import { useCountCardInfo } from 'src/service/statistics/statisticsService'
 import styled from 'styled-components'
 import 'swiper/css'
 import 'swiper/css/grid'
@@ -53,7 +54,15 @@ const StyledSwiper = styled(Swiper)`
 `
 
 const ChartDetailSwiper: FC<ChartDetailSwiperProps> = ({ height = '100%' }): React.ReactElement => {
-  const items = [1, 2, 3, 4, 5, 6, 7, 8] // 더 많은 아이템
+  const { data: cardInfo, isLoading } = useCountCardInfo()
+
+  if (isLoading) {
+    return <></>
+  }
+
+  if (!cardInfo?.data || !Array.isArray(cardInfo.data) || cardInfo.data.length === 0) {
+    return <></>
+  }
 
   return (
     <Box sx={{ width: '100%', height }}>
@@ -80,36 +89,62 @@ const ChartDetailSwiper: FC<ChartDetailSwiperProps> = ({ height = '100%' }): Rea
         }}
       >
         <Box className='swiper-pagination' />
-        {items.map(item => (
-          <SwiperSlide
-            key={item}
-            style={{
-              height: 'calc(50% - 4px)'
-            }}
-          >
-            <Paper
-              sx={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center'
+        {cardInfo?.data?.map((item, index) => {
+          return Array.from({ length: 4 }).map((_, subIndex) => (
+            <SwiperSlide
+              key={`${item.currentDate}-${subIndex}`}
+              style={{
+                height: 'calc(50% - 4px)'
               }}
             >
-              <BoxContents
-                titles={['카드 1', '카드 2']}
-                centerText={`카드 ${item}`}
-                bottomTexts={['오전 : 눈 많이', '오후 : 구름 많이', '111111']}
-                color={item % 2 === 0 ? '#38A3FA' : '#544FC5'}
-                onClick={val => {
-                  console.log(val)
-                  console.log('clicked')
+              <Paper
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
-              />
-            </Paper>
-          </SwiperSlide>
-        ))}
+              >
+                <BoxContents
+                  titles={
+                    subIndex === 0
+                      ? [item.lastDate, item.lastLabel]
+                      : subIndex === 1
+                      ? [item.currentDate, item.currentLabel]
+                      : subIndex === 2
+                      ? [item.rateLabel]
+                      : [item.weatherDate, item.weatherLabel]
+                  }
+                  centerText={
+                    subIndex === 0
+                      ? item.lastCount
+                      : subIndex === 1
+                      ? item.currentCount
+                      : subIndex === 2
+                      ? `${
+                          isNaN(Math.round(((item.currentCount - item.lastCount) / item.lastCount) * 100))
+                            ? 0
+                            : Math.round(((item.currentCount - item.lastCount) / item.lastCount) * 100)
+                        }%`
+                      : ''
+                  }
+                  bottomTexts={
+                    subIndex === 3
+                      ? [`오전 : ${item.morningLabel}`, `오후 : ${item.afternoonLabel}`, item.dustValue]
+                      : []
+                  }
+                  color={index % 2 === 0 ? '#38A3FA' : '#544FC5'}
+                  onClick={val => {
+                    console.log(val)
+                    console.log('clicked')
+                  }}
+                />
+              </Paper>
+            </SwiperSlide>
+          ))
+        })}
       </StyledSwiper>
     </Box>
   )

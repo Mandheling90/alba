@@ -131,3 +131,50 @@ export interface ISelectedColorList {
   id: number
   color: string
 }
+
+export interface ICountLineChart {
+  startYear: string
+  startMonth: string
+  startDay: string
+  startHour: string
+  endYear: string
+  endMonth: string
+  endDay: string
+  endHour: string
+  totalPlaceCount: number
+  lineDataList: ILineDataList[]
+  yname: string
+}
+
+export interface ILineDataList {
+  label: string
+  dataList: [number, number][]
+}
+
+export interface ICardInfo {
+  lastDate: string
+  lastLabel: string
+  lastCount: number
+  currentDate: string
+  currentLabel: string
+  currentCount: number
+  rateLabel: string
+  rate: number
+  weatherDate: string
+  weatherLabel: string
+  morningLabel: string
+  afternoonLabel: string
+  dustValue: string
+}
+
+export interface IHeatMapData {
+  hour: number
+  ageGroup: string
+  visitors: number
+  male: number
+  female: number
+}
+
+export interface IHeatMapResponse {
+  data: IHeatMapData[]
+}

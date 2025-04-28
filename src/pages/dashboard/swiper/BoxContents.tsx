@@ -7,7 +7,7 @@ import 'swiper/css/pagination'
 
 interface IBoxContents {
   titles?: string[]
-  centerText?: string
+  centerText?: string | number
   bottomTexts?: string[]
   color?: string
   onClick?: (isSelected: boolean) => void
@@ -106,7 +106,7 @@ const BoxContents: FC<IBoxContents> = ({
           bottom: 16,
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '50%',
+          width: '70%',
           maxWidth: '300px',
           textAlign: 'left'
         }}

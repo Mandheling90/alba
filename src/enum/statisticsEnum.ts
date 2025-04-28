@@ -76,5 +76,9 @@ export const EPath = {
 
   STATS_AREA_PIE_GROUP_NAV: '/stats/area/pie/nav/group',
   STATS_AREA_TABLE: '/stats/area/table',
-  STATS_AREA_TABLE_GROUP: '/stats/area/table/group'
+  STATS_AREA_TABLE_GROUP: '/stats/area/table/group',
+
+  STATS_DASHBOARD_COUNT_LINE_CHART: '/dashboard/count/line/chart',
+  STATS_DASHBOARD_COUNT_CARD_INFO: '/dashboard/count/card/info',
+  STATS_HEATMAP_DATA: '/stats/heatmap/data'
 } as const

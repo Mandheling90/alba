@@ -7,9 +7,9 @@ import PieChart from 'src/@core/components/charts/PieChart'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
 import IconCustom from 'src/layouts/components/IconCustom'
-import DashboardMenu from '../menu/DashboardMenu'
+import DashboardMenu from 'src/pages/dashboard/menu/DashboardMenu'
 
-const VisitorsByHour: FC = ({}): React.ReactElement => {
+const VisitorTemplate: FC = ({}): React.ReactElement => {
   return (
     <StandardTemplate title={'방문자수 통계'}>
       <Grid container spacing={5} alignItems={'flex-end'}>
@@ -58,4 +58,4 @@ const VisitorsByHour: FC = ({}): React.ReactElement => {
   )
 }
 
-export default VisitorsByHour
+export default VisitorTemplate

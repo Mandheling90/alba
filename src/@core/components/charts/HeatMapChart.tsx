@@ -155,6 +155,7 @@ const HeatMapChart: React.FC = () => {
               })
             }
           }
+          console.log(data)
 
           return data
         })(),
