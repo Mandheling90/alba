@@ -174,8 +174,17 @@ export const EComponentList = [
   },
   {
     title: '카메라 관리',
-    path: '/cameras',
-    icon: 'cameras'
+    icon: 'cameras',
+    children: [
+      {
+        title: '카메라 위치등록',
+        path: '/cameras'
+      },
+      {
+        title: '사용자별 카메라설정',
+        path: '/cameras/user-setting'
+      }
+    ]
   },
   {
     title: '스케쥴 관리',

@@ -17,6 +17,8 @@ export interface IViewType {
   size: 'full' | 'half'
 }
 
+export type CameraPageType = 'cameras' | 'user-setting' | undefined
+
 export type CamerasValuesType = {
   clientCameraData: MClientCameraList[] | null
   setClientCameraData: React.Dispatch<React.SetStateAction<MClientCameraList[] | null>>
@@ -73,6 +75,9 @@ export type CamerasValuesType = {
   deleteClientCamera: (cameraNo: number) => void
   addGroupCamera: (groupId: number, newCamera: MClientCameraList) => void
   deleteGroupCamera: (groupId: number, cameraNo: number | undefined) => void
+
+  cameraPage: CameraPageType
+  setCameraPage: React.Dispatch<React.SetStateAction<CameraPageType>>
 }
 
 // ** Defaults
@@ -127,7 +132,10 @@ const defaultProvider: CamerasValuesType = {
   addClientCamera: () => null,
   deleteClientCamera: () => null,
   addGroupCamera: () => null,
-  deleteGroupCamera: () => null
+  deleteGroupCamera: () => null,
+
+  cameraPage: undefined,
+  setCameraPage: () => null
 }
 
 const CamerasContext = createContext(defaultProvider)
@@ -167,6 +175,7 @@ const CamerasProvider = ({ children }: Props) => {
   const [mapModifyModCameraId, setMapModifyModCameraId] = useState<number | null>(defaultProvider.mapModifyModCameraId)
 
   const [viewType, setViewType] = useState<IViewType>(defaultProvider.viewType)
+  const [cameraPage, setCameraPage] = useState<CameraPageType>(defaultProvider.cameraPage)
 
   const clear = () => {
     // setLayoutDisplay(defaultProvider.layoutDisplay)
@@ -559,7 +568,9 @@ const CamerasProvider = ({ children }: Props) => {
     addClientCamera,
     deleteClientCamera,
     addGroupCamera,
-    deleteGroupCamera
+    deleteGroupCamera,
+    cameraPage,
+    setCameraPage
   }
 
   return <CamerasContext.Provider value={values}>{children}</CamerasContext.Provider>

@@ -15,7 +15,7 @@ const Cameras: FC = (): React.ReactElement => {
   const mainContent = <CamerasDetail selectClient={selectClient} />
 
   return (
-    <StandardTemplate title={'카메라 관리'}>
+    <StandardTemplate title={'카메라 위치등록'}>
       <SlidingLayout isOpen={layoutDisplay} sideContent={sideContent} mainContent={mainContent} maxHeight='85vh' />
     </StandardTemplate>
   )

@@ -18,7 +18,7 @@ const ClientSimpleList: FC<IClientList> = ({ data, refetch, selectRowEvent }) =>
   const [userData, setUserData] = useState<(MCompanySearch & { display: boolean })[]>([])
 
   useEffect(() => {
-    if (data.length > 0) {
+    if (Array.isArray(data) && data.length > 0) {
       setUserData(data.map(obj => ({ ...obj, display: true })))
     }
   }, [data])
