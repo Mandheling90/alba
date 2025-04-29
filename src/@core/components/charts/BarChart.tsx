@@ -1,19 +1,21 @@
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import { useEffect } from 'react'
+import { ICountBarChart } from 'src/model/statistics/StatisticsModel'
 
 interface IBarChart {
   onHover?: (category: string) => void // 선택된 값
+  data?: ICountBarChart
 }
 
-const BarChart = ({ onHover }: IBarChart) => {
+const BarChart = ({ onHover, data }: IBarChart) => {
   const options = {
     chart: {
       type: 'column'
     },
 
     xAxis: {
-      categories: ['남문출입구', '북문출입구', '교육동1층입구', '교육동2층입구'],
+      categories: data?.xcategories,
       crosshair: true,
       accessibility: {
         description: 'Countries'
@@ -23,11 +25,11 @@ const BarChart = ({ onHover }: IBarChart) => {
     yAxis: {
       min: 0,
       title: {
-        text: '방문객수'
+        text: data?.yname
       }
     },
     tooltip: {
-      valueSuffix: ' (1000 MT)'
+      valueSuffix: ' 명'
     },
     plotOptions: {
       column: {
@@ -43,8 +45,8 @@ const BarChart = ({ onHover }: IBarChart) => {
     },
     series: [
       {
-        name: '전일 방문객',
-        data: [387749, 280000, 129000, 64300],
+        name: data?.barDataList[0].name,
+        data: data?.barDataList[0].dataList,
         point: {
           events: {
             mouseOver: function (this: Highcharts.Point) {
@@ -57,8 +59,8 @@ const BarChart = ({ onHover }: IBarChart) => {
         }
       },
       {
-        name: '금일 방문객',
-        data: [45321, 140000, 10000, 140500],
+        name: data?.barDataList[1].name,
+        data: data?.barDataList[1].dataList,
         point: {
           events: {
             mouseOver: function (this: Highcharts.Point) {

@@ -4,6 +4,7 @@ import { EPath } from 'src/enum/statisticsEnum'
 import MResult from 'src/model/commonModel'
 import {
   ICardInfo,
+  ICountBarChart,
   ICountLineChart,
   IHeatMapResponse,
   MBarChart,
@@ -115,10 +116,10 @@ export const useCountLineChart = () => {
 
 export const useCountCardInfo = () => {
   return useQuery<MResult<ICardInfo[]>>([EPath.STATS_DASHBOARD_COUNT_CARD_INFO], {})
+}
 
-  // return useMutation(() => {
-  //   return createGet<ICardInfo>([EPath.STATS_DASHBOARD_COUNT_CARD_INFO])
-  // }, {})
+export const useCountBarChart = () => {
+  return useQuery<MResult<ICountBarChart>>([EPath.STATS_DASHBOARD_COUNT_BAR_CHART], {})
 }
 
 export const useHeatMapData = () => {

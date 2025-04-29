@@ -80,5 +80,6 @@ export const EPath = {
 
   STATS_DASHBOARD_COUNT_LINE_CHART: '/dashboard/count/line/chart',
   STATS_DASHBOARD_COUNT_CARD_INFO: '/dashboard/count/card/info',
-  STATS_HEATMAP_DATA: '/stats/heatmap/data'
+  STATS_HEATMAP_DATA: '/stats/heatmap/data',
+  STATS_DASHBOARD_COUNT_BAR_CHART: '/dashboard/count/bar/chart'
 } as const

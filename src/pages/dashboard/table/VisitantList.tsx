@@ -4,27 +4,41 @@ import { Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { useRouter } from 'next/router'
 
 import CustomTable from 'src/@core/components/table/CustomTable'
-import { MVisitant, MVisitantList } from 'src/model/dashboard/dashboard'
+import { MVisitantList } from 'src/model/dashboard/dashboard'
+import { IBarDataList } from 'src/model/statistics/StatisticsModel'
+import { calculateChangeRate } from 'src/utils/CommonUtil'
 
 interface IVisitantList {
-  data: MVisitant
+  data: IBarDataList[]
+  xcategories: string[]
   selected?: string
   refetch: () => void
 }
 
-const VisitantList: FC<IVisitantList> = ({ data, selected = '', refetch }) => {
+const VisitantList: FC<IVisitantList> = ({ data, xcategories, selected = '', refetch }) => {
   console.log(selected)
 
-  const router = useRouter()
-
-  const [visitantData, setVisitantData] = useState<MVisitantList[]>([])
+  const [visitantData, setVisitantData] = useState<IBarDataList[]>(data)
 
   useEffect(() => {
-    setVisitantData(data.visitantList)
+    setVisitantData(data)
   }, [data])
+
+  const getFormattedDate = (date: Date) => {
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+
+    return `${month}/${day}`
+  }
+
+  const today = new Date()
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+
+  console.log(visitantData[0].name)
+  console.log(visitantData[1].name)
 
   const columns: GridColDef[] = [
     {
@@ -35,13 +49,13 @@ const VisitantList: FC<IVisitantList> = ({ data, selected = '', refetch }) => {
     },
     {
       field: 'previousDayInOut',
-      headerName: `전일 입장(${data.previousDayInOutCount} /${data.previousDayInOutTotal})`,
+      headerName: `${visitantData[1].name}(${getFormattedDate(yesterday)})`,
       headerAlign: 'center',
       flex: 1
     },
     {
       field: 'currentDayInOut',
-      headerName: `금일 입장(${data.currentDayInOutCount} /${data.currentDayInOutTotal})`,
+      headerName: `${visitantData[0].name}(${getFormattedDate(today)})`,
       headerAlign: 'center',
       flex: 1
     },
@@ -54,7 +68,7 @@ const VisitantList: FC<IVisitantList> = ({ data, selected = '', refetch }) => {
       renderCell: ({ row }: GridRenderCellParams<MVisitantList>) => {
         return (
           <Typography variant='inherit' noWrap>
-            {row.change}%
+            {row.change}
           </Typography>
         )
       }
@@ -66,7 +80,17 @@ const VisitantList: FC<IVisitantList> = ({ data, selected = '', refetch }) => {
       <Grid item xs={12}>
         <Card>
           <CustomTable
-            rows={visitantData}
+            rows={xcategories.map((item, index) => {
+              const currentValue = visitantData[0].dataList[index]
+              const previousValue = visitantData[1].dataList[index]
+
+              return {
+                location: item,
+                currentDayInOut: `${currentValue}`,
+                previousDayInOut: `${previousValue}`,
+                change: calculateChangeRate(currentValue, previousValue)
+              }
+            })}
             columns={columns}
             id='location'
             isAllView

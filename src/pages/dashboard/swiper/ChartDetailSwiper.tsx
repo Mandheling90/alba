@@ -1,6 +1,7 @@
 import { Box, Paper } from '@mui/material'
 import { FC } from 'react'
 import { useCountCardInfo } from 'src/service/statistics/statisticsService'
+import { calculateChangeRate } from 'src/utils/CommonUtil'
 import styled from 'styled-components'
 import 'swiper/css'
 import 'swiper/css/grid'
@@ -123,11 +124,7 @@ const ChartDetailSwiper: FC<ChartDetailSwiperProps> = ({ height = '100%' }): Rea
                       : subIndex === 1
                       ? item.currentCount
                       : subIndex === 2
-                      ? `${
-                          isNaN(Math.round(((item.currentCount - item.lastCount) / item.lastCount) * 100))
-                            ? 0
-                            : Math.round(((item.currentCount - item.lastCount) / item.lastCount) * 100)
-                        }%`
+                      ? `${calculateChangeRate(item.currentCount, item.lastCount)}`
                       : ''
                   }
                   bottomTexts={

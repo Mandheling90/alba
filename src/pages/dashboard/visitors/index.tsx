@@ -5,7 +5,7 @@ import BarChart from 'src/@core/components/charts/BarChart'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { exampleMVisitant } from 'src/model/dashboard/dashboard'
+import { useCountBarChart } from 'src/service/statistics/statisticsService'
 import ChartDetailSwiper from '../swiper/ChartDetailSwiper'
 import VisitantList from '../table/VisitantList'
 
@@ -28,6 +28,8 @@ const Visitors: FC = ({}): React.ReactElement => {
   const [hoveredPoint, setHoveredPoint] = useState('')
   const [data, setData] = useState<[number, number][]>([])
   const [secondData, setSecondData] = useState<[number, number][]>([])
+
+  const { data: barChart, isLoading: barChartLoading } = useCountBarChart()
 
   useEffect(() => {
     setData(generateSampleData())
@@ -62,6 +64,7 @@ const Visitors: FC = ({}): React.ReactElement => {
         <Grid item xs={12}>
           <Card>
             <BarChart
+              data={barChart?.data}
               onHover={category => {
                 setHoveredPoint(category)
               }}
@@ -71,7 +74,8 @@ const Visitors: FC = ({}): React.ReactElement => {
         <Grid item xs={6}>
           <Card>
             <VisitantList
-              data={exampleMVisitant}
+              data={barChart?.data?.barDataList || []}
+              xcategories={barChart?.data?.xcategories || []}
               selected={hoveredPoint}
               refetch={() => {
                 console.log('refetch')
@@ -82,7 +86,8 @@ const Visitors: FC = ({}): React.ReactElement => {
         <Grid item xs={6}>
           <Card>
             <VisitantList
-              data={exampleMVisitant}
+              data={barChart?.data?.exitsCountList || []}
+              xcategories={barChart?.data?.xcategories || []}
               selected={hoveredPoint}
               refetch={() => {
                 console.log('refetch')

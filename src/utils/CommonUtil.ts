@@ -290,3 +290,12 @@ export const isValidPassword = (password: string) => {
 
 //   return { data: data, errCount: errCount }
 // }
+
+export const calculateChangeRate = (currentValue: number, previousValue: number): string => {
+  if (currentValue === 0) return '-%'
+  if (previousValue === 0) return '100%'
+
+  const change = ((currentValue - previousValue) / previousValue) * 100
+
+  return `${Math.min(Math.max(Math.round(change), -100), 100)}%`
+}

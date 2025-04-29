@@ -178,3 +178,15 @@ export interface IHeatMapData {
 export interface IHeatMapResponse {
   data: IHeatMapData[]
 }
+
+export interface ICountBarChart {
+  barDataList: IBarDataList[]
+  exitsCountList: IBarDataList[]
+  xcategories: string[]
+  yname: string
+}
+
+export interface IBarDataList {
+  name: string
+  dataList: number[]
+}
