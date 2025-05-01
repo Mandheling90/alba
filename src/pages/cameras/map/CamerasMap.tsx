@@ -75,7 +75,8 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
     setViewType,
     setClientCameraData,
     handleCancelClick,
-    handleSaveClick
+    handleSaveClick,
+    cameraPage
   } = useCameras()
 
   useEffect(() => {
@@ -315,6 +316,10 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
           setViewType={setViewType}
           newImageAddMode={!flowPlan?.flowPlanImgUrl}
           newImageAddModeFn={() => {
+            if (cameraPage === 'user-setting') {
+              return
+            }
+
             setFlowPlan({
               lat: mapInfo.center.lat,
               lon: mapInfo.center.lon,
@@ -360,11 +365,14 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
 
                     refetch()
                   }}
+                  isFixed={cameraPage === 'user-setting'}
                 />
                 <CameraMapMarker />
               </MapComponent>
 
-              <MapControlOverlay buttons={mapControlButtons} />
+              <MapControlOverlay
+                buttons={cameraPage === 'user-setting' ? mapControlButtons.slice(1) : mapControlButtons}
+              />
             </>
           ) : (
             <ImageMap

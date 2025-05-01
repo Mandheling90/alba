@@ -11,17 +11,17 @@ import { IAiSolutionService } from 'src/model/client/clientModel'
 import CameraModifyActions from '../../../../pages/cameras/table/CameraModifyActions'
 
 interface CameraColumnsProps {
-  isGroupMode: boolean
-  setIsGroupMode: (value: boolean) => void
-  updateClientCameraData: (cameraNo: number, data: Partial<MClientCameraList>) => void
-  handleCancelClick: (cameraNo?: number) => void
-  handleSaveClick: (cameraNo?: number) => void
-  isGroupModifyMode: boolean
-  viewType: { type: string }
-  setMapModifyModCameraId: (cameraNo: number) => void
-  mapModifyModCameraId: number | null
-  clientGroupStatus: (params: { cameraNo: number; companyNo: number; cameraStatus: YN }) => Promise<any>
-  companyNo: number
+  isGroupMode?: boolean
+  setIsGroupMode?: (value: boolean) => void
+  updateClientCameraData?: (cameraNo: number, data: Partial<MClientCameraList>) => void
+  handleCancelClick?: (cameraNo?: number) => void
+  handleSaveClick?: (cameraNo?: number) => void
+  isGroupModifyMode?: boolean
+  viewType?: { type: string }
+  setMapModifyModCameraId?: (cameraNo: number) => void
+  mapModifyModCameraId?: number | null
+  clientGroupStatus?: (params: { cameraNo: number; companyNo: number; cameraStatus: YN }) => Promise<any>
+  companyNo?: number
   columnFilter?: string[]
   showGroupHeader?: boolean
 }
@@ -49,7 +49,7 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
           width={50}
           switchName={['개별', '그룹']}
           selected={!isGroupMode}
-          onChange={() => setIsGroupMode(!isGroupMode)}
+          onChange={() => setIsGroupMode?.(!isGroupMode)}
           activeColor={['#9155FD', '#9155FD']}
         />
       </Box>
@@ -96,7 +96,7 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
                 size='small'
                 value={row.cameraId}
                 onChange={e => {
-                  updateClientCameraData(row.cameraNo, { cameraId: e.target.value })
+                  updateClientCameraData?.(row.cameraNo, { cameraId: e.target.value })
                 }}
               />
             ) : (
@@ -123,7 +123,7 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
                 size='small'
                 value={row.cameraName}
                 onChange={e => {
-                  updateClientCameraData(row.cameraNo, { cameraName: e.target.value })
+                  updateClientCameraData?.(row.cameraNo, { cameraName: e.target.value })
                 }}
               />
             ) : (
@@ -197,21 +197,21 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
             lon={y}
             isEditing={isEditing}
             onLatChange={value => {
-              viewType.type === 'image' &&
-                updateClientCameraData(row.cameraNo, {
+              viewType?.type === 'image' &&
+                updateClientCameraData?.(row.cameraNo, {
                   lat: value ?? 0,
                   lon: y
                 })
             }}
             onLonChange={value => {
-              viewType.type === 'image' &&
-                updateClientCameraData(row.cameraNo, {
+              viewType?.type === 'image' &&
+                updateClientCameraData?.(row.cameraNo, {
                   lat: x,
                   lon: value ?? 0
                 })
             }}
             onMapClick={() => {
-              viewType.type === 'image' && setMapModifyModCameraId(row.cameraNo)
+              viewType?.type === 'image' && setMapModifyModCameraId?.(row.cameraNo)
             }}
             isMapActive={mapModifyModCameraId === row.cameraNo}
           />
@@ -230,12 +230,12 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
             <Switch
               checked={row.cameraStatus === YN.Y}
               onChange={async event => {
-                await clientGroupStatus({
+                await clientGroupStatus?.({
                   cameraNo: row.cameraNo,
-                  companyNo: companyNo,
+                  companyNo: companyNo ?? 0,
                   cameraStatus: event.target.checked ? YN.Y : YN.N
                 })
-                updateClientCameraData(row.cameraNo, { cameraStatus: event.target.checked ? YN.Y : YN.N })
+                updateClientCameraData?.(row.cameraNo, { cameraStatus: event.target.checked ? YN.Y : YN.N })
               }}
             />
           </Box>
@@ -253,17 +253,17 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
           <CameraModifyActions
             row={row}
             isModify={row.isEdit ?? false}
-            isGroupModifyMode={isGroupModifyMode}
+            isGroupModifyMode={isGroupModifyMode ?? false}
             handleEditClick={() => {
-              updateClientCameraData(row.cameraNo, { isEdit: true })
+              updateClientCameraData?.(row.cameraNo, { isEdit: true })
             }}
             handleCancelClick={() => {
-              handleCancelClick(row.cameraNo)
-              updateClientCameraData(row.cameraNo, { isEdit: false })
+              handleCancelClick?.(row.cameraNo)
+              updateClientCameraData?.(row.cameraNo, { isEdit: false })
             }}
             handleSaveClick={() => {
-              handleSaveClick(row.cameraNo)
-              updateClientCameraData(row.cameraNo, { isEdit: false })
+              handleSaveClick?.(row.cameraNo)
+              updateClientCameraData?.(row.cameraNo, { isEdit: false })
             }}
           />
         )

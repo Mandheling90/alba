@@ -4,7 +4,7 @@ import PageHeader from 'src/@core/components/page-header'
 import { CamerasContext } from 'src/context/CamerasContext'
 import { ICameraClient } from 'src/model/cameras/CamerasModel'
 import CamerasMap from '../map/CamerasMap'
-import CamerasClientList from '../table/CamerasClientList'
+import CameraUserSettingList from './CameraUserSettingList'
 
 interface IClientDetail {
   selectClient: ICameraClient | null
@@ -34,7 +34,7 @@ const CameraUserSettingDetail: FC<IClientDetail> = ({ selectClient }) => {
             }
           />
           <Box sx={{ height: '35vh', overflow: 'auto' }}>
-            <CamerasClientList columnFilter={['group', 'cameraId', 'cameraName']} cameraPage='user-setting' />
+            <CameraUserSettingList />
           </Box>
         </Grid>
       </Collapse>

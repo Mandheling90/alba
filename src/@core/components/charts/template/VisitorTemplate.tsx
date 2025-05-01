@@ -10,6 +10,18 @@ import IconCustom from 'src/layouts/components/IconCustom'
 import DashboardMenu from 'src/pages/dashboard/menu/DashboardMenu'
 
 const VisitorTemplate: FC = ({}): React.ReactElement => {
+  const xAxisData = ['09시', '10시', '11시', '12시', '13시', '14시', '15시', '16시', '17시']
+  const seriesData = [
+    {
+      name: '교육동2층',
+      data: [50, 120, 180, 200, 150, 160, 170, 140, 100]
+    },
+    {
+      name: '식물원입구',
+      data: [30, 80, 120, 150, 130, 140, 120, 100, 70]
+    }
+  ]
+
   return (
     <StandardTemplate title={'방문자수 통계'}>
       <Grid container spacing={5} alignItems={'flex-end'}>
@@ -45,7 +57,7 @@ const VisitorTemplate: FC = ({}): React.ReactElement => {
         </Grid>
         <Grid item xs={9}>
           <Card>
-            <HorizontalBarChartLocation />
+            <HorizontalBarChartLocation xAxisData={xAxisData} seriesData={seriesData} />
           </Card>
         </Grid>
         <Grid item xs={3}>

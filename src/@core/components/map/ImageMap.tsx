@@ -90,9 +90,6 @@ const Marker = ({
     }
   }, [])
 
-  console.log(selectedCamera)
-  console.log(showOverlay)
-
   return (
     <div
       ref={drag}
@@ -154,7 +151,7 @@ const ImageMap = ({
   floorplanLocation,
   resizeing
 }: IImageMap): React.ReactElement => {
-  const { clientCameraData, selectedCamera, viewType, updateClientCameraData } = useContext(CamerasContext)
+  const { clientCameraData, selectedCamera, viewType, updateClientCameraData, cameraPage } = useContext(CamerasContext)
 
   const [displaySize, setDisplaySize] = useState({ width: 0, height: 0 })
   const [initialDisplaySize, setInitialDisplaySize] = useState({ width: 0, height: 0 })
@@ -309,23 +306,27 @@ const ImageMap = ({
           draggable={false}
         >
           <MapControlOverlay
-            buttons={[
-              {
-                icon: viewType.size === 'half' ? 'zoomIn_default' : 'zoomOut_default',
-                hoverIcon: viewType.size === 'half' ? 'zoomIn_hovering' : 'zoomOut_hovering',
-                onClick: resizeing
-              },
-              {
-                icon: 'floorplanLoc_default',
-                hoverIcon: 'floorplanLoc_hovering',
-                onClick: floorplanLocation
-              },
-              {
-                icon: 'image-add-icon',
-                hoverIcon: 'image-add-icon_hovering',
-                onClick: imageUpdateFn
-              }
-            ]}
+            buttons={
+              cameraPage === 'user-setting'
+                ? []
+                : [
+                    {
+                      icon: viewType.size === 'half' ? 'zoomIn_default' : 'zoomOut_default',
+                      hoverIcon: viewType.size === 'half' ? 'zoomIn_hovering' : 'zoomOut_hovering',
+                      onClick: resizeing
+                    },
+                    {
+                      icon: 'floorplanLoc_default',
+                      hoverIcon: 'floorplanLoc_hovering',
+                      onClick: floorplanLocation
+                    },
+                    {
+                      icon: 'image-add-icon',
+                      hoverIcon: 'image-add-icon_hovering',
+                      onClick: imageUpdateFn
+                    }
+                  ]
+            }
           />
           <Box
             onClick={e => {

@@ -24,7 +24,16 @@ const FlowPlanMapMarker: React.FC<{
   setFlowPlanOriginal: (flowPlan: MFlowPlan) => void
   imageUpdateFn: () => void
   locationUpdateFn: (flowPlan: MFlowPlan) => void
-}> = ({ flowPlan, setFlowPlan, flowPlanOriginal, setFlowPlanOriginal, imageUpdateFn, locationUpdateFn }) => {
+  isFixed?: boolean
+}> = ({
+  flowPlan,
+  setFlowPlan,
+  flowPlanOriginal,
+  setFlowPlanOriginal,
+  imageUpdateFn,
+  locationUpdateFn,
+  isFixed = false
+}) => {
   // const [flowPlan, setFlowPlan] = useState<MFlowPlan>()
   // const [flowPlanOriginal, setFlowPlanOriginal] = useState<MFlowPlan>()
 
@@ -173,7 +182,7 @@ const FlowPlanMapMarker: React.FC<{
           lat: flowPlan?.lat ?? 0,
           lng: flowPlan?.lon ?? 0
         }}
-        draggable={true}
+        draggable={!isFixed}
         onDragEnd={e => {
           setIsDragging(true)
           const lat = e.getPosition().getLat()

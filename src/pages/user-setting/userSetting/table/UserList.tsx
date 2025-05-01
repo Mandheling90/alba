@@ -1,9 +1,10 @@
 import { FC, useEffect, useState } from 'react'
 
-import { Box, Button, IconButton, Switch, Typography } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
+import { getUserColumns } from 'src/@core/components/table/columns/userColumns'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
@@ -41,80 +42,14 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
     }
   }
 
-  const columns = [
-    { field: 'name', headerName: '사용자명', flex: 1 },
-    {
-      field: 'name2',
-      headerName: '사용자 ID',
-      flex: 1,
-      renderCell: ({ row }: any) => {
-        return (
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.name}
-          </Typography>
-        )
-      }
-    },
-    { field: 'mailAddress', headerName: '이메일 주소', flex: 1 },
-    {
-      field: 'authName',
-      headerName: '권한',
-      flex: 1
-    },
-    {
-      field: 'userStatus',
-      headerName: '상태',
-      flex: 0.5,
-      renderCell: ({ row }: any) => {
-        return (
-          <Switch
-            checked={row.userStatus === 1}
-            onChange={event => {
-              modStateUser({ userNo: row.userNo, userStatus: event.target.checked ? 1 : 0 })
-              const updatedList = userData.map(user => {
-                if (user.userId === row.userId) {
-                  return { ...user, userStatus: event.target.checked ? 1 : 0 }
-                }
-
-                return user
-              })
-              setUserData(updatedList)
-            }}
-          />
-        )
-      }
-    },
-    {
-      field: 'updateDelete',
-      headerName: '수정 및 삭제',
-      flex: 0.5,
-      renderCell: ({ row }: any) => {
-        return (
-          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', gap: 1 }}>
-            <IconButton
-              sx={{ color: 'text.secondary' }}
-              onClick={e => {
-                setSelectUser(row)
-                setIsOpen(true)
-              }}
-            >
-              <IconCustom path='settingCard' icon='pen' />
-              <Typography sx={{ textDecoration: 'none' }}></Typography>
-            </IconButton>
-            <IconButton
-              sx={{ color: 'text.secondary' }}
-              onClick={e => {
-                userDeleteFn(row.userNo)
-              }}
-            >
-              <IconCustom path='settingCard' icon='delete' />
-              <Typography sx={{ textDecoration: 'none' }}></Typography>
-            </IconButton>
-          </Box>
-        )
-      }
-    }
-  ]
+  const columns = getUserColumns({
+    modStateUser,
+    userData,
+    setUserData,
+    setSelectUser,
+    setIsOpen,
+    userDeleteFn
+  })
 
   const handleCheckboxSelection = (selectedRows: any[]) => {
     setSelectedUser(selectedRows)

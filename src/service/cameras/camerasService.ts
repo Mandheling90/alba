@@ -260,3 +260,14 @@ export const useClientGroupUpdate = () => {
     return createPut<MResult>([url, req.groupList])
   }, {})
 }
+
+export const useClientCameraUserAuth = () => {
+  return useMutation((req: { companyNo: number; userNo: number }) => {
+    const url = EPath.CAMERAS_CLIENT_OF_COMPANY_USER_AUTH.replace('{companyNo}', req.companyNo.toString()).replace(
+      '{userNo}',
+      req.userNo.toString()
+    )
+
+    return createGet<number[]>([url])
+  }, {})
+}

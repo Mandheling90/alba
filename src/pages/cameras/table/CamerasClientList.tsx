@@ -83,10 +83,10 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
       clientGroupStatus,
       companyNo,
       columnFilter,
-      showGroupHeader: cameraPage !== 'user-setting'
+      showGroupHeader: true
     })
     setColumns(newColumns)
-  }, [cameraPage])
+  }, [cameraPage, isGroupMode])
 
   const handleDragStart = (row: MClientCameraList) => {
     setDraggedRow(row)
@@ -128,109 +128,106 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
                   layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
                 }}
               />
-              {cameraPage !== 'user-setting' && (
-                <>
-                  <ButtonHover
-                    display={
-                      <Button
-                        variant={'contained'}
-                        sx={{ width: '160px', height: '40px' }}
-                        startIcon={<IconCustom isCommon path='camera' icon='cameraAddDel' />}
-                      >
-                        등록 및 수정
-                      </Button>
-                    }
-                    hover={
-                      <Button
-                        variant={'contained'}
-                        sx={{ width: '160px', height: '40px', display: 'flex', justifyContent: 'space-between' }}
-                        onClick={() => {
-                          router.push({
-                            pathname: '/clients/clientsAdd',
-                            query: {
-                              mode: 'edit',
-                              id: companyNo
-                            }
-                          })
-                        }}
-                      >
-                        <ButtonHoverIconList
 
-                        // onClick={() => {
-                        //   console.log('add')
-                        // }}
-                        >
-                          <IconCustom isCommon path='camera' icon='cameraAdd' />
-                        </ButtonHoverIconList>
-                        <ButtonHoverIconList
+              <ButtonHover
+                display={
+                  <Button
+                    variant={'contained'}
+                    sx={{ width: '160px', height: '40px' }}
+                    startIcon={<IconCustom isCommon path='camera' icon='cameraAddDel' />}
+                  >
+                    등록 및 수정
+                  </Button>
+                }
+                hover={
+                  <Button
+                    variant={'contained'}
+                    sx={{ width: '160px', height: '40px', display: 'flex', justifyContent: 'space-between' }}
+                    onClick={() => {
+                      router.push({
+                        pathname: '/clients/clientsAdd',
+                        query: {
+                          mode: 'edit',
+                          id: companyNo
+                        }
+                      })
+                    }}
+                  >
+                    <ButtonHoverIconList
 
-                        // onClick={() => {
-                        //   console.log('del')
-                        // }}
-                        >
-                          <IconCustom isCommon path='camera' icon='cameraDel' />
-                        </ButtonHoverIconList>
-                        <ButtonHoverIconList
+                    // onClick={() => {
+                    //   console.log('add')
+                    // }}
+                    >
+                      <IconCustom isCommon path='camera' icon='cameraAdd' />
+                    </ButtonHoverIconList>
+                    <ButtonHoverIconList
 
-                        // onClick={() => {
-                        //   console.log('mod')
-                        // }}
-                        >
-                          <IconCustom isCommon path='camera' icon='cameraMod' />
-                        </ButtonHoverIconList>
-                      </Button>
-                    }
-                  />
+                    // onClick={() => {
+                    //   console.log('del')
+                    // }}
+                    >
+                      <IconCustom isCommon path='camera' icon='cameraDel' />
+                    </ButtonHoverIconList>
+                    <ButtonHoverIconList
 
-                  <ButtonHover
-                    display={
-                      <Button variant={'contained'} startIcon={<IconCustom isCommon path='camera' icon='group-add' />}>
-                        그룹생성
-                      </Button>
-                    }
-                    hover={
-                      <Button
-                        variant={'contained'}
-                        startIcon={<IconCustom isCommon path='camera' icon='group-open-blank' />}
-                        onClick={async () => {
-                          if (!clientGroupCameraData) return
+                    // onClick={() => {
+                    //   console.log('mod')
+                    // }}
+                    >
+                      <IconCustom isCommon path='camera' icon='cameraMod' />
+                    </ButtonHoverIconList>
+                  </Button>
+                }
+              />
 
-                          try {
-                            // const res = await clientGroupAdd({ userNo: user?.userInfo?.userNo ?? 0, name: '새로운 그룹' })
-                            // console.log(res.data.groupId)
+              <ButtonHover
+                display={
+                  <Button variant={'contained'} startIcon={<IconCustom isCommon path='camera' icon='group-add' />}>
+                    그룹생성
+                  </Button>
+                }
+                hover={
+                  <Button
+                    variant={'contained'}
+                    startIcon={<IconCustom isCommon path='camera' icon='group-open-blank' />}
+                    onClick={async () => {
+                      if (!clientGroupCameraData) return
 
-                            // 새로운 그룹 ID 생성 (기존 그룹 ID 중 최대값 + 1)
-                            const newGroupId = clientGroupCameraData.length + 1
+                      try {
+                        // const res = await clientGroupAdd({ userNo: user?.userInfo?.userNo ?? 0, name: '새로운 그룹' })
+                        // console.log(res.data.groupId)
 
-                            // 새로운 그룹 생성
-                            const newGroup: MClientGroupCameraList = {
-                              groupId: newGroupId,
-                              userNo: user?.userInfo?.userNo ?? 0,
-                              groupName: '새로운 그룹',
-                              groupItemList: []
-                            }
+                        // 새로운 그룹 ID 생성 (기존 그룹 ID 중 최대값 + 1)
+                        const newGroupId = clientGroupCameraData.length + 1
 
-                            // 그룹 데이터 업데이트
-                            setClientGroupCameraData(prevData => {
-                              if (!prevData) return [newGroup]
+                        // 새로운 그룹 생성
+                        const newGroup: MClientGroupCameraList = {
+                          groupId: newGroupId,
+                          userNo: user?.userInfo?.userNo ?? 0,
+                          groupName: '새로운 그룹',
+                          groupItemList: []
+                        }
 
-                              return [...prevData, newGroup]
-                            })
+                        // 그룹 데이터 업데이트
+                        setClientGroupCameraData(prevData => {
+                          if (!prevData) return [newGroup]
 
-                            // 그룹 수정 모드 활성화
-                            setGroupModifyId(newGroupId)
-                            setIsGroupModifyMode(true)
-                          } catch (error) {
-                            console.log(error)
-                          }
-                        }}
-                      >
-                        그룹생성
-                      </Button>
-                    }
-                  />
-                </>
-              )}
+                          return [...prevData, newGroup]
+                        })
+
+                        // 그룹 수정 모드 활성화
+                        setGroupModifyId(newGroupId)
+                        setIsGroupModifyMode(true)
+                      } catch (error) {
+                        console.log(error)
+                      }
+                    }}
+                  >
+                    그룹생성
+                  </Button>
+                }
+              />
             </Box>
 
             <Box sx={{ display: 'flex', gap: 3 }}>

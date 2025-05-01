@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from '@mui/material'
 import { DataGrid } from 'custom_modules/@mui_custom/x-data-grid'
-import { FC, useContext, useState } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { TableContext } from 'src/context/TableContext'
 import styled from 'styled-components'
 import PageSizeSelect from './PageSizeSelect'
@@ -31,6 +31,8 @@ interface IGridOptions {
   combineTableId?: string
   hideRows?: boolean
   requireSingleSelection?: boolean
+  defaultSelectedCheckboxes?: any[]
+  disableCheckboxSelection?: boolean
 }
 
 const CustomTable: FC<
@@ -44,6 +46,7 @@ const CustomTable: FC<
   selectRowEvent,
   enablePointer = false,
   onCheckboxSelectionChange,
+  defaultSelectedCheckboxes,
   highlightCriteria,
   showHeader = true,
   combineTableId,
@@ -51,13 +54,15 @@ const CustomTable: FC<
   onDragEnd,
   initialSelectedRow,
   hideRows = false,
-  requireSingleSelection = false
+  requireSingleSelection = false,
+  disableCheckboxSelection = false
 }) => {
   const { selectedRow: combineselectedRows, setSelectedRowFn } = useContext(TableContext)
   const [pageSize, setPageSize] = useState(isAllView ? 100 : 25)
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: isAllView ? 100 : 25 })
-  const [selectedCheckboxes, setSelectedCheckboxes] = useState<any[]>([])
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState<any[]>(defaultSelectedCheckboxes ?? [])
   const [localSelectedRow, setLocalSelectedRow] = useState<any>(initialSelectedRow)
+  const [isCheckboxDisabled, setIsCheckboxDisabled] = useState(disableCheckboxSelection)
 
   const selectedRow = combineTableId ? combineselectedRows[combineTableId] : localSelectedRow
 
@@ -73,9 +78,12 @@ const CustomTable: FC<
     return rows.filter(row => selectedIds.includes(row[id ?? 'id']))
   }
 
-  // if (hideNoRows && rows.length === 0) {
-  //   return null
-  // }
+  console.log(disableCheckboxSelection)
+
+  useEffect(() => {
+    setSelectedCheckboxes(defaultSelectedCheckboxes ?? [])
+    setIsCheckboxDisabled(disableCheckboxSelection)
+  }, [defaultSelectedCheckboxes, disableCheckboxSelection])
 
   return (
     <>
@@ -85,6 +93,7 @@ const CustomTable: FC<
           rows={rows}
           columns={columns}
           checkboxSelection={!!onCheckboxSelectionChange}
+          isRowSelectable={() => !isCheckboxDisabled}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           getRowId={row => row[id ?? 'id']}

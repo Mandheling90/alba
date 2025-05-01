@@ -415,13 +415,15 @@ const CamerasProvider = ({ children }: Props) => {
     const clientGroupCameraList = await getClientGroupCameraList({ companyNo: companyNo })
     const clientCameraList = await getClientCameraList({ companyNo: companyNo })
 
-    const clientGroupCameraListItems: MClientGroupCameraList[] = clientGroupCameraList.data.map(item => ({
-      ...item,
-      groupItemList: item.groupItemList.map(item => ({
-        ...item,
-        isEdit: false
-      }))
-    }))
+    const clientGroupCameraListItems: MClientGroupCameraList[] = Array.isArray(clientGroupCameraList?.data)
+      ? clientGroupCameraList.data.map(item => ({
+          ...item,
+          groupItemList: item.groupItemList.map(item => ({
+            ...item,
+            isEdit: false
+          }))
+        }))
+      : []
 
     const clientCameraListItems: MClientCameraList[] = clientCameraList.data.map(item => ({
       ...item,
