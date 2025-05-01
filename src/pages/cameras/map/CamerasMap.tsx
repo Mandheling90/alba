@@ -1,5 +1,5 @@
 import { Box, Grid } from '@mui/material'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import MapComponent from 'src/@core/components/map/MapComponent'
 import FileUploader from 'src/@core/components/molecule/FileUploader'
 import MapControlOverlay from 'src/@core/components/molecule/MapControlOverlay'
@@ -23,7 +23,16 @@ import CameraSelecter from './CameraSelecter'
 import FlowPlanMapMarker from './FlowPlanMapMarker'
 import MapControls from './MapControls'
 
-const INITIAL_DIALOG_PROPS = {
+interface IDialogProps {
+  open: boolean
+  title: string
+  contents: string
+  isSave: boolean
+  isImageUpdate: boolean
+  confirmFn?: () => void
+}
+
+const INITIAL_DIALOG_PROPS: IDialogProps = {
   open: false,
   title: '',
   contents: '',
@@ -66,16 +75,13 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
-    clientCameraData,
     selectedCamera,
-    mapModifyModCameraId,
     viewType,
     updateClientCameraData,
-    setMapModifyModCameraId,
     setViewType,
-    setClientCameraData,
     handleCancelClick,
     handleSaveClick,
+    setSelectedCamera,
     cameraPage
   } = useCameras()
 
@@ -170,37 +176,52 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
     }
   }, [selectedCamera])
 
-  // const handleMapClick = (map: kakao.maps.Map, mouseEvent: kakao.maps.event.MouseEvent) => {
-  //   if (mapModifyModCameraId) {
-  //     const lat = mouseEvent.latLng.getLat()
-  //     const lng = mouseEvent.latLng.getLng()
+  const handleMapClick = (map: kakao.maps.Map, mouseEvent: kakao.maps.event.MouseEvent) => {
+    if (selectedCamera && selectedCamera.length === 1 && selectedCamera[0].flowPlanBindingYN === YN.Y) {
+      setSimpleDialogModalProps({
+        ...simpleDialogModalProps,
+        open: true,
+        title: '카메라 타입 변경',
+        contents: '현재 설정된 카메라는 지도 카메라가 아닙니다. \r\n 지도 카메라로 변경하시겠습니까?',
+        confirmFn: () => {
+          const updateInfo = {
+            flowPlanBindingYN: YN.N,
+            lat: mouseEvent.latLng.getLat(),
+            lon: mouseEvent.latLng.getLng()
+          }
 
-  //     updateClientCameraData(mapModifyModCameraId, {
-  //       zonePoints: { lat, lon: lng }
-  //     })
-
-  //     setMapInfo({
-  //       ...mapInfo,
-  //       markerPositions: [
-  //         {
-  //           lat,
-  //           lon: lng
-  //         }
-  //       ]
-  //     })
-
-  //     setMapModifyModCameraId(null)
-  //   }
-  // }
-
-  const handleImageMapClick = (x: number, y: number) => {
-    if (mapModifyModCameraId) {
-      // updateClientCameraData(mapModifyModCameraId, {
-      //   markers: { x, y }
-      // })
-      // setMapModifyModCameraId(null)
+          updateClientCameraData(selectedCamera[0].cameraNo, updateInfo)
+          setSelectedCamera([{ ...selectedCamera[0], ...updateInfo }])
+          setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
+        }
+      })
     }
   }
+
+  const handleImageMapClick = useCallback(
+    (x: number, y: number) => {
+      if (selectedCamera && selectedCamera.length === 1 && selectedCamera[0].flowPlanBindingYN === YN.N) {
+        setSimpleDialogModalProps({
+          ...simpleDialogModalProps,
+          open: true,
+          title: '카메라 타입 변경',
+          contents: '현재 설정된 카메라는 평면도 카메라가 아닙니다. \r\n 평면도 카메라로 변경하시겠습니까?',
+          confirmFn: () => {
+            const updateInfo = {
+              flowPlanBindingYN: YN.Y,
+              flowPlanX: x,
+              flowPlanY: y
+            }
+
+            updateClientCameraData(selectedCamera[0].cameraNo, updateInfo)
+            setSelectedCamera([{ ...selectedCamera[0], ...updateInfo }])
+            setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
+          }
+        })
+      }
+    },
+    [selectedCamera]
+  )
 
   const [simpleDialogModalProps, setSimpleDialogModalProps] = useState(INITIAL_DIALOG_PROPS)
 
@@ -304,7 +325,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
         onClose={() => {
           setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
         }}
-        onConfirm={handleConfirm}
+        onConfirm={simpleDialogModalProps.confirmFn ?? handleConfirm}
         title={simpleDialogModalProps.title}
         contents={simpleDialogModalProps.contents}
         isConfirm
@@ -341,11 +362,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
 
           {viewType.type === 'map' ? (
             <>
-              <MapComponent
-                mapContainerRef={mapContainerRef}
-
-                // onClick={handleMapClick}
-              >
+              <MapComponent mapContainerRef={mapContainerRef} onClick={handleMapClick}>
                 <FlowPlanMapMarker
                   flowPlan={flowPlan}
                   setFlowPlan={setFlowPlan}

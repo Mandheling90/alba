@@ -5,7 +5,6 @@ import ButtonHover from 'src/@core/components/atom/ButtonHover'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { CameraPageType } from 'src/context/CamerasContext'
-import { YN } from 'src/enum/commonEnum'
 import { useAuth } from 'src/hooks/useAuth'
 import { useCameras } from 'src/hooks/useCameras'
 import { useLayout } from 'src/hooks/useLayout'
@@ -103,9 +102,9 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   }
 
   const selectRowEvent = (row: MClientCameraList) => {
-    if (viewType.type === 'image' && row.flowPlanBindingYN === YN.N) {
-      return
-    }
+    // if (viewType.type === 'image' && row.flowPlanBindingYN === YN.N) {
+    //   return
+    // }
 
     if (Object.keys(row).length === 0) {
       setSelectedCamera(null)

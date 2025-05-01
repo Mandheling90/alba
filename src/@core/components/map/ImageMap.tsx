@@ -164,7 +164,7 @@ const ImageMap = ({
 
   // 선택된 카메라가 변경될 때마다 해당 카메라의 위치로 이동
   useEffect(() => {
-    if (selectedCamera && selectedCamera.length === 1) {
+    if (selectedCamera && selectedCamera.length === 1 && selectedCamera[0].flowPlanBindingYN === YN.Y) {
       const camera = selectedCamera[0]
       const x = camera.flowPlanX ?? 0
       const y = camera.flowPlanY ?? 0
