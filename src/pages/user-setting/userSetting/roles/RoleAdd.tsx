@@ -6,6 +6,7 @@ import DividerBar from 'src/@core/components/atom/DividerBar'
 import DuplicateText from 'src/@core/components/molecule/DuplicateText'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { EResultCode, YN } from 'src/enum/commonEnum'
+import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
 import { MAuthMenu, MRole } from 'src/model/userSetting/userSettingModel'
 import { useAddAuth, useAuthDuplicate, useModAuth, useUserGroup } from 'src/service/setting/userSetting'
@@ -17,7 +18,8 @@ interface IRoleAddModal {
 
 const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
   const { mutateAsync: groupMutate } = useUserGroup()
-  const { companyNo, selectedAuthList } = useUser()
+  const { selectedAuthList } = useUser()
+  const { companyNo } = useLayout()
 
   const [rows, setRows] = useState<MRole[]>([])
   const [originalRows, setOriginalRows] = useState<MRole[]>([])

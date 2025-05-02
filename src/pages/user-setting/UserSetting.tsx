@@ -19,7 +19,7 @@ const UserSetting: FC = (): React.ReactElement => {
   const userContext = useUser()
   const { authList, setAuthList, selectedAuthList } = userContext
   const { user } = useAuth()
-  const { layoutDisplay, setCompanyId, setCompanyName, companyId, companyName, companyNo, setCompanyNo } = useLayout()
+  const { layoutDisplay, companyNo } = useLayout()
 
   const { data: UserCompanyList, refetch: UserCompanyListRefetch } = useUserCompanyList({ companyNo })
   const { data: AuthListData, refetch: AuthListRefetch } = useAuthList({ companyNo })

@@ -22,6 +22,7 @@ import { MUserCompanyList } from 'src/model/userSetting/userSettingModel'
 
 // import { useUserSettingStore } from 'src/pages/user-setting'
 import { smallPlaceholderStyle } from 'src/@core/styles/TextFieldStyle'
+import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
 import { useUserMod, useUserSave } from 'src/service/setting/userSetting'
 import { isValidPassword } from 'src/utils/CommonUtil'
@@ -57,7 +58,8 @@ const defaultValue: MUserCompanyList = {
 }
 
 const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, selectUser, onClose, onSubmitAfter }) => {
-  const { authList, companyNo } = useUser()
+  const { authList } = useUser()
+  const { companyNo } = useLayout()
 
   const { mutateAsync: saveUser } = useUserSave()
   const { mutateAsync: modUser } = useUserMod()
