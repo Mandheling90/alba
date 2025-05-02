@@ -271,3 +271,14 @@ export const useClientCameraUserAuth = () => {
     return createGet<number[]>([url])
   }, {})
 }
+
+export const useClientCameraUserAuthUpdate = () => {
+  return useMutation((req: { companyNo: number; userNo: number; cameraNoList: { cameraNo: number }[] }) => {
+    const url = EPath.CAMERAS_CLIENT_OF_COMPANY_USER_AUTH.replace('{companyNo}', req.companyNo.toString()).replace(
+      '{userNo}',
+      req.userNo.toString()
+    )
+
+    return createPut<number[]>([url, req.cameraNoList])
+  }, {})
+}

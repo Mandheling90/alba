@@ -7,7 +7,7 @@ import { YN } from 'src/enum/commonEnum'
 import { useCameras } from 'src/hooks/useCameras'
 import { useLayout } from 'src/hooks/useLayout'
 import { MClientCameraList } from 'src/model/cameras/CamerasModel'
-import { useClientCameraUserAuth } from 'src/service/cameras/camerasService'
+import { useClientCameraUserAuth, useClientCameraUserAuthUpdate } from 'src/service/cameras/camerasService'
 import styled from 'styled-components'
 
 import { getCameraColumns } from 'src/@core/components/table/columns/cameraColumns'
@@ -32,6 +32,7 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
   const { companyNo, companyId, companyName } = useLayout()
   const { data: UserCompanyList, refetch: UserCompanyListRefetch } = useUserCompanyList({ companyNo })
   const { mutateAsync: clientCameraUserAuth } = useClientCameraUserAuth()
+  const { mutateAsync: clientCameraUserAuthUpdate } = useClientCameraUserAuthUpdate()
 
   const [userData, setUserData] = useState<MUserCompanyList[]>([])
   const layoutContext = useLayout()
@@ -54,25 +55,26 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
     }
   }, [UserCompanyList])
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!selectedUser?.userNo) {
-        setAccessibleCameraList([])
-        setOrgAccessibleCameraList([])
+  const fetchClientCameraUserAuthData = async () => {
+    if (!selectedUser?.userNo) {
+      setAccessibleCameraList([])
+      setOrgAccessibleCameraList([])
 
-        return
-      }
-
-      try {
-        const res = await clientCameraUserAuth({ companyNo, userNo: selectedUser.userNo })
-        setAccessibleCameraList(res.data)
-        setOrgAccessibleCameraList(res.data)
-      } catch (error) {
-        setAccessibleCameraList([])
-        setOrgAccessibleCameraList([])
-      }
+      return
     }
-    fetchData()
+
+    try {
+      const res = await clientCameraUserAuth({ companyNo, userNo: selectedUser.userNo })
+      setAccessibleCameraList(res.data)
+      setOrgAccessibleCameraList(res.data)
+    } catch (error) {
+      setAccessibleCameraList([])
+      setOrgAccessibleCameraList([])
+    }
+  }
+
+  useEffect(() => {
+    fetchClientCameraUserAuthData()
   }, [selectedUser])
 
   useEffect(() => {
@@ -106,8 +108,6 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
     setAccessibleCameraList(cameraNos)
   }
 
-  console.log(selectedUser)
-
   return (
     <Grid container>
       <Grid item xs={12}>
@@ -128,11 +128,13 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
               <Button
                 variant={'outlined'}
                 onClick={async () => {
-                  // if (!isGroupMode) {
-                  //   handleSaveClick(undefined)
-                  // } else {
-                  //   handleGroupSaveClick(undefined)
-                  // }
+                  await clientCameraUserAuthUpdate({
+                    companyNo,
+                    userNo: selectedUser?.userNo ?? 0,
+                    cameraNoList: accessibleCameraList.map(cameraNo => ({ cameraNo }))
+                  })
+
+                  fetchClientCameraUserAuthData()
                 }}
               >
                 저장
