@@ -85,7 +85,7 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
       showGroupHeader: true
     })
     setColumns(newColumns)
-  }, [cameraPage, isGroupMode])
+  }, [cameraPage, isGroupMode, companyNo])
 
   const handleDragStart = (row: MClientCameraList) => {
     setDraggedRow(row)

@@ -78,8 +78,6 @@ const CustomTable: FC<
     return rows.filter(row => selectedIds.includes(row[id ?? 'id']))
   }
 
-  console.log(disableCheckboxSelection)
-
   useEffect(() => {
     setSelectedCheckboxes(defaultSelectedCheckboxes ?? [])
     setIsCheckboxDisabled(disableCheckboxSelection)
