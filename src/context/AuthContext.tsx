@@ -65,6 +65,8 @@ const AuthProvider = ({ children }: Props) => {
               role: ROLE.ADMIN,
               viewNamesWithY: []
             })
+
+            setLoading(false)
           } else {
             handleLogout()
           }
@@ -77,7 +79,7 @@ const AuthProvider = ({ children }: Props) => {
     }
 
     initAuth()
-  }, [user?.componentListInfo, router.pathname])
+  }, [])
 
   const handleLogin = async (params: LoginParams, errorCallback?: ErrCallbackType) => {
     try {
@@ -117,6 +119,7 @@ const AuthProvider = ({ children }: Props) => {
         const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
 
         router.replace(redirectURL as string)
+        setLoading(false)
       } else {
         if (errorCallback) {
           errorCallback({

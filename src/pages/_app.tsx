@@ -61,6 +61,7 @@ import '../../styles/globals.css'
 
 // ** react-query
 import { QueryClientProvider } from 'react-query'
+import GuestGuard from 'src/@core/components/auth/GuestGuard'
 import ContextProviders from 'src/context/ContextProviders'
 import { queryClient } from '../module/reactQuery'
 
@@ -93,7 +94,7 @@ if (themeConfig.routingLoader) {
 
 const Guard = ({ children, authGuard, guestGuard }: GuardProps) => {
   if (guestGuard) {
-    return <>{children}</>
+    return <GuestGuard fallback={<Spinner />}>{children}</GuestGuard>
   } else if (!guestGuard && !authGuard) {
     return <>{children}</>
   } else {

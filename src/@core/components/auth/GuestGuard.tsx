@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode, ReactElement, useEffect } from 'react'
+import { ReactElement, ReactNode, useEffect } from 'react'
 
 // ** Next Import
 import { useRouter } from 'next/router'
@@ -22,15 +22,15 @@ const GuestGuard = (props: GuestGuardProps) => {
       return
     }
 
-    if (window.localStorage.getItem('userData')) {
-      router.replace('/')
-    }
+    // if (window.localStorage.getItem('userData')) {
+    //   router.replace('/')
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.route])
 
-  if (auth.loading || (!auth.loading && auth.user !== null)) {
-    return fallback
-  }
+  // if (auth.loading || (!auth.loading && auth.user !== null)) {
+  //   return fallback
+  // }
 
   return <>{children}</>
 }
