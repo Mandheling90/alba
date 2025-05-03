@@ -6,6 +6,8 @@ export const EPath = {
   CHANGE_PASSWORD: '/auth/change/password',
   USER_DETAIL: '/user/detail',
   LOG: '/log',
+  CUSTOMER_LIST: '/customer/list',
+  GATE_LIST: '/gate/list',
   USER_INFO: '/user/info'
 } as const
 
