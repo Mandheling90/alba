@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useState } from 'react'
+import SimpleDialogModal, { INITIAL_DIALOG_PROPS } from 'src/@core/components/molecule/SimpleDialogModal'
 import { SORT } from 'src/enum/commonEnum'
 import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
@@ -176,6 +177,8 @@ const CamerasProvider = ({ children }: Props) => {
 
   const [viewType, setViewType] = useState<IViewType>(defaultProvider.viewType)
   const [cameraPage, setCameraPage] = useState<CameraPageType>(defaultProvider.cameraPage)
+
+  const [simpleDialogModalProps, setSimpleDialogModalProps] = useState(INITIAL_DIALOG_PROPS)
 
   const clear = () => {
     // setLayoutDisplay(defaultProvider.layoutDisplay)
@@ -502,6 +505,23 @@ const CamerasProvider = ({ children }: Props) => {
       const updatedGroupList = [...prevData]
       const group = updatedGroupList[groupIndex]
 
+      // 그룹에 이미 카메라가 있는 경우
+      if (group.groupItemList.length > 0) {
+        // 기존 카메라들의 flowPlanBindingYN 상태 확인
+        const existingFlowPlanBindingYN = group.groupItemList[0].flowPlanBindingYN
+
+        // 새로 추가하려는 카메라의 flowPlanBindingYN이 기존과 다르면 추가하지 않음
+        if (existingFlowPlanBindingYN !== newCamera.flowPlanBindingYN) {
+          setSimpleDialogModalProps({
+            open: true,
+            title: '카메라 추가 오류',
+            contents: '카메라는 그룹에는 한 종류의 카메라만 추가할 수 있습니다.'
+          })
+
+          return prevData
+        }
+      }
+
       updatedGroupList[groupIndex] = {
         ...group,
         groupItemList: [...group.groupItemList, newCamera]
@@ -576,6 +596,18 @@ const CamerasProvider = ({ children }: Props) => {
     setCameraPage
   }
 
-  return <CamerasContext.Provider value={values}>{children}</CamerasContext.Provider>
+  return (
+    <CamerasContext.Provider value={values}>
+      <SimpleDialogModal
+        open={simpleDialogModalProps.open}
+        onClose={() => {
+          setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
+        }}
+        title={simpleDialogModalProps.title}
+        contents={simpleDialogModalProps.contents}
+      />
+      {children}
+    </CamerasContext.Provider>
+  )
 }
 export { CamerasContext, CamerasProvider }

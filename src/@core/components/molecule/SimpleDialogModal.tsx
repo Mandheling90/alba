@@ -2,6 +2,19 @@ import { Box, Button, Dialog, Typography } from '@mui/material'
 import React from 'react'
 import DialogCustomContent from './DialogCustomContent'
 
+export interface IDialogProps {
+  open: boolean
+  title: string
+  contents: string
+  confirmFn?: () => void
+}
+
+export const INITIAL_DIALOG_PROPS: IDialogProps = {
+  open: false,
+  title: '',
+  contents: ''
+}
+
 interface ModalProps {
   open: boolean
   onClose: () => void
