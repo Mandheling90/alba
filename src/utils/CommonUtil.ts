@@ -299,3 +299,7 @@ export const calculateChangeRate = (currentValue: number, previousValue: number)
 
   return `${Math.min(Math.max(Math.round(change), -100), 100)}%`
 }
+
+export const areEqual = (prevProps: any, nextProps: any) => {
+  return JSON.stringify(prevProps) === JSON.stringify(nextProps)
+}

@@ -5,8 +5,8 @@ import MResult from 'src/model/commonModel'
 import {
   ICardInfo,
   ICountBarChart,
-  ICountLineChart,
   IHeatMapResponse,
+  ILineChartResponse,
   MBarChart,
   MChartNavReq,
   MChartReq,
@@ -109,9 +109,7 @@ export const useOccupancyTable = () => {
 }
 
 export const useCountLineChart = () => {
-  return useMutation(() => {
-    return createGet<ICountLineChart>([EPath.STATS_DASHBOARD_COUNT_LINE_CHART])
-  }, {})
+  return useQuery<MResult<ILineChartResponse>>([EPath.STATS_DASHBOARD_COUNT_LINE_CHART], {})
 }
 
 export const useCountCardInfo = () => {
@@ -120,6 +118,10 @@ export const useCountCardInfo = () => {
 
 export const useCountBarChart = () => {
   return useQuery<MResult<ICountBarChart>>([EPath.STATS_DASHBOARD_COUNT_BAR_CHART], {})
+}
+
+export const useGenderAgeChart = () => {
+  return useQuery<MResult<any>>([EPath.STATS_DASHBOARD_GENDER_AGE_CHART], {})
 }
 
 export const useHeatMapData = () => {

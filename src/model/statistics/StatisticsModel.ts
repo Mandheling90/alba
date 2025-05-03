@@ -148,7 +148,7 @@ export interface ICountLineChart {
 
 export interface ILineDataList {
   label: string
-  dataList: [number, number][]
+  dataList: { timestamp: number; count: number }[]
 }
 
 export interface ICardInfo {
@@ -179,11 +179,27 @@ export interface IHeatMapResponse {
   data: IHeatMapData[]
 }
 
-export interface ICountBarChart {
-  barDataList: IBarDataList[]
-  exitsCountList: IBarDataList[]
-  xcategories: string[]
+export interface IBaseChartResponse {
+  startYear: string
+  startMonth: string
+  startDay: string
+  startHour: string
+  endYear: string
+  endMonth: string
+  endDay: string
+  endHour: string
+  totalPlaceCount: number
   yname: string
+}
+
+export interface ILineChartResponse extends IBaseChartResponse {
+  lineDataList: ILineDataList[]
+}
+
+export interface ICountBarChart extends IBaseChartResponse {
+  barDataList: IBarDataList[]
+  exitCountList: IBarDataList[]
+  xcategories: string[]
 }
 
 export interface IBarDataList {

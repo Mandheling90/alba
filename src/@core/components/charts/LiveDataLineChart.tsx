@@ -1,14 +1,25 @@
 import Highcharts from 'highcharts/highstock'
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
+import { ILineDataList } from 'src/model/statistics/StatisticsModel'
+import { areEqual } from 'src/utils/CommonUtil'
 
 interface ILiveDataLineChart {
   selected: number // 선택된 값
-  data: [number, number][] // 첫 번째 데이터 배열
-  secondData: [number, number][] // 두 번째 데이터 배열
+  data: ILineDataList[]
+
+  // secondData: { timestamp: number; count: number }[] // 두 번째 데이터 배열
   height?: number | string // 차트 높이 (px 또는 %)
 }
 
-const LiveDataLineChart: React.FC<ILiveDataLineChart> = ({ selected, data, secondData, height = '400px' }) => {
+const LiveDataLineChart = memo(({ selected, data, height = '400px' }: ILiveDataLineChart) => {
+  // 데이터 형식 변환 함수
+  const convertDataFormat = (data: { timestamp: number; count: number }[]): [number, number][] => {
+    return data.map(item => [item.timestamp, item.count])
+  }
+
+  const convertedData = convertDataFormat(data[0].dataList)
+  const convertedSecondData = convertDataFormat(data[1].dataList)
+
   useEffect(() => {
     const style = document.createElement('style')
     style.innerHTML = `
@@ -29,7 +40,14 @@ const LiveDataLineChart: React.FC<ILiveDataLineChart> = ({ selected, data, secon
         events: {
           load: function () {
             const series = this.series as Highcharts.Series[]
-            if (!series || series.length < 2 || !series[0].data || !series[1].data || !data || !secondData) {
+            if (
+              !series ||
+              series.length < 2 ||
+              !series[0].data ||
+              !series[1].data ||
+              !convertedData ||
+              !convertedSecondData
+            ) {
               console.error('Series or series data is undefined or not enough series present')
 
               return
@@ -48,13 +66,12 @@ const LiveDataLineChart: React.FC<ILiveDataLineChart> = ({ selected, data, secon
               series[0].addPoint([x, y1], false)
               series[1].addPoint([x, y2], true)
 
-              data.push([x, y1])
-              secondData.push([x, y2])
+              convertedData.push([x, y1])
+              convertedSecondData.push([x, y2])
             }, 2000)
           }
         }
       },
-
       time: {
         timezoneOffset: new Date().getTimezoneOffset()
       },
@@ -107,7 +124,6 @@ const LiveDataLineChart: React.FC<ILiveDataLineChart> = ({ selected, data, secon
       navigator: {
         enabled: false
       },
-
       series: [
         {
           type: 'spline',
@@ -117,7 +133,7 @@ const LiveDataLineChart: React.FC<ILiveDataLineChart> = ({ selected, data, secon
           },
           lineWidth: 2,
           color: '#87CEEB',
-          data: data || [],
+          data: convertedData || [],
           turboThreshold: 0
         },
         {
@@ -128,14 +144,16 @@ const LiveDataLineChart: React.FC<ILiveDataLineChart> = ({ selected, data, secon
           },
           lineWidth: 2,
           color: '#00008B',
-          data: secondData || [],
+          data: convertedSecondData || [],
           turboThreshold: 0
         }
       ]
     })
-  }, [data, secondData])
+  }, [convertedData, convertedSecondData])
 
   return <div id='container' />
-}
+}, areEqual)
+
+LiveDataLineChart.displayName = 'LiveDataLineChart'
 
 export default LiveDataLineChart

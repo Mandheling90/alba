@@ -37,9 +37,6 @@ const VisitantList: FC<IVisitantList> = ({ data, xcategories, selected = '', ref
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
 
-  console.log(visitantData[0].name)
-  console.log(visitantData[1].name)
-
   const columns: GridColDef[] = [
     {
       field: 'location',
