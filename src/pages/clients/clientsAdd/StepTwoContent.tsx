@@ -112,7 +112,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
     setSolutionList(prev => [
       ...prev,
       {
-        aiSolutionId: prev.length + 1,
+        aiSolutionId: 1,
         aiSolutionName: 'CVEDIA',
         companySolutionId: prev.length + 1,
         serverList: []
@@ -511,6 +511,8 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
       return true
     })
   }
+
+  console.log(solutionList)
 
   return (
     <>
