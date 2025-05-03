@@ -85,7 +85,7 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
       showGroupHeader: true
     })
     setColumns(newColumns)
-  }, [cameraPage, isGroupMode, companyNo])
+  }, [cameraPage, isGroupMode, companyNo, isGroupModifyMode])
 
   const handleDragStart = (row: MClientCameraList) => {
     setDraggedRow(row)
@@ -216,6 +216,7 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
                         })
 
                         // 그룹 수정 모드 활성화
+                        setIsGroupMode(true)
                         setGroupModifyId(newGroupId)
                         setIsGroupModifyMode(true)
                       } catch (error) {

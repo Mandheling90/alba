@@ -44,15 +44,34 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
 
   const groupHeaderRenderer = () => {
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <SwitchCustom
-          width={50}
-          switchName={['개별', '그룹']}
-          selected={!isGroupMode}
-          onChange={() => setIsGroupMode?.(!isGroupMode)}
-          activeColor={['#9155FD', '#9155FD']}
-        />
-      </Box>
+      <>
+        {!isGroupModifyMode ? (
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <SwitchCustom
+              width={50}
+              switchName={['개별', '그룹']}
+              selected={!isGroupMode}
+              onChange={() => setIsGroupMode?.(!isGroupMode)}
+              activeColor={['#9155FD', '#9155FD']}
+            />
+          </Box>
+        ) : (
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Box
+              sx={{
+                height: '10px',
+                border: '1px solid',
+                borderRadius: '5px',
+                padding: '12px 10px',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              개별
+            </Box>
+          </Box>
+        )}
+      </>
     )
   }
 

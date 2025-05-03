@@ -45,7 +45,7 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
       field: 'name2',
       headerName: '사용자 ID',
       headerAlign: 'center',
-      flex: 1,
+      flex: 0.9,
       align: 'center',
       type: 'string',
       renderCell: ({ row }: GridRenderCellParams) => {
@@ -63,7 +63,7 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
       field: 'mailAddress',
       headerName: '이메일 주소',
       headerAlign: 'center',
-      flex: 1,
+      flex: 0.9,
       align: 'center',
       type: 'string'
     },

@@ -466,11 +466,12 @@ const CamerasProvider = ({ children }: Props) => {
   }
 
   const removeDuplicateCameras = (): MClientCameraList[] => {
-    const groupCameraNos = new Set(
-      clientGroupCameraData?.flatMap(group => group.groupItemList).map(item => item.cameraNo)
-    )
+    if (!groupModifyId) return clientCameraData ?? []
 
-    // setClientCameraData(clientCameraData?.filter(item => !groupCameraNos.has(item.cameraNo)) ?? [])
+    const groupCameraNos = new Set(
+      clientGroupCameraData?.find(group => group.groupId === groupModifyId)?.groupItemList.map(item => item.cameraNo) ??
+        []
+    )
 
     return clientCameraData?.filter(item => !groupCameraNos.has(item.cameraNo)) ?? []
   }
