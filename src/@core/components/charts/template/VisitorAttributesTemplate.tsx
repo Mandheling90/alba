@@ -3,8 +3,6 @@ import dynamic from 'next/dynamic'
 import { FC } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 
-import PieChart from 'src/@core/components/charts/PieChart'
-import PyramidChart from 'src/@core/components/charts/PyramidChart'
 import { VisitorChartExample } from 'src/@core/components/charts/StackedBarChart'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
@@ -56,14 +54,10 @@ const VisitorAttributesTemplate: FC = ({}): React.ReactElement => {
           />
         </Grid>
         <Grid item xs={9}>
-          <Card>
-            <PyramidChart />
-          </Card>
+          <Card>{/* <PyramidChart /> */}</Card>
         </Grid>
         <Grid item xs={3}>
-          <Card>
-            <PieChart />
-          </Card>
+          <Card>{/* <PieChart /> */}</Card>
         </Grid>
 
         <Grid item xs={12}>

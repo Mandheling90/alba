@@ -1,8 +1,8 @@
 import { Checkbox, ListItemText, MenuItem, Select, SelectChangeEvent } from '@mui/material'
 import Image from 'next/image'
 import { FC, useMemo } from 'react'
+import { useGateList } from 'src/service/queries'
 import styled from 'styled-components'
-import { useGateList } from '../queries'
 
 interface IGateSelect<T = string | string[]> {
   value: T

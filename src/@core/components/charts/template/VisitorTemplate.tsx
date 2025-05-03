@@ -3,7 +3,6 @@ import { FC } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import BarStackedChart from 'src/@core/components/charts/BarStackedChart'
 import HorizontalBarChartLocation from 'src/@core/components/charts/HorizontalBarChartLocation'
-import PieChart from 'src/@core/components/charts/PieChart'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
 import IconCustom from 'src/layouts/components/IconCustom'
@@ -61,9 +60,7 @@ const VisitorTemplate: FC = ({}): React.ReactElement => {
           </Card>
         </Grid>
         <Grid item xs={3}>
-          <Card>
-            <PieChart />
-          </Card>
+          <Card>{/* <PieChart /> */}</Card>
         </Grid>
       </Grid>
     </StandardTemplate>
