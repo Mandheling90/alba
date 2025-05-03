@@ -1,14 +1,27 @@
 import { Box } from '@mui/material'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import { useState } from 'react'
+import { memo, useState } from 'react'
+import { IDashboardAgeChart } from 'src/model/statistics/StatisticsModel'
+import { areEqual } from 'src/utils/CommonUtil'
 import RoundedBubble from '../atom/RoundedBubble'
 
-// Age categories
-const categories = ['10대 이하', '10대', '20대', '30대', '40대', '50대', '60대 이상']
-
-const PyramidChart = ({}) => {
+const PyramidChart = memo(({ data }: { data: IDashboardAgeChart }) => {
   const [hoveredPoint, setHoveredPoint] = useState('')
+
+  // 전체 합계 계산
+  const calculateTotal = (data: number[]) => {
+    return data.reduce((sum, value) => sum + Math.abs(value), 0)
+  }
+
+  // 각 성별의 총합 계산
+  const maleTotal = calculateTotal(data.pyramidChart[0].data)
+  const femaleTotal = calculateTotal(data.pyramidChart[1].data)
+  const total = maleTotal + femaleTotal
+
+  // 각 성별의 비율 계산
+  const malePercentage = ((maleTotal / total) * 100).toFixed(1)
+  const femalePercentage = ((femaleTotal / total) * 100).toFixed(1)
 
   const options = {
     chart: {
@@ -27,7 +40,7 @@ const PyramidChart = ({}) => {
     },
     xAxis: [
       {
-        categories: categories,
+        categories: data.categories,
         reversed: false,
         labels: {
           step: 1
@@ -40,7 +53,7 @@ const PyramidChart = ({}) => {
         // mirror axis on right side
         opposite: true,
         reversed: false,
-        categories: categories,
+        categories: data.categories,
         linkedTo: 0,
         labels: {
           step: 1
@@ -72,7 +85,27 @@ const PyramidChart = ({}) => {
         borderRadius: '50%',
         states: {
           inactive: {
-            opacity: 0.5 // 마우스 오버 시 반대쪽 차트의 불투명도 조정
+            opacity: 0.5
+          }
+        },
+        events: {
+          mouseOver: function (this: Highcharts.Series) {
+            const chart = this.chart
+            setHoveredPoint(this.name)
+            setTimeout(() => {
+              chart.series.forEach((series: Highcharts.Series) => {
+                if (series !== this) {
+                  series.setState('inactive')
+                }
+              })
+            }, 10)
+          },
+          mouseOut: function (this: Highcharts.Series) {
+            const chart = this.chart
+            setHoveredPoint('')
+            chart.series.forEach((series: Highcharts.Series) => {
+              series.setState('')
+            })
           }
         }
       }
@@ -115,32 +148,12 @@ const PyramidChart = ({}) => {
     },
     series: [
       {
-        name: '남성',
-        data: [-12, -33, -60, -28, -18, -3, -2],
-        point: {
-          events: {
-            mouseOver: function (this: Highcharts.Point) {
-              setHoveredPoint('남성') // 마우스 오버한 데이터 포인트 저장
-            },
-            mouseOut: function () {
-              setHoveredPoint('') // 마우스 아웃 시 빈 문자열 전송
-            }
-          }
-        }
+        name: data.pyramidChart[0].name,
+        data: data.pyramidChart[0].data
       },
       {
-        name: '여성',
-        data: [25, 37, 115, 72, 27, 13, 1],
-        point: {
-          events: {
-            mouseOver: function (this: Highcharts.Point) {
-              setHoveredPoint('여성') // 마우스 오버한 데이터 포인트 저장
-            },
-            mouseOut: function () {
-              setHoveredPoint('') // 마우스 아웃 시 빈 문자열 전송
-            }
-          }
-        }
+        name: data.pyramidChart[1].name,
+        data: data.pyramidChart[1].data
       }
     ]
   }
@@ -149,18 +162,30 @@ const PyramidChart = ({}) => {
     <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
       {hoveredPoint === '여성' && (
         <Box sx={{ position: 'absolute', zIndex: 999, left: '5%', top: '15%' }}>
-          <RoundedBubble title={'남성전체:'} content={'30.1%'} background={'#38A3FA'} tailDirection={'5'} />
+          <RoundedBubble
+            title={'남성전체:'}
+            content={`${malePercentage}%`}
+            background={'#38A3FA'}
+            tailDirection={'5'}
+          />
         </Box>
       )}
       {hoveredPoint === '남성' && (
         <Box sx={{ position: 'absolute', zIndex: 999, right: '5%', top: '15%' }}>
-          <RoundedBubble title={'여성전체:'} content={'30.1%'} background={'#4D3FBA'} tailDirection={'7'} />
+          <RoundedBubble
+            title={'여성전체:'}
+            content={`${femalePercentage}%`}
+            background={'#4D3FBA'}
+            tailDirection={'7'}
+          />
         </Box>
       )}
 
       <HighchartsReact highcharts={Highcharts} options={options} />
     </Box>
   )
-}
+}, areEqual)
+
+PyramidChart.displayName = 'PyramidChart'
 
 export default PyramidChart

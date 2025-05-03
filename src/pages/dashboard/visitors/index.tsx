@@ -37,12 +37,12 @@ const Visitors: FC = ({}): React.ReactElement => {
             marginBottom={-8}
           />
         </Grid>
-        <Grid item xs={9.5}>
+        <Grid item xs={9}>
           <Card>
             <LiveDataLineChart selected={1} data={lineChart?.data?.lineDataList || []} />
           </Card>
         </Grid>
-        <Grid item xs={2.5}>
+        <Grid item xs={3}>
           <ChartDetailSwiper height={'430px'} />
         </Grid>
 

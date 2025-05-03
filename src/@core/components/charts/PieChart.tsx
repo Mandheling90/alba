@@ -1,13 +1,16 @@
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+import { memo } from 'react'
+import { IDashboardAgeChart } from 'src/model/statistics/StatisticsModel'
+import { areEqual } from 'src/utils/CommonUtil'
 
-const PieChart = () => {
+const PieChart = memo(({ data }: { data: IDashboardAgeChart }) => {
   const options = {
     chart: {
       type: 'pie'
     },
     title: {
-      text: '장소별 방문자수'
+      text: data.pieChart.name
     },
     tooltip: {
       valueSuffix: '명'
@@ -46,20 +49,14 @@ const PieChart = () => {
       {
         name: '방문자수',
         colorByPoint: true,
-        data: [
-          { name: '교육동2층', y: 11460 },
-          { name: '식물원입구', y: 19455, sliced: true, selected: true },
-          { name: '농업관01', y: 13748 },
-          { name: '농업관02', y: 8113 },
-          { name: '어린이박물관', y: 4821 },
-          { name: '기획전시실', y: 3195 },
-          { name: '북문', y: 1641 }
-        ]
+        data: data.pieChart.data
       }
     ]
   }
 
   return <HighchartsReact highcharts={Highcharts} options={options} />
-}
+}, areEqual)
+
+PieChart.displayName = 'PieChart'
 
 export default PieChart

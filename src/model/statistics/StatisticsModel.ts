@@ -206,3 +206,24 @@ export interface IBarDataList {
   name: string
   dataList: number[]
 }
+
+export interface IDashboardAgeChart extends IBaseChartResponse {
+  categories: string[]
+  pyramidChart: IPyramidChart[]
+  pieChart: IPieChart
+}
+
+export interface IPyramidChart {
+  name: string
+  data: number[]
+}
+
+export interface IPieChart {
+  name: string
+  data: IPieChartData[]
+}
+
+export interface IPieChartData {
+  name: string
+  y: number
+}

@@ -8,7 +8,7 @@ import PyramidChart from 'src/@core/components/charts/PyramidChart'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { useCountBarChart, useCountLineChart } from 'src/service/statistics/statisticsService'
+import { useCountBarChart, useCountLineChart, useGenderAgeChart } from 'src/service/statistics/statisticsService'
 import ChartDetailSwiper from '../swiper/ChartDetailSwiper'
 import VisitantList from '../table/VisitantList'
 
@@ -20,6 +20,7 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
   const [hoveredPoint, setHoveredPoint] = useState<string>('')
 
   const { data: lineChart, isLoading: lineChartLoading } = useCountLineChart()
+  const { data: genderAgeChart, isLoading: genderAgeChartLoading } = useGenderAgeChart()
   const { data: barChart, isLoading: barChartLoading } = useCountBarChart()
 
   return (
@@ -36,30 +37,30 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
             marginBottom={-8}
           />
         </Grid>
-        <Grid item xs={9.5}>
+        <Grid item xs={9}>
           <Card>
             <LiveDataLineChart selected={1} data={lineChart?.data?.lineDataList || []} />
           </Card>
         </Grid>
-        <Grid item xs={2.5}>
+        <Grid item xs={3}>
           <ChartDetailSwiper height={'430px'} />
         </Grid>
 
         <Grid item xs={12}>
           <PipelineTitle
             Icon={<IconCustom isCommon path='dashboard' icon='calendar' />}
-            title={['장소별 방문자수', '2025년 2월 7일 0시 ~ 18시', '총 12 곳']}
+            title={[
+              '장소별 방문자수',
+              `${genderAgeChart?.data?.startYear}년 ${genderAgeChart?.data?.startMonth}월 ${genderAgeChart?.data?.startDay}일 0시 ~ ${genderAgeChart?.data?.endHour}시`,
+              `총 ${genderAgeChart?.data?.totalPlaceCount} 곳`
+            ]}
           />
         </Grid>
         <Grid item xs={9}>
-          <Card>
-            <PyramidChart />
-          </Card>
+          <Card>{genderAgeChart?.data && <PyramidChart data={genderAgeChart?.data} />}</Card>
         </Grid>
         <Grid item xs={3}>
-          <Card>
-            <PieChart />
-          </Card>
+          <Card>{genderAgeChart?.data && <PieChart data={genderAgeChart?.data} />}</Card>
         </Grid>
 
         <Grid item xs={12}>

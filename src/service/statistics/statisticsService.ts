@@ -5,6 +5,7 @@ import MResult from 'src/model/commonModel'
 import {
   ICardInfo,
   ICountBarChart,
+  IDashboardAgeChart,
   IHeatMapResponse,
   ILineChartResponse,
   MBarChart,
@@ -121,7 +122,7 @@ export const useCountBarChart = () => {
 }
 
 export const useGenderAgeChart = () => {
-  return useQuery<MResult<any>>([EPath.STATS_DASHBOARD_GENDER_AGE_CHART], {})
+  return useQuery<MResult<IDashboardAgeChart>>([EPath.STATS_DASHBOARD_GENDER_AGE_CHART], {})
 }
 
 export const useHeatMapData = () => {
