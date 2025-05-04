@@ -2,9 +2,11 @@ import { Box, Button, IconButton, SelectChangeEvent, Typography } from '@mui/mat
 import { FC, useEffect, useRef, useState } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
-import SimpleDialogModal from 'src/@core/components/molecule/SimpleDialogModal'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
+
+import SimpleDialogModal from 'src/@core/components/molecule/SimpleDialogModal'
 import { YN } from 'src/enum/commonEnum'
+import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
 import {
   IAiSolutionCompanyList,
@@ -12,7 +14,9 @@ import {
   IClientDetail,
   ISolutionList,
   MAiSolutionCompanyList,
-  SOLUTION_USE_SERVER_TYPE
+  SOLUTION_TYPE_ID,
+  isNonServerSolution,
+  isServerUsingSolution
 } from 'src/model/client/clientModel'
 import {
   useAiSolutionCompanyDelete,
@@ -27,15 +31,15 @@ import {
 } from 'src/service/client/clientService'
 import SolutionServerList from './SolutionServerList'
 
-export const isServerAddable = (solutionName: string) => {
-  return (
-    solutionName === SOLUTION_USE_SERVER_TYPE.CVEDIA ||
-    solutionName === SOLUTION_USE_SERVER_TYPE.NEXREALAIBOX ||
-    solutionName === SOLUTION_USE_SERVER_TYPE.SAFR ||
-    solutionName === SOLUTION_USE_SERVER_TYPE.FA_GATE ||
-    solutionName === SOLUTION_USE_SERVER_TYPE.PROAI_SERVER
-  )
-}
+// export const isServerAddable = (solutionId: number) => {
+//   return (
+//     solutionId === SOLUTION_USE_SERVER_TYPE_ID.CVEDIA ||
+//     solutionId === SOLUTION_USE_SERVER_TYPE_ID.NEXREALAIBOX ||
+//     solutionId === SOLUTION_USE_SERVER_TYPE_ID.SAFR ||
+//     solutionId === SOLUTION_USE_SERVER_TYPE_ID.FA_GATE ||
+//     solutionId === SOLUTION_USE_SERVER_TYPE_ID.PROAI_SERVER
+//   )
+// }
 
 export const DefaultPackageSolution = (PackageSolution?: MAiSolutionCompanyList, remark?: string): ISolutionList => {
   return {
@@ -68,6 +72,8 @@ interface IStepTwoContent {
 }
 
 const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, companyNo, refetch }) => {
+  const { setSimpleDialogModalProps, resetModal } = useModal()
+
   const { data } = useAiSolutionCompanyList()
   const { mutateAsync: saveAiSolutionCompany } = useAiSolutionCompanySave()
   const { mutateAsync: updateAiSolutionCompany } = useAiSolutionCompanyUpdate()
@@ -89,7 +95,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
 
   useEffect(() => {
     if (aiData?.packageInfo?.packageYn === 'P') {
-      const Package = data?.data?.find(item => item.name === SOLUTION_USE_SERVER_TYPE.PACKAGE)
+      const Package = data?.data?.find(item => item.id === SOLUTION_TYPE_ID.PACKAGE)
       const PackageSolution = DefaultPackageSolution(Package, aiData.packageInfo.remark)
       const tempAiData = {
         ...aiData,
@@ -127,7 +133,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
     if (!solution) return
 
     // 패키지는 그대로 삭제
-    if (solution.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE) {
+    if (solution.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE) {
       await deleteAiSolutionCompanyPackage({ companyNo: companyNo })
       refetch()
 
@@ -135,7 +141,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
     }
 
     // 서버를 사용하는 솔루션인지 확인
-    const isServerSolution = isServerAddable(solution.aiSolutionName)
+    const isServerSolution = isServerUsingSolution(solution.aiSolutionId)
 
     if (isServerSolution) {
       // 서버를 사용하는 솔루션인 경우, 서버가 있는지 확인
@@ -287,12 +293,13 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
   }
 
   const handleSelectChange = (companySolutionId: number) => (event: SelectChangeEvent) => {
-    const aiSolutionId = event.target.value
-    const aiSolutionName = data?.data?.find(item => item.id.toString() === aiSolutionId)?.name || ''
+    const aiSolutionIdTarget = event.target.value
+    const aiSolutionName = data?.data?.find(item => item.id.toString() === aiSolutionIdTarget)?.name || ''
+    const aiSolutionId = data?.data?.find(item => item.id.toString() === aiSolutionIdTarget)?.id || 0
 
     if (
-      aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE &&
-      solutionList.find(item => item.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE)
+      aiSolutionId === SOLUTION_TYPE_ID.PACKAGE &&
+      solutionList.find(item => item.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE)
     ) {
       alert('패키지 솔루션은 1개만 등록할 수 있습니다.')
 
@@ -304,17 +311,17 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
         if (card.companySolutionId === companySolutionId) {
           console.log('Updating solution with companySolutionId:', companySolutionId)
 
-          if (isServerAddable(aiSolutionName)) {
+          if (isServerUsingSolution(aiSolutionId)) {
             return {
               ...card,
-              aiSolutionId: parseInt(aiSolutionId),
+              aiSolutionId: aiSolutionId,
               aiSolutionName: aiSolutionName,
               serverList: []
             }
           } else {
             return {
               ...card,
-              aiSolutionId: parseInt(aiSolutionId),
+              aiSolutionId: aiSolutionId,
               aiSolutionName: aiSolutionName,
               serverList: [
                 {
@@ -512,8 +519,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
     })
   }
 
-  console.log(solutionList)
-
   return (
     <>
       <Box
@@ -573,7 +578,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                     />
                   </Box>
                   <Box>
-                    {card.aiSolutionName !== SOLUTION_USE_SERVER_TYPE.PACKAGE && (
+                    {card.aiSolutionId !== SOLUTION_TYPE_ID.PACKAGE && (
                       <Typography>
                         총 {card.serverList.reduce((acc, server) => acc + server.instanceList.length, 0)}대의 카메라
                         항목이 있습니다.
@@ -584,14 +589,14 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
               }
               rightContent={
                 <>
-                  {isServerAddable(card.aiSolutionName) && (
+                  {isServerUsingSolution(card.aiSolutionId) && (
                     <Button
                       variant='contained'
                       startIcon={<IconCustom isCommon icon='plus' />}
                       onClick={() => handleAddServer(index)}
                       sx={{ height: '20px', padding: '12px', mr: 1 }}
                     >
-                      {card.aiSolutionName === SOLUTION_USE_SERVER_TYPE.NEXREALAIBOX ? 'AIBOX 추가' : '서버 추가'}
+                      {card.aiSolutionId === SOLUTION_TYPE_ID.NEX_REAL_AIBOX ? 'AIBOX 추가' : '서버 추가'}
                     </Button>
                   )}
                   <IconButton onClick={() => handleDeleteSolution(card.companySolutionId)}>
@@ -627,16 +632,63 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                   size='medium'
                   variant='contained'
                   onClick={async () => {
-                    if (!isValidSolution(index)) {
-                      alert('서비스 이름과 타입을 모두 입력해주세요.')
+                    // 필수값 검증
+                    const requiredFields = card.serverList
+                      .map(server => {
+                        const emptyFields = []
+
+                        // 서버 정보가 필요한 솔루션인 경우에만 서버 정보 검증
+                        if (isServerUsingSolution(card.aiSolutionId)) {
+                          if (!server.serverName) emptyFields.push('서버명')
+                          if (
+                            !server.serverIp &&
+                            card.aiSolutionId !== SOLUTION_TYPE_ID.FA_SIGNAGE &&
+                            card.aiSolutionId !== SOLUTION_TYPE_ID.FA_GATE
+                          )
+                            emptyFields.push('서버주소')
+
+                          if (card.aiSolutionId === SOLUTION_TYPE_ID.NEX_REAL_AIBOX) {
+                            if (!server.aiBoxId) emptyFields.push('AIBox ID')
+                            if (!server.aiBoxPassword) emptyFields.push('AIBox Password')
+                          }
+                          if (card.aiSolutionId === SOLUTION_TYPE_ID.SAFR) {
+                            if (!server.safrEventUrl) emptyFields.push('SAFR 이벤트 서버주소')
+                            if (!server.safrId) emptyFields.push('SAFR ID')
+                            if (!server.safrPassword) emptyFields.push('SAFR Password')
+                          }
+                        }
+
+                        // 인스턴스 필드 검증
+                        server.instanceList.forEach(instance => {
+                          if (!instance.aiServiceId) emptyFields.push('분석 서비스')
+                          if (!instance.cameraName) emptyFields.push('카메라명')
+                          if (!instance.cameraIp) emptyFields.push('카메라주소')
+                          if (isNonServerSolution(card.aiSolutionId)) {
+                            if (!instance.cameraId) emptyFields.push('카메라ID')
+                          }
+                          if (card.aiSolutionId === SOLUTION_TYPE_ID.SAFR) {
+                            if (!instance.cameraGroupId) emptyFields.push('카메라 그룹ID')
+                          }
+                        })
+
+                        return emptyFields
+                      })
+                      .flat()
+
+                    if (requiredFields.length > 0) {
+                      setSimpleDialogModalProps({
+                        open: true,
+                        title: `다음 필수 항목을 입력해주세요:\n${requiredFields.join(', ')}`,
+                        contents: ''
+                      })
 
                       return
                     }
 
                     try {
-                      if (card.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE) {
+                      if (card.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE) {
                         const isPackageExists = originalAiData.current?.solutionList?.some(
-                          solution => solution.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE
+                          solution => solution.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE
                         )
 
                         const packageSolutionData: IAiSolutionCompanyPackageParam = {
@@ -654,18 +706,20 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                           solution => solution.companySolutionId === card.companySolutionId
                         )
 
-                        // const remark =
-                        //   solutionList.find(solution => solution.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE)
-                        //     ?.serverList[0].remark ?? ''
-
                         const solutionData = {
                           ...card,
                           companyNo,
-                          ...(card.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE && { serverList: [] })
+                          ...(card.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE && { serverList: [] })
                         }
 
                         if (isNewCard) {
                           await saveAiSolutionCompany(solutionData)
+
+                          setSimpleDialogModalProps({
+                            open: true,
+                            title: '솔루션 등록 완료',
+                            contents: '솔루션 등록이 완료되었습니다.'
+                          })
                         } else {
                           await updateAiSolutionCompany(solutionData)
                         }
@@ -679,14 +733,29 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                   sx={{ mr: 4 }}
                   disabled={!isValidSolution(index)}
                 >
-                  등록
+                  {!originalAiData.current?.solutionList?.some(
+                    solution => solution.companySolutionId === card.companySolutionId
+                  )
+                    ? '등록'
+                    : '수정'}
                 </Button>
 
                 <Button
                   size='medium'
                   color='secondary'
                   variant='outlined'
-                  onClick={() => handleRevertToOriginalState(card.companySolutionId)}
+                  onClick={() => {
+                    setSimpleDialogModalProps({
+                      open: true,
+                      title: '솔루션 초기화',
+                      contents: '솔루션 등록을 취소 하시겠습니까?',
+                      isConfirm: true,
+                      confirmFn: () => {
+                        handleRevertToOriginalState(card.companySolutionId)
+                        resetModal()
+                      }
+                    })
+                  }}
                   disabled={false}
                 >
                   취소

@@ -83,6 +83,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   고객사ID
                 </Typography>
                 <TextField
+                  disabled={(clientData?.companyNo ?? 0) > 0}
                   size='small'
                   value={clientData?.companyId || ''}
                   onChange={handleChange('companyId')}

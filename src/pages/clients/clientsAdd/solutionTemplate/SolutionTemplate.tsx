@@ -6,6 +6,7 @@ import { ISolutionServerProps } from 'src/model/client/clientModel'
 import SolutionRow from '../SolutionRow'
 
 const SolutionTemplate: FC<ISolutionServerProps> = ({
+  aiSolutionService,
   solutionId,
   server,
   onDeleteInstance,
@@ -13,7 +14,10 @@ const SolutionTemplate: FC<ISolutionServerProps> = ({
   onUpdateServer,
   onDelete,
   onAddInstance,
-  children
+  children,
+  useCameraId = false,
+  useCameraGroup = false,
+  useInstance = false
 }) => {
   const [isFold, setIsFold] = useState(false)
 
@@ -45,9 +49,11 @@ const SolutionTemplate: FC<ISolutionServerProps> = ({
           {server.instanceList.map(instance => (
             <Box sx={{ mt: 2, mb: 2 }} key={instance.instanceId}>
               <SolutionRow
+                aiSolutionService={aiSolutionService}
                 solutionId={solutionId}
-                useCameraId
-                useInstance
+                useCameraId={useCameraId}
+                useCameraGroup={useCameraGroup}
+                useInstance={useInstance}
                 serverId={server.serverId}
                 onDeleteInstance={onDeleteInstance}
                 key={instance.instanceId}

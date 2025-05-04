@@ -1,10 +1,18 @@
 import { Box, IconButton, TextareaAutosize, TextField } from '@mui/material'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { IServerList, ISolutionList, SOLUTION_USE_SERVER_TYPE } from 'src/model/client/clientModel'
+import {
+  IAiSolutionService,
+  IServerList,
+  ISolutionList,
+  isServerUsingSolution,
+  SOLUTION_TYPE_ID
+} from 'src/model/client/clientModel'
+import { useAiSolutionService } from 'src/service/client/clientService'
 import SolutionRow from './SolutionRow'
 import SolutionTemplate from './solutionTemplate/SolutionTemplate'
-import { isServerAddable } from './StepTwoContent'
+
+// import { isServerAddable } from './StepTwoContent'
 
 interface ISolutionRow {
   solutionList: ISolutionList
@@ -25,11 +33,24 @@ const SolutionServerList: FC<ISolutionRow> = ({
   onUpdateInstance,
   onUpdateServer
 }) => {
+  const { mutateAsync: getAiSolutionService } = useAiSolutionService()
+  const [aiSolutionService, setAiSolutionService] = useState<IAiSolutionService[]>([])
+  useEffect(() => {
+    getAiSolutionService({ solutionId: solutionList.aiSolutionId }).then(res => {
+      if (res.data) {
+        setAiSolutionService(res.data)
+      }
+    })
+  }, [solutionList.aiSolutionId])
+
   const renderSolutionComponent = (server: IServerList) => {
-    switch (solutionList.aiSolutionName) {
-      case SOLUTION_USE_SERVER_TYPE.CVEDIA:
+    console.log(solutionList.aiSolutionName)
+
+    switch (solutionList.aiSolutionId) {
+      case SOLUTION_TYPE_ID.CVEDIA:
         return (
           <SolutionTemplate
+            aiSolutionService={aiSolutionService}
             solutionId={solutionList.aiSolutionId}
             server={server}
             onDelete={onDelete}
@@ -37,6 +58,8 @@ const SolutionServerList: FC<ISolutionRow> = ({
             onUpdateInstance={onUpdateInstance}
             onUpdateServer={onUpdateServer}
             onAddInstance={onAddInstance}
+            useCameraId={true}
+            useInstance={true}
           >
             <TextField
               size='small'
@@ -44,6 +67,7 @@ const SolutionServerList: FC<ISolutionRow> = ({
               label='CVEDIA 서버명'
               variant='outlined'
               placeholder={`CVEDIA 서버명`}
+              required
               onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
             />
 
@@ -53,13 +77,15 @@ const SolutionServerList: FC<ISolutionRow> = ({
               label='CVEDIA 서버주소'
               variant='outlined'
               placeholder={`CVEDIA 서버주소`}
+              required
               onChange={e => onUpdateServer(server.serverId, 'serverIp', e.target.value)}
             />
           </SolutionTemplate>
         )
-      case SOLUTION_USE_SERVER_TYPE.NEXREALAIBOX:
+      case SOLUTION_TYPE_ID.SAFR:
         return (
           <SolutionTemplate
+            aiSolutionService={aiSolutionService}
             solutionId={solutionList.aiSolutionId}
             server={server}
             onDelete={onDelete}
@@ -67,54 +93,8 @@ const SolutionServerList: FC<ISolutionRow> = ({
             onUpdateInstance={onUpdateInstance}
             onUpdateServer={onUpdateServer}
             onAddInstance={onAddInstance}
-          >
-            <TextField
-              size='small'
-              value={server.serverName}
-              label='AIBox 명'
-              variant='outlined'
-              placeholder={`AIBox 명`}
-              onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
-            />
-
-            <TextField
-              size='small'
-              value={server.serverIp}
-              label='AIBox 주소'
-              variant='outlined'
-              placeholder={`AIBox 주소`}
-              onChange={e => onUpdateServer(server.serverId, 'serverIp', e.target.value)}
-            />
-
-            <TextField
-              size='small'
-              value={server.aiBoxId}
-              label='AIBox ID'
-              variant='outlined'
-              placeholder={`AIBox ID`}
-              onChange={e => onUpdateServer(server.serverId, 'aiBoxId', e.target.value)}
-            />
-            <TextField
-              size='small'
-              value={server.aiBoxPassword}
-              label='AIBox PassWord'
-              variant='outlined'
-              placeholder={`AIBox PassWord`}
-              type='password'
-              onChange={e => onUpdateServer(server.serverId, 'aiBoxPassword', e.target.value)}
-            />
-          </SolutionTemplate>
-        )
-      case SOLUTION_USE_SERVER_TYPE.SAFR:
-        return (
-          <SolutionTemplate
-            solutionId={solutionList.aiSolutionId}
-            server={server}
-            onDelete={onDelete}
-            onDeleteInstance={onDeleteInstance}
-            onUpdateInstance={onUpdateInstance}
-            onUpdateServer={onUpdateServer}
-            onAddInstance={onAddInstance}
+            useCameraId={true}
+            useCameraGroup={true}
           >
             <TextField
               size='small'
@@ -122,6 +102,7 @@ const SolutionServerList: FC<ISolutionRow> = ({
               label='SAFR 서버명'
               variant='outlined'
               placeholder={`SAFR 서버명`}
+              required
               onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
             />
 
@@ -131,6 +112,7 @@ const SolutionServerList: FC<ISolutionRow> = ({
               label='SAFR 서버주소'
               variant='outlined'
               placeholder={`SAFR 서버주소`}
+              required
               onChange={e => onUpdateServer(server.serverId, 'serverIp', e.target.value)}
             />
 
@@ -140,6 +122,7 @@ const SolutionServerList: FC<ISolutionRow> = ({
               label='SAFR 이벤트 서버주소'
               variant='outlined'
               placeholder={`SAFR 이벤트 서버주소`}
+              required
               onChange={e => onUpdateServer(server.serverId, 'safrEventUrl', e.target.value)}
             />
 
@@ -149,6 +132,7 @@ const SolutionServerList: FC<ISolutionRow> = ({
               label='SAFR ID'
               variant='outlined'
               placeholder={`SAFR ID`}
+              required
               onChange={e => onUpdateServer(server.serverId, 'safrId', e.target.value)}
             />
             <TextField
@@ -158,13 +142,16 @@ const SolutionServerList: FC<ISolutionRow> = ({
               variant='outlined'
               placeholder={`SAFR PassWord`}
               type='password'
+              required
               onChange={e => onUpdateServer(server.serverId, 'safrPassword', e.target.value)}
             />
           </SolutionTemplate>
         )
-      case SOLUTION_USE_SERVER_TYPE.FA_GATE:
+
+      case SOLUTION_TYPE_ID.PROAI_SERVER:
         return (
           <SolutionTemplate
+            aiSolutionService={aiSolutionService}
             solutionId={solutionList.aiSolutionId}
             server={server}
             onDelete={onDelete}
@@ -172,6 +159,73 @@ const SolutionServerList: FC<ISolutionRow> = ({
             onUpdateInstance={onUpdateInstance}
             onUpdateServer={onUpdateServer}
             onAddInstance={onAddInstance}
+            useCameraId={true}
+          >
+            <TextField
+              size='small'
+              value={server.serverName}
+              label='ProAI Server 서버명'
+              variant='outlined'
+              placeholder={`ProAI Server 서버명`}
+              required
+              onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
+            />
+
+            <TextField
+              size='small'
+              value={server.serverIp}
+              label='ProAI Server 서버주소'
+              variant='outlined'
+              placeholder={`ProAI Server 서버주소`}
+              required
+              onChange={e => onUpdateServer(server.serverId, 'serverIp', e.target.value)}
+            />
+          </SolutionTemplate>
+        )
+      case SOLUTION_TYPE_ID.FA_SIGNAGE:
+        return (
+          <SolutionTemplate
+            aiSolutionService={aiSolutionService}
+            solutionId={solutionList.aiSolutionId}
+            server={server}
+            onDelete={onDelete}
+            onDeleteInstance={onDeleteInstance}
+            onUpdateInstance={onUpdateInstance}
+            onUpdateServer={onUpdateServer}
+            onAddInstance={onAddInstance}
+            useCameraId={true}
+          >
+            <TextField
+              size='small'
+              value={server.serverName}
+              label='FA Signage 서버명'
+              variant='outlined'
+              placeholder={`FA Signage 서버명`}
+              required
+              onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
+            />
+            <TextField
+              size='small'
+              value={server.serverIp}
+              label='FA Signage 서버주소'
+              variant='outlined'
+              placeholder={`FA Signage 서버주소`}
+              onChange={e => onUpdateServer(server.serverId, 'serverIp', e.target.value)}
+            />
+          </SolutionTemplate>
+        )
+      case SOLUTION_TYPE_ID.FA_GATE:
+        return (
+          <SolutionTemplate
+            aiSolutionService={aiSolutionService}
+            solutionId={solutionList.aiSolutionId}
+            server={server}
+            onDelete={onDelete}
+            onDeleteInstance={onDeleteInstance}
+            onUpdateInstance={onUpdateInstance}
+            onUpdateServer={onUpdateServer}
+            onAddInstance={onAddInstance}
+            useCameraId={true}
           >
             <TextField
               size='small'
@@ -179,6 +233,7 @@ const SolutionServerList: FC<ISolutionRow> = ({
               label='FA Gate 서버명'
               variant='outlined'
               placeholder={`FA Gate 서버명`}
+              required
               onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
             />
 
@@ -192,9 +247,10 @@ const SolutionServerList: FC<ISolutionRow> = ({
             />
           </SolutionTemplate>
         )
-      case SOLUTION_USE_SERVER_TYPE.PROAI_SERVER:
+      case SOLUTION_TYPE_ID.NEX_REAL_AIBOX:
         return (
           <SolutionTemplate
+            aiSolutionService={aiSolutionService}
             solutionId={solutionList.aiSolutionId}
             server={server}
             onDelete={onDelete}
@@ -202,23 +258,46 @@ const SolutionServerList: FC<ISolutionRow> = ({
             onUpdateInstance={onUpdateInstance}
             onUpdateServer={onUpdateServer}
             onAddInstance={onAddInstance}
+            useCameraId={true}
           >
             <TextField
               size='small'
               value={server.serverName}
-              label='ProAI Server 서버명'
+              label='AIBox 명'
               variant='outlined'
-              placeholder={`ProAI Server 서버명`}
+              placeholder={`AIBox 명`}
+              required
               onChange={e => onUpdateServer(server.serverId, 'serverName', e.target.value)}
             />
 
             <TextField
               size='small'
               value={server.serverIp}
-              label='ProAI Server 서버주소'
+              label='AIBox 주소'
               variant='outlined'
-              placeholder={`ProAI Server 서버주소`}
+              placeholder={`AIBox 주소`}
+              required
               onChange={e => onUpdateServer(server.serverId, 'serverIp', e.target.value)}
+            />
+
+            <TextField
+              size='small'
+              value={server.aiBoxId}
+              label='AIBox ID'
+              variant='outlined'
+              placeholder={`AIBox ID`}
+              required
+              onChange={e => onUpdateServer(server.serverId, 'aiBoxId', e.target.value)}
+            />
+            <TextField
+              size='small'
+              value={server.aiBoxPassword}
+              label='AIBox PassWord'
+              variant='outlined'
+              placeholder={`AIBox PassWord`}
+              type='password'
+              required
+              onChange={e => onUpdateServer(server.serverId, 'aiBoxPassword', e.target.value)}
             />
           </SolutionTemplate>
         )
@@ -228,12 +307,14 @@ const SolutionServerList: FC<ISolutionRow> = ({
             {server.instanceList.map(instance => (
               <Box sx={{ mt: 2, mb: 2 }} key={instance.instanceId}>
                 <SolutionRow
+                  aiSolutionService={aiSolutionService}
                   serverId={server.serverId}
                   solutionId={solutionList.aiSolutionId}
                   useCameraId={
-                    solutionList.aiSolutionName === 'ProAIEdge' ||
-                    solutionList.aiSolutionName === 'ProAIServer' ||
-                    solutionList.aiSolutionName === 'VCA'
+                    solutionList.aiSolutionId === SOLUTION_TYPE_ID.PROAI_EDGE ||
+                    solutionList.aiSolutionId === SOLUTION_TYPE_ID.VCA ||
+                    solutionList.aiSolutionId === SOLUTION_TYPE_ID.NEX_REAL_3D ||
+                    solutionList.aiSolutionId === SOLUTION_TYPE_ID.NEX_REAL_AI
                   }
                   key={instance.instanceId}
                   instance={instance}
@@ -255,7 +336,7 @@ const SolutionServerList: FC<ISolutionRow> = ({
 
   return (
     <>
-      {solutionList.aiSolutionName === SOLUTION_USE_SERVER_TYPE.PACKAGE ? (
+      {solutionList.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE ? (
         <TextareaAutosize
           style={{
             width: '100%',
@@ -270,7 +351,7 @@ const SolutionServerList: FC<ISolutionRow> = ({
         />
       ) : (
         <>
-          {isServerAddable(solutionList.aiSolutionName) && solutionList.serverList.length === 0 && (
+          {isServerUsingSolution(solutionList.aiSolutionId) && solutionList.serverList.length === 0 && (
             <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
               <IconButton onClick={() => onAddInstance(0)}>
                 <IconCustom isCommon icon={'add-button'} />

@@ -3,13 +3,14 @@ import { FC, KeyboardEvent, useRef, useState } from 'react'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import { YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { IInstanceList } from 'src/model/client/clientModel'
-import { useAiSolutionService } from 'src/service/client/clientService'
+import { IAiSolutionService, IInstanceList } from 'src/model/client/clientModel'
 
 interface ISolutionRow {
+  aiSolutionService: IAiSolutionService[]
   solutionId: number
   serverId: number
   useCameraId?: boolean
+  useCameraGroup?: boolean
   useInstance?: boolean
   instance: IInstanceList
   onDeleteInstance: (serverId: number, instanceId: number) => void
@@ -17,25 +18,28 @@ interface ISolutionRow {
 }
 
 const SolutionRow: FC<ISolutionRow> = ({
+  aiSolutionService,
   solutionId,
   serverId,
   useCameraId = false,
+  useCameraGroup = false,
   useInstance = false,
   instance,
   onDeleteInstance,
   onUpdateInstance
 }) => {
-  const { data, refetch } = useAiSolutionService(solutionId)
   const [newTag, setNewTag] = useState('')
+
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const serviceOptions = data?.data
-    ?.filter(item => item.dataStatus === YN.Y)
-    .map(item => ({
-      key: item.aiServiceId.toString(),
-      value: item.aiServiceId.toString(),
-      label: item.aiServiceName
-    }))
+  const serviceOptions =
+    aiSolutionService
+      ?.filter((item: IAiSolutionService) => item.dataStatus === YN.Y)
+      .map((item: IAiSolutionService) => ({
+        key: item.aiServiceId.toString(),
+        value: item.aiServiceId.toString(),
+        label: item.aiServiceName
+      })) ?? []
 
   const handleAddTag = () => {
     if (newTag.trim()) {
@@ -78,14 +82,13 @@ const SolutionRow: FC<ISolutionRow> = ({
       <CustomSelectBox
         value={instance.aiServiceId.toString()}
         onChange={e => onUpdateInstance(serverId, instance.instanceId ?? 0, 'aiServiceId', e.target.value)}
-        options={serviceOptions ?? []}
+        options={serviceOptions}
         width='200px'
 
-        // placeholder='분석 서비스 선택'
-        // placeholderColor='#757575'
+        // required
       />
 
-      {useCameraId ? (
+      {useCameraId && (
         <TextField
           size='small'
           value={instance.cameraId}
@@ -93,8 +96,11 @@ const SolutionRow: FC<ISolutionRow> = ({
           label='카메라ID'
           variant='outlined'
           placeholder={`카메라ID`}
+          required
         />
-      ) : (
+      )}
+
+      {useCameraGroup && (
         <TextField
           size='small'
           value={instance.cameraGroupId}
@@ -102,6 +108,7 @@ const SolutionRow: FC<ISolutionRow> = ({
           label='카메라 그룹ID'
           variant='outlined'
           placeholder={`카메라 그룹ID`}
+          required
         />
       )}
 
@@ -112,6 +119,7 @@ const SolutionRow: FC<ISolutionRow> = ({
         label='카메라명'
         variant='outlined'
         placeholder={`카메라명`}
+        required
       />
 
       {useInstance && (
@@ -122,6 +130,7 @@ const SolutionRow: FC<ISolutionRow> = ({
           label='인스턴스명 '
           variant='outlined'
           placeholder={`인스턴스명`}
+          required
         />
       )}
       <TextField
@@ -131,6 +140,7 @@ const SolutionRow: FC<ISolutionRow> = ({
         label='카메라주소 '
         variant='outlined'
         placeholder={`카메라주소`}
+        required
       />
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, minWidth: '200px' }}>
         <TextField

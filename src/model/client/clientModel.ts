@@ -35,13 +35,56 @@ export enum SOLUTION_TYPE {
   PROAI_SERVER = 'ProAI Server'
 }
 
-export enum SOLUTION_USE_SERVER_TYPE {
-  CVEDIA = 'CVEDIA',
-  NEXREALAIBOX = 'NexRealAIBox',
-  SAFR = 'SAFR',
-  FA_GATE = 'FA Gate',
-  PROAI_SERVER = 'ProAI Server',
-  PACKAGE = 'Package'
+export enum SOLUTION_TYPE_ID {
+  CVEDIA = 1,
+  SAFR = 2,
+  PROAI_EDGE = 3,
+  PROAI_SERVER = 4,
+  VCA = 5,
+  FA_SIGNAGE = 6,
+  FA_GATE = 7,
+  NEX_REAL_3D = 8,
+  NEX_REAL_AI = 9,
+  NEX_REAL_AIBOX = 10,
+  PACKAGE = 99
+}
+
+// 서버를 사용하는 솔루션 ID 목록
+export const SERVER_USING_SOLUTIONS = [
+  SOLUTION_TYPE_ID.CVEDIA,
+  SOLUTION_TYPE_ID.SAFR,
+  SOLUTION_TYPE_ID.PROAI_SERVER,
+  SOLUTION_TYPE_ID.FA_SIGNAGE,
+  SOLUTION_TYPE_ID.FA_GATE,
+  SOLUTION_TYPE_ID.NEX_REAL_AIBOX
+]
+
+// 서버를 사용하지 않는 솔루션 ID 목록
+export const NON_SERVER_SOLUTIONS = [
+  SOLUTION_TYPE_ID.PROAI_EDGE,
+  SOLUTION_TYPE_ID.VCA,
+  SOLUTION_TYPE_ID.NEX_REAL_3D,
+  SOLUTION_TYPE_ID.NEX_REAL_AI
+]
+
+// 특수 솔루션 ID 목록
+export const SPECIAL_SOLUTIONS = {
+  PACKAGE: SOLUTION_TYPE_ID.PACKAGE
+}
+
+// 서버 사용 여부 확인 함수
+export const isServerUsingSolution = (solutionId: SOLUTION_TYPE_ID): boolean => {
+  return SERVER_USING_SOLUTIONS.includes(solutionId)
+}
+
+// 서버 사용하지 않는 솔루션 확인 함수
+export const isNonServerSolution = (solutionId: SOLUTION_TYPE_ID): boolean => {
+  return NON_SERVER_SOLUTIONS.includes(solutionId)
+}
+
+// 특수 솔루션 확인 함수
+export const isSpecialSolution = (solutionId: SOLUTION_TYPE_ID, type: keyof typeof SPECIAL_SOLUTIONS): boolean => {
+  return solutionId === SPECIAL_SOLUTIONS[type]
 }
 
 // 검색 타입 enum
@@ -219,6 +262,7 @@ export interface MAiSolutionCompanyList {
 }
 
 export interface ISolutionServerProps {
+  aiSolutionService: IAiSolutionService[]
   solutionId: number
   server: IServerList
   onDelete: (serviceId: number) => void
@@ -226,6 +270,9 @@ export interface ISolutionServerProps {
   onUpdateInstance: (serverId: number, instanceId: number, field: string, value: string) => void
   onUpdateServer: (serverId: number, field: string, value: string) => void
   onAddInstance: (serverId: number) => void
+  useCameraId?: boolean
+  useCameraGroup?: boolean
+  useInstance?: boolean
   children?: React.ReactNode
 }
 

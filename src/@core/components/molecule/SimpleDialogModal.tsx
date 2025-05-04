@@ -7,12 +7,14 @@ export interface IDialogProps {
   title: string
   contents: string
   confirmFn?: () => void
+  isConfirm?: boolean
 }
 
 export const INITIAL_DIALOG_PROPS: IDialogProps = {
   open: false,
   title: '',
-  contents: ''
+  contents: '',
+  isConfirm: false
 }
 
 interface ModalProps {

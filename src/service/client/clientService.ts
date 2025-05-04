@@ -115,6 +115,10 @@ export const useClientReportGenerationStatusUpdate = () => {
   }, {})
 }
 
-export const useAiSolutionService = (solutionId: number) => {
-  return useQuery<MResult<IAiSolutionService[]>>([EPath.AI_SOLUTION_SERVICE + `/${solutionId}`])
+export const useAiSolutionService = () => {
+  return useMutation((params: { solutionId: number }) => {
+    return createGet<IAiSolutionService[]>([EPath.AI_SOLUTION_SERVICE + `/${params.solutionId}`])
+  }, {})
+
+  // return useQuery<MResult<IAiSolutionService[]>>([EPath.AI_SOLUTION_SERVICE + `/${solutionId}`])
 }

@@ -8,11 +8,11 @@ import { useRouter } from 'next/router'
 
 import BorderNameTag from 'src/@core/components/atom/BorderNameTag'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
-import SimpleDialogModal from 'src/@core/components/molecule/SimpleDialogModal'
 import CustomTable from 'src/@core/components/table/CustomTable'
 
 import { YN } from 'src/enum/commonEnum'
 import { useClients } from 'src/hooks/useClients'
+import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MList } from 'src/model/client/clientModel'
 import { useClientDelete, useClientReportGenerationStatusUpdate } from 'src/service/client/clientService'
@@ -25,12 +25,13 @@ interface IClientList {
 const ClientList: FC<IClientList> = ({ data, refetch }) => {
   const router = useRouter()
 
+  const { setSimpleDialogModalProps } = useModal()
+
   const { mutateAsync: deleteClient } = useClientDelete()
   const { mutateAsync: updateReportGenerationStatus } = useClientReportGenerationStatusUpdate()
   const [clientData, setclientData] = useState<MList[]>([])
   const [analysisChannels, setAnalysisChannels] = useState(0)
   const { setSelectClientData } = useClients()
-  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     setclientData(data)
@@ -187,7 +188,12 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
               }}
               onClick={() => {
                 setAnalysisChannels(row.analysisChannels)
-                setIsOpen(true)
+
+                setSimpleDialogModalProps({
+                  open: true,
+                  title: `선택된 컨텐츠는 아래 총 ${row.analysisChannels}곳에 게시되어 있습니다`,
+                  contents: ''
+                })
               }}
             >
               <IconCustom isCommon icon='colons' />
@@ -295,15 +301,6 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
 
   return (
     <>
-      <SimpleDialogModal
-        open={isOpen}
-        onClose={() => {
-          setIsOpen(false)
-        }}
-        title={`선택된 컨텐츠는 아래 총 ${analysisChannels}곳에 게시되어 있습니다`}
-        contents={''}
-      />
-
       <Grid container>
         <Grid item xs={12}>
           <Card>

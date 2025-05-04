@@ -63,6 +63,7 @@ import '../../styles/globals.css'
 import { QueryClientProvider } from 'react-query'
 import GuestGuard from 'src/@core/components/auth/GuestGuard'
 import ContextProviders from 'src/context/ContextProviders'
+import { ModalProvider } from 'src/context/ModalContext'
 import { queryClient } from '../module/reactQuery'
 
 // ** Extend App Props with Emotion
@@ -159,15 +160,17 @@ const App = (props: ExtendedAppProps) => {
               {({ settings }) => {
                 return (
                   <ThemeComponent settings={settings}>
-                    {/* <SoketComponent> */}
-                    <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                      <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard} authGuard={authGuard}>
-                        {getLayout(<Component {...pageProps} />)}
-                      </AclGuard>
-                    </Guard>
-                    <ReactHotToast>
-                      <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
-                    </ReactHotToast>
+                    <ModalProvider>
+                      {/* <SoketComponent> */}
+                      <Guard authGuard={authGuard} guestGuard={guestGuard}>
+                        <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard} authGuard={authGuard}>
+                          {getLayout(<Component {...pageProps} />)}
+                        </AclGuard>
+                      </Guard>
+                      <ReactHotToast>
+                        <Toaster position={settings.toastPosition} toastOptions={{ className: 'react-hot-toast' }} />
+                      </ReactHotToast>
+                    </ModalProvider>
                     {/* </SoketComponent> */}
                   </ThemeComponent>
                 )
