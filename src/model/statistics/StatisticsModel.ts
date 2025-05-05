@@ -227,3 +227,84 @@ export interface IPieChartData {
   name: string
   y: number
 }
+
+export interface ICameraList {
+  cameraList: ICamera[]
+  cameraGroupList: ICameraGroup[]
+}
+
+export interface ICamera {
+  cameraNo: number
+  cameraName: string
+  cameraId: string
+}
+
+export interface ICameraGroup {
+  cameraGroupId: number
+  cameraGroupName: string
+  cameraList: ICamera[]
+}
+
+export interface IStatisticsReq {
+  cameraNos?: number[] | string
+  cameraGroupIds?: number[] | string
+  startDate?: string
+  endDate?: string
+  startTime?: string
+  endTime?: string
+  ageType?: string
+}
+
+export interface ICountBarChart extends IBaseChartResponse {
+  chartDataList: IChartDataList[]
+
+  xtitle: string
+  ytitle: string
+  xaxisDataList: string[]
+  xcategories: string[]
+}
+
+export interface IChartDataList {
+  name: string
+  dataList: number[]
+}
+
+export interface ICountBarPieChart extends IBaseChartResponse {
+  barChart: IBarChart
+  pieChart: IPieChart
+}
+
+export interface IBarChart {
+  chartDataList: IChartDataList[]
+  xcategories: string[]
+  xtitle: string
+  ytitle: string
+}
+
+export interface ICountBarTable extends IBaseChartResponse {
+  totalInCount: number
+  totalOutCount: number
+  dataList: IDataList1[]
+}
+
+export interface IDataList1 {
+  dateName: string
+  totalPlaceName: string
+  totalInCount: number
+  totalOutCount: number
+  dataList: IDataList2[]
+}
+
+export interface IDataList2 {
+  dateName: string
+  totalPlaceName: string
+  totalInCount: number
+  totalOutCount: number
+  dataList: IDataList3[]
+}
+
+export interface IDataList3 {
+  placeName: string
+  inCount: number
+  outCount: number
+}

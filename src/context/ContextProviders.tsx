@@ -11,6 +11,7 @@ import { queryClient } from '../module/reactQuery'
 import { ClientsProvider } from './ClientsContext'
 import { LayoutProvider } from './LayoutContext'
 import { MapProvider } from './MapContext'
+import { StatisticsProvider } from './StatisticsContext'
 
 type ProvidersProps = {
   children: ReactNode
@@ -26,7 +27,9 @@ const ContextProviders = ({ children, emotionCache, settingsProps }: ProvidersPr
           <AuthProvider>
             <MapProvider>
               <ClientsProvider>
-                <SettingsProvider {...settingsProps}>{children}</SettingsProvider>
+                <StatisticsProvider>
+                  <SettingsProvider {...settingsProps}>{children}</SettingsProvider>
+                </StatisticsProvider>
               </ClientsProvider>
             </MapProvider>
           </AuthProvider>

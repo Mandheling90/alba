@@ -3,30 +3,30 @@ import dynamic from 'next/dynamic'
 import { FC } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 
-import { VisitorChartExample } from 'src/@core/components/charts/StackedBarChart'
+import StackedBarChart from 'src/@core/components/charts/StackedBarChart'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
+import { IStatisticsContextReq } from 'src/context/StatisticsContext'
 import IconCustom from 'src/layouts/components/IconCustom'
+import { ICountBarChart } from 'src/model/statistics/StatisticsModel'
 import DashboardMenu from 'src/pages/dashboard/menu/DashboardMenu'
 import ChartDetailSwiper from 'src/pages/dashboard/swiper/ChartDetailSwiper'
 
-// import HeatMapChart from 'src/@core/components/charts/HeatMapChart'
 const HeatMapChart = dynamic(() => import('src/@core/components/charts/HeatMapChart'), {
   ssr: false
 })
 
-const VisitorAttributesTemplate: FC = ({}): React.ReactElement => {
+const VisitorAttributesTemplate: FC<{
+  statisticsReq: IStatisticsContextReq
+  barChartData?: ICountBarChart
+  refetch: (req?: IStatisticsContextReq) => void
+}> = ({ statisticsReq, barChartData, refetch }): React.ReactElement => {
   return (
     <StandardTemplate title={'방문자 특성 통계'}>
       <Grid container spacing={5} alignItems={'flex-end'}>
         <Grid item sm={12} xs={12}>
           <Box sx={{ mb: 3 }}>
-            <DashboardMenu
-              refetch={() => {
-                console.log('')
-              }}
-              useAgeSelect
-            />
+            <DashboardMenu refetch={refetch} useAgeSelect statisticsReq={statisticsReq} />
           </Box>
           <DividerBar />
         </Grid>
@@ -34,14 +34,16 @@ const VisitorAttributesTemplate: FC = ({}): React.ReactElement => {
         <Grid item xs={12}>
           <PipelineTitle
             Icon={<IconCustom isCommon path='dashboard' icon='calendar' />}
-            title={['시간별 방문자수', '2025년 2월 7일 0시 ~ 18시', '총 12 곳']}
+            title={[
+              '시간별 방문자수',
+              `${barChartData?.startYear}년 ${barChartData?.startMonth}월 ${barChartData?.startDay}일 ${barChartData?.startHour}시 ~ ${barChartData?.endYear}년 ${barChartData?.endMonth}월 ${barChartData?.endDay}일 ${barChartData?.endHour}시`,
+              `총 ${barChartData?.totalPlaceCount} 곳`
+            ]}
             marginBottom={-8}
           />
         </Grid>
         <Grid item xs={9.5}>
-          <Card>
-            <VisitorChartExample />
-          </Card>
+          <Card>{barChartData && <StackedBarChart containerId='visitor-chart-example' data={barChartData} />}</Card>
         </Grid>
         <Grid item xs={2.5}>
           <ChartDetailSwiper height={'430px'} />

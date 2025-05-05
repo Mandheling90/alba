@@ -5,6 +5,13 @@ export enum KIOSK_STATUS {
   ERROR = 2
 }
 
+export enum EStatisticsPage {
+  DAILY = 'visitor-report-daily',
+  WEEKLY = 'visitor-report-weekly',
+  HOURLY = 'visitor-report-hourly',
+  MONTHLY = 'visitor-report-monthly'
+}
+
 export type RangeSelectorButtonTypeValue = 'hour' | 'day' | 'month'
 
 type RangeSelectorButtonsOptions = {
@@ -80,7 +87,25 @@ export const EPath = {
 
   STATS_DASHBOARD_COUNT_LINE_CHART: '/dashboard/count/line/chart',
   STATS_DASHBOARD_COUNT_CARD_INFO: '/dashboard/count/card/info',
-  STATS_HEATMAP_DATA: '/stats/heatmap/data',
   STATS_DASHBOARD_COUNT_BAR_CHART: '/dashboard/count/bar/chart',
-  STATS_DASHBOARD_GENDER_AGE_CHART: '/dashboard/gender/age/chart'
+  STATS_DASHBOARD_GENDER_AGE_CHART: '/dashboard/gender/age/chart',
+
+  STATS_SEARCH_CAMERA_LIST: '/statistics/search/{companyNo}/camera/list',
+  STATS_GENDER_AGE_HOURLY_BAR_CHART: '/statistics/gender/age/hourly/bar/chart',
+  STATS_HEATMAP_DATA: '/stats/heatmap/data',
+  STATS_COUNT_HOURLY_BAR_CHART: '/statistics/count/hourly/bar/chart',
+  STATS_COUNT_HOURLY_BAR_PIE_CHART: '/statistics/count/hourly/bar/pie/chart',
+  STATS_COUNT_HOURLY_BAR_TABLE: '/statistics/count/hourly/table',
+
+  STATS_COUNT_DAILY_TABLE: '/statistics/count/daily/table',
+  STATS_COUNT_DAILY_BAR_PIE_CHART: '/statistics/count/daily/bar/pie/chart',
+  STATS_COUNT_DAILY_BAR_CHART: '/statistics/count/daily/bar/chart',
+
+  STATS_COUNT_WEEKLY_TABLE: '/statistics/count/weekday/table',
+  STATS_COUNT_WEEKLY_BAR_CHART: '/statistics/count/weekday/bar/chart',
+  STATS_COUNT_WEEKLY_BAR_PIE_CHART: '/statistics/count/weekday/bar/pie/chart',
+
+  STATS_COUNT_MONTHLY_TABLE: ' /statistics/count/monthly/table',
+  STATS_COUNT_MONTHLY_BAR_CHART: '/statistics/count/monthly/bar/chart',
+  STATS_COUNT_MONTHLY_BAR_PIE_CHART: '/statistics/count/monthly/bar/pie/chart'
 } as const

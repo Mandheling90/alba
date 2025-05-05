@@ -1,5 +1,6 @@
 import Highcharts, { Chart as ChartType } from 'highcharts'
 import { useEffect, useRef } from 'react'
+import { IBarChart } from 'src/model/statistics/StatisticsModel'
 import SwitchCustom from '../atom/SwitchCustom'
 
 interface SeriesData {
@@ -8,11 +9,10 @@ interface SeriesData {
 }
 
 interface HorizontalBarChartLocationProps {
-  xAxisData: string[] // x축에 표시될 시간 데이터
-  seriesData: SeriesData[] // 각 시리즈의 데이터
+  data: IBarChart
 }
 
-const HorizontalBarChartLocation = ({ xAxisData, seriesData }: HorizontalBarChartLocationProps) => {
+const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) => {
   const chartRef = useRef<ChartType | null>(null)
 
   useEffect(() => {
@@ -36,14 +36,14 @@ const HorizontalBarChartLocation = ({ xAxisData, seriesData }: HorizontalBarChar
           useHTML: true
         },
         xAxis: {
-          categories: xAxisData,
+          categories: data.xcategories,
           title: {
-            text: '시간'
+            text: data.xtitle
           }
         },
         yAxis: {
           title: {
-            text: '방문자 수'
+            text: data.ytitle
           },
           allowDecimals: false,
           min: 0
@@ -75,16 +75,16 @@ const HorizontalBarChartLocation = ({ xAxisData, seriesData }: HorizontalBarChar
           }
         },
         colors: ['#FF5733', '#33FF57', '#3357FF', '#F333FF', '#33FFF3', '#F3FF33', '#FF33A8'],
-        series: seriesData.map(data => ({
+        series: data.chartDataList.map(data => ({
           type: 'spline' as const,
           name: data.name,
-          data: data.data,
+          data: data.dataList,
           lineWidth: 2,
           visible: true
         }))
       })
     }
-  }, [xAxisData, seriesData])
+  }, [data])
 
   const handleSwitchChange = (selected: boolean) => {
     if (chartRef.current) {

@@ -19,9 +19,9 @@ const LiveDataLineChart = dynamic(() => import('src/@core/components/charts/Live
 const VisitorAttributes: FC = ({}): React.ReactElement => {
   const [hoveredPoint, setHoveredPoint] = useState<string>('')
 
-  const { data: lineChart, isLoading: lineChartLoading } = useCountLineChart()
-  const { data: genderAgeChart, isLoading: genderAgeChartLoading } = useGenderAgeChart()
-  const { data: barChart, isLoading: barChartLoading } = useCountBarChart()
+  const { data: lineChart } = useCountLineChart()
+  const { data: genderAgeChart } = useGenderAgeChart()
+  const { data: barChart } = useCountBarChart()
 
   return (
     <StandardTemplate title={'방문자 특성 통계'}>
@@ -60,7 +60,7 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
           <Card>{genderAgeChart?.data && <PyramidChart data={genderAgeChart?.data} />}</Card>
         </Grid>
         <Grid item xs={3}>
-          <Card>{genderAgeChart?.data && <PieChart data={genderAgeChart?.data} />}</Card>
+          <Card>{genderAgeChart?.data && <PieChart data={genderAgeChart?.data.pieChart} />}</Card>
         </Grid>
 
         <Grid item xs={12}>

@@ -18,8 +18,6 @@ interface IVisitantList {
 }
 
 const VisitantList: FC<IVisitantList> = ({ data, xcategories, selected = '', refetch }) => {
-  console.log(selected)
-
   const [visitantData, setVisitantData] = useState<IBarDataList[]>(data)
 
   useEffect(() => {

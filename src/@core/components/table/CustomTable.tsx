@@ -94,7 +94,14 @@ const CustomTable: FC<
           isRowSelectable={() => !isCheckboxDisabled}
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
-          getRowId={row => row[id ?? 'id']}
+          getRowId={row => {
+            const rowId = row[id ?? 'id']
+            if (!rowId) {
+              return row._index ?? row.index ?? Math.random().toString(36).substr(2, 9)
+            }
+
+            return rowId
+          }}
           getRowClassName={(params): string => {
             const isSelectedByClick = selectedRow === params.id
             const isHighlighted = highlightCriteria && params.row[highlightCriteria.field] === highlightCriteria.value

@@ -1,13 +1,13 @@
 import Highcharts from 'highcharts'
 import { useEffect } from 'react'
+import { ICountBarChart } from 'src/model/statistics/StatisticsModel'
 
 interface StackedBarChartProps {
   containerId: string
-  maleData: number[]
-  femaleData: number[]
+  data: ICountBarChart
 }
 
-const StackedBarChart = ({ containerId, maleData, femaleData }: StackedBarChartProps) => {
+const StackedBarChart = ({ containerId, data }: StackedBarChartProps) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       Highcharts.chart({
@@ -20,15 +20,15 @@ const StackedBarChart = ({ containerId, maleData, femaleData }: StackedBarChartP
           align: 'left'
         },
         xAxis: {
-          categories: Array.from({ length: 24 }, (_, i) => `${i}시`),
+          categories: data.xaxisDataList,
           title: {
-            text: '시간'
+            text: data.xtitle
           }
         },
         yAxis: {
           min: 0,
           title: {
-            text: '방문자 수'
+            text: data.ytitle
           },
           stackLabels: {
             enabled: true
@@ -59,37 +59,21 @@ const StackedBarChart = ({ containerId, maleData, femaleData }: StackedBarChartP
         },
         series: [
           {
-            name: '남성',
+            name: data.chartDataList[0].name,
             type: 'column',
-            data: maleData
+            data: data.chartDataList[0].dataList
           },
           {
-            name: '여성',
+            name: data.chartDataList[1].name,
             type: 'column',
-            data: femaleData
+            data: data.chartDataList[1].dataList
           }
         ]
       })
     }
-  }, [containerId, maleData, femaleData])
+  }, [containerId, data])
 
   return <div id={containerId} />
 }
 
 export default StackedBarChart
-
-// 사용 예시
-export const VisitorChartExample = () => {
-  const exampleMaleData = [
-    0, 0, 0, 0, 0, 0, 20, 45, 92, 119, 705, 816, 936, 1333, 1306, 1180, 1008, 269, 46, 3, 2, 1, 0, 0
-  ]
-  const exampleFemaleData = [
-    0, 0, 0, 0, 0, 0, 22, 44, 221, 209, 1199, 1306, 1491, 2118, 1959, 1801, 1561, 381, 11, 9, 7, 6, 5, 4
-  ]
-
-  return (
-    <div style={{ width: '100%', height: '400px' }}>
-      <StackedBarChart containerId='visitor-chart-example' maleData={exampleMaleData} femaleData={exampleFemaleData} />
-    </div>
-  )
-}

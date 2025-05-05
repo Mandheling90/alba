@@ -1,16 +1,16 @@
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import { memo } from 'react'
-import { IDashboardAgeChart } from 'src/model/statistics/StatisticsModel'
+import { IPieChart } from 'src/model/statistics/StatisticsModel'
 import { areEqual } from 'src/utils/CommonUtil'
 
-const PieChart = memo(({ data }: { data: IDashboardAgeChart }) => {
+const PieChart = memo(({ data }: { data: IPieChart }) => {
   const options = {
     chart: {
       type: 'pie'
     },
     title: {
-      text: data.pieChart.name
+      text: data.name
     },
     tooltip: {
       valueSuffix: '명'
@@ -47,9 +47,9 @@ const PieChart = memo(({ data }: { data: IDashboardAgeChart }) => {
     },
     series: [
       {
-        name: '방문자수',
+        name: data.name,
         colorByPoint: true,
-        data: data.pieChart.data
+        data: data.data
       }
     ]
   }

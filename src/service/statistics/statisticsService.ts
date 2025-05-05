@@ -3,11 +3,15 @@ import { EPath } from 'src/enum/statisticsEnum'
 
 import MResult from 'src/model/commonModel'
 import {
+  ICameraList,
   ICardInfo,
   ICountBarChart,
+  ICountBarPieChart,
+  ICountBarTable,
   IDashboardAgeChart,
   IHeatMapResponse,
   ILineChartResponse,
+  IStatisticsReq,
   MBarChart,
   MChartNavReq,
   MChartReq,
@@ -21,6 +25,40 @@ import {
   MTable
 } from 'src/model/statistics/StatisticsModel'
 import { createDelete, createGet, createPatch, createPost } from 'src/module/reactQuery'
+
+/**
+ * 통계 데이터 파싱을 위한 공통 유틸리티 함수
+ * @param params 통계 요청 파라미터
+ * @returns 변환된 파라미터
+ */
+export const transformStatisticsParams = (params: IStatisticsReq): IStatisticsReq => {
+  const transformedParams: IStatisticsReq = {
+    ...params,
+    startDate: params.startDate?.replace(/-/g, ''),
+    endDate: params.endDate?.replace(/-/g, '')
+  }
+
+  // cameraNos가 존재하고 빈 배열이 아닌 경우에만 변환
+  if (params.cameraNos && (Array.isArray(params.cameraNos) ? params.cameraNos.length > 0 : params.cameraNos)) {
+    transformedParams.cameraNos = Array.isArray(params.cameraNos) ? params.cameraNos.join(',') : params.cameraNos
+  } else {
+    delete transformedParams.cameraNos
+  }
+
+  // cameraGroupIds가 존재하고 빈 배열이 아닌 경우에만 변환
+  if (
+    params.cameraGroupIds &&
+    (Array.isArray(params.cameraGroupIds) ? params.cameraGroupIds.length > 0 : params.cameraGroupIds)
+  ) {
+    transformedParams.cameraGroupIds = Array.isArray(params.cameraGroupIds)
+      ? params.cameraGroupIds.join(',')
+      : params.cameraGroupIds
+  } else {
+    delete transformedParams.cameraGroupIds
+  }
+
+  return transformedParams
+}
 
 export const useStatsGroupList = (params: MGroupReq) => {
   return useQuery<MResult<MGroupList[]>>([EPath.STATS_GROUP, params], {})
@@ -127,4 +165,122 @@ export const useGenderAgeChart = () => {
 
 export const useHeatMapData = () => {
   return useQuery<MResult<IHeatMapResponse>>([EPath.STATS_HEATMAP_DATA], {})
+}
+
+export const useSearchCameraList = (params: { companyNo: number }) => {
+  const url = EPath.STATS_SEARCH_CAMERA_LIST.replace('{companyNo}', params.companyNo.toString())
+
+  return useQuery<MResult<ICameraList>>([url], {})
+}
+
+export const useSearchCameraListMutation = () => {
+  return useMutation((params: { companyNo: number }) => {
+    const url = EPath.STATS_SEARCH_CAMERA_LIST.replace('{companyNo}', params.companyNo.toString())
+
+    return createGet<ICameraList>([url])
+  }, {})
+}
+
+export const useGenderAgeHourlyBarChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarChart>([EPath.STATS_GENDER_AGE_HOURLY_BAR_CHART, transformedParams])
+  }, {})
+}
+
+export const useCountHourlyBarChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarChart>([EPath.STATS_COUNT_HOURLY_BAR_CHART, transformedParams])
+  }, {})
+}
+
+export const useCountHourlyBarPieChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarPieChart>([EPath.STATS_COUNT_HOURLY_BAR_PIE_CHART, transformedParams])
+  }, {})
+}
+
+export const useCountHourlyBarTable = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarTable>([EPath.STATS_COUNT_HOURLY_BAR_TABLE, transformedParams])
+  }, {})
+}
+
+export const useCountDailyTable = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarTable>([EPath.STATS_COUNT_DAILY_TABLE, transformedParams])
+  }, {})
+}
+
+export const useCountDailyBarPieChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarPieChart>([EPath.STATS_COUNT_DAILY_BAR_PIE_CHART, transformedParams])
+  }, {})
+}
+
+export const useCountDailyBarChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarChart>([EPath.STATS_COUNT_DAILY_BAR_CHART, transformedParams])
+  }, {})
+}
+
+export const useCountWeeklyTable = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarTable>([EPath.STATS_COUNT_WEEKLY_TABLE, transformedParams])
+  }, {})
+}
+
+export const useCountWeeklyBarChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarChart>([EPath.STATS_COUNT_WEEKLY_BAR_CHART, transformedParams])
+  }, {})
+}
+
+export const useCountWeeklyBarPieChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarPieChart>([EPath.STATS_COUNT_WEEKLY_BAR_PIE_CHART, transformedParams])
+  }, {})
+}
+
+export const useCountMonthlyTable = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarTable>([EPath.STATS_COUNT_MONTHLY_TABLE, transformedParams])
+  }, {})
+}
+
+export const useCountMonthlyBarChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarChart>([EPath.STATS_COUNT_MONTHLY_BAR_CHART, transformedParams])
+  }, {})
+}
+
+export const useCountMonthlyBarPieChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarPieChart>([EPath.STATS_COUNT_MONTHLY_BAR_PIE_CHART, transformedParams])
+  }, {})
 }
