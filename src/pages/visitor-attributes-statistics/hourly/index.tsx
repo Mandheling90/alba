@@ -40,11 +40,9 @@ const VisitorAttributesStatisticsHourly: FC = ({}): React.ReactElement => {
       setBarChartData(res.data)
 
       const resPie = await genderAgePyramidPieChart(statistics)
-      console.log(resPie.data)
       setPyramidPieChartData(resPie.data)
 
       const resTable = await genderAgeHeatmapChart(statistics)
-      console.log(resTable.data)
       setHeatmapChartData(resTable.data)
 
       if (req) {

@@ -84,7 +84,7 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
     },
     colorAxis: {
       min: 0,
-      max: 150,
+      max: Math.max(...data.dataList.map(item => item.value)),
       stops: [
         [0, '#B9EEFF'],
         [0.4, '#7FACFF'],

@@ -6,18 +6,18 @@ import { EStatisticsPage } from 'src/enum/statisticsEnum'
 import { useStatistics } from 'src/hooks/useStatistics'
 import { ICountBarChart, IHeatMapChart, IPyramidPieChart } from 'src/model/statistics/StatisticsModel'
 import {
-  useGenderAgeDailyBarChart,
-  useGenderAgeDailyHeatmapChart,
-  useGenderAgeDailyPyramidPieChart
+  useGenderAgeWeekDayBarChart,
+  useGenderAgeWeekDayHeatmapChart,
+  useGenderAgeWeekDayPyramidPieChart
 } from 'src/service/statistics/statisticsService'
 
-const VisitorAttributesStatisticsDaily: FC = ({}): React.ReactElement => {
+const VisitorAttributesStatisticsWeekDay: FC = ({}): React.ReactElement => {
   const { statisticsReq, statisticsDefultSet, statisticsReqUpdate } = useStatistics()
-  const { mutateAsync: genderAgeBarChart } = useGenderAgeDailyBarChart()
-  const { mutateAsync: genderAgePyramidPieChart } = useGenderAgeDailyPyramidPieChart()
-  const { mutateAsync: genderAgeHeatmapChart } = useGenderAgeDailyHeatmapChart()
+  const { mutateAsync: genderAgeBarChart } = useGenderAgeWeekDayBarChart()
+  const { mutateAsync: genderAgePyramidPieChart } = useGenderAgeWeekDayPyramidPieChart()
+  const { mutateAsync: genderAgeHeatmapChart } = useGenderAgeWeekDayHeatmapChart()
 
-  const page = EStatisticsPage.DAILY_ATTRIBUTES
+  const page = EStatisticsPage.WEEK_DAY_ATTRIBUTES
   const [barChartData, setBarChartData] = useState<ICountBarChart>()
   const [pyramidPieChartData, setPyramidPieChartData] = useState<IPyramidPieChart>()
   const [heatmapChartData, setHeatmapChartData] = useState<IHeatMapChart>()
@@ -25,7 +25,7 @@ const VisitorAttributesStatisticsDaily: FC = ({}): React.ReactElement => {
   const fetchData = useCallback(
     async (req?: IStatisticsContextReq) => {
       const today = new Date()
-      const threeDaysAgo = subDays(today, 6)
+      const threeDaysAgo = subDays(today, 60)
       const formattedToday = format(today, 'yyyy-MM-dd')
       const formattedThreeDaysAgo = format(threeDaysAgo, 'yyyy-MM-dd')
 
@@ -34,7 +34,7 @@ const VisitorAttributesStatisticsDaily: FC = ({}): React.ReactElement => {
         (await statisticsDefultSet({
           startDate: formattedThreeDaysAgo,
           endDate: formattedToday,
-          tableType: ETableType.DAILY,
+          tableType: ETableType.WEEKDAY,
           page: page
         }))
 
@@ -75,4 +75,4 @@ const VisitorAttributesStatisticsDaily: FC = ({}): React.ReactElement => {
   )
 }
 
-export default VisitorAttributesStatisticsDaily
+export default VisitorAttributesStatisticsWeekDay

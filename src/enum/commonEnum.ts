@@ -115,7 +115,7 @@ export const EComponentList = [
       },
       {
         title: '요일별',
-        path: '/visitor-attributes-statistics/day-of-week'
+        path: '/visitor-attributes-statistics/week-day'
       },
       {
         title: '주별',
