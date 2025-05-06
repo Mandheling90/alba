@@ -216,7 +216,8 @@ const GroupList: FC<IGroupList> = ({
           <Box display='flex' alignItems='center' gap={3} ml={5}>
             <CustomAddCancelButton
               onSaveClick={() => {
-                handleGroupSaveClick(group.groupId)
+                // handleGroupSaveClick(group.groupId)
+                handleGroupSaveClick(undefined)
                 handleClose()
               }}
               onCancelClick={() => {
