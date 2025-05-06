@@ -196,7 +196,7 @@ export interface ILineChartResponse extends IBaseChartResponse {
   lineDataList: ILineDataList[]
 }
 
-export interface ICountBarChart extends IBaseChartResponse {
+export interface IDashboardCountBarChart extends IBaseChartResponse {
   barDataList: IBarDataList[]
   exitCountList: IBarDataList[]
   xcategories: string[]
@@ -207,7 +207,7 @@ export interface IBarDataList {
   dataList: number[]
 }
 
-export interface IDashboardAgeChart extends IBaseChartResponse {
+export interface IPyramidPieChart extends IBaseChartResponse {
   categories: string[]
   pyramidChart: IPyramidChart[]
   pieChart: IPieChart
@@ -257,7 +257,6 @@ export interface IStatisticsReq {
 
 export interface ICountBarChart extends IBaseChartResponse {
   chartDataList: IChartDataList[]
-
   xtitle: string
   ytitle: string
   xaxisDataList: string[]
@@ -281,7 +280,7 @@ export interface IBarChart {
   ytitle: string
 }
 
-export interface ICountBarTable extends IBaseChartResponse {
+export interface ITableData extends IBaseChartResponse {
   totalInCount: number
   totalOutCount: number
   dataList: IDataList1[]
@@ -307,4 +306,20 @@ export interface IDataList3 {
   placeName: string
   inCount: number
   outCount: number
+}
+
+export interface IHeatMapChart extends IBaseChartResponse {
+  title: string
+  xaxisCategories: string[]
+  yaxisCategories: string[]
+  dataList: IHeatMapDataList[]
+}
+
+export interface IHeatMapDataList {
+  x: number
+  y: number
+  visitors: number
+  male: number
+  female: number
+  value: number
 }

@@ -173,6 +173,7 @@ export interface ISolutionList {
   aiSolutionId: number
   aiSolutionName: string
   companySolutionId: number
+  isNew?: boolean
   serverList: IServerList[]
 }
 
@@ -187,6 +188,7 @@ export interface IServerList {
   safrId: string | null
   safrPassword: string | null
   instanceList: IInstanceList[]
+  isNew?: boolean
 }
 
 export interface IInstanceList {
@@ -200,6 +202,7 @@ export interface IInstanceList {
   cameraName: string
   cameraIp: string
   areaNameList: IAreaNameList[]
+  isNew?: boolean
 }
 
 interface IAreaNameList {

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { IHeatMapChart } from 'src/model/statistics/StatisticsModel'
 
 // Highcharts 모듈을 동적으로 로드
 let Highcharts: any
@@ -16,7 +17,7 @@ if (typeof window !== 'undefined') {
   })
 }
 
-const HeatMapChart: React.FC = () => {
+const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
   const [HighchartsReact, setHighchartsReact] = useState<any>(null)
 
   useEffect(() => {
@@ -68,35 +69,10 @@ const HeatMapChart: React.FC = () => {
       }
     },
     xAxis: {
-      categories: [
-        '0시',
-        '1시',
-        '2시',
-        '3시',
-        '4시',
-        '5시',
-        '6시',
-        '7시',
-        '8시',
-        '9시',
-        '10시',
-        '11시',
-        '12시',
-        '13시',
-        '14시',
-        '15시',
-        '16시',
-        '17시',
-        '18시',
-        '19시',
-        '20시',
-        '21시',
-        '22시',
-        '23시'
-      ]
+      categories: data.xaxisCategories
     },
     yAxis: {
-      categories: ['60대이상', '50대', '40대', '30대', '20대', '10대', '10대이하'],
+      categories: data.yaxisCategories,
       title: undefined,
       reversed: true
     },
@@ -136,29 +112,9 @@ const HeatMapChart: React.FC = () => {
     series: [
       {
         type: 'heatmap',
-        name: '방문자수 및 성별 비율',
+        name: data.title,
         borderWidth: 1,
-        data: (function () {
-          const data = []
-          for (let i = 0; i < 24; i++) {
-            for (let j = 0; j < 7; j++) {
-              const visitors = Math.floor(Math.random() * 151)
-              const male = Math.floor(Math.random() * 101)
-              const female = 100 - male
-              data.push({
-                x: i,
-                y: j,
-                visitors: visitors,
-                male: male,
-                female: female,
-                value: visitors
-              })
-            }
-          }
-          console.log(data)
-
-          return data
-        })(),
+        data: data.dataList,
         dataLabels: {
           enabled: true,
           color: '#000000',

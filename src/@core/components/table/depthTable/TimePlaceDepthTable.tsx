@@ -1,13 +1,13 @@
 import { Box } from '@mui/material'
 import { GridColDef } from '@mui/x-data-grid'
 import { FC, useContext } from 'react'
-import { ICountBarTable } from 'src/model/statistics/StatisticsModel'
+import { ITableData } from 'src/model/statistics/StatisticsModel'
 import DividerBar from '../../atom/DividerBar'
 import CustomTable from '../CustomTable'
-import { TableContext } from './DepthTable'
+import { TableContext } from './VisitorDepthTable'
 
 interface TimePlaceDepthTableProps {
-  data: ICountBarTable
+  data: ITableData
   columns: GridColDef[]
   columns2: GridColDef[]
 }

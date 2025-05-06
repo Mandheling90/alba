@@ -15,6 +15,8 @@ const ClientListGrid: FC = (): React.ReactElement => {
   const { layoutDisplay, setCompanyId, setCompanyName, setCompanyNo, companyId, companyName, companyNo } = useLayout()
   const { user } = useAuth()
 
+  console.log(user?.userInfo)
+
   useEffect(() => {
     if (companyId && companyName && companyNo) {
       setCompanyNo(companyNo)

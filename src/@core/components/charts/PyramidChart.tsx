@@ -2,11 +2,11 @@ import { Box } from '@mui/material'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import { memo, useState } from 'react'
-import { IDashboardAgeChart } from 'src/model/statistics/StatisticsModel'
+import { IPyramidPieChart } from 'src/model/statistics/StatisticsModel'
 import { areEqual } from 'src/utils/CommonUtil'
 import RoundedBubble from '../atom/RoundedBubble'
 
-const PyramidChart = memo(({ data }: { data: IDashboardAgeChart }) => {
+const PyramidChart = memo(({ data }: { data: IPyramidPieChart }) => {
   const [hoveredPoint, setHoveredPoint] = useState('')
 
   // 전체 합계 계산

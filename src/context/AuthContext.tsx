@@ -58,6 +58,8 @@ const AuthProvider = ({ children }: Props) => {
           const userInfo = await userDetailInfoMutate()
 
           if (result.data && userInfo.data) {
+            console.log(userInfo.data)
+
             setUser({
               ...user,
               componentListInfo: result.data,

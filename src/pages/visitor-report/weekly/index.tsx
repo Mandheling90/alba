@@ -4,7 +4,7 @@ import VisitorTemplate from 'src/@core/components/charts/template/VisitorTemplat
 import { ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
 import { EStatisticsPage } from 'src/enum/statisticsEnum'
 import { useStatistics } from 'src/hooks/useStatistics'
-import { ICountBarChart, ICountBarPieChart, ICountBarTable } from 'src/model/statistics/StatisticsModel'
+import { ICountBarChart, ICountBarPieChart, ITableData } from 'src/model/statistics/StatisticsModel'
 import {
   useCountWeeklyBarChart,
   useCountWeeklyBarPieChart,
@@ -20,7 +20,7 @@ const VisitorReportWeekly: FC = (): React.ReactElement => {
   const page = EStatisticsPage.WEEKLY
   const [barChartData, setBarChartData] = useState<ICountBarChart>()
   const [barPieChartData, setBarPieChartData] = useState<ICountBarPieChart>()
-  const [barTableData, setBarTableData] = useState<ICountBarTable>()
+  const [barTableData, setBarTableData] = useState<ITableData>()
 
   const fetchData = useCallback(
     async (req?: IStatisticsContextReq) => {
@@ -70,7 +70,7 @@ const VisitorReportWeekly: FC = (): React.ReactElement => {
       refetch={fetchData}
       barChartData={barChartData}
       barPieChartData={barPieChartData}
-      barTableData={barTableData}
+      tableData={barTableData}
     />
   )
 }

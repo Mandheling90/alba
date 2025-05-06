@@ -8,10 +8,10 @@ import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
 import { ETableDisplayType, ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
 import { useStatistics } from 'src/hooks/useStatistics'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { ICountBarChart, ICountBarPieChart, ICountBarTable } from 'src/model/statistics/StatisticsModel'
+import { ICountBarChart, ICountBarPieChart, ITableData } from 'src/model/statistics/StatisticsModel'
 import DashboardMenu from 'src/pages/dashboard/menu/DashboardMenu'
 import { exportToExcel } from 'src/utils/CommonUtil'
-import DepthTable from '../../table/depthTable/DepthTable'
+import VisitorDepthTable from '../../table/depthTable/VisitorDepthTable'
 import PieChart from '../PieChart'
 
 const VisitorTemplate: FC<{
@@ -19,8 +19,8 @@ const VisitorTemplate: FC<{
   refetch: (req?: IStatisticsContextReq) => void
   barChartData?: ICountBarChart
   barPieChartData?: ICountBarPieChart
-  barTableData?: ICountBarTable
-}> = ({ statisticsReq, refetch, barChartData, barPieChartData, barTableData }): React.ReactElement => {
+  tableData?: ITableData
+}> = ({ statisticsReq, refetch, barChartData, barPieChartData, tableData }): React.ReactElement => {
   const [tableDisplayType, setTableDisplayType] = useState<ETableDisplayType>(
     statisticsReq.tableDisplayType ?? ETableDisplayType.TIME_PLACE
   )
@@ -78,7 +78,7 @@ const VisitorTemplate: FC<{
           </>
         )}
 
-        {barTableData && (
+        {tableData && (
           <>
             <Grid item xs={12}>
               <Box display='flex' alignItems='center' width='100%'>
@@ -87,8 +87,8 @@ const VisitorTemplate: FC<{
                     Icon={<IconCustom isCommon path='dashboard' icon='calendar' />}
                     title={[
                       '장소별 방문자수',
-                      `${barTableData?.startYear}년 ${barTableData?.startMonth}월 ${barTableData?.startDay}일 ${barTableData?.startHour}시 ~ ${barTableData?.endYear}년 ${barTableData?.endMonth}월 ${barTableData?.endDay}일 ${barTableData?.endHour}시`,
-                      `총 ${barTableData?.totalPlaceCount} 곳`
+                      `${tableData?.startYear}년 ${tableData?.startMonth}월 ${tableData?.startDay}일 ${tableData?.startHour}시 ~ ${tableData?.endYear}년 ${tableData?.endMonth}월 ${tableData?.endDay}일 ${tableData?.endHour}시`,
+                      `총 ${tableData?.totalPlaceCount} 곳`
                     ]}
                   />
                 </Box>
@@ -106,7 +106,7 @@ const VisitorTemplate: FC<{
                         padding: '2px'
                       }}
                     >
-                      {barTableData?.totalInCount}
+                      {tableData?.totalInCount}
                     </Typography>
                     명 | 전체 퇴장객 수
                     <Typography
@@ -119,7 +119,7 @@ const VisitorTemplate: FC<{
                         padding: '2px'
                       }}
                     >
-                      {barTableData?.totalOutCount}
+                      {tableData?.totalOutCount}
                     </Typography>
                     명
                   </Typography>
@@ -164,9 +164,9 @@ const VisitorTemplate: FC<{
                       variant='outlined'
                       color='primary'
                       onClick={() => {
-                        if (barTableData) {
-                          const fileName = `방문자수_통계_${barTableData.startYear}${barTableData.startMonth}${barTableData.startDay}`
-                          exportToExcel(barTableData.dataList, fileName)
+                        if (tableData) {
+                          const fileName = `방문자수_통계_${tableData.startYear}${tableData.startMonth}${tableData.startDay}`
+                          exportToExcel(tableData.dataList, fileName)
                         }
                       }}
                     >
@@ -179,10 +179,10 @@ const VisitorTemplate: FC<{
 
             <Grid item xs={12}>
               <Card>
-                <DepthTable
+                <VisitorDepthTable
                   tableDisplayType={tableDisplayType}
                   tableType={statisticsReq.tableType ?? ETableType.HOURLY}
-                  data={barTableData}
+                  data={tableData}
                 />
               </Card>
             </Grid>

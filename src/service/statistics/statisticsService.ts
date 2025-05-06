@@ -7,11 +7,13 @@ import {
   ICardInfo,
   ICountBarChart,
   ICountBarPieChart,
-  ICountBarTable,
-  IDashboardAgeChart,
+  IDashboardCountBarChart,
+  IHeatMapChart,
   IHeatMapResponse,
   ILineChartResponse,
+  IPyramidPieChart,
   IStatisticsReq,
+  ITableData,
   MBarChart,
   MChartNavReq,
   MChartReq,
@@ -156,11 +158,11 @@ export const useCountCardInfo = () => {
 }
 
 export const useCountBarChart = () => {
-  return useQuery<MResult<ICountBarChart>>([EPath.STATS_DASHBOARD_COUNT_BAR_CHART], {})
+  return useQuery<MResult<IDashboardCountBarChart>>([EPath.STATS_DASHBOARD_COUNT_BAR_CHART], {})
 }
 
 export const useGenderAgeChart = () => {
-  return useQuery<MResult<IDashboardAgeChart>>([EPath.STATS_DASHBOARD_GENDER_AGE_CHART], {})
+  return useQuery<MResult<IPyramidPieChart>>([EPath.STATS_DASHBOARD_GENDER_AGE_CHART], {})
 }
 
 export const useHeatMapData = () => {
@@ -189,6 +191,22 @@ export const useGenderAgeHourlyBarChart = () => {
   }, {})
 }
 
+export const useGenderAgeHourlyPyramidPieChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<IPyramidPieChart>([EPath.STATS_GENDER_AGE_HOURLY_PYRAMID_PIE_CHART, transformedParams])
+  }, {})
+}
+
+export const useGenderAgeHourlyHeatmapChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<IHeatMapChart>([EPath.STATS_GENDER_AGE_HOURLY_HEATMAP_CHART, transformedParams])
+  }, {})
+}
+
 export const useCountHourlyBarChart = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
@@ -209,7 +227,7 @@ export const useCountHourlyBarTable = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
 
-    return createGet<ICountBarTable>([EPath.STATS_COUNT_HOURLY_BAR_TABLE, transformedParams])
+    return createGet<ITableData>([EPath.STATS_COUNT_HOURLY_BAR_TABLE, transformedParams])
   }, {})
 }
 
@@ -217,7 +235,7 @@ export const useCountDailyTable = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
 
-    return createGet<ICountBarTable>([EPath.STATS_COUNT_DAILY_TABLE, transformedParams])
+    return createGet<ITableData>([EPath.STATS_COUNT_DAILY_TABLE, transformedParams])
   }, {})
 }
 
@@ -241,7 +259,7 @@ export const useCountWeeklyTable = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
 
-    return createGet<ICountBarTable>([EPath.STATS_COUNT_WEEKLY_TABLE, transformedParams])
+    return createGet<ITableData>([EPath.STATS_COUNT_WEEKLY_TABLE, transformedParams])
   }, {})
 }
 
@@ -265,7 +283,7 @@ export const useCountMonthlyTable = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
 
-    return createGet<ICountBarTable>([EPath.STATS_COUNT_MONTHLY_TABLE, transformedParams])
+    return createGet<ITableData>([EPath.STATS_COUNT_MONTHLY_TABLE, transformedParams])
   }, {})
 }
 
@@ -289,7 +307,7 @@ export const useCountWeekDayTable = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
 
-    return createGet<ICountBarTable>([EPath.STATS_COUNT_WEEK_DAY_TABLE, transformedParams])
+    return createGet<ITableData>([EPath.STATS_COUNT_WEEK_DAY_TABLE, transformedParams])
   }, {})
 }
 

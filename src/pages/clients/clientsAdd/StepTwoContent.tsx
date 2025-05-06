@@ -316,6 +316,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
               ...card,
               aiSolutionId: aiSolutionId,
               aiSolutionName: aiSolutionName,
+              isNew: true,
               serverList: []
             }
           } else {
@@ -323,6 +324,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
               ...card,
               aiSolutionId: aiSolutionId,
               aiSolutionName: aiSolutionName,
+              isNew: true,
               serverList: [
                 {
                   serverId: 0,
@@ -365,7 +367,8 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                 safrEventUrl: null,
                 safrId: null,
                 safrPassword: null,
-                instanceList: []
+                instanceList: [],
+                isNew: true
               }
             ]
           }
@@ -403,7 +406,8 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                       cameraId: '',
                       cameraName: '',
                       cameraIp: '',
-                      areaNameList: []
+                      areaNameList: [],
+                      isNew: true
                     }
                   ]
                 }
@@ -702,9 +706,11 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                           await saveAiSolutionCompanyPackage(packageSolutionData)
                         }
                       } else {
-                        const isNewCard = !originalAiData.current?.solutionList?.some(
-                          solution => solution.companySolutionId === card.companySolutionId
-                        )
+                        const isNewCard = card.isNew
+
+                        // const isNewCard = !originalAiData.current?.solutionList?.some(
+                        //   solution => solution.companySolutionId === card.companySolutionId
+                        // )
 
                         const solutionData = {
                           ...card,
@@ -721,23 +727,43 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                             contents: '솔루션 등록이 완료되었습니다.'
                           })
                         } else {
-                          await updateAiSolutionCompany(solutionData)
+                          // cameraNo가 0인 경우 instanceId도 0으로 설정
+                          const updatedSolutionData = {
+                            ...solutionData,
+                            serverList: solutionData.serverList.map(server => ({
+                              ...server,
+                              serverId: server.isNew ? 0 : server.serverId,
+                              instanceList: server.instanceList.map(instance => ({
+                                ...instance,
+                                instanceId: instance.cameraNo === 0 ? 0 : instance.instanceId
+                              }))
+                            }))
+                          }
+
+                          await updateAiSolutionCompany(updatedSolutionData)
+
+                          setSimpleDialogModalProps({
+                            open: true,
+                            title: '솔루션 수정 완료',
+                            contents: '솔루션 수정이 완료되었습니다.'
+                          })
                         }
                       }
 
                       refetch()
                     } catch (error) {
+                      setSimpleDialogModalProps({
+                        open: true,
+                        title: '솔루션 등록 오류',
+                        contents: '솔루션 등록 중 오류가 발생했습니다.'
+                      })
                       console.error('솔루션 등록 오류:', error)
                     }
                   }}
                   sx={{ mr: 4 }}
                   disabled={!isValidSolution(index)}
                 >
-                  {!originalAiData.current?.solutionList?.some(
-                    solution => solution.companySolutionId === card.companySolutionId
-                  )
-                    ? '등록'
-                    : '수정'}
+                  {card.isNew ? '등록' : '수정'}
                 </Button>
 
                 <Button

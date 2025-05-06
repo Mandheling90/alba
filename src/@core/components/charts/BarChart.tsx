@@ -1,12 +1,12 @@
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import { memo, useEffect, useMemo } from 'react'
-import { ICountBarChart } from 'src/model/statistics/StatisticsModel'
+import { IDashboardCountBarChart } from 'src/model/statistics/StatisticsModel'
 import { areEqual } from 'src/utils/CommonUtil'
 
 interface IBarChart {
   onHover?: (category: string) => void // 선택된 값
-  data?: ICountBarChart
+  data?: IDashboardCountBarChart
 }
 
 const BarChart = memo(({ onHover, data }: IBarChart) => {

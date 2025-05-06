@@ -10,7 +10,13 @@ export enum EStatisticsPage {
   DAILY = 'visitor-report-daily',
   WEEK_DAY = 'visitor-report-week-day',
   WEEKLY = 'visitor-report-weekly',
-  MONTHLY = 'visitor-report-monthly'
+  MONTHLY = 'visitor-report-monthly',
+
+  HOURLY_ATTRIBUTES = 'visitor-attributes-statistics-hourly',
+  DAILY_ATTRIBUTES = 'visitor-attributes-statistics-daily',
+  WEEK_DAY_ATTRIBUTES = 'visitor-attributes-statistics-week-day',
+  WEEKLY_ATTRIBUTES = 'visitor-attributes-statistics-weekly',
+  MONTHLY_ATTRIBUTES = 'visitor-attributes-statistics-monthly'
 }
 
 export type RangeSelectorButtonTypeValue = 'hour' | 'day' | 'month'
@@ -92,7 +98,11 @@ export const EPath = {
   STATS_DASHBOARD_GENDER_AGE_CHART: '/dashboard/gender/age/chart',
 
   STATS_SEARCH_CAMERA_LIST: '/statistics/search/{companyNo}/camera/list',
+
   STATS_GENDER_AGE_HOURLY_BAR_CHART: '/statistics/gender/age/hourly/bar/chart',
+  STATS_GENDER_AGE_HOURLY_PYRAMID_PIE_CHART: '/statistics/gender/age/hourly/pyramid/pie/chart',
+  STATS_GENDER_AGE_HOURLY_HEATMAP_CHART: '/statistics/gender/age/hourly/heatmap/chart',
+
   STATS_HEATMAP_DATA: '/stats/heatmap/data',
   STATS_COUNT_HOURLY_BAR_CHART: '/statistics/count/hourly/bar/chart',
   STATS_COUNT_HOURLY_BAR_PIE_CHART: '/statistics/count/hourly/bar/pie/chart',
@@ -110,7 +120,7 @@ export const EPath = {
   STATS_COUNT_WEEK_DAY_BAR_CHART: '/statistics/count/weekday/bar/chart',
   STATS_COUNT_WEEK_DAY_BAR_PIE_CHART: '/statistics/count/weekday/bar/pie/chart',
 
-  STATS_COUNT_MONTHLY_TABLE: ' /statistics/count/monthly/table',
+  STATS_COUNT_MONTHLY_TABLE: '/statistics/count/monthly/table',
   STATS_COUNT_MONTHLY_BAR_CHART: '/statistics/count/monthly/bar/chart',
   STATS_COUNT_MONTHLY_BAR_PIE_CHART: '/statistics/count/monthly/bar/pie/chart'
 } as const

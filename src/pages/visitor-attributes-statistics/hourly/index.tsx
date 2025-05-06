@@ -1,16 +1,26 @@
 import { format } from 'date-fns'
 import { FC, useCallback, useEffect, useState } from 'react'
 import VisitorAttributesTemplate from 'src/@core/components/charts/template/VisitorAttributesTemplate'
-import { IStatisticsContextReq } from 'src/context/StatisticsContext'
+import { ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
+import { EStatisticsPage } from 'src/enum/statisticsEnum'
 import { useStatistics } from 'src/hooks/useStatistics'
-import { ICountBarChart } from 'src/model/statistics/StatisticsModel'
-import { useGenderAgeHourlyBarChart } from 'src/service/statistics/statisticsService'
+import { ICountBarChart, IHeatMapChart, IPyramidPieChart } from 'src/model/statistics/StatisticsModel'
+import {
+  useGenderAgeHourlyBarChart,
+  useGenderAgeHourlyHeatmapChart,
+  useGenderAgeHourlyPyramidPieChart
+} from 'src/service/statistics/statisticsService'
 
 const VisitorAttributesStatisticsHourly: FC = ({}): React.ReactElement => {
   const { statisticsReq, statisticsDefultSet, statisticsReqUpdate } = useStatistics()
+  const { mutateAsync: genderAgeBarChart } = useGenderAgeHourlyBarChart()
+  const { mutateAsync: genderAgePyramidPieChart } = useGenderAgeHourlyPyramidPieChart()
+  const { mutateAsync: genderAgeHeatmapChart } = useGenderAgeHourlyHeatmapChart()
+
+  const page = EStatisticsPage.HOURLY_ATTRIBUTES
   const [barChartData, setBarChartData] = useState<ICountBarChart>()
-  const { mutateAsync: genderAgeHourlyBarChart } = useGenderAgeHourlyBarChart()
-  const page = 'visitor-attributes-statistics-hourly'
+  const [pyramidPieChartData, setPyramidPieChartData] = useState<IPyramidPieChart>()
+  const [heatmapChartData, setHeatmapChartData] = useState<IHeatMapChart>()
 
   const fetchData = useCallback(
     async (req?: IStatisticsContextReq) => {
@@ -22,11 +32,20 @@ const VisitorAttributesStatisticsHourly: FC = ({}): React.ReactElement => {
         (await statisticsDefultSet({
           startDate: formattedToday,
           endDate: formattedToday,
+          tableType: ETableType.HOURLY,
           page: page
         }))
 
-      const res = await genderAgeHourlyBarChart(statistics)
+      const res = await genderAgeBarChart(statistics)
       setBarChartData(res.data)
+
+      const resPie = await genderAgePyramidPieChart(statistics)
+      console.log(resPie.data)
+      setPyramidPieChartData(resPie.data)
+
+      const resTable = await genderAgeHeatmapChart(statistics)
+      console.log(resTable.data)
+      setHeatmapChartData(resTable.data)
 
       if (req) {
         statisticsReqUpdate({
@@ -34,7 +53,7 @@ const VisitorAttributesStatisticsHourly: FC = ({}): React.ReactElement => {
         })
       }
     },
-    [statisticsDefultSet, genderAgeHourlyBarChart, statisticsReqUpdate]
+    [genderAgeBarChart, genderAgePyramidPieChart, genderAgeHeatmapChart, page, statisticsDefultSet, statisticsReqUpdate]
   )
 
   useEffect(() => {
@@ -45,7 +64,15 @@ const VisitorAttributesStatisticsHourly: FC = ({}): React.ReactElement => {
 
   if (!currentStatistics) return <></>
 
-  return <VisitorAttributesTemplate statisticsReq={currentStatistics} barChartData={barChartData} refetch={fetchData} />
+  return (
+    <VisitorAttributesTemplate
+      statisticsReq={currentStatistics}
+      barChartData={barChartData}
+      pyramidPieChartData={pyramidPieChartData}
+      heatmapChartData={heatmapChartData}
+      refetch={fetchData}
+    />
+  )
 }
 
 export default VisitorAttributesStatisticsHourly

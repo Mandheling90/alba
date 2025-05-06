@@ -3,7 +3,7 @@ import { FC, createContext, useState } from 'react'
 
 import { ETableDisplayType, ETableType } from 'src/context/StatisticsContext'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { ICountBarTable } from 'src/model/statistics/StatisticsModel'
+import { ITableData } from 'src/model/statistics/StatisticsModel'
 import { generateColumns } from '../columns/columnGenerator'
 import CustomTable from '../CustomTable'
 import TimeDepthTable from './TimeDepthTable'
@@ -22,10 +22,10 @@ export const TableContext = createContext<TableContextType>({
 interface DepthTableProps {
   tableType: ETableType
   tableDisplayType: ETableDisplayType
-  data: ICountBarTable
+  data: ITableData
 }
 
-const DepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) => {
+const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) => {
   const [expandedRows, setExpandedRows] = useState<string[]>([])
 
   const toggleRow = (key: string) => {
@@ -136,7 +136,10 @@ const DepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) 
               type: 'string'
             },
             { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
+            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' },
+            { field: 'morningWeather', headerName: '날씨', type: 'string' },
+            { field: 'morningTemperature', headerName: '기온', type: 'string' },
+            { field: 'dust', headerName: '미세먼지', type: 'string' }
           ],
           customRenderers: {
             dateName: (params: any) => {
@@ -245,9 +248,12 @@ const DepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) 
         return generateColumns({
           columns: [
             { field: 'temp', headerName: '', type: 'string' },
-            { field: 'placeName', headerName: '장소 이름', type: 'string' },
+            { field: 'placeName', headerName: '', type: 'string' },
             { field: 'inCount', headerName: '입장객', type: 'number' },
-            { field: 'outCount', headerName: '퇴장객', type: 'number' }
+            { field: 'outCount', headerName: '퇴장객', type: 'number' },
+            { field: 'morningWeather', headerName: '날씨', type: 'string' },
+            { field: 'morningTemperature', headerName: '기온', type: 'string' },
+            { field: 'dust', headerName: '미세먼지', type: 'string' }
           ],
           customRenderers: {
             temp: (params: any) => {
@@ -285,4 +291,4 @@ const DepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) 
   )
 }
 
-export default DepthTable
+export default VisitorAttributesDepthTable
