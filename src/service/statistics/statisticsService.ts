@@ -284,3 +284,27 @@ export const useCountMonthlyBarPieChart = () => {
     return createGet<ICountBarPieChart>([EPath.STATS_COUNT_MONTHLY_BAR_PIE_CHART, transformedParams])
   }, {})
 }
+
+export const useCountWeekDayTable = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarTable>([EPath.STATS_COUNT_WEEK_DAY_TABLE, transformedParams])
+  }, {})
+}
+
+export const useCountWeekDayBarChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarChart>([EPath.STATS_COUNT_WEEK_DAY_BAR_CHART, transformedParams])
+  }, {})
+}
+
+export const useCountWeekDayBarPieChart = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<ICountBarPieChart>([EPath.STATS_COUNT_WEEK_DAY_BAR_PIE_CHART, transformedParams])
+  }, {})
+}

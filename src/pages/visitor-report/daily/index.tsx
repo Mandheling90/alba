@@ -1,7 +1,7 @@
 import { format, subDays } from 'date-fns'
 import { FC, useCallback, useEffect, useState } from 'react'
 import VisitorTemplate from 'src/@core/components/charts/template/VisitorTemplate'
-import { IStatisticsContextReq } from 'src/context/StatisticsContext'
+import { ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
 import { EStatisticsPage } from 'src/enum/statisticsEnum'
 import { useStatistics } from 'src/hooks/useStatistics'
 import { ICountBarChart, ICountBarPieChart, ICountBarTable } from 'src/model/statistics/StatisticsModel'
@@ -34,7 +34,7 @@ const VisitorReportDaily: FC = (): React.ReactElement => {
         (await statisticsDefultSet({
           startDate: formattedThreeDaysAgo,
           endDate: formattedToday,
-          tableType: 'daily',
+          tableType: ETableType.DAILY,
           page: page
         }))
 

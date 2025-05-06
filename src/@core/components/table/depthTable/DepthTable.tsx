@@ -1,9 +1,11 @@
 import { Box, IconButton } from '@mui/material'
 import { FC, createContext, useState } from 'react'
 
+import { ETableDisplayType, ETableType } from 'src/context/StatisticsContext'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { ICountBarTable } from 'src/model/statistics/StatisticsModel'
 import { generateColumns } from '../columns/columnGenerator'
+import CustomTable from '../CustomTable'
 import TimeDepthTable from './TimeDepthTable'
 import TimePlaceDepthTable from './TimePlaceDepthTable'
 
@@ -18,8 +20,8 @@ export const TableContext = createContext<TableContextType>({
 })
 
 interface DepthTableProps {
-  tableType: 'hourly' | 'daily' | 'weekly' | 'monthly'
-  tableDisplayType: 'time' | 'timePlace'
+  tableType: ETableType
+  tableDisplayType: ETableDisplayType
   data: ICountBarTable
 }
 
@@ -46,7 +48,7 @@ const DepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) 
 
   const getColumns = () => {
     switch (tableType) {
-      case 'hourly':
+      case ETableType.HOURLY:
         return generateColumns({
           columns: [
             {
@@ -120,7 +122,7 @@ const DepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) 
             }
           }
         })
-      case 'daily':
+      case ETableType.DAILY:
         return generateColumns({
           columns: [
             {
@@ -194,8 +196,23 @@ const DepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) 
             }
           }
         })
-      case 'weekly':
-      case 'monthly':
+      case ETableType.WEEKDAY:
+        return generateColumns({
+          columns: [
+            { field: 'weekDayName', headerName: '요일', type: 'string' },
+            { field: 'totalInCount', headerName: '입장객', type: 'number' },
+            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
+          ]
+        })
+      case ETableType.WEEKLY:
+        return generateColumns({
+          columns: [
+            { field: 'weekName', headerName: '주별기간', type: 'string' },
+            { field: 'totalInCount', headerName: '입장객', type: 'number' },
+            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
+          ]
+        })
+      case ETableType.MONTHLY:
         return generateColumns({
           columns: [
             { field: 'dateName', headerName: '날짜', type: 'string' },
@@ -210,7 +227,7 @@ const DepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) 
 
   const getColumns2 = () => {
     switch (tableType) {
-      case 'hourly':
+      case ETableType.HOURLY:
         return generateColumns({
           columns: [
             { field: 'temp', headerName: '', type: 'string' },
@@ -224,7 +241,7 @@ const DepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) 
             }
           }
         })
-      case 'daily':
+      case ETableType.DAILY:
         return generateColumns({
           columns: [
             { field: 'temp', headerName: '', type: 'string' },
@@ -238,8 +255,8 @@ const DepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) 
             }
           }
         })
-      case 'weekly':
-      case 'monthly':
+      case ETableType.WEEKLY:
+      case ETableType.MONTHLY:
         return generateColumns({
           columns: [
             { field: 'dateName', headerName: '날짜', type: 'string' },
@@ -257,7 +274,9 @@ const DepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) 
 
   return (
     <TableContext.Provider value={{ expandedRows, toggleRow }}>
-      {tableDisplayType === 'timePlace' ? (
+      {tableType === ETableType.WEEKDAY || tableType === ETableType.WEEKLY ? (
+        <CustomTable columns={columns} rows={data.dataList} isAllView />
+      ) : tableDisplayType === ETableDisplayType.TIME_PLACE ? (
         <TimePlaceDepthTable data={data} columns={columns} columns2={columns2} />
       ) : (
         <TimeDepthTable data={data} columns={columns} />

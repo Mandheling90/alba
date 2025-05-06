@@ -5,7 +5,7 @@ import BarStackedChart from 'src/@core/components/charts/BarStackedChart'
 import HorizontalBarChartLocation from 'src/@core/components/charts/HorizontalBarChartLocation'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
-import { IStatisticsContextReq } from 'src/context/StatisticsContext'
+import { ETableDisplayType, ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
 import { useStatistics } from 'src/hooks/useStatistics'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { ICountBarChart, ICountBarPieChart, ICountBarTable } from 'src/model/statistics/StatisticsModel'
@@ -21,8 +21,8 @@ const VisitorTemplate: FC<{
   barPieChartData?: ICountBarPieChart
   barTableData?: ICountBarTable
 }> = ({ statisticsReq, refetch, barChartData, barPieChartData, barTableData }): React.ReactElement => {
-  const [tableDisplayType, setTableDisplayType] = useState<'time' | 'timePlace'>(
-    statisticsReq.tableDisplayType ?? 'timePlace'
+  const [tableDisplayType, setTableDisplayType] = useState<ETableDisplayType>(
+    statisticsReq.tableDisplayType ?? ETableDisplayType.TIME_PLACE
   )
   const { statisticsReqUpdate } = useStatistics()
 
@@ -127,32 +127,38 @@ const VisitorTemplate: FC<{
 
                 <Box flex={1} display='flex' justifyContent='flex-end'>
                   <Box display='flex' gap={2}>
-                    <Button
-                      variant={tableDisplayType === 'time' ? 'contained' : 'outlined'}
-                      color='primary'
-                      onClick={() => {
-                        setTableDisplayType('time')
-                        statisticsReqUpdate({
-                          ...statisticsReq,
-                          tableDisplayType: 'time'
-                        })
-                      }}
-                    >
-                      시간대별
-                    </Button>
-                    <Button
-                      variant={tableDisplayType === 'timePlace' ? 'contained' : 'outlined'}
-                      color='primary'
-                      onClick={() => {
-                        setTableDisplayType('timePlace')
-                        statisticsReqUpdate({
-                          ...statisticsReq,
-                          tableDisplayType: 'timePlace'
-                        })
-                      }}
-                    >
-                      시간대 및 장소별
-                    </Button>
+                    {statisticsReq.tableType !== ETableType.WEEKDAY &&
+                      statisticsReq.tableType !== ETableType.WEEKLY && (
+                        <>
+                          <Button
+                            variant={tableDisplayType === ETableDisplayType.TIME ? 'contained' : 'outlined'}
+                            color='primary'
+                            onClick={() => {
+                              setTableDisplayType(ETableDisplayType.TIME)
+                              statisticsReqUpdate({
+                                ...statisticsReq,
+                                tableDisplayType: ETableDisplayType.TIME
+                              })
+                            }}
+                          >
+                            시간대별
+                          </Button>
+                          <Button
+                            variant={tableDisplayType === 'timePlace' ? 'contained' : 'outlined'}
+                            color='primary'
+                            onClick={() => {
+                              setTableDisplayType(ETableDisplayType.TIME_PLACE)
+                              statisticsReqUpdate({
+                                ...statisticsReq,
+                                tableDisplayType: ETableDisplayType.TIME_PLACE
+                              })
+                            }}
+                          >
+                            시간대 및 장소별
+                          </Button>
+                        </>
+                      )}
+
                     <Button
                       startIcon={<IconCustom isCommon icon='download2' />}
                       variant='outlined'
@@ -175,7 +181,7 @@ const VisitorTemplate: FC<{
               <Card>
                 <DepthTable
                   tableDisplayType={tableDisplayType}
-                  tableType={statisticsReq.tableType ?? 'hourly'}
+                  tableType={statisticsReq.tableType ?? ETableType.HOURLY}
                   data={barTableData}
                 />
               </Card>

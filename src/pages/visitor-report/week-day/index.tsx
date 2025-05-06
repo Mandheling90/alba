@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { format, subDays } from 'date-fns'
 import { FC, useCallback, useEffect, useState } from 'react'
 import VisitorTemplate from 'src/@core/components/charts/template/VisitorTemplate'
 import { ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
@@ -6,18 +6,18 @@ import { EStatisticsPage } from 'src/enum/statisticsEnum'
 import { useStatistics } from 'src/hooks/useStatistics'
 import { ICountBarChart, ICountBarPieChart, ICountBarTable } from 'src/model/statistics/StatisticsModel'
 import {
-  useCountHourlyBarChart,
-  useCountHourlyBarPieChart,
-  useCountHourlyBarTable
+  useCountWeekDayBarChart,
+  useCountWeekDayBarPieChart,
+  useCountWeekDayTable
 } from 'src/service/statistics/statisticsService'
 
-const VisitorReportHourly: FC = (): React.ReactElement => {
+const VisitorReportWeekDay: FC = (): React.ReactElement => {
   const { statisticsReq, statisticsDefultSet, statisticsReqUpdate } = useStatistics()
-  const { mutateAsync: countBarChart, isLoading: countBarChartLoading } = useCountHourlyBarChart()
-  const { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading } = useCountHourlyBarPieChart()
-  const { mutateAsync: countBarTable, isLoading: countBarTableLoading } = useCountHourlyBarTable()
+  const { mutateAsync: countBarChart, isLoading: countBarChartLoading } = useCountWeekDayBarChart()
+  const { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading } = useCountWeekDayBarPieChart()
+  const { mutateAsync: countTable, isLoading: countTableLoading } = useCountWeekDayTable()
 
-  const page = EStatisticsPage.HOURLY
+  const page = EStatisticsPage.WEEK_DAY
   const [barChartData, setBarChartData] = useState<ICountBarChart>()
   const [barPieChartData, setBarPieChartData] = useState<ICountBarPieChart>()
   const [barTableData, setBarTableData] = useState<ICountBarTable>()
@@ -25,14 +25,16 @@ const VisitorReportHourly: FC = (): React.ReactElement => {
   const fetchData = useCallback(
     async (req?: IStatisticsContextReq) => {
       const today = new Date()
+      const threeDaysAgo = subDays(today, 6)
       const formattedToday = format(today, 'yyyy-MM-dd')
+      const formattedThreeDaysAgo = format(threeDaysAgo, 'yyyy-MM-dd')
 
       const statistics =
         req ||
         (await statisticsDefultSet({
-          startDate: formattedToday,
+          startDate: formattedThreeDaysAgo,
           endDate: formattedToday,
-          tableType: ETableType.HOURLY,
+          tableType: ETableType.WEEKDAY,
           page: page
         }))
 
@@ -42,7 +44,7 @@ const VisitorReportHourly: FC = (): React.ReactElement => {
       const resPie = await countBarPieChart(statistics)
       setBarPieChartData(resPie.data)
 
-      const resTable = await countBarTable(statistics)
+      const resTable = await countTable(statistics)
       setBarTableData(resTable.data)
 
       if (req) {
@@ -51,7 +53,7 @@ const VisitorReportHourly: FC = (): React.ReactElement => {
         })
       }
     },
-    [countBarChart, countBarPieChart, countBarTable, page, statisticsDefultSet, statisticsReqUpdate]
+    [countBarChart, countBarPieChart, countTable, page, statisticsDefultSet, statisticsReqUpdate]
   )
 
   useEffect(() => {
@@ -60,7 +62,7 @@ const VisitorReportHourly: FC = (): React.ReactElement => {
 
   const currentStatistics = statisticsReq.find(item => item.page === page)
 
-  if (!currentStatistics || countBarChartLoading || countBarPieChartLoading || countBarTableLoading) return <></>
+  if (!currentStatistics || countBarChartLoading || countBarPieChartLoading || countTableLoading) return <></>
 
   return (
     <VisitorTemplate
@@ -73,4 +75,4 @@ const VisitorReportHourly: FC = (): React.ReactElement => {
   )
 }
 
-export default VisitorReportHourly
+export default VisitorReportWeekDay

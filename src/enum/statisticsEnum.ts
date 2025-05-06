@@ -6,9 +6,10 @@ export enum KIOSK_STATUS {
 }
 
 export enum EStatisticsPage {
-  DAILY = 'visitor-report-daily',
-  WEEKLY = 'visitor-report-weekly',
   HOURLY = 'visitor-report-hourly',
+  DAILY = 'visitor-report-daily',
+  WEEK_DAY = 'visitor-report-week-day',
+  WEEKLY = 'visitor-report-weekly',
   MONTHLY = 'visitor-report-monthly'
 }
 
@@ -101,9 +102,13 @@ export const EPath = {
   STATS_COUNT_DAILY_BAR_PIE_CHART: '/statistics/count/daily/bar/pie/chart',
   STATS_COUNT_DAILY_BAR_CHART: '/statistics/count/daily/bar/chart',
 
-  STATS_COUNT_WEEKLY_TABLE: '/statistics/count/weekday/table',
-  STATS_COUNT_WEEKLY_BAR_CHART: '/statistics/count/weekday/bar/chart',
-  STATS_COUNT_WEEKLY_BAR_PIE_CHART: '/statistics/count/weekday/bar/pie/chart',
+  STATS_COUNT_WEEKLY_TABLE: '/statistics/count/week/table',
+  STATS_COUNT_WEEKLY_BAR_CHART: '/statistics/count/week/bar/chart',
+  STATS_COUNT_WEEKLY_BAR_PIE_CHART: '/statistics/count/week/bar/pie/chart',
+
+  STATS_COUNT_WEEK_DAY_TABLE: '/statistics/count/weekday/table',
+  STATS_COUNT_WEEK_DAY_BAR_CHART: '/statistics/count/weekday/bar/chart',
+  STATS_COUNT_WEEK_DAY_BAR_PIE_CHART: '/statistics/count/weekday/bar/pie/chart',
 
   STATS_COUNT_MONTHLY_TABLE: ' /statistics/count/monthly/table',
   STATS_COUNT_MONTHLY_BAR_CHART: '/statistics/count/monthly/bar/chart',

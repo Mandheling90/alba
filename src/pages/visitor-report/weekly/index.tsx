@@ -1,7 +1,7 @@
 import { format, subDays } from 'date-fns'
 import { FC, useCallback, useEffect, useState } from 'react'
 import VisitorTemplate from 'src/@core/components/charts/template/VisitorTemplate'
-import { IStatisticsContextReq } from 'src/context/StatisticsContext'
+import { ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
 import { EStatisticsPage } from 'src/enum/statisticsEnum'
 import { useStatistics } from 'src/hooks/useStatistics'
 import { ICountBarChart, ICountBarPieChart, ICountBarTable } from 'src/model/statistics/StatisticsModel'
@@ -25,7 +25,7 @@ const VisitorReportWeekly: FC = (): React.ReactElement => {
   const fetchData = useCallback(
     async (req?: IStatisticsContextReq) => {
       const today = new Date()
-      const threeDaysAgo = subDays(today, 6)
+      const threeDaysAgo = subDays(today, 29)
       const formattedToday = format(today, 'yyyy-MM-dd')
       const formattedThreeDaysAgo = format(threeDaysAgo, 'yyyy-MM-dd')
 
@@ -34,7 +34,7 @@ const VisitorReportWeekly: FC = (): React.ReactElement => {
         (await statisticsDefultSet({
           startDate: formattedThreeDaysAgo,
           endDate: formattedToday,
-          tableType: 'weekly',
+          tableType: ETableType.WEEKLY,
           page: page
         }))
 

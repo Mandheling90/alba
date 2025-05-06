@@ -3,10 +3,23 @@ import { useAuth } from 'src/hooks/useAuth'
 import { IStatisticsReq } from 'src/model/statistics/StatisticsModel'
 import { useSearchCameraListMutation } from 'src/service/statistics/statisticsService'
 
+export enum ETableType {
+  HOURLY = 'hourly',
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  WEEKDAY = 'weekday',
+  MONTHLY = 'monthly'
+}
+
+export enum ETableDisplayType {
+  TIME = 'time',
+  TIME_PLACE = 'timePlace'
+}
+
 export interface IStatisticsContextReq extends IStatisticsReq {
   page: string
-  tableType?: 'hourly' | 'daily' | 'weekly' | 'monthly'
-  tableDisplayType?: 'time' | 'timePlace'
+  tableType?: ETableType
+  tableDisplayType?: ETableDisplayType
 }
 
 export type StatisticsValuesType = {

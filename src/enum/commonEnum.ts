@@ -89,6 +89,10 @@ export const EComponentList = [
       },
       {
         title: '요일별',
+        path: '/visitor-report/week-day'
+      },
+      {
+        title: '주별',
         path: '/visitor-report/weekly'
       },
       {
@@ -111,6 +115,10 @@ export const EComponentList = [
       },
       {
         title: '요일별',
+        path: '/visitor-attributes-statistics/day-of-week'
+      },
+      {
+        title: '주별',
         path: '/visitor-attributes-statistics/weekly'
       },
       {
