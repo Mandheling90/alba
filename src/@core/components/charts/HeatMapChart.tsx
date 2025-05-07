@@ -112,8 +112,8 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
         return `<b>시간대: ${this.series.xAxis.categories[this.x]}</b><br>
                 <b>연령: ${this.series.yAxis.categories[this.y]}</b><br>
                 방문자수: ${this.visitors || 0}<br>
-                남성: ${formatPercentage(this.male || 0)}%<br>
-                여성: ${formatPercentage(this.female || 0)}%`
+                남성: ${this.male}명(${formatPercentage(this.male || 0)})%<br>
+                여성: ${this.female}명(${formatPercentage(this.female || 0)})%`
       }
     },
     series: [
