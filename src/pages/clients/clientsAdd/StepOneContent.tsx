@@ -258,7 +258,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
             sx={{ mr: 4 }}
             disabled={!checkRequiredFields()}
           >
-            등록
+            {(clientData?.companyNo ?? 0) > 0 ? '수정' : '등록'}
           </Button>
 
           <Button

@@ -113,7 +113,7 @@ const Index: FC = ({}) => {
 
   const steps = [
     {
-      title: '고객사 정보등록',
+      title: companyNo ? '고객사 정보수정' : '고객사 정보등록',
       content: (
         <StepOneContent
           clientData={clientData}
