@@ -13,9 +13,11 @@ import {
 
 const VisitorAttributesStatisticsWeekDay: FC = ({}): React.ReactElement => {
   const { statisticsReq, statisticsDefultSet, statisticsReqUpdate } = useStatistics()
-  const { mutateAsync: genderAgeBarChart } = useGenderAgeWeekDayBarChart()
-  const { mutateAsync: genderAgePyramidPieChart } = useGenderAgeWeekDayPyramidPieChart()
-  const { mutateAsync: genderAgeHeatmapChart } = useGenderAgeWeekDayHeatmapChart()
+  const { mutateAsync: genderAgeBarChart, isLoading: genderAgeBarChartLoading } = useGenderAgeWeekDayBarChart()
+  const { mutateAsync: genderAgePyramidPieChart, isLoading: genderAgePyramidPieChartLoading } =
+    useGenderAgeWeekDayPyramidPieChart()
+  const { mutateAsync: genderAgeHeatmapChart, isLoading: genderAgeHeatmapChartLoading } =
+    useGenderAgeWeekDayHeatmapChart()
 
   const page = EStatisticsPage.WEEK_DAY_ATTRIBUTES
   const [barChartData, setBarChartData] = useState<ICountBarChart>()
@@ -62,7 +64,14 @@ const VisitorAttributesStatisticsWeekDay: FC = ({}): React.ReactElement => {
 
   const currentStatistics = statisticsReq.find(item => item.page === page)
 
-  if (!currentStatistics) return <></>
+  if (
+    !currentStatistics ||
+    genderAgeBarChartLoading ||
+    genderAgePyramidPieChartLoading ||
+    genderAgeHeatmapChartLoading
+  ) {
+    return <></>
+  }
 
   return (
     <VisitorAttributesTemplate

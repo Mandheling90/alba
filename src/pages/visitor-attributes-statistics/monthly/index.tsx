@@ -13,9 +13,11 @@ import {
 
 const VisitorAttributesStatisticsMonthly: FC = ({}): React.ReactElement => {
   const { statisticsReq, statisticsDefultSet, statisticsReqUpdate } = useStatistics()
-  const { mutateAsync: genderAgeBarChart } = useGenderAgeMonthlyBarChart()
-  const { mutateAsync: genderAgePyramidPieChart } = useGenderAgeMonthlyPyramidPieChart()
-  const { mutateAsync: genderAgeHeatmapChart } = useGenderAgeMonthlyHeatmapChart()
+  const { mutateAsync: genderAgeBarChart, isLoading: genderAgeBarChartLoading } = useGenderAgeMonthlyBarChart()
+  const { mutateAsync: genderAgePyramidPieChart, isLoading: genderAgePyramidPieChartLoading } =
+    useGenderAgeMonthlyPyramidPieChart()
+  const { mutateAsync: genderAgeHeatmapChart, isLoading: genderAgeHeatmapChartLoading } =
+    useGenderAgeMonthlyHeatmapChart()
 
   const page = EStatisticsPage.MONTHLY_ATTRIBUTES
   const [barChartData, setBarChartData] = useState<ICountBarChart>()
@@ -62,7 +64,14 @@ const VisitorAttributesStatisticsMonthly: FC = ({}): React.ReactElement => {
 
   const currentStatistics = statisticsReq.find(item => item.page === page)
 
-  if (!currentStatistics) return <></>
+  if (
+    !currentStatistics ||
+    genderAgeBarChartLoading ||
+    genderAgePyramidPieChartLoading ||
+    genderAgeHeatmapChartLoading
+  ) {
+    return <></>
+  }
 
   return (
     <VisitorAttributesTemplate

@@ -111,6 +111,10 @@ export const EPath = {
   STATS_GENDER_AGE_WEEK_DAY_PYRAMID_PIE_CHART: '/statistics/gender/age/weekday/pyramid/pie/chart',
   STATS_GENDER_AGE_WEEK_DAY_HEATMAP_CHART: '/statistics/gender/age/weekday/heatmap/chart',
 
+  STATS_GENDER_AGE_WEEKLY_BAR_CHART: '/statistics/gender/age/week/bar/chart',
+  STATS_GENDER_AGE_WEEKLY_PYRAMID_PIE_CHART: '/statistics/gender/age/week/pyramid/pie/chart',
+  STATS_GENDER_AGE_WEEKLY_HEATMAP_CHART: '/statistics/gender/age/week/heatmap/chart',
+
   STATS_GENDER_AGE_MONTHLY_BAR_CHART: '/statistics/gender/age/monthly/bar/chart',
   STATS_GENDER_AGE_MONTHLY_PYRAMID_PIE_CHART: '/statistics/gender/age/monthly/pyramid/pie/chart',
   STATS_GENDER_AGE_MONTHLY_HEATMAP_CHART: '/statistics/gender/age/monthly/heatmap/chart',
