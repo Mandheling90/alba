@@ -102,11 +102,18 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
     },
     tooltip: {
       formatter: function (this: any) {
+        const formatPercentage = (value: number) => {
+          if (!this.visitors || this.visitors === 0) return 0
+          const percentage = (value / this.visitors) * 100
+
+          return Number.isInteger(percentage) ? percentage : percentage.toFixed(1)
+        }
+
         return `<b>시간대: ${this.series.xAxis.categories[this.x]}</b><br>
                 <b>연령: ${this.series.yAxis.categories[this.y]}</b><br>
-                방문자수: ${this.visitors}<br>
-                남성: ${this.male}%<br>
-                여성: ${this.female}%`
+                방문자수: ${this.visitors || 0}<br>
+                남성: ${formatPercentage(this.male || 0)}%<br>
+                여성: ${formatPercentage(this.female || 0)}%`
       }
     },
     series: [
