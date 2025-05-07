@@ -7,6 +7,7 @@ import DuplicateText from 'src/@core/components/molecule/DuplicateText'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { EResultCode, YN } from 'src/enum/commonEnum'
 import { useLayout } from 'src/hooks/useLayout'
+import { useModal } from 'src/hooks/useModal'
 import { useUser } from 'src/hooks/useUser'
 import { MAuthMenu, MRole } from 'src/model/userSetting/userSettingModel'
 import { useAddAuth, useAuthDuplicate, useModAuth, useUserGroup } from 'src/service/setting/userSetting'
@@ -17,6 +18,8 @@ interface IRoleAddModal {
 }
 
 const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
+  const { showModal } = useModal()
+
   const { mutateAsync: groupMutate } = useUserGroup()
   const { selectedAuthList } = useUser()
   const { companyNo } = useLayout()
@@ -179,27 +182,29 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
         </Typography>
         <DuplicateText
           value={selectedAuthListName}
-          valueOrg={selectedAuthList.name}
-          setValue={value => setSelectedAuthListName(value)}
           placeholder='새로운 권한 이름 입력'
           setDuplicateCheck={value => setIsDuplicate(value)}
-          duplicateCheck={async () => {
+          duplicateCheck={async (text: string) => {
             try {
-              const res = await authDuplicate({ authName: selectedAuthListName, companyNo: companyNo })
-              alert(res.data.message)
-              if (res.data?.duplicateYn === YN.Y) {
-                setIsDuplicate(true)
+              const res = await authDuplicate({ authName: text, companyNo: companyNo })
 
-                return false
-              } else {
-                setIsDuplicate(false)
+              await showModal({
+                title: '중복확인',
+                contents: res.data.message
+              })
+
+              if (res.data?.duplicateYn === YN.N) {
+                setSelectedAuthListName(text)
 
                 return true
+              } else {
+                return false
               }
             } catch (err) {
               return false
             }
           }}
+          size='small'
         />
       </Box>
 

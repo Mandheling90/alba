@@ -8,6 +8,7 @@ export interface IDialogProps {
   contents: string
   confirmFn?: () => void
   isConfirm?: boolean
+  resolve?: (value: boolean) => void
 }
 
 export const INITIAL_DIALOG_PROPS: IDialogProps = {
@@ -27,6 +28,7 @@ interface ModalProps {
   isConfirm?: boolean
   useClose?: boolean
   contentsHtml?: React.ReactNode
+  resolve?: (value: boolean) => void
 }
 
 const SimpleDialogModal: React.FC<ModalProps> = ({
@@ -38,24 +40,23 @@ const SimpleDialogModal: React.FC<ModalProps> = ({
   buttonText,
   isConfirm,
   useClose = true,
-  contentsHtml
+  contentsHtml,
+  resolve
 }) => {
+  const handleClose = () => {
+    onClose()
+    resolve?.(false)
+  }
+
+  const handleConfirm = () => {
+    onConfirm?.()
+    onClose()
+    resolve?.(true)
+  }
+
   return (
-    <Dialog
-      fullWidth
-      maxWidth='sm'
-      scroll='body'
-      onClose={() => {
-        onClose()
-      }}
-      open={open}
-    >
-      <DialogCustomContent
-        onClose={() => {
-          onClose()
-        }}
-        useClose={useClose}
-      >
+    <Dialog fullWidth maxWidth='sm' scroll='body' onClose={handleClose} open={open}>
+      <DialogCustomContent onClose={handleClose} useClose={useClose}>
         {title && (
           <Typography
             id='modal-title'
@@ -85,31 +86,16 @@ const SimpleDialogModal: React.FC<ModalProps> = ({
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 8, mb: 5 }}>
           {isConfirm ? (
             <>
-              <Button
-                variant='contained'
-                onClick={() => {
-                  onConfirm ? onConfirm() : onClose()
-                }}
-              >
+              <Button variant='contained' onClick={handleConfirm}>
                 확인
               </Button>
 
-              <Button
-                variant='outlined'
-                onClick={() => {
-                  onClose()
-                }}
-              >
+              <Button variant='outlined' onClick={handleClose}>
                 취소
               </Button>
             </>
           ) : (
-            <Button
-              variant='contained'
-              onClick={() => {
-                onConfirm ? onConfirm() : onClose()
-              }}
-            >
+            <Button variant='contained' onClick={handleConfirm}>
               {buttonText ? buttonText : '확인'}
             </Button>
           )}

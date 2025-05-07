@@ -4,7 +4,7 @@ import SimpleDialogModal, { IDialogProps, INITIAL_DIALOG_PROPS } from 'src/@core
 export type ModalValuesType = {
   simpleDialogModalProps: IDialogProps
   setSimpleDialogModalProps: (value: IDialogProps) => void
-
+  showModal: (props: Omit<IDialogProps, 'open'>) => Promise<boolean>
   resetModal: () => void
 }
 
@@ -12,6 +12,7 @@ export type ModalValuesType = {
 const defaultProvider: ModalValuesType = {
   simpleDialogModalProps: INITIAL_DIALOG_PROPS,
   setSimpleDialogModalProps: () => INITIAL_DIALOG_PROPS,
+  showModal: () => Promise.resolve(false),
   resetModal: () => {
     // Default empty implementation
   }
@@ -32,9 +33,24 @@ const ModalProvider = ({ children }: Props) => {
     setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
   }
 
+  const showModal = (props: Omit<IDialogProps, 'open'>): Promise<boolean> => {
+    return new Promise(resolve => {
+      setSimpleDialogModalProps({
+        ...props,
+        open: true,
+        confirmFn: () => {
+          props.confirmFn?.()
+          resolve(true)
+        },
+        resolve
+      })
+    })
+  }
+
   const values: ModalValuesType = {
     simpleDialogModalProps,
     setSimpleDialogModalProps,
+    showModal,
     resetModal
   }
 
@@ -49,6 +65,7 @@ const ModalProvider = ({ children }: Props) => {
         contents={simpleDialogModalProps.contents}
         isConfirm={simpleDialogModalProps.isConfirm}
         onConfirm={simpleDialogModalProps.confirmFn}
+        resolve={simpleDialogModalProps.resolve}
       />
       {children}
     </ModalContext.Provider>

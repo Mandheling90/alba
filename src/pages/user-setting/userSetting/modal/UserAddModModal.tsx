@@ -17,14 +17,16 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { EResultCode } from 'src/enum/commonEnum'
+import { EResultCode, YN } from 'src/enum/commonEnum'
 import { MUserCompanyList } from 'src/model/userSetting/userSettingModel'
 
 // import { useUserSettingStore } from 'src/pages/user-setting'
+import DuplicateText from 'src/@core/components/molecule/DuplicateText'
 import { smallPlaceholderStyle } from 'src/@core/styles/TextFieldStyle'
 import { useLayout } from 'src/hooks/useLayout'
+import { useModal } from 'src/hooks/useModal'
 import { useUser } from 'src/hooks/useUser'
-import { useUserMod, useUserSave } from 'src/service/setting/userSetting'
+import { useUserDuplicate, useUserMod, useUserSave } from 'src/service/setting/userSetting'
 import { isValidPassword } from 'src/utils/CommonUtil'
 
 interface IRoleAddModal {
@@ -66,6 +68,12 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
 
   const [userInfo, setUserInfo] = useState<MUserCompanyList>(defaultValue)
   const [passwordInfo, setPasswordInfo] = useState<IUserInfoAdd>(defaultPassword)
+
+  const [isDuplicate, setIsDuplicate] = useState<boolean>(false)
+
+  const { mutateAsync: userDuplicate } = useUserDuplicate()
+
+  const { setSimpleDialogModalProps, showModal } = useModal()
 
   useEffect(() => {
     if (selectUser) {
@@ -213,18 +221,39 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
           </Grid>
 
           <Grid item xs={6}>
-            <TextField
-              size='small'
+            <DuplicateText
               value={userInfo.userId}
-              label='사용자 ID'
               placeholder='필수항목 - 국문,영문 및 숫자조합'
+              setDuplicateCheck={value => setIsDuplicate(value)}
+              duplicateCheck={async (text: string) => {
+                try {
+                  const res = await userDuplicate({ userId: text })
+
+                  await showModal({
+                    title: '중복확인',
+                    contents: res.data.message
+                  })
+
+                  if (res.data?.duplicateYn === YN.N) {
+                    setUserInfo({ ...userInfo, userId: text })
+
+                    return true
+                  } else {
+                    return false
+                  }
+                } catch (err) {
+                  return false
+                }
+              }}
+              size='small'
+              label='사용자 ID'
               sx={{ width: '100%', ...smallPlaceholderStyle }}
               name='userId'
-              onChange={handleChange}
               error={!!errors.userId}
               helperText={errors.userId}
             />
           </Grid>
+
           <Grid item xs={6}>
             <TextField
               size='small'
@@ -346,6 +375,15 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
             onClick={async (e: React.FormEvent) => {
               e.preventDefault()
 
+              if (isDuplicate) {
+                await showModal({
+                  title: '중복확인',
+                  contents: '중복확인을 진행해주세요.'
+                })
+
+                return
+              }
+
               if (validate()) {
                 try {
                   if (selectUser) {
@@ -359,7 +397,12 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
                     const res = await modUser({ ...req })
 
                     if (res.code === EResultCode.SUCCESS) {
-                      alert('사용자 수정에 성공했습니다.')
+                      // alert('사용자 수정에 성공했습니다.')
+                      setSimpleDialogModalProps({
+                        open: true,
+                        title: '사용자 수정',
+                        contents: '사용자 수정에 성공했습니다.'
+                      })
                     }
                   } else {
                     const req = {
@@ -371,7 +414,12 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
                     const res = await saveUser({ ...req })
 
                     if (res.code === EResultCode.SUCCESS) {
-                      alert('새로운 사용자 등록에 성공했습니다.')
+                      // alert('새로운 사용자 등록에 성공했습니다.')
+                      setSimpleDialogModalProps({
+                        open: true,
+                        title: '사용자 등록',
+                        contents: '새로운 사용자 등록에 성공했습니다.'
+                      })
                     }
                   }
                   onSubmitAfter?.()

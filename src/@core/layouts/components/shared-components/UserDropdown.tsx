@@ -107,6 +107,9 @@ const UserDropdown = (props: Props) => {
           }}
           onSubmitAfter={async () => {
             const userInfo = await userDetailInfoMutate()
+
+            console.log(userInfo.data)
+
             auth.setUser({ ...auth.user, userInfo: userInfo.data })
           }}
           isSelfUserMod

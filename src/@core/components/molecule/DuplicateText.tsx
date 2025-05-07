@@ -1,47 +1,49 @@
-import { Button, InputAdornment, TextField } from '@mui/material'
+import { Button, InputAdornment, TextField, TextFieldProps } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
-interface IDuplicateText {
+interface IDuplicateText extends Omit<TextFieldProps, 'value' | 'onChange'> {
   value: string
-  valueOrg: string
-  setValue: (value: string) => void
   placeholder: string
-  duplicateCheck: () => Promise<boolean>
+  duplicateCheck: (value: string) => Promise<boolean>
   setDuplicateCheck: (value: boolean) => void
 }
 
 const DuplicateText: React.FC<IDuplicateText> = ({
   value,
-  valueOrg,
-  setValue,
   placeholder,
   duplicateCheck,
-  setDuplicateCheck
+  setDuplicateCheck,
+  ...textFieldProps
 }) => {
   const [isChange, setIsChange] = useState(false)
 
-  useEffect(() => {
-    setIsChange(false)
-  }, [valueOrg])
+  const [text, setText] = useState(value)
+  const [textOrigin, setTextOrigin] = useState(value)
 
   useEffect(() => {
-    if (isChange) {
-      setDuplicateCheck(true)
-    }
-  }, [isChange])
+    setText(value)
+    setTextOrigin(value)
+  }, [value])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsChange(e.target.value !== valueOrg)
-    setValue(e.target.value)
+  const handleDuplicateCheck = async () => {
+    const res = await duplicateCheck(text)
+
+    setIsChange(!res)
+    setDuplicateCheck(!res)
   }
 
   return (
     <TextField
-      size='small'
-      value={value}
+      value={text}
       placeholder={placeholder}
-      onChange={handleChange}
+      onChange={e => {
+        setText(e.target.value)
+        setIsChange(e.target.value !== textOrigin)
+        setDuplicateCheck(e.target.value !== textOrigin)
+      }}
+      {...textFieldProps}
       InputProps={{
+        ...textFieldProps.InputProps,
         endAdornment: (
           <InputAdornment position='end'>
             <Button
@@ -60,13 +62,8 @@ const DuplicateText: React.FC<IDuplicateText> = ({
                   color: '#3A354142'
                 }
               }}
-              onClick={async () => {
-                const res = await duplicateCheck()
-                if (res) {
-                  setIsChange(false)
-                }
-              }}
-              disabled={!isChange}
+              onClick={handleDuplicateCheck}
+              disabled={!isChange || !text}
             >
               중복확인
             </Button>

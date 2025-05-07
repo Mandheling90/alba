@@ -102,14 +102,14 @@ const AuthProvider = ({ children }: Props) => {
       const componentList = await componentListInfoMutate()
       const userInfo = await userDetailInfoMutate()
 
-      console.log(userInfo.data)
-
       if (result.code !== EResultCode.FAIL) {
         if (params.rememberMe) {
           window.localStorage.setItem(ELocalStorageKey.LGOIN_REMEMBER, params.id)
         } else {
           window.localStorage.removeItem(ELocalStorageKey.LGOIN_REMEMBER)
         }
+        console.log(userInfo.data)
+
         setUser({
           ...user,
           userInfo: userInfo.data,

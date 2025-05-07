@@ -10,5 +10,7 @@ export const EPath = {
 
   AUTH: '/auth',
   AUTH_STATUS: '/auth/status',
-  AUTH_DUPLICATE: '/auth/duplicate'
+  AUTH_DUPLICATE: '/auth/duplicate',
+
+  USER_DUPLICATE: '/user/duplicate/check/{userId}'
 } as const

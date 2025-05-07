@@ -103,3 +103,11 @@ export const useAuthStatusMod = () => {
     return createPatch<MResult>([EPath.AUTH_STATUS, params])
   }, {})
 }
+
+export const useUserDuplicate = () => {
+  return useMutation((params: { userId: string }) => {
+    const url = EPath.USER_DUPLICATE.replace('{userId}', params.userId)
+
+    return createGet<MAuthDuplicate>([url])
+  }, {})
+}
