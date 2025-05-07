@@ -19,8 +19,8 @@ const BubbleContainer = styled.div`
 const Bubble = styled.div<{ background?: string; color?: string }>`
   background-color: ${({ background }) => background || '#f0f0f0'};
   border-radius: 50%;
-  width: 150px;
-  height: 150px;
+  width: 120px;
+  height: 120px;
   padding: 10px;
   display: flex;
   align-items: center;

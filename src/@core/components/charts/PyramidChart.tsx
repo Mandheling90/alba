@@ -161,7 +161,7 @@ const PyramidChart = memo(({ data }: { data: IPyramidPieChart }) => {
   return (
     <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
       {hoveredPoint === '여성' && (
-        <Box sx={{ position: 'absolute', zIndex: 999, left: '5%', top: '15%' }}>
+        <Box sx={{ position: 'absolute', zIndex: 999, left: '5%', top: '5%' }}>
           <RoundedBubble
             title={'남성전체:'}
             content={`${malePercentage}%`}
@@ -171,7 +171,7 @@ const PyramidChart = memo(({ data }: { data: IPyramidPieChart }) => {
         </Box>
       )}
       {hoveredPoint === '남성' && (
-        <Box sx={{ position: 'absolute', zIndex: 999, right: '5%', top: '15%' }}>
+        <Box sx={{ position: 'absolute', zIndex: 999, right: '5%', top: '5%' }}>
           <RoundedBubble
             title={'여성전체:'}
             content={`${femalePercentage}%`}
