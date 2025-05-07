@@ -25,10 +25,7 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
       type: 'string',
       renderCell: ({ row }: GridRenderCellParams) => {
         return (
-          <Typography
-            noWrap
-            sx={{ color: 'text.secondary', textTransform: 'capitalize', display: 'flex', alignItems: 'center', gap: 1 }}
-          >
+          <Typography noWrap sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', gap: 1 }}>
             <IconCustom
               path='avatars'
               style={{ width: '30px', height: '30px', borderRadius: '50%' }}
