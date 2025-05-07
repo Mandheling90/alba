@@ -28,8 +28,10 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
   const { mutateAsync: modStateUser } = useUserStateMod()
 
   useEffect(() => {
-    if (data) {
+    if (data && Array.isArray(data)) {
       setUserData(data.map(obj => ({ ...obj, display: true })))
+    } else {
+      setUserData([])
     }
   }, [data])
 
