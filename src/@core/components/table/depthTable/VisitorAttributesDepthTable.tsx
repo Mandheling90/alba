@@ -1,28 +1,18 @@
 import { Box, IconButton } from '@mui/material'
-import { FC, createContext, useState } from 'react'
+import { FC, useState } from 'react'
 
 import { ETableDisplayType, ETableType } from 'src/context/StatisticsContext'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { ITableData } from 'src/model/statistics/StatisticsModel'
+import { IAgeGenderStatisticsTableResponse } from 'src/model/statistics/StatisticsModel'
 import { generateColumns } from '../columns/columnGenerator'
 import CustomTable from '../CustomTable'
 import TimeDepthTable from './TimeDepthTable'
 import TimePlaceDepthTable from './TimePlaceDepthTable'
 
-interface TableContextType {
-  expandedRows: string[]
-  toggleRow: (key: string) => void
-}
-
-export const TableContext = createContext<TableContextType>({
-  expandedRows: [],
-  toggleRow: (key: string) => key
-})
-
 interface DepthTableProps {
   tableType: ETableType
   tableDisplayType: ETableDisplayType
-  data: ITableData
+  data: IAgeGenderStatisticsTableResponse
 }
 
 const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) => {
@@ -39,7 +29,7 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
   }
 
   const checkDataListDepth = (obj: any, depth = 0): number => {
-    if (!obj || !obj.dataList || !Array.isArray(obj.dataList) || obj.dataList.length === 0) {
+    if (!obj || !obj.dataList || !Array.isArray(obj.dataList)) {
       return depth
     }
 
@@ -49,142 +39,79 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
   const getColumns = () => {
     switch (tableType) {
       case ETableType.HOURLY:
+      case ETableType.DAILY:
+      case ETableType.MONTHLY:
         return generateColumns({
           columns: [
             {
+              field: `toggle`,
+              headerName: ``,
+              type: 'string'
+            },
+            {
               field: `dateName`,
               headerName: `${tableDisplayType === 'time' ? '날짜' : '날짜 및 시간대'}`,
-              type: 'string'
+              type: 'string',
+              flex: 1.5
             },
             {
               field: `${tableDisplayType === 'time' ? 'dateNameTemp' : 'totalPlaceName'}`,
               headerName: `${tableDisplayType === 'time' ? '시간대' : '장소'}`,
               type: 'string'
             },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
+            { field: 'totalM0', headerName: '10대이하', type: 'number' },
+            { field: 'totalM10', headerName: '10대', type: 'number' },
+            { field: 'totalM20', headerName: '20대', type: 'number' },
+            { field: 'totalM30', headerName: '30대', type: 'number' },
+            { field: 'totalM40', headerName: '40대', type: 'number' },
+            { field: 'totalM50', headerName: '50대', type: 'number' },
+            { field: 'totalM60', headerName: '60대이상', type: 'number' },
+            { field: 'totalF0', headerName: '10대이하', type: 'number' },
+            { field: 'totalF10', headerName: '10대', type: 'number' },
+            { field: 'totalF20', headerName: '20대', type: 'number' },
+            { field: 'totalF30', headerName: '30대', type: 'number' },
+            { field: 'totalF40', headerName: '40대', type: 'number' },
+            { field: 'totalF50', headerName: '50대', type: 'number' },
+            { field: 'totalF60', headerName: '60대이상', type: 'number' },
+            { field: 'totalManCount', headerName: '남자', type: 'number' },
+            { field: 'totalWomanCount', headerName: '여자', type: 'number' },
+            { field: 'totalCount', headerName: '계', type: 'number' }
           ],
           customRenderers: {
-            dateName: (params: any) => {
+            toggle: (params: any) => {
               const depth = checkDataListDepth(params.row)
-              const key = `${params.row.dateName}-${params.row.totalPlaceName}-${params.row.totalInCount}-${params.row.totalOutCount}`
 
-              return tableDisplayType === 'time' ? (
-                <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
-                  {depth === 2 && (
-                    <>
-                      <Box sx={{ position: 'absolute', left: 0 }}>
-                        <IconButton
-                          onClick={(e: React.MouseEvent) => {
-                            e.stopPropagation()
-                            toggleRow(key)
-                          }}
-                        >
-                          {depth === 2 && (
-                            <IconCustom
-                              isCommon
-                              path='table'
-                              icon={expandedRows.includes(key) ? 'unfolding' : 'folding'}
-                            />
-                          )}
-                        </IconButton>
-                      </Box>
-                      <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
-                    </>
-                  )}
-                </Box>
-              ) : (
-                <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
-                  <Box sx={{ position: 'absolute', left: depth === 2 ? 0 : 30 }}>
-                    <IconButton
-                      onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation()
-                        toggleRow(key)
-                      }}
-                    >
-                      <IconCustom isCommon path='table' icon={expandedRows.includes(key) ? 'unfolding' : 'folding'} />
-                    </IconButton>
-                  </Box>
-                  <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
-                </Box>
-              )
-            },
-            dateNameTemp: (params: any) => {
-              const depth = checkDataListDepth(params.row)
+              if (tableDisplayType === 'time' && depth === 1) {
+                return <></>
+              }
 
               return (
-                <>
-                  {tableDisplayType === 'time' && depth === 1 && (
-                    <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
-                  )}
-                </>
-              )
-            }
-          }
-        })
-      case ETableType.DAILY:
-        return generateColumns({
-          columns: [
-            {
-              field: `dateName`,
-              headerName: `${tableDisplayType === 'time' ? '날짜' : '날짜 및 시간대'}`,
-              type: 'string'
-            },
-            {
-              field: `${tableDisplayType === 'time' ? 'dateNameTemp' : 'totalPlaceName'}`,
-              headerName: `${tableDisplayType === 'time' ? '시간대' : '장소'}`,
-              type: 'string'
-            },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' },
-            { field: 'morningWeather', headerName: '날씨', type: 'string' },
-            { field: 'morningTemperature', headerName: '기온', type: 'string' },
-            { field: 'dust', headerName: '미세먼지', type: 'string' }
-          ],
-          customRenderers: {
-            dateName: (params: any) => {
-              const depth = checkDataListDepth(params.row)
-              const key = `${params.row.dateName}-${params.row.totalPlaceName}-${params.row.totalInCount}-${params.row.totalOutCount}`
-
-              return tableDisplayType === 'time' ? (
-                <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
-                  {depth === 2 && (
-                    <>
-                      <Box sx={{ position: 'absolute', left: 0 }}>
-                        <IconButton
-                          onClick={(e: React.MouseEvent) => {
-                            e.stopPropagation()
-                            toggleRow(key)
-                          }}
-                        >
-                          {depth === 2 && (
-                            <IconCustom
-                              isCommon
-                              path='table'
-                              icon={expandedRows.includes(key) ? 'unfolding' : 'folding'}
-                            />
-                          )}
-                        </IconButton>
-                      </Box>
-                      <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
-                    </>
-                  )}
-                </Box>
-              ) : (
                 <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
                   <Box sx={{ position: 'absolute', left: depth === 2 ? 0 : 30 }}>
                     <IconButton
                       onClick={(e: React.MouseEvent) => {
                         e.stopPropagation()
-                        toggleRow(key)
+                        toggleRow(params.row.key)
                       }}
                     >
-                      <IconCustom isCommon path='table' icon={expandedRows.includes(key) ? 'unfolding' : 'folding'} />
+                      <IconCustom
+                        isCommon
+                        path='table'
+                        icon={expandedRows.includes(params.row.key) ? 'unfolding' : 'folding'}
+                      />
                     </IconButton>
                   </Box>
-                  <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
                 </Box>
               )
+            },
+            dateName: (params: any) => {
+              const depth = checkDataListDepth(params.row)
+
+              if (tableDisplayType === 'time' && depth === 1) {
+                return <></>
+              }
+
+              return <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
             },
             dateNameTemp: (params: any) => {
               const depth = checkDataListDepth(params.row)
@@ -203,24 +130,46 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
         return generateColumns({
           columns: [
             { field: 'weekDayName', headerName: '요일', type: 'string' },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
+            { field: 'totalM0', headerName: '10대이하', type: 'number' },
+            { field: 'totalM10', headerName: '10대', type: 'number' },
+            { field: 'totalM20', headerName: '20대', type: 'number' },
+            { field: 'totalM30', headerName: '30대', type: 'number' },
+            { field: 'totalM40', headerName: '40대', type: 'number' },
+            { field: 'totalM50', headerName: '50대', type: 'number' },
+            { field: 'totalM60', headerName: '60대이상', type: 'number' },
+            { field: 'totalF0', headerName: '10대이하', type: 'number' },
+            { field: 'totalF10', headerName: '10대', type: 'number' },
+            { field: 'totalF20', headerName: '20대', type: 'number' },
+            { field: 'totalF30', headerName: '30대', type: 'number' },
+            { field: 'totalF40', headerName: '40대', type: 'number' },
+            { field: 'totalF50', headerName: '50대', type: 'number' },
+            { field: 'totalF60', headerName: '60대이상', type: 'number' },
+            { field: 'totalManCount', headerName: '남자', type: 'number' },
+            { field: 'totalWomanCount', headerName: '여자', type: 'number' },
+            { field: 'totalCount', headerName: '계', type: 'number' }
           ]
         })
       case ETableType.WEEKLY:
         return generateColumns({
           columns: [
             { field: 'weekName', headerName: '주별기간', type: 'string' },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
-          ]
-        })
-      case ETableType.MONTHLY:
-        return generateColumns({
-          columns: [
-            { field: 'dateName', headerName: '날짜', type: 'string' },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
+            { field: 'totalM0', headerName: '10대이하', type: 'number' },
+            { field: 'totalM10', headerName: '10대', type: 'number' },
+            { field: 'totalM20', headerName: '20대', type: 'number' },
+            { field: 'totalM30', headerName: '30대', type: 'number' },
+            { field: 'totalM40', headerName: '40대', type: 'number' },
+            { field: 'totalM50', headerName: '50대', type: 'number' },
+            { field: 'totalM60', headerName: '60대이상', type: 'number' },
+            { field: 'totalF0', headerName: '10대이하', type: 'number' },
+            { field: 'totalF10', headerName: '10대', type: 'number' },
+            { field: 'totalF20', headerName: '20대', type: 'number' },
+            { field: 'totalF30', headerName: '30대', type: 'number' },
+            { field: 'totalF40', headerName: '40대', type: 'number' },
+            { field: 'totalF50', headerName: '50대', type: 'number' },
+            { field: 'totalF60', headerName: '60대이상', type: 'number' },
+            { field: 'totalManCount', headerName: '남자', type: 'number' },
+            { field: 'totalWomanCount', headerName: '여자', type: 'number' },
+            { field: 'totalCount', headerName: '계', type: 'number' }
           ]
         })
       default:
@@ -231,44 +180,39 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
   const getColumns2 = () => {
     switch (tableType) {
       case ETableType.HOURLY:
-        return generateColumns({
-          columns: [
-            { field: 'temp', headerName: '', type: 'string' },
-            { field: 'placeName', headerName: '장소 이름', type: 'string' },
-            { field: 'inCount', headerName: '입장객', type: 'number' },
-            { field: 'outCount', headerName: '퇴장객', type: 'number' }
-          ],
-          customRenderers: {
-            temp: (params: any) => {
-              return <></>
-            }
-          }
-        })
       case ETableType.DAILY:
-        return generateColumns({
-          columns: [
-            { field: 'temp', headerName: '', type: 'string' },
-            { field: 'placeName', headerName: '', type: 'string' },
-            { field: 'inCount', headerName: '입장객', type: 'number' },
-            { field: 'outCount', headerName: '퇴장객', type: 'number' },
-            { field: 'morningWeather', headerName: '날씨', type: 'string' },
-            { field: 'morningTemperature', headerName: '기온', type: 'string' },
-            { field: 'dust', headerName: '미세먼지', type: 'string' }
-          ],
-          customRenderers: {
-            temp: (params: any) => {
-              return <></>
-            }
-          }
-        })
-      case ETableType.WEEKLY:
       case ETableType.MONTHLY:
         return generateColumns({
           columns: [
-            { field: 'dateName', headerName: '날짜', type: 'string' },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
-          ]
+            { field: 'temp1', headerName: '', type: 'string' },
+            { field: 'temp2', headerName: '', type: 'string', flex: 1.5 },
+            { field: 'placeName', headerName: '장소', type: 'string' },
+            { field: 'm0', headerName: '10대이하', type: 'number' },
+            { field: 'm10', headerName: '10대', type: 'number' },
+            { field: 'm20', headerName: '20대', type: 'number' },
+            { field: 'm30', headerName: '30대', type: 'number' },
+            { field: 'm40', headerName: '40대', type: 'number' },
+            { field: 'm50', headerName: '50대', type: 'number' },
+            { field: 'm60', headerName: '60대이상', type: 'number' },
+            { field: 'f0', headerName: '10대이하', type: 'number' },
+            { field: 'f10', headerName: '10대', type: 'number' },
+            { field: 'f20', headerName: '20대', type: 'number' },
+            { field: 'f30', headerName: '30대', type: 'number' },
+            { field: 'f40', headerName: '40대', type: 'number' },
+            { field: 'f50', headerName: '50대', type: 'number' },
+            { field: 'f60', headerName: '60대이상', type: 'number' },
+            { field: 'totalManCount', headerName: '남자', type: 'number' },
+            { field: 'totalWomanCount', headerName: '여자', type: 'number' },
+            { field: 'totalCount', headerName: '계', type: 'number' }
+          ],
+          customRenderers: {
+            temp1: (params: any) => {
+              return <></>
+            },
+            temp2: (params: any) => {
+              return <></>
+            }
+          }
         })
       default:
         return []
@@ -279,15 +223,15 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
   const columns2 = getColumns2()
 
   return (
-    <TableContext.Provider value={{ expandedRows, toggleRow }}>
+    <>
       {tableType === ETableType.WEEKDAY || tableType === ETableType.WEEKLY ? (
         <CustomTable columns={columns} rows={data.dataList} isAllView />
       ) : tableDisplayType === ETableDisplayType.TIME_PLACE ? (
-        <TimePlaceDepthTable data={data} columns={columns} columns2={columns2} />
+        <TimePlaceDepthTable data={data} columns={columns} columns2={columns2} expandedRows={expandedRows} />
       ) : (
-        <TimeDepthTable data={data} columns={columns} />
+        <TimeDepthTable data={data} columns={columns} expandedRows={expandedRows} />
       )}
-    </TableContext.Provider>
+    </>
   )
 }
 

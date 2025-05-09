@@ -1,16 +1,24 @@
-import { Box, Card, Grid } from '@mui/material'
+import { Box, Button, Card, Grid, Typography } from '@mui/material'
 import dynamic from 'next/dynamic'
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 
 import StackedBarChart from 'src/@core/components/charts/StackedBarChart'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
-import { IStatisticsContextReq } from 'src/context/StatisticsContext'
+import { ETableDisplayType, ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
+import { useStatistics } from 'src/hooks/useStatistics'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { ICountBarChart, IHeatMapChart, IPyramidPieChart } from 'src/model/statistics/StatisticsModel'
+import {
+  IAgeGenderStatisticsTableResponse,
+  ICountBarChart,
+  IHeatMapChart,
+  IPyramidPieChart
+} from 'src/model/statistics/StatisticsModel'
 import DashboardMenu from 'src/pages/dashboard/menu/DashboardMenu'
 import ChartDetailSwiper from 'src/pages/dashboard/swiper/ChartDetailSwiper'
+import { exportToExcel } from 'src/utils/CommonUtil'
+import VisitorAttributesDepthTable from '../../table/depthTable/VisitorAttributesDepthTable'
 import PieChart from '../PieChart'
 import PyramidChart from '../PyramidChart'
 
@@ -23,8 +31,21 @@ const VisitorAttributesTemplate: FC<{
   barChartData?: ICountBarChart
   pyramidPieChartData?: IPyramidPieChart
   heatmapChartData?: IHeatMapChart
+  tableData?: IAgeGenderStatisticsTableResponse
   refetch: (req?: IStatisticsContextReq) => void
-}> = ({ statisticsReq, barChartData, pyramidPieChartData, heatmapChartData, refetch }): React.ReactElement => {
+}> = ({
+  statisticsReq,
+  barChartData,
+  pyramidPieChartData,
+  heatmapChartData,
+  tableData,
+  refetch
+}): React.ReactElement => {
+  const [tableDisplayType, setTableDisplayType] = useState<ETableDisplayType>(
+    statisticsReq.tableDisplayType ?? ETableDisplayType.TIME_PLACE
+  )
+  const { statisticsReqUpdate } = useStatistics()
+
   return (
     <StandardTemplate title={'방문자 특성 통계'}>
       <Grid container spacing={5} alignItems={'flex-end'}>
@@ -96,6 +117,117 @@ const VisitorAttributesTemplate: FC<{
             <Grid item xs={12}>
               <Card>
                 <HeatMapChart data={heatmapChartData} />
+              </Card>
+            </Grid>
+          </>
+        )}
+
+        {tableData && (
+          <>
+            <Grid item xs={12}>
+              <Box display='flex' alignItems='center' width='100%'>
+                <Box flex={1}>
+                  <PipelineTitle
+                    Icon={<IconCustom isCommon path='dashboard' icon='calendar' />}
+                    title={[
+                      '장소별 방문자수',
+                      `${tableData?.startYear}년 ${tableData?.startMonth}월 ${tableData?.startDay}일 ${tableData?.startHour}시 ~ ${tableData?.endYear}년 ${tableData?.endMonth}월 ${tableData?.endDay}일 ${tableData?.endHour}시`,
+                      `총 ${tableData?.totalPlaceCount} 곳`
+                    ]}
+                  />
+                </Box>
+
+                <Box flex={1} display='flex' justifyContent='center'>
+                  <Typography variant='h5' sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    전체 입장객 수
+                    <Typography
+                      component='span'
+                      sx={{
+                        fontWeight: 'bold',
+                        color: 'primary.main',
+                        border: '1px solid rgba(58, 53, 65, 0.87)',
+                        borderRadius: '5px',
+                        padding: '2px'
+                      }}
+                    >
+                      {tableData?.totalManCount + tableData?.totalWomanCount}
+                    </Typography>
+                    명 | 전체 퇴장객 수
+                    <Typography
+                      component='span'
+                      sx={{
+                        fontWeight: 'bold',
+                        color: 'primary.main',
+                        border: '1px solid rgba(58, 53, 65, 0.87)',
+                        borderRadius: '5px',
+                        padding: '2px'
+                      }}
+                    >
+                      {tableData?.totalManCount + tableData?.totalWomanCount}
+                    </Typography>
+                    명
+                  </Typography>
+                </Box>
+
+                <Box flex={1} display='flex' justifyContent='flex-end'>
+                  <Box display='flex' gap={2}>
+                    {statisticsReq.tableType !== ETableType.WEEKDAY &&
+                      statisticsReq.tableType !== ETableType.WEEKLY && (
+                        <>
+                          <Button
+                            variant={tableDisplayType === ETableDisplayType.TIME ? 'contained' : 'outlined'}
+                            color='primary'
+                            onClick={() => {
+                              setTableDisplayType(ETableDisplayType.TIME)
+                              statisticsReqUpdate({
+                                ...statisticsReq,
+                                tableDisplayType: ETableDisplayType.TIME
+                              })
+                            }}
+                          >
+                            시간대별
+                          </Button>
+                          <Button
+                            variant={tableDisplayType === 'timePlace' ? 'contained' : 'outlined'}
+                            color='primary'
+                            onClick={() => {
+                              setTableDisplayType(ETableDisplayType.TIME_PLACE)
+                              statisticsReqUpdate({
+                                ...statisticsReq,
+                                tableDisplayType: ETableDisplayType.TIME_PLACE
+                              })
+                            }}
+                          >
+                            시간대 및 장소별
+                          </Button>
+                        </>
+                      )}
+
+                    <Button
+                      startIcon={<IconCustom isCommon icon='downLoad2' />}
+                      variant='outlined'
+                      color='primary'
+                      onClick={() => {
+                        if (tableData) {
+                          const fileName = `방문자수_통계_${tableData.startYear}${tableData.startMonth}${tableData.startDay}`
+                          exportToExcel(tableData.dataList, fileName)
+                        }
+                      }}
+                    >
+                      다운로드
+                    </Button>
+                  </Box>
+                </Box>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Card>
+                <VisitorAttributesDepthTable
+                  tableDisplayType={tableDisplayType}
+                  tableType={statisticsReq.tableType ?? ETableType.HOURLY}
+                  data={tableData}
+                />
               </Card>
             </Grid>
           </>

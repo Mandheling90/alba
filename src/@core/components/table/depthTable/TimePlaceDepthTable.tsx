@@ -1,22 +1,19 @@
 import { Box } from '@mui/material'
 import { GridColDef } from '@mui/x-data-grid'
-import { FC, useContext } from 'react'
-import { ITableData } from 'src/model/statistics/StatisticsModel'
+import { FC } from 'react'
 import DividerBar from '../../atom/DividerBar'
 import CustomTable from '../CustomTable'
-import { TableContext } from './VisitorDepthTable'
 
 interface TimePlaceDepthTableProps {
-  data: ITableData
+  data: any
   columns: GridColDef[]
   columns2: GridColDef[]
+  expandedRows: string[]
 }
 
-const TimePlaceDepthTable: FC<TimePlaceDepthTableProps> = ({ data, columns, columns2 }) => {
-  const { expandedRows } = useContext(TableContext)
-
+const TimePlaceDepthTable: FC<TimePlaceDepthTableProps> = ({ data, columns, columns2, expandedRows }) => {
   const checkDataListDepth = (obj: any, depth = 0): number => {
-    if (!obj || !obj.dataList || !Array.isArray(obj.dataList) || obj.dataList.length === 0) {
+    if (!obj || !obj.dataList || !Array.isArray(obj.dataList)) {
       return depth
     }
 
@@ -30,8 +27,7 @@ const TimePlaceDepthTable: FC<TimePlaceDepthTableProps> = ({ data, columns, colu
           <Box key={`${row.dateName}-${row.totalPlaceName}-${index}`}>
             <CustomTable columns={columns} rows={[row]} isAllView showHeader={false} />
             <DividerBar />
-            {expandedRows.includes(`${row.dateName}-${row.totalPlaceName}-${row.totalInCount}-${row.totalOutCount}`) &&
-              renderDetailPanel2(row.dataList)}
+            {expandedRows.includes(row.key) && renderDetailPanel2(row.dataList)}
           </Box>
         ))}
       </>
@@ -49,7 +45,7 @@ const TimePlaceDepthTable: FC<TimePlaceDepthTableProps> = ({ data, columns, colu
 
   return (
     <>
-      {data.dataList.map((row, index) => (
+      {data.dataList.map((row: any, index: number) => (
         <Box key={row.dateName}>
           <CustomTable
             id='dateName'
@@ -59,8 +55,7 @@ const TimePlaceDepthTable: FC<TimePlaceDepthTableProps> = ({ data, columns, colu
             showHeader={index === 0}
           />
           <DividerBar />
-          {expandedRows.includes(`${row.dateName}-${row.totalPlaceName}-${row.totalInCount}-${row.totalOutCount}`) &&
-            renderDetailPanel(row)}
+          {expandedRows.includes(row.key) && renderDetailPanel(row)}
         </Box>
       ))}
     </>

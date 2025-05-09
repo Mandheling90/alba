@@ -44,8 +44,19 @@ const VisitorReportWeekly: FC = (): React.ReactElement => {
       const resPie = await countBarPieChart(statistics)
       setBarPieChartData(resPie.data)
 
-      const resTable = await countTable(statistics)
-      setBarTableData(resTable.data)
+      const resTableData = await countTable(statistics)
+      const tableDataWithKeys = {
+        ...resTableData.data,
+        dataList: resTableData.data.dataList.map((item, index) => ({
+          ...item,
+          key: `table-item-${index}}`,
+          dataList: item.dataList?.map((subItem, subIndex) => ({
+            ...subItem,
+            key: `table-sub-item-${index}-${subIndex}}`
+          }))
+        }))
+      }
+      setBarTableData(tableDataWithKeys)
 
       if (req) {
         statisticsReqUpdate({

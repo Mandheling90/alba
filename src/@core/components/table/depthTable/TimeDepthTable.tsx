@@ -1,27 +1,16 @@
 import { Box } from '@mui/material'
 import { GridColDef } from '@mui/x-data-grid'
-import { FC, useContext } from 'react'
-import { ITableData } from 'src/model/statistics/StatisticsModel'
+import { FC } from 'react'
 import DividerBar from '../../atom/DividerBar'
 import CustomTable from '../CustomTable'
-import { TableContext } from './VisitorDepthTable'
 
 interface TimeDepthTableProps {
-  data: ITableData
+  data: any
   columns: GridColDef[]
+  expandedRows: string[]
 }
 
-const TimeDepthTable: FC<TimeDepthTableProps> = ({ data, columns }) => {
-  const { expandedRows } = useContext(TableContext)
-
-  const checkDataListDepth = (obj: any, depth = 0): number => {
-    if (!obj || !obj.dataList || !Array.isArray(obj.dataList) || obj.dataList.length === 0) {
-      return depth
-    }
-
-    return checkDataListDepth(obj.dataList[0], depth + 1)
-  }
-
+const TimeDepthTable: FC<TimeDepthTableProps> = ({ data, columns, expandedRows }) => {
   const renderDetailPanel = (row: any) => {
     return (
       <Box>
@@ -33,7 +22,7 @@ const TimeDepthTable: FC<TimeDepthTableProps> = ({ data, columns }) => {
 
   return (
     <>
-      {data.dataList.map((row, index) => (
+      {data.dataList.map((row: any, index: number) => (
         <Box key={row.dateName}>
           <CustomTable
             id='dateName'
@@ -43,8 +32,7 @@ const TimeDepthTable: FC<TimeDepthTableProps> = ({ data, columns }) => {
             showHeader={index === 0}
           />
           <DividerBar />
-          {expandedRows.includes(`${row.dateName}-${row.totalPlaceName}-${row.totalInCount}-${row.totalOutCount}`) &&
-            renderDetailPanel(row)}
+          {expandedRows.includes(row.key) && renderDetailPanel(row)}
         </Box>
       ))}
     </>

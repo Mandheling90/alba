@@ -102,24 +102,30 @@ export const EPath = {
   STATS_GENDER_AGE_HOURLY_BAR_CHART: '/statistics/gender/age/hourly/bar/chart',
   STATS_GENDER_AGE_HOURLY_PYRAMID_PIE_CHART: '/statistics/gender/age/hourly/pyramid/pie/chart',
   STATS_GENDER_AGE_HOURLY_HEATMAP_CHART: '/statistics/gender/age/hourly/heatmap/chart',
+  STATS_GENDER_AGE_HOURLY_TABLE: '/statistics/gender/age/hourly/table/chart',
 
   STATS_GENDER_AGE_DAILY_BAR_CHART: '/statistics/gender/age/daily/bar/chart',
   STATS_GENDER_AGE_DAILY_PYRAMID_PIE_CHART: '/statistics/gender/age/daily/pyramid/pie/chart',
   STATS_GENDER_AGE_DAILY_HEATMAP_CHART: '/statistics/gender/age/daily/heatmap/chart',
+  STATS_GENDER_AGE_DAILY_TABLE: '/statistics/gender/age/daily/table/chart',
 
   STATS_GENDER_AGE_WEEK_DAY_BAR_CHART: '/statistics/gender/age/weekday/bar/chart',
   STATS_GENDER_AGE_WEEK_DAY_PYRAMID_PIE_CHART: '/statistics/gender/age/weekday/pyramid/pie/chart',
   STATS_GENDER_AGE_WEEK_DAY_HEATMAP_CHART: '/statistics/gender/age/weekday/heatmap/chart',
+  STATS_GENDER_AGE_WEEK_DAY_TABLE: '/statistics/gender/age/weekday/table/chart',
 
   STATS_GENDER_AGE_WEEKLY_BAR_CHART: '/statistics/gender/age/week/bar/chart',
   STATS_GENDER_AGE_WEEKLY_PYRAMID_PIE_CHART: '/statistics/gender/age/week/pyramid/pie/chart',
   STATS_GENDER_AGE_WEEKLY_HEATMAP_CHART: '/statistics/gender/age/week/heatmap/chart',
+  STATS_GENDER_AGE_WEEKLY_TABLE: '/statistics/gender/age/week/table/chart',
 
   STATS_GENDER_AGE_MONTHLY_BAR_CHART: '/statistics/gender/age/monthly/bar/chart',
   STATS_GENDER_AGE_MONTHLY_PYRAMID_PIE_CHART: '/statistics/gender/age/monthly/pyramid/pie/chart',
   STATS_GENDER_AGE_MONTHLY_HEATMAP_CHART: '/statistics/gender/age/monthly/heatmap/chart',
+  STATS_GENDER_AGE_MONTHLY_TABLE: '/statistics/gender/age/monthly/table/chart',
 
   STATS_HEATMAP_DATA: '/stats/heatmap/data',
+
   STATS_COUNT_HOURLY_BAR_CHART: '/statistics/count/hourly/bar/chart',
   STATS_COUNT_HOURLY_BAR_PIE_CHART: '/statistics/count/hourly/bar/pie/chart',
   STATS_COUNT_HOURLY_BAR_TABLE: '/statistics/count/hourly/table',
