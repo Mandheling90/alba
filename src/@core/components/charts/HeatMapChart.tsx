@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { IHeatMapChart } from 'src/model/statistics/StatisticsModel'
+import { categoryPercentage } from 'src/utils/CommonUtil'
 
 // Highcharts 모듈을 동적으로 로드
 let Highcharts: any
@@ -54,6 +55,8 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
       })
     }
   }, [Highcharts])
+
+  
 
   const options: Highcharts.Options = {
     chart: {
@@ -126,7 +129,7 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
           enabled: true,
           color: '#000000',
           formatter: function (this: any) {
-            return `${this.point.visitors}<br>(${this.point.male}%, ${this.point.female}%)`
+            return `${this.point.visitors}<br>(${categoryPercentage(this.point.visitors, this.point.male || 0)}%, ${categoryPercentage(this.point.visitors,this.point.female || 0)}%)`
           }
         }
       }

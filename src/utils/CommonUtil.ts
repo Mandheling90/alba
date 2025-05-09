@@ -19,6 +19,13 @@ export const toggleValueInArray = <T>(array: T[], value: T): T[] => {
   }
 }
 
+export const categoryPercentage = (totalCnt: number, categoryCounts: number) => {
+  if (!totalCnt || totalCnt === 0) return 0
+  const percentage = (categoryCounts / totalCnt) * 100
+
+  return Number.isInteger(percentage) ? percentage : percentage.toFixed(1)
+}
+
 export const riskLevelPercent = (percent: number) => {
   // 부동 소수점을 정수로 변환
   const percentInt = Math.round(percent * 100)
