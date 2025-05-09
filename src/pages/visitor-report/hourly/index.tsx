@@ -42,8 +42,19 @@ const VisitorReportHourly: FC = (): React.ReactElement => {
       const resPie = await countBarPieChart(statistics)
       setBarPieChartData(resPie.data)
 
-      const resTable = await countBarTable(statistics)
-      setTableData(resTable.data)
+      const resTableData = await countBarTable(statistics)
+      const tableDataWithKeys = {
+        ...resTableData.data,
+        dataList: resTableData.data.dataList.map((item, index) => ({
+          ...item,
+          key: `table-item-${index}}`,
+          dataList: item.dataList?.map((subItem, subIndex) => ({
+            ...subItem,
+            key: `table-sub-item-${index}-${subIndex}}`
+          }))
+        }))
+      }
+      setTableData(tableDataWithKeys)
 
       if (req) {
         statisticsReqUpdate({

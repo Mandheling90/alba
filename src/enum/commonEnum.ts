@@ -60,19 +60,10 @@ export const EComponentList = [
         path: '/dashboard/visitors'
       },
 
-      // {
-      //   title: '방문자수 통계 - 시간별',
-      //   path: '/dashboard/visitorsByHour'
-      // },
       {
         title: '방문자 특성 통계',
         path: '/dashboard/visitorAttributes'
       }
-
-      // {
-      //   title: '방문자 특성 통계 - 시간별',
-      //   path: '/dashboard/visitorAttributesByHour'
-      // }
     ]
   },
   {

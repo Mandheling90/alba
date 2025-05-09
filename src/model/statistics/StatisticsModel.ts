@@ -323,3 +323,54 @@ export interface IHeatMapDataList {
   female: number
   value: number
 }
+
+export interface IAgeGenderStatistics {
+  dateName: string
+  totalPlaceName: string
+  totalM0: number
+  totalM10: number
+  totalM20: number
+  totalM30: number
+  totalM40: number
+  totalM50: number
+  totalM60: number
+  totalF0: number
+  totalF10: number
+  totalF20: number
+  totalF30: number
+  totalF40: number
+  totalF50: number
+  totalF60: number
+  totalManCount: number
+  totalWomanCount: number
+  totalCount: number
+  dataList: IAgeGenderPlaceStatistics[]
+}
+
+export interface IAgeGenderPlaceStatistics {
+  placeName: string
+  m0: number
+  m10: number
+  m20: number
+  m30: number
+  m40: number
+  m50: number
+  m60: number
+  f0: number
+  f10: number
+  f20: number
+  f30: number
+  f40: number
+  f50: number
+  f60: number
+  totalManCount: number
+  totalWomanCount: number
+  totalCount: number
+}
+
+export interface IAgeGenderStatisticsTableResponse extends IBaseChartResponse {
+  totalManCount: number
+  totalPlaceCount: number
+  totalWomanCount: number
+  dataList: IAgeGenderStatistics[]
+}

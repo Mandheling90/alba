@@ -4,11 +4,17 @@ import VisitorAttributesTemplate from 'src/@core/components/charts/template/Visi
 import { ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
 import { EStatisticsPage } from 'src/enum/statisticsEnum'
 import { useStatistics } from 'src/hooks/useStatistics'
-import { ICountBarChart, IHeatMapChart, IPyramidPieChart } from 'src/model/statistics/StatisticsModel'
+import {
+  IAgeGenderStatisticsTableResponse,
+  ICountBarChart,
+  IHeatMapChart,
+  IPyramidPieChart
+} from 'src/model/statistics/StatisticsModel'
 import {
   useGenderAgeWeekDayBarChart,
   useGenderAgeWeekDayHeatmapChart,
-  useGenderAgeWeekDayPyramidPieChart
+  useGenderAgeWeekDayPyramidPieChart,
+  useGenderAgeWeekDayTable
 } from 'src/service/statistics/statisticsService'
 
 const VisitorAttributesStatisticsWeekDay: FC = ({}): React.ReactElement => {
@@ -18,11 +24,13 @@ const VisitorAttributesStatisticsWeekDay: FC = ({}): React.ReactElement => {
     useGenderAgeWeekDayPyramidPieChart()
   const { mutateAsync: genderAgeHeatmapChart, isLoading: genderAgeHeatmapChartLoading } =
     useGenderAgeWeekDayHeatmapChart()
+  const { mutateAsync: genderAgeTable, isLoading: genderAgeTableLoading } = useGenderAgeWeekDayTable()
 
   const page = EStatisticsPage.WEEK_DAY_ATTRIBUTES
   const [barChartData, setBarChartData] = useState<ICountBarChart>()
   const [pyramidPieChartData, setPyramidPieChartData] = useState<IPyramidPieChart>()
   const [heatmapChartData, setHeatmapChartData] = useState<IHeatMapChart>()
+  const [tableData, setTableData] = useState<IAgeGenderStatisticsTableResponse>()
 
   const fetchData = useCallback(
     async (req?: IStatisticsContextReq) => {
@@ -49,13 +57,35 @@ const VisitorAttributesStatisticsWeekDay: FC = ({}): React.ReactElement => {
       const resTable = await genderAgeHeatmapChart(statistics)
       setHeatmapChartData(resTable.data)
 
+      const resTableData = await genderAgeTable(statistics)
+      const tableDataWithKeys = {
+        ...resTableData.data,
+        dataList: resTableData.data.dataList.map((item, index) => ({
+          ...item,
+          key: `table-item-${index}}`,
+          dataList: item.dataList?.map((subItem, subIndex) => ({
+            ...subItem,
+            key: `table-sub-item-${index}-${subIndex}}`
+          }))
+        }))
+      }
+      setTableData(tableDataWithKeys)
+
       if (req) {
         statisticsReqUpdate({
           ...req
         })
       }
     },
-    [genderAgeBarChart, genderAgePyramidPieChart, genderAgeHeatmapChart, page, statisticsDefultSet, statisticsReqUpdate]
+    [
+      statisticsDefultSet,
+      page,
+      genderAgeBarChart,
+      genderAgePyramidPieChart,
+      genderAgeHeatmapChart,
+      genderAgeTable,
+      statisticsReqUpdate
+    ]
   )
 
   useEffect(() => {
@@ -68,7 +98,8 @@ const VisitorAttributesStatisticsWeekDay: FC = ({}): React.ReactElement => {
     !currentStatistics ||
     genderAgeBarChartLoading ||
     genderAgePyramidPieChartLoading ||
-    genderAgeHeatmapChartLoading
+    genderAgeHeatmapChartLoading ||
+    genderAgeTableLoading
   ) {
     return <></>
   }
@@ -79,6 +110,7 @@ const VisitorAttributesStatisticsWeekDay: FC = ({}): React.ReactElement => {
       barChartData={barChartData}
       pyramidPieChartData={pyramidPieChartData}
       heatmapChartData={heatmapChartData}
+      tableData={tableData}
       refetch={fetchData}
     />
   )

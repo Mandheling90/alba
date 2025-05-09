@@ -1,5 +1,5 @@
 import { Box, IconButton } from '@mui/material'
-import { FC, createContext, useState } from 'react'
+import { FC, useState } from 'react'
 
 import { ETableDisplayType, ETableType } from 'src/context/StatisticsContext'
 import IconCustom from 'src/layouts/components/IconCustom'
@@ -8,16 +8,6 @@ import { generateColumns } from '../columns/columnGenerator'
 import CustomTable from '../CustomTable'
 import TimeDepthTable from './TimeDepthTable'
 import TimePlaceDepthTable from './TimePlaceDepthTable'
-
-interface TableContextType {
-  expandedRows: string[]
-  toggleRow: (key: string) => void
-}
-
-export const TableContext = createContext<TableContextType>({
-  expandedRows: [],
-  toggleRow: (key: string) => key
-})
 
 interface DepthTableProps {
   tableType: ETableType
@@ -67,7 +57,6 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
           customRenderers: {
             dateName: (params: any) => {
               const depth = checkDataListDepth(params.row)
-              const key = `${params.row.dateName}-${params.row.totalPlaceName}-${params.row.totalInCount}-${params.row.totalOutCount}`
 
               return tableDisplayType === 'time' ? (
                 <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
@@ -77,14 +66,14 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
                         <IconButton
                           onClick={(e: React.MouseEvent) => {
                             e.stopPropagation()
-                            toggleRow(key)
+                            toggleRow(params.row.key)
                           }}
                         >
                           {depth === 2 && (
                             <IconCustom
                               isCommon
                               path='table'
-                              icon={expandedRows.includes(key) ? 'unfolding' : 'folding'}
+                              icon={expandedRows.includes(params.row.key) ? 'unfolding' : 'folding'}
                             />
                           )}
                         </IconButton>
@@ -99,10 +88,14 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
                     <IconButton
                       onClick={(e: React.MouseEvent) => {
                         e.stopPropagation()
-                        toggleRow(key)
+                        toggleRow(params.row.key)
                       }}
                     >
-                      <IconCustom isCommon path='table' icon={expandedRows.includes(key) ? 'unfolding' : 'folding'} />
+                      <IconCustom
+                        isCommon
+                        path='table'
+                        icon={expandedRows.includes(params.row.key) ? 'unfolding' : 'folding'}
+                      />
                     </IconButton>
                   </Box>
                   <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
@@ -144,7 +137,6 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
           customRenderers: {
             dateName: (params: any) => {
               const depth = checkDataListDepth(params.row)
-              const key = `${params.row.dateName}-${params.row.totalPlaceName}-${params.row.totalInCount}-${params.row.totalOutCount}`
 
               return tableDisplayType === 'time' ? (
                 <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
@@ -154,14 +146,14 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
                         <IconButton
                           onClick={(e: React.MouseEvent) => {
                             e.stopPropagation()
-                            toggleRow(key)
+                            toggleRow(params.row.key)
                           }}
                         >
                           {depth === 2 && (
                             <IconCustom
                               isCommon
                               path='table'
-                              icon={expandedRows.includes(key) ? 'unfolding' : 'folding'}
+                              icon={expandedRows.includes(params.row.key) ? 'unfolding' : 'folding'}
                             />
                           )}
                         </IconButton>
@@ -176,10 +168,14 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
                     <IconButton
                       onClick={(e: React.MouseEvent) => {
                         e.stopPropagation()
-                        toggleRow(key)
+                        toggleRow(params.row.key)
                       }}
                     >
-                      <IconCustom isCommon path='table' icon={expandedRows.includes(key) ? 'unfolding' : 'folding'} />
+                      <IconCustom
+                        isCommon
+                        path='table'
+                        icon={expandedRows.includes(params.row.key) ? 'unfolding' : 'folding'}
+                      />
                     </IconButton>
                   </Box>
                   <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
@@ -279,15 +275,15 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
   const columns2 = getColumns2()
 
   return (
-    <TableContext.Provider value={{ expandedRows, toggleRow }}>
+    <>
       {tableType === ETableType.WEEKDAY || tableType === ETableType.WEEKLY ? (
         <CustomTable columns={columns} rows={data.dataList} isAllView />
       ) : tableDisplayType === ETableDisplayType.TIME_PLACE ? (
-        <TimePlaceDepthTable data={data} columns={columns} columns2={columns2} />
+        <TimePlaceDepthTable data={data} columns={columns} columns2={columns2} expandedRows={expandedRows} />
       ) : (
-        <TimeDepthTable data={data} columns={columns} />
+        <TimeDepthTable data={data} columns={columns} expandedRows={expandedRows} />
       )}
-    </TableContext.Provider>
+    </>
   )
 }
 

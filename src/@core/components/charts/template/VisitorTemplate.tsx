@@ -160,7 +160,7 @@ const VisitorTemplate: FC<{
                       )}
 
                     <Button
-                      startIcon={<IconCustom isCommon icon='download2' />}
+                      startIcon={<IconCustom isCommon icon='downLoad2' />}
                       variant='outlined'
                       color='primary'
                       onClick={() => {

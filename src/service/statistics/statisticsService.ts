@@ -3,6 +3,7 @@ import { EPath } from 'src/enum/statisticsEnum'
 
 import MResult from 'src/model/commonModel'
 import {
+  IAgeGenderStatisticsTableResponse,
   ICameraList,
   ICardInfo,
   ICountBarChart,
@@ -190,7 +191,6 @@ export const useGenderAgeHourlyBarChart = () => {
     return createGet<ICountBarChart>([EPath.STATS_GENDER_AGE_HOURLY_BAR_CHART, transformedParams])
   }, {})
 }
-
 export const useGenderAgeHourlyPyramidPieChart = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
@@ -198,12 +198,18 @@ export const useGenderAgeHourlyPyramidPieChart = () => {
     return createGet<IPyramidPieChart>([EPath.STATS_GENDER_AGE_HOURLY_PYRAMID_PIE_CHART, transformedParams])
   }, {})
 }
-
 export const useGenderAgeHourlyHeatmapChart = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
 
     return createGet<IHeatMapChart>([EPath.STATS_GENDER_AGE_HOURLY_HEATMAP_CHART, transformedParams])
+  }, {})
+}
+export const useGenderAgeHourlyTable = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<IAgeGenderStatisticsTableResponse>([EPath.STATS_GENDER_AGE_HOURLY_TABLE, transformedParams])
   }, {})
 }
 
@@ -214,7 +220,6 @@ export const useGenderAgeDailyBarChart = () => {
     return createGet<ICountBarChart>([EPath.STATS_GENDER_AGE_DAILY_BAR_CHART, transformedParams])
   }, {})
 }
-
 export const useGenderAgeDailyPyramidPieChart = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
@@ -222,12 +227,18 @@ export const useGenderAgeDailyPyramidPieChart = () => {
     return createGet<IPyramidPieChart>([EPath.STATS_GENDER_AGE_DAILY_PYRAMID_PIE_CHART, transformedParams])
   }, {})
 }
-
 export const useGenderAgeDailyHeatmapChart = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
 
     return createGet<IHeatMapChart>([EPath.STATS_GENDER_AGE_DAILY_HEATMAP_CHART, transformedParams])
+  }, {})
+}
+export const useGenderAgeDailyTable = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<IAgeGenderStatisticsTableResponse>([EPath.STATS_GENDER_AGE_DAILY_TABLE, transformedParams])
   }, {})
 }
 
@@ -238,7 +249,6 @@ export const useGenderAgeWeekDayBarChart = () => {
     return createGet<ICountBarChart>([EPath.STATS_GENDER_AGE_WEEK_DAY_BAR_CHART, transformedParams])
   }, {})
 }
-
 export const useGenderAgeWeekDayPyramidPieChart = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
@@ -246,12 +256,18 @@ export const useGenderAgeWeekDayPyramidPieChart = () => {
     return createGet<IPyramidPieChart>([EPath.STATS_GENDER_AGE_WEEK_DAY_PYRAMID_PIE_CHART, transformedParams])
   }, {})
 }
-
 export const useGenderAgeWeekDayHeatmapChart = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
 
     return createGet<IHeatMapChart>([EPath.STATS_GENDER_AGE_WEEK_DAY_HEATMAP_CHART, transformedParams])
+  }, {})
+}
+export const useGenderAgeWeekDayTable = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<IAgeGenderStatisticsTableResponse>([EPath.STATS_GENDER_AGE_WEEK_DAY_TABLE, transformedParams])
   }, {})
 }
 
@@ -262,7 +278,6 @@ export const useGenderAgeWeeklyBarChart = () => {
     return createGet<ICountBarChart>([EPath.STATS_GENDER_AGE_WEEKLY_BAR_CHART, transformedParams])
   }, {})
 }
-
 export const useGenderAgeWeeklyPyramidPieChart = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
@@ -270,12 +285,18 @@ export const useGenderAgeWeeklyPyramidPieChart = () => {
     return createGet<IPyramidPieChart>([EPath.STATS_GENDER_AGE_WEEKLY_PYRAMID_PIE_CHART, transformedParams])
   }, {})
 }
-
 export const useGenderAgeWeeklyHeatmapChart = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
 
     return createGet<IHeatMapChart>([EPath.STATS_GENDER_AGE_WEEKLY_HEATMAP_CHART, transformedParams])
+  }, {})
+}
+export const useGenderAgeWeeklyTable = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<IAgeGenderStatisticsTableResponse>([EPath.STATS_GENDER_AGE_WEEKLY_TABLE, transformedParams])
   }, {})
 }
 
@@ -286,7 +307,6 @@ export const useGenderAgeMonthlyBarChart = () => {
     return createGet<ICountBarChart>([EPath.STATS_GENDER_AGE_MONTHLY_BAR_CHART, transformedParams])
   }, {})
 }
-
 export const useGenderAgeMonthlyPyramidPieChart = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
@@ -294,12 +314,18 @@ export const useGenderAgeMonthlyPyramidPieChart = () => {
     return createGet<IPyramidPieChart>([EPath.STATS_GENDER_AGE_MONTHLY_PYRAMID_PIE_CHART, transformedParams])
   }, {})
 }
-
 export const useGenderAgeMonthlyHeatmapChart = () => {
   return useMutation((params: IStatisticsReq) => {
     const transformedParams = transformStatisticsParams(params)
 
     return createGet<IHeatMapChart>([EPath.STATS_GENDER_AGE_MONTHLY_HEATMAP_CHART, transformedParams])
+  }, {})
+}
+export const useGenderAgeMonthlyTable = () => {
+  return useMutation((params: IStatisticsReq) => {
+    const transformedParams = transformStatisticsParams(params)
+
+    return createGet<IAgeGenderStatisticsTableResponse>([EPath.STATS_GENDER_AGE_MONTHLY_TABLE, transformedParams])
   }, {})
 }
 
