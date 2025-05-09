@@ -139,7 +139,7 @@ const VisitorAttributesTemplate: FC<{
 
                 <Box flex={1} display='flex' justifyContent='center'>
                   <Typography variant='h5' sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    전체 입장객 수
+                    남성 전체
                     <Typography
                       component='span'
                       sx={{
@@ -150,9 +150,9 @@ const VisitorAttributesTemplate: FC<{
                         padding: '2px'
                       }}
                     >
-                      {tableData?.totalManCount + tableData?.totalWomanCount}
+                      {tableData?.totalManCount}
                     </Typography>
-                    명 | 전체 퇴장객 수
+                    명 | 여성 전체
                     <Typography
                       component='span'
                       sx={{
@@ -163,7 +163,7 @@ const VisitorAttributesTemplate: FC<{
                         padding: '2px'
                       }}
                     >
-                      {tableData?.totalManCount + tableData?.totalWomanCount}
+                      {tableData?.totalWomanCount}
                     </Typography>
                     명
                   </Typography>

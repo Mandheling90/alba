@@ -219,11 +219,70 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
     }
   }
 
+  const getColumns3 = () => {
+    switch (tableType) {
+      case ETableType.HOURLY:
+      case ETableType.DAILY:
+      case ETableType.MONTHLY:
+        return generateColumns({
+          columns: [
+            { field: 'temp1', headerName: '통계날짜', type: 'string', flex: 0.7 },
+            { field: 'temp2', headerName: '남자', type: 'string', flex: 1.5 },
+            { field: 'temp3', headerName: '여자', type: 'string', flex: 1.5 },
+            { field: 'temp4', headerName: '합계', type: 'string', flex: 0.6 }
+          ],
+          customRenderers: {
+            temp1: (params: any) => {
+              return <></>
+            },
+            temp2: (params: any) => {
+              return <></>
+            },
+            temp3: (params: any) => {
+              return <></>
+            },
+            temp4: (params: any) => {
+              return <></>
+            }
+          }
+        })
+      case ETableType.WEEKDAY:
+      case ETableType.WEEKLY:
+        return generateColumns({
+          columns: [
+            { field: 'temp1', headerName: '통계날짜', type: 'string', flex: 0.2 },
+            { field: 'temp2', headerName: '남자', type: 'string', flex: 1.5 },
+            { field: 'temp3', headerName: '여자', type: 'string', flex: 1.5 },
+            { field: 'temp4', headerName: '합계', type: 'string', flex: 0.6 }
+          ],
+          customRenderers: {
+            temp1: (params: any) => {
+              return <></>
+            },
+            temp2: (params: any) => {
+              return <></>
+            },
+            temp3: (params: any) => {
+              return <></>
+            },
+            temp4: (params: any) => {
+              return <></>
+            }
+          }
+        })
+      default:
+        return []
+    }
+  }
+
   const columns = getColumns()
   const columns2 = getColumns2()
+  const coverColumns = getColumns3()
 
   return (
     <>
+      <CustomTable columns={coverColumns} rows={[]} isAllView hideRows />
+
       {tableType === ETableType.WEEKDAY || tableType === ETableType.WEEKLY ? (
         <CustomTable columns={columns} rows={data.dataList} isAllView />
       ) : tableDisplayType === ETableDisplayType.TIME_PLACE ? (
