@@ -10,7 +10,7 @@ import { useRouter } from 'next/router'
 
 // ** Types
 import { EErrorMessage, ELocalStorageKey, EResultCode, ROLE } from 'src/enum/commonEnum'
-import { login, useComponentListInfo, useGenerateCode, useUserDetailInfo } from 'src/service/commonService'
+import { login, useGenerateCode, useMenuList, useUserDetailInfo } from 'src/service/commonService'
 import { useUserGroup } from 'src/service/setting/userSetting'
 import { AuthValuesType, ErrCallbackType, LoginParams, SuccessCallbackType, UserDataType } from './types'
 
@@ -36,7 +36,7 @@ const AuthProvider = ({ children }: Props) => {
   const [user, setUser] = useState<UserDataType | null>(defaultProvider.user)
   const [loading, setLoading] = useState<boolean>(defaultProvider.loading)
 
-  const { mutateAsync: componentListInfoMutate } = useComponentListInfo()
+  const { mutateAsync: menuListMutate } = useMenuList()
   const { mutateAsync: userDetailInfoMutate } = useUserDetailInfo()
   const { mutateAsync: groupMutate } = useUserGroup()
   const { mutateAsync: generateCodeMutate, isLoading } = useGenerateCode()
@@ -54,7 +54,7 @@ const AuthProvider = ({ children }: Props) => {
         }
 
         try {
-          const result = await componentListInfoMutate()
+          const result = await menuListMutate()
           const userInfo = await userDetailInfoMutate()
 
           if (result.data && userInfo.data) {
@@ -99,7 +99,7 @@ const AuthProvider = ({ children }: Props) => {
       window.localStorage.setItem(ELocalStorageKey.ACCESS_TOKEN, result.data?.accessToken ?? '')
       window.localStorage.setItem(ELocalStorageKey.REFRESH_TOKEN, result.data?.refreshToken ?? '')
 
-      const componentList = await componentListInfoMutate()
+      const menuList = await menuListMutate()
       const userInfo = await userDetailInfoMutate()
 
       if (result.code !== EResultCode.FAIL) {
@@ -108,13 +108,13 @@ const AuthProvider = ({ children }: Props) => {
         } else {
           window.localStorage.removeItem(ELocalStorageKey.LGOIN_REMEMBER)
         }
-        console.log(userInfo.data)
 
         setUser({
           ...user,
           userInfo: userInfo.data,
           role: ROLE.ADMIN,
-          viewNamesWithY: []
+          viewNamesWithY: [],
+          componentListInfo: menuList.data
         })
 
         const returnUrl = router.query.returnUrl

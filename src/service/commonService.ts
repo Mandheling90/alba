@@ -1,6 +1,12 @@
 import { useMutation } from 'react-query'
 import { EPath, EResultCode } from 'src/enum/commonEnum'
-import MResult, { IComponents, MAuthInfo, MChangePassword, MUserInfo, MVerifyCodeReq } from 'src/model/commonModel'
+import MResult, {
+  MAuthInfo,
+  MChangePassword,
+  MUserInfo,
+  MVerifyCodeReq,
+  MVerticalNavItems
+} from 'src/model/commonModel'
 import API from 'src/module/api'
 import { createGet, createPatch } from 'src/module/reactQuery'
 
@@ -47,31 +53,9 @@ export const useChangePassword = () => {
 }
 
 //메뉴 리스트 조회
-export const useComponentListInfo = () => {
-  const exampleComponent: IComponents = {
-    componentId: 1,
-    componentName: 'Dashboard',
-    componentUri: '/dashboard',
-    componentIconClass: 'icon-dashboard',
-    subComponents: [
-      {
-        componentId: 101,
-        componentName: 'Overview',
-        componentUri: '/dashboard/overview',
-        componentIconClass: 'icon-overview'
-      },
-      {
-        componentId: 102,
-        componentName: 'Stats',
-        componentUri: '/dashboard/stats',
-        componentIconClass: 'icon-stats'
-      }
-    ]
-  }
-
+export const useMenuList = () => {
   return useMutation(() => {
-    // return API.get<IComponents[]>(EPath.COMPONENT_LIST, {})
-    return Promise.resolve({ data: [exampleComponent] })
+    return createGet<MVerticalNavItems[]>([EPath.MENU_LIST, {}])
   }, {})
 }
 

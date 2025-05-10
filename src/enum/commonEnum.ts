@@ -8,7 +8,8 @@ export const EPath = {
   LOG: '/log',
   CUSTOMER_LIST: '/customer/list',
   GATE_LIST: '/gate/list',
-  USER_INFO: '/user/info'
+  USER_INFO: '/user/info',
+  MENU_LIST: '/menu/list'
 } as const
 
 export const ELocalStorageKey = {

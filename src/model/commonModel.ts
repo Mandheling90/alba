@@ -77,6 +77,19 @@ interface MSubComponents {
   componentIconClass: string
 }
 
+export interface MVerticalNavItems {
+  title: string
+  icon: string
+  path: string
+  children: MVerticalNavItems[]
+}
+
+export interface MHorizontalNavItems {
+  title: string
+  icon: string
+  path: string
+}
+
 export interface MOrder {
   sort: SORT
 }

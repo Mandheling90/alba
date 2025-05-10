@@ -22,6 +22,7 @@ import VerticalAppBarContent from './components/vertical/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
+import { VerticalNavItemsType } from 'src/@core/layouts/types'
 import { EComponentList } from 'src/enum/commonEnum'
 import { useAuth } from 'src/hooks/useAuth'
 
@@ -53,7 +54,10 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
   }
 
   const user = useAuth().user
-  const [componentList, setComponentList] = useState(EComponentList)
+
+  // console.log(convertToNavItems(user?.componentListInfo ?? []))
+
+  const [componentList, setComponentList] = useState<VerticalNavItemsType>(user?.componentListInfo ?? EComponentList)
 
   // 권한에 따른 메뉴 필터링
   // useEffect(() => {

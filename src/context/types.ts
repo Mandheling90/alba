@@ -1,4 +1,4 @@
-import { IComponents, MUserInfo } from 'src/model/commonModel'
+import { MUserInfo, MVerticalNavItems } from 'src/model/commonModel'
 
 export type ErrCallbackType = (err: { [key: string]: string }) => void
 export type SuccessCallbackType = () => void
@@ -16,7 +16,7 @@ export type UserDataType = {
   password?: string
   avatar?: string | null
   role?: string
-  componentListInfo?: IComponents[]
+  componentListInfo?: MVerticalNavItems[]
   viewNamesWithY?: (string | undefined)[]
 
   id?: number
