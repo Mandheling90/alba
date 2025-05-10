@@ -167,6 +167,8 @@ export interface IClientDetail {
   reportEmail: string
   accountStatus: YN
   accountStatusStr: string
+  exitDisplayYn: YN
+  exitDisplayYnStr: string
 }
 
 export interface ISolutionList {

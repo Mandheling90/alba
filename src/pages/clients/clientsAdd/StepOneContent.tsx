@@ -7,6 +7,7 @@ import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 import { grayTextBackground, grayTextFieldStyle, requiredTextFieldStyle } from 'src/@core/styles/TextFieldStyle'
 import { YN } from 'src/enum/commonEnum'
+import { useModal } from 'src/hooks/useModal'
 import { IClientDetail } from 'src/model/client/clientModel'
 
 interface IStepOneContentProps {
@@ -27,6 +28,8 @@ const StepOneContent: FC<IStepOneContentProps> = ({
   onValidationChange,
   onDuplicateCheck
 }) => {
+  const { setSimpleDialogModalProps } = useModal()
+
   const handleChange = (field: keyof IClientDetail) => (event: React.ChangeEvent<HTMLInputElement>) => {
     onDataChange({ [field]: event.target.value })
   }
@@ -36,7 +39,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
   }
 
   const handleSwitchChange = (field: keyof IClientDetail) => (selected: boolean) => {
-    onDataChange({ [field]: selected })
+    onDataChange({ [field]: selected ? YN.Y : YN.N })
   }
 
   const handleDateChange = (start: string, end: string) => {
@@ -245,7 +248,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
             </Grid>
 
             <Grid item xs={8}>
-              <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', pl: 10 }}>
+              <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
                 <Typography
                   fontSize={20}
                   fontWeight={500}
@@ -283,6 +286,25 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                 />
               </Box>
             </Grid>
+            <Grid item xs={4}>
+              <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
+                <Typography
+                  fontSize={20}
+                  fontWeight={500}
+                  variant='h6'
+                  sx={{ minWidth: '110px', whiteSpace: 'nowrap' }}
+                >
+                  퇴장객 분석
+                </Typography>
+                <SwitchCustom
+                  width={100}
+                  switchName={['활성', '비활성']}
+                  selected={clientData?.exitDisplayYn === YN.Y}
+                  onChange={handleSwitchChange('exitDisplayYn')}
+                  activeColor={['#9155FD', '#F57A52']}
+                />
+              </Box>
+            </Grid>
           </Grid>
         </WindowCard>
       </Box>
@@ -298,6 +320,11 @@ const StepOneContent: FC<IStepOneContentProps> = ({
 
                 return
               }
+
+              setSimpleDialogModalProps({
+                open: true,
+                title: `고객사 ${(clientData?.companyNo ?? 0) > 0 ? '수정' : '등록'} 완료`
+              })
 
               onNext()
             }}

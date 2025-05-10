@@ -105,7 +105,7 @@ const Visitors: FC = ({}): React.ReactElement => {
             />
           </Card>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={barChart?.data?.exitCountList && barChart?.data?.exitCountList.length > 0 ? 6 : 12}>
           <Card>
             <VisitantList
               data={barChart?.data?.barDataList || []}
@@ -119,14 +119,16 @@ const Visitors: FC = ({}): React.ReactElement => {
         </Grid>
         <Grid item xs={6}>
           <Card>
-            <VisitantList
-              data={barChart?.data?.exitCountList || []}
-              xcategories={barChart?.data?.xcategories || []}
-              selected={hoveredPoint}
-              refetch={() => {
-                console.log('refetch')
-              }}
-            />
+            {barChart?.data?.exitCountList && barChart?.data?.exitCountList.length > 0 && (
+              <VisitantList
+                data={barChart?.data?.exitCountList || []}
+                xcategories={barChart?.data?.xcategories || []}
+                selected={hoveredPoint}
+                refetch={() => {
+                  console.log('refetch')
+                }}
+              />
+            )}
           </Card>
         </Grid>
       </Grid>

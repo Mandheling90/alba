@@ -131,7 +131,7 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
             />
           </Card>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={barChart?.data?.exitCountList && barChart?.data?.exitCountList.length > 0 ? 6 : 12}>
           <Card>
             <VisitantList
               data={barChart?.data?.barDataList || []}
@@ -144,16 +144,18 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
           </Card>
         </Grid>
         <Grid item xs={6}>
-          <Card>
-            <VisitantList
-              data={barChart?.data?.exitCountList || []}
-              xcategories={barChart?.data?.xcategories || []}
-              refetch={() => {
-                console.log('refetch')
-              }}
-              selected={hoveredPoint}
-            />
-          </Card>
+          {barChart?.data?.exitCountList && barChart?.data?.exitCountList.length > 0 && (
+            <Card>
+              <VisitantList
+                data={barChart?.data?.exitCountList || []}
+                xcategories={barChart?.data?.xcategories || []}
+                refetch={() => {
+                  console.log('refetch')
+                }}
+                selected={hoveredPoint}
+              />
+            </Card>
+          )}
         </Grid>
       </Grid>
     </StandardTemplate>

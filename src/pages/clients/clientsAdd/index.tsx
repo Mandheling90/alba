@@ -31,7 +31,9 @@ export const DEFAULT_CLIENT_DATA: IClientDetail = {
   reportGenerationStr: '',
   reportEmail: '',
   accountStatus: YN.Y,
-  accountStatusStr: ''
+  accountStatusStr: '',
+  exitDisplayYn: YN.Y,
+  exitDisplayYnStr: ''
 }
 
 // StepContent 커스텀

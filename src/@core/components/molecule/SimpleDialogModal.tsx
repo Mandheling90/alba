@@ -5,7 +5,7 @@ import DialogCustomContent from './DialogCustomContent'
 export interface IDialogProps {
   open: boolean
   title: string
-  contents: string
+  contents?: string
   confirmFn?: () => void
   isConfirm?: boolean
   resolve?: (value: boolean) => void
