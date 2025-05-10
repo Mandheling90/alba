@@ -8,6 +8,7 @@ import {
   ICardInfo,
   ICountBarChart,
   ICountBarPieChart,
+  ICountLineChartPolling,
   IDashboardCountBarChart,
   IHeatMapChart,
   IHeatMapResponse,
@@ -152,6 +153,12 @@ export const useOccupancyTable = () => {
 
 export const useCountLineChart = () => {
   return useQuery<MResult<ILineChartResponse>>([EPath.STATS_DASHBOARD_COUNT_LINE_CHART], {})
+}
+
+export const useCountLineChartPolling = () => {
+  return useMutation((params: { lastDate: string; lastTime: string }) => {
+    return createGet<ICountLineChartPolling>([EPath.STATS_DASHBOARD_COUNT_LINE_CHART_POLLING, params])
+  }, {})
 }
 
 export const useCountCardInfo = () => {

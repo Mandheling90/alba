@@ -93,6 +93,7 @@ export const EPath = {
   STATS_AREA_TABLE_GROUP: '/stats/area/table/group',
 
   STATS_DASHBOARD_COUNT_LINE_CHART: '/dashboard/count/line/chart',
+  STATS_DASHBOARD_COUNT_LINE_CHART_POLLING: '/dashboard/count/line/chart/polling',
   STATS_DASHBOARD_COUNT_CARD_INFO: '/dashboard/count/card/info',
   STATS_DASHBOARD_COUNT_BAR_CHART: '/dashboard/count/bar/chart',
   STATS_DASHBOARD_GENDER_AGE_CHART: '/dashboard/gender/age/chart',

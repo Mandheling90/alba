@@ -192,11 +192,21 @@ export interface IBaseChartResponse {
   yname: string
 }
 
-export interface ILineChartResponse extends IBaseChartResponse {
+export interface IBaseDashboardChartResponse {
+  day: string
+  endHour: string
+  month: string
+  startHour: string
+  totalPlaceCount: number
+  year: string
+  yname: string
+}
+
+export interface ILineChartResponse extends IBaseDashboardChartResponse {
   lineDataList: ILineDataList[]
 }
 
-export interface IDashboardCountBarChart extends IBaseChartResponse {
+export interface IDashboardCountBarChart extends IBaseDashboardChartResponse {
   barDataList: IBarDataList[]
   exitCountList: IBarDataList[]
   xcategories: string[]
@@ -373,4 +383,19 @@ export interface IAgeGenderStatisticsTableResponse extends IBaseChartResponse {
   totalPlaceCount: number
   totalWomanCount: number
   dataList: IAgeGenderStatistics[]
+}
+
+export interface ICountLineChartPolling {
+  hour: string
+  totalPlaceCount: number
+  lineDataList: ILineData[]
+  yname: string
+}
+
+export interface ILineData {
+  label: string
+  data: {
+    timestamp: number
+    count: number
+  }
 }
