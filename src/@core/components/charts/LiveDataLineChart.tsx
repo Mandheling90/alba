@@ -1,5 +1,5 @@
 import Highcharts from 'highcharts/highstock'
-import { memo, useEffect } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import { ICountLineChartPolling, ILineDataList } from 'src/model/statistics/StatisticsModel'
 import { areEqual } from 'src/utils/CommonUtil'
 
@@ -15,6 +15,8 @@ interface ILiveDataLineChart {
 
 const LiveDataLineChart = memo(
   ({ selected, data, height = '400px', livePollingMutate, onTimeStrChange }: ILiveDataLineChart) => {
+    const intervalIdRef = useRef<NodeJS.Timeout>()
+
     // 데이터 형식 변환 함수
     const convertDataFormat = (data: { timestamp: number; count: number }[]): [number, number][] => {
       return data.map(item => [item.timestamp, item.count])
@@ -56,7 +58,7 @@ const LiveDataLineChart = memo(
                 return
               }
 
-              setInterval(async function () {
+              intervalIdRef.current = setInterval(async function () {
                 const lastTimestamp = convertedData[convertedData.length - 1][0]
 
                 const date = new Date(lastTimestamp)
@@ -101,7 +103,7 @@ const LiveDataLineChart = memo(
 
                 convertedData.push([previousData.timestamp, previousData.count])
                 convertedSecondData.push([currentData.timestamp, currentData.count])
-              }, 30000)
+              }, 3000)
             }
           }
         },
@@ -212,6 +214,16 @@ const LiveDataLineChart = memo(
           }
         ]
       })
+
+      return () => {
+        console.log('=====================================')
+        if (intervalIdRef.current) {
+          clearInterval(intervalIdRef.current)
+        }
+        if (chart) {
+          chart.destroy()
+        }
+      }
     }, [convertedData, convertedSecondData])
 
     return <div id='container' />
