@@ -12,6 +12,7 @@ import styled from 'styled-components'
 
 import { getCameraColumns } from 'src/@core/components/table/columns/cameraColumns'
 import { getUserColumns } from 'src/@core/components/table/columns/userColumns'
+import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
 import { MUserCompanyList } from 'src/model/userSetting/userSettingModel'
 import { useUserCompanyList } from 'src/service/setting/userSetting'
 
@@ -112,44 +113,54 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
     <Grid container>
       <Grid item xs={12}>
         <Card>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', m: 3, gap: 3 }}>
-            <Box sx={{ display: 'flex', gap: 3 }}>
-              <LayoutControlPanel
-                menuName='고객사'
-                companyId={companyId}
-                companyName={companyName}
-                onClick={() => {
-                  layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
-                }}
-              />
+          <HorizontalScrollBox>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                m: 3,
+                gap: 3,
+                width: '100%'
+              }}
+            >
+              <Box sx={{ display: 'flex', gap: 3 }}>
+                <LayoutControlPanel
+                  menuName='고객사'
+                  companyId={companyId}
+                  companyName={companyName}
+                  onClick={() => {
+                    layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
+                  }}
+                />
+              </Box>
+
+              <Box sx={{ display: 'flex', gap: 3 }}>
+                <Button
+                  variant={'outlined'}
+                  onClick={async () => {
+                    await clientCameraUserAuthUpdate({
+                      companyNo,
+                      userNo: selectedUser?.userNo ?? 0,
+                      cameraNoList: accessibleCameraList.map(cameraNo => ({ cameraNo }))
+                    })
+
+                    fetchClientCameraUserAuthData()
+                  }}
+                >
+                  저장
+                </Button>
+                <Button
+                  variant={'outlined'}
+                  onClick={() => {
+                    setAccessibleCameraList(orgAccessibleCameraList)
+                  }}
+                >
+                  취소
+                </Button>
+              </Box>
             </Box>
-
-            <Box sx={{ display: 'flex', gap: 3 }}>
-              <Button
-                variant={'outlined'}
-                onClick={async () => {
-                  await clientCameraUserAuthUpdate({
-                    companyNo,
-                    userNo: selectedUser?.userNo ?? 0,
-                    cameraNoList: accessibleCameraList.map(cameraNo => ({ cameraNo }))
-                  })
-
-                  fetchClientCameraUserAuthData()
-                }}
-              >
-                저장
-              </Button>
-              <Button
-                variant={'outlined'}
-                onClick={() => {
-                  setAccessibleCameraList(orgAccessibleCameraList)
-                }}
-              >
-                취소
-              </Button>
-            </Box>
-          </Box>
-
+          </HorizontalScrollBox>
           <Box sx={{ display: 'flex', width: '100%', gap: 3 }}>
             <Box sx={{ width: '50%' }}>
               <CustomTable

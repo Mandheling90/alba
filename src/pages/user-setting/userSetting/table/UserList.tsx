@@ -6,6 +6,7 @@ import DividerBar from 'src/@core/components/atom/DividerBar'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import { getUserColumns } from 'src/@core/components/table/columns/userColumns'
 import CustomTable from 'src/@core/components/table/CustomTable'
+import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
 import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
@@ -74,45 +75,47 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
 
       <Grid container>
         <Grid item xs={12}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', m: 3 }}>
-            <LayoutControlPanel
-              menuName='고객사'
-              companyId={companyId}
-              companyName={companyName}
-              onClick={() => {
-                setLayoutDisplay(!layoutDisplay)
-              }}
-            />
-
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button
-                variant={'contained'}
-                startIcon={<IconCustom isCommon icon='plus' />}
+          <HorizontalScrollBox>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', m: 3, width: '100%' }}>
+              <LayoutControlPanel
+                menuName='고객사'
+                companyId={companyId}
+                companyName={companyName}
                 onClick={() => {
-                  setSelectUser(undefined)
-                  setIsOpen(true)
+                  setLayoutDisplay(!layoutDisplay)
                 }}
-              >
-                사용자 추가
-              </Button>
+              />
 
-              <Button
-                variant={'contained'}
-                startIcon={<IconCustom isCommon icon='minus' />}
-                onClick={async () => {
-                  const result = window.confirm('정말삭제 하시겠습니까?')
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Button
+                  variant={'contained'}
+                  startIcon={<IconCustom isCommon icon='plus' />}
+                  onClick={() => {
+                    setSelectUser(undefined)
+                    setIsOpen(true)
+                  }}
+                >
+                  사용자 추가
+                </Button>
 
-                  if (result) {
-                    const userNos = selectedUser.map(user => user.userNo)
-                    await userDel({ userNos })
-                    refetch()
-                  }
-                }}
-              >
-                사용자 삭제
-              </Button>
+                <Button
+                  variant={'contained'}
+                  startIcon={<IconCustom isCommon icon='minus' />}
+                  onClick={async () => {
+                    const result = window.confirm('정말삭제 하시겠습니까?')
+
+                    if (result) {
+                      const userNos = selectedUser.map(user => user.userNo)
+                      await userDel({ userNos })
+                      refetch()
+                    }
+                  }}
+                >
+                  사용자 삭제
+                </Button>
+              </Box>
             </Box>
-          </Box>
+          </HorizontalScrollBox>
           <Box sx={{ maxHeight: '33.5vh', overflow: 'auto' }}>
             <CustomTable
               id='userNo'

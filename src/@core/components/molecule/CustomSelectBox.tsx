@@ -37,6 +37,11 @@ const CustomSelectBox: FC<ICustomSelectBox> = ({
         backgroundColor: backgroundColor || 'transparent',
         '& .MuiOutlinedInput-notchedOutline': {
           border: border ? '1px solid #ccc' : 'none'
+        },
+        '& .MuiSelect-select': {
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap'
         }
       }}
       value={value}

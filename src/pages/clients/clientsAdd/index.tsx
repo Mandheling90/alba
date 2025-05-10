@@ -210,7 +210,7 @@ const Index: FC = ({}) => {
                 <CustomStepContent stepindex={index} activestep={activeStep}>
                   <Box sx={{ py: 3, display: expandedSteps[index] ? 'block' : 'none' }}>
                     <Grid container spacing={1}>
-                      <Grid item xs={8}>
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={8}>
                         {step.content}
                       </Grid>
                     </Grid>

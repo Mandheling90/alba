@@ -79,7 +79,12 @@ const StepOneContent: FC<IStepOneContentProps> = ({
           <Grid container spacing={1}>
             <Grid item xs={6}>
               <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-                <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '160px' }}>
+                <Typography
+                  fontSize={20}
+                  fontWeight={500}
+                  variant='h6'
+                  sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                >
                   고객사ID
                 </Typography>
                 <TextField
@@ -101,6 +106,12 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                       setCompanyIdOrg(clientData?.companyId || '')
                     }
                   }}
+                  sx={{
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    minWidth: '100px'
+                  }}
                 >
                   중복확인
                 </Button>
@@ -109,7 +120,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
 
             <Grid item xs={6}>
               <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-                <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '90px' }}>
+                <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '90px', whiteSpace: 'nowrap' }}>
                   고객사명
                 </Typography>
                 <TextField
@@ -124,7 +135,12 @@ const StepOneContent: FC<IStepOneContentProps> = ({
 
             <Grid item xs={12}>
               <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-                <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '160px' }}>
+                <Typography
+                  fontSize={20}
+                  fontWeight={500}
+                  variant='h6'
+                  sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                >
                   고객사주소
                 </Typography>
                 <TextField
@@ -139,7 +155,12 @@ const StepOneContent: FC<IStepOneContentProps> = ({
 
             <Grid item xs={7}>
               <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-                <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '160px' }}>
+                <Typography
+                  fontSize={20}
+                  fontWeight={500}
+                  variant='h6'
+                  sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                >
                   사업자등록번호
                 </Typography>
                 <TextField
@@ -154,7 +175,12 @@ const StepOneContent: FC<IStepOneContentProps> = ({
 
             <Grid item xs={5}>
               <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', pl: 3 }}>
-                <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '160px' }}>
+                <Typography
+                  fontSize={20}
+                  fontWeight={500}
+                  variant='h6'
+                  sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                >
                   사업자 현재 상태
                 </Typography>
                 <CustomSelectBox
@@ -176,7 +202,12 @@ const StepOneContent: FC<IStepOneContentProps> = ({
 
             <Grid item xs={12}>
               <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-                <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '160px' }}>
+                <Typography
+                  fontSize={20}
+                  fontWeight={500}
+                  variant='h6'
+                  sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                >
                   계약기간설정
                 </Typography>
                 <Box sx={{ width: '100%' }}>
@@ -195,7 +226,12 @@ const StepOneContent: FC<IStepOneContentProps> = ({
 
             <Grid item xs={4}>
               <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-                <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '160px' }}>
+                <Typography
+                  fontSize={20}
+                  fontWeight={500}
+                  variant='h6'
+                  sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                >
                   리포트생성
                 </Typography>
                 <SwitchCustom
@@ -210,7 +246,12 @@ const StepOneContent: FC<IStepOneContentProps> = ({
 
             <Grid item xs={8}>
               <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', pl: 10 }}>
-                <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '110px' }}>
+                <Typography
+                  fontSize={20}
+                  fontWeight={500}
+                  variant='h6'
+                  sx={{ minWidth: '110px', whiteSpace: 'nowrap' }}
+                >
                   리포트수신
                 </Typography>
                 <TextField
@@ -225,7 +266,12 @@ const StepOneContent: FC<IStepOneContentProps> = ({
 
             <Grid item xs={4}>
               <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-                <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '160px' }}>
+                <Typography
+                  fontSize={20}
+                  fontWeight={500}
+                  variant='h6'
+                  sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                >
                   고객사계정
                 </Typography>
                 <SwitchCustom

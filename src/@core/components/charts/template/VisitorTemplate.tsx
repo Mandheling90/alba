@@ -5,6 +5,7 @@ import BarStackedChart from 'src/@core/components/charts/BarStackedChart'
 import HorizontalBarChartLocation from 'src/@core/components/charts/HorizontalBarChartLocation'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
+import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
 import { ETableDisplayType, ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
 import { useStatistics } from 'src/hooks/useStatistics'
 import IconCustom from 'src/layouts/components/IconCustom'
@@ -81,8 +82,8 @@ const VisitorTemplate: FC<{
         {tableData && (
           <>
             <Grid item xs={12}>
-              <Box display='flex' alignItems='center' width='100%'>
-                <Box flex={1}>
+              <HorizontalScrollBox>
+                <Box sx={{ minWidth: 'fit-content' }}>
                   <PipelineTitle
                     Icon={<IconCustom isCommon path='dashboard' icon='calendar' />}
                     title={[
@@ -93,8 +94,8 @@ const VisitorTemplate: FC<{
                   />
                 </Box>
 
-                <Box flex={1} display='flex' justifyContent='center'>
-                  <Typography variant='h5' sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box sx={{ minWidth: 'fit-content', mx: 'auto' }}>
+                  <Typography variant='h5' sx={{ display: 'flex', alignItems: 'center', gap: 2, whiteSpace: 'nowrap' }}>
                     전체 입장객 수
                     <Typography
                       component='span'
@@ -125,7 +126,7 @@ const VisitorTemplate: FC<{
                   </Typography>
                 </Box>
 
-                <Box flex={1} display='flex' justifyContent='flex-end'>
+                <Box sx={{ minWidth: 'fit-content' }}>
                   <Box display='flex' gap={2}>
                     {statisticsReq.tableType !== ETableType.WEEKDAY &&
                       statisticsReq.tableType !== ETableType.WEEKLY && (
@@ -174,9 +175,8 @@ const VisitorTemplate: FC<{
                     </Button>
                   </Box>
                 </Box>
-              </Box>
+              </HorizontalScrollBox>
             </Grid>
-
             <Grid item xs={12}>
               <Card>
                 <VisitorDepthTable

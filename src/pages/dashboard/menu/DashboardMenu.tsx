@@ -2,6 +2,7 @@ import { Box, Button, Typography } from '@mui/material'
 import { FC, useState } from 'react'
 import PickersRange from 'src/@core/components/atom/PickersRange'
 import TimePicker from 'src/@core/components/atom/TimePicker'
+import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
 import { IStatisticsContextReq } from 'src/context/StatisticsContext'
 import IconCustom from 'src/layouts/components/IconCustom'
 import AgeSelect from 'src/pages/dashboard/menu/AgeSelect'
@@ -17,7 +18,8 @@ interface IDashboardMenu {
 const FlexBox = styled(Box)({
   display: 'flex',
   alignItems: 'center',
-  gap: 10
+  gap: 10,
+  flexShrink: 0
 })
 
 const DashboardMenu: FC<IDashboardMenu> = ({ refetch, useAgeSelect = false, statisticsReq }) => {
@@ -60,7 +62,7 @@ const DashboardMenu: FC<IDashboardMenu> = ({ refetch, useAgeSelect = false, stat
   }
 
   return (
-    <Box display={'flex'} alignItems={'center'} gap={5}>
+    <HorizontalScrollBox>
       <CameraGroupSelect value={selectedValues} onChange={handleCameraChange} />
 
       <FlexBox>
@@ -138,7 +140,7 @@ const DashboardMenu: FC<IDashboardMenu> = ({ refetch, useAgeSelect = false, stat
           검색
         </Button>
       </FlexBox>
-    </Box>
+    </HorizontalScrollBox>
   )
 }
 
