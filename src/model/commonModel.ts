@@ -1,5 +1,10 @@
 import { SORT, YN } from 'src/enum/commonEnum'
 
+export enum AuthType {
+  CUSTOMER = 1,
+  ADMIN = 2
+}
+
 export default interface MResult<T = any> {
   code?: string
   msg: string
@@ -43,7 +48,7 @@ export interface MUserInfo {
   name: string
   mobileNo: string
   mailAddress: string
-  authId: number
+  authId: AuthType
   authName: string
   userStatus: number
   userStatusStr: string

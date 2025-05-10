@@ -1,7 +1,6 @@
 // ** MUI Imports
 import { Box, Card, IconButton, TextField } from '@mui/material'
-import { FC, useEffect, useState } from 'react'
-import { useAuth } from 'src/hooks/useAuth'
+import { FC, useState } from 'react'
 import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
 
@@ -12,24 +11,7 @@ const ClientListGrid: FC = (): React.ReactElement => {
   const [searchKeyword, setSearchKeyword] = useState('')
   const { data, refetch } = useCompanySearchList({ keyword: '' })
 
-  const { layoutDisplay, setCompanyId, setCompanyName, setCompanyNo, companyId, companyName, companyNo } = useLayout()
-  const { user } = useAuth()
-
-  console.log(user?.userInfo)
-
-  useEffect(() => {
-    if (companyId && companyName && companyNo) {
-      setCompanyNo(companyNo)
-      setCompanyId(companyId)
-      setCompanyName(companyName)
-    } else {
-      if (user?.userInfo?.companyNo && user?.userInfo?.companyId && user?.userInfo?.companyName) {
-        setCompanyNo(user?.userInfo?.companyNo)
-        setCompanyId(user?.userInfo?.companyId)
-        setCompanyName(user?.userInfo?.companyName)
-      }
-    }
-  }, [])
+  const { setCompanyId, setCompanyName, setCompanyNo } = useLayout()
 
   const handleSelectClientGrid = (row: any) => {
     setCompanyNo(row.companyNo)

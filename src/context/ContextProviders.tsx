@@ -23,8 +23,8 @@ const ContextProviders = ({ children, emotionCache, settingsProps }: ProvidersPr
   return (
     <CacheProvider value={emotionCache}>
       <QueryClientProvider client={queryClient}>
-        <LayoutProvider>
-          <AuthProvider>
+        <AuthProvider>
+          <LayoutProvider>
             <MapProvider>
               <ClientsProvider>
                 <StatisticsProvider>
@@ -32,8 +32,8 @@ const ContextProviders = ({ children, emotionCache, settingsProps }: ProvidersPr
                 </StatisticsProvider>
               </ClientsProvider>
             </MapProvider>
-          </AuthProvider>
-        </LayoutProvider>
+          </LayoutProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </CacheProvider>
   )

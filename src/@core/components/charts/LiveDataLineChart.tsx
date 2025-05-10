@@ -103,7 +103,7 @@ const LiveDataLineChart = memo(
 
                 convertedData.push([previousData.timestamp, previousData.count])
                 convertedSecondData.push([currentData.timestamp, currentData.count])
-              }, 3000)
+              }, 30000)
             }
           }
         },
