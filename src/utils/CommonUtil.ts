@@ -1,4 +1,5 @@
 import { saveAs } from 'file-saver'
+import { EErrorMessage } from 'src/enum/commonEnum'
 
 // import { KIOSK_STATUS, POWER_TYPE } from 'src/enum/kisokEnum'
 // import { MMonitoringHealth } from 'src/model/monitoring/monitoringModel'
@@ -309,4 +310,21 @@ export const calculateChangeRate = (currentValue: number, previousValue: number)
 
 export const areEqual = (prevProps: any, nextProps: any) => {
   return JSON.stringify(prevProps) === JSON.stringify(nextProps)
+}
+
+export const getErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "msg" in error &&
+    typeof (error as any).msg === "string"
+  ) {
+    return (error as any).msg;
+  }
+
+  return EErrorMessage.COMMON_ERROR;
 }
