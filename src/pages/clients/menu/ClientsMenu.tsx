@@ -46,6 +46,14 @@ const ClientsMenu: FC<IKioskMenu> = ({ refetch }) => {
           onChange={e => {
             setSearchKeyword(e.target.value)
           }}
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              setClientListReq({
+                ...clientListReq,
+                keyword: searchKeyword
+              })
+            }
+          }}
         />
       </Box>
 
