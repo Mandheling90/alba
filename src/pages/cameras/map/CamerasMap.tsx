@@ -397,6 +397,21 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
               height={height}
               handleImageMapClick={handleImageMapClick}
               imageUpdateFn={() => {
+                // 평면도가 없을 때 평면도 등록 클릭시
+                if (!flowPlan?.flowPlanImgUrl) {
+                  setFlowPlan({
+                    lat: mapInfo.center.lat,
+                    lon: mapInfo.center.lon,
+                    flowPlanImgUrl: '',
+                    cameraFlowPlanNo: 0
+                  })
+
+                  setIsDragging(true)
+                  setViewType({ type: 'map', size: 'half' })
+
+                  return
+                }
+
                 setSimpleDialogModalProps({
                   ...simpleDialogModalProps,
                   open: true,
