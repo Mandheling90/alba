@@ -4,13 +4,13 @@ import { FC } from 'react'
 import DividerBar from '../../atom/DividerBar'
 import CustomTable from '../CustomTable'
 
-interface TimeDepthTableProps {
+interface OneDepthTableProps {
   data: any
   columns: GridColDef[]
   expandedRows: string[]
 }
 
-const TimeDepthTable: FC<TimeDepthTableProps> = ({ data, columns, expandedRows }) => {
+const OneDepthTable: FC<OneDepthTableProps> = ({ data, columns, expandedRows }) => {
   const renderDetailPanel = (row: any) => {
     return (
       <Box>
@@ -39,4 +39,4 @@ const TimeDepthTable: FC<TimeDepthTableProps> = ({ data, columns, expandedRows }
   )
 }
 
-export default TimeDepthTable
+export default OneDepthTable

@@ -13,7 +13,7 @@ import { YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MClientCameraList, MClientGroupCameraList } from 'src/model/cameras/CamerasModel'
 import { useClientGroupDelete } from 'src/service/cameras/camerasService'
-import CameraModifyActions from './CameraModifyActions'
+import ModifyActions from './ModifyActions'
 
 interface IGroupList {
   group: MClientGroupCameraList
@@ -102,7 +102,7 @@ const GroupList: FC<IGroupList> = ({
           ...column,
           renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
             return (
-              <CameraModifyActions
+              <ModifyActions
                 row={row}
                 isModify={row.isEdit ?? false}
                 isGroupModifyMode={isGroupModifyMode}

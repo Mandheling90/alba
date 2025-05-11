@@ -6,11 +6,11 @@ import { CamerasContext } from 'src/context/CamerasContext'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MClientCameraList } from 'src/model/cameras/CamerasModel'
 
-interface CameraModifyActionsProps {
+interface ModifyActionsProps {
   row: MClientCameraList
   isModify: boolean
   isGroupModify?: boolean
-  isGroupModifyMode: boolean
+  isGroupModifyMode?: boolean
   handleEditClick: (row: MClientCameraList) => void
   handleCancelClick: (cameraNo: number) => void
   handleSaveClick: (cameraNo: number) => void
@@ -18,11 +18,11 @@ interface CameraModifyActionsProps {
   // addCameraToGroup: (groupIndex: number) => void
 }
 
-const CameraModifyActions: React.FC<CameraModifyActionsProps> = ({
+const ModifyActions: React.FC<ModifyActionsProps> = ({
   row,
   isModify,
   isGroupModify = false,
-  isGroupModifyMode,
+  isGroupModifyMode = false,
   handleEditClick,
   handleCancelClick,
   handleSaveClick
@@ -71,4 +71,4 @@ const CameraModifyActions: React.FC<CameraModifyActionsProps> = ({
   )
 }
 
-export default CameraModifyActions
+export default ModifyActions

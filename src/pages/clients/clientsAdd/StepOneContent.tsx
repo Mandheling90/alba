@@ -321,12 +321,21 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                 return
               }
 
-              setSimpleDialogModalProps({
-                open: true,
-                title: `고객사 ${(clientData?.companyNo ?? 0) > 0 ? '수정' : '등록'} 완료`
-              })
+              try {
+                setSimpleDialogModalProps({
+                  open: true,
+                  title: `고객사 ${(clientData?.companyNo ?? 0) > 0 ? '수정' : '등록'} 완료`
+                })
 
-              onNext()
+                onNext()
+              } catch (error) {
+                setSimpleDialogModalProps({
+                  open: true,
+                  title: `고객사 등록 중 오류가 발생했습니다.`
+                })
+
+                console.log(error)
+              }
             }}
             sx={{ mr: 4 }}
             disabled={!checkRequiredFields()}

@@ -8,7 +8,7 @@ import { YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MClientCameraList } from 'src/model/cameras/CamerasModel'
 import { IAiSolutionService } from 'src/model/client/clientModel'
-import CameraModifyActions from '../../../../pages/cameras/table/CameraModifyActions'
+import ModifyActions from '../../../../pages/cameras/table/ModifyActions'
 
 interface CameraColumnsProps {
   isGroupMode?: boolean
@@ -270,7 +270,7 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
       type: 'string',
       renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
         return (
-          <CameraModifyActions
+          <ModifyActions
             row={row}
             isModify={row.isEdit ?? false}
             isGroupModifyMode={isGroupModifyMode ?? false}

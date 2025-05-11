@@ -163,7 +163,6 @@ export const EComponentList = [
       }
     ]
   },
-
   {
     title: '고객사 관리',
     path: '/clients',
@@ -192,5 +191,15 @@ export const EComponentList = [
     title: '스케쥴 관리',
     path: '/schedules',
     icon: 'contents'
+  },
+  {
+    title: '시스템 관리',
+    icon: 'systemManager',
+    children: [
+      {
+        title: '통계 용어 관리',
+        path: '/systemManager/statTermManager'
+      }
+    ]
   }
 ]

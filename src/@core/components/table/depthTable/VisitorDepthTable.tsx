@@ -6,7 +6,7 @@ import IconCustom from 'src/layouts/components/IconCustom'
 import { ITableData } from 'src/model/statistics/StatisticsModel'
 import { generateColumns } from '../columns/columnGenerator'
 import CustomTable from '../CustomTable'
-import TimeDepthTable from './TimeDepthTable'
+import OneDepthTable from './OneDepthTable'
 import TimePlaceDepthTable from './TimePlaceDepthTable'
 
 interface DepthTableProps {
@@ -281,7 +281,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
       ) : tableDisplayType === ETableDisplayType.TIME_PLACE ? (
         <TimePlaceDepthTable data={data} columns={columns} columns2={columns2} expandedRows={expandedRows} />
       ) : (
-        <TimeDepthTable data={data} columns={columns} expandedRows={expandedRows} />
+        <OneDepthTable data={data} columns={columns} expandedRows={expandedRows} />
       )}
     </>
   )

@@ -57,7 +57,8 @@ const UserLayout = ({ children, contentHeightFixed }: Props) => {
 
   // console.log(convertToNavItems(user?.componentListInfo ?? []))
 
-  const [componentList, setComponentList] = useState<VerticalNavItemsType>(user?.componentListInfo ?? EComponentList)
+  // const [componentList, setComponentList] = useState<VerticalNavItemsType>(user?.componentListInfo ?? EComponentList)
+  const [componentList, setComponentList] = useState<VerticalNavItemsType>(EComponentList)
 
   // 권한에 따른 메뉴 필터링
   // useEffect(() => {
