@@ -98,6 +98,9 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
   useEffect(() => {
     setFlowPlan(flowPlanData?.data ?? undefined)
     setFlowPlanOriginal(flowPlanData?.data ?? undefined)
+    if(!flowPlanData?.data?.flowPlanImgUrl){
+      setViewType({ type: 'map', size: 'half' })
+    }
 
     if (!flowPlanData?.data?.flowPlanImgUrl) {
       setMapInfo(defaultMapInfo)
