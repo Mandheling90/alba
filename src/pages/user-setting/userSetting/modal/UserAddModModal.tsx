@@ -27,7 +27,7 @@ import { useLayout } from 'src/hooks/useLayout'
 import { useModal } from 'src/hooks/useModal'
 import { useUser } from 'src/hooks/useUser'
 import { useUserDuplicate, useUserMod, useUserSave } from 'src/service/setting/userSetting'
-import { isValidPassword } from 'src/utils/CommonUtil'
+import { isValidPassword, isValidEmail, getErrorMessage } from 'src/utils/CommonUtil'
 
 interface IRoleAddModal {
   isOpen: boolean
@@ -154,6 +154,14 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
       isValid = false
     }
 
+    if (!userInfo.mailAddress) {
+      errors.mailAddress = '이메일을 입력해주세요'
+      isValid = false;
+    } else if (!isValidEmail(userInfo.mailAddress)) {
+      errors.mailAddress = '이메일 형식을 확인해주세요'
+      isValid = false;
+    }
+
     setErrors(errors)
 
     return isValid
@@ -270,6 +278,7 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
               }
               onChange={handleChange}
               error={!!errors.mailAddress}
+              helperText={errors.mailAddress}
             />
           </Grid>
 
@@ -425,7 +434,11 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
                   onSubmitAfter?.()
                   onClose()
                 } catch (e) {
-                  console.log(e)
+                  // console.log(e);
+                  setSimpleDialogModalProps({
+                    open: true,
+                    title: getErrorMessage(e),
+                  })
                 }
               }
             }}
