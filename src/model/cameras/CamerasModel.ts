@@ -139,10 +139,27 @@ export interface MClientCameraList {
   cameraId: string
   cameraName: string
   aiSolutionServiceResDtoList: IAiSolutionService[]
-  lon: number
-  lat: number
+  lon: number | null
+  lat: number | null
   flowPlanX: number | null
   flowPlanY: number | null
+  flowPlanBindingYN: YN
+  cameraStatus: YN
+
+  groupItemId?: number
+  groupId?: number
+  isEdit?: boolean // 프론트에서 사용
+}
+
+export interface MClientCameraListForSave {
+  cameraNo: number
+  cameraId: string
+  cameraName: string
+  aiSolutionServiceResDtoList: IAiSolutionService[]
+  lon?: number | null
+  lat?: number | null
+  flowPlanX?: number | null
+  flowPlanY?: number | null
   flowPlanBindingYN: YN
   cameraStatus: YN
 

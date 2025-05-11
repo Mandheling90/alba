@@ -3,7 +3,12 @@ import SimpleDialogModal, { INITIAL_DIALOG_PROPS } from 'src/@core/components/mo
 import { SORT } from 'src/enum/commonEnum'
 import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
-import { ICameraClientReq, MClientCameraList, MClientGroupCameraList } from 'src/model/cameras/CamerasModel'
+import {
+  ICameraClientReq,
+  MClientCameraList,
+  MClientCameraListForSave,
+  MClientGroupCameraList
+} from 'src/model/cameras/CamerasModel'
 import {
   useClientCameraAdditionalInfo,
   useClientCameraList,
@@ -254,7 +259,13 @@ const CamerasProvider = ({ children }: Props) => {
     // 전체 저장의 경우
     if (!cameraNo) {
       try {
-        const res = await clientCameraAdditionalInfo({ companyNo: companyNo, cameraList: clientCameraData })
+        const filteredCameraData: MClientCameraListForSave[] = clientCameraData.map(camera => {
+          const { lat, lon, flowPlanX, flowPlanY, ...rest } = camera
+
+          return camera.flowPlanBindingYN === 'Y' ? { ...rest, flowPlanX, flowPlanY } : { ...rest, lat, lon }
+        })
+
+        const res = await clientCameraAdditionalInfo({ companyNo: companyNo, cameraList: filteredCameraData })
 
         console.log(res)
         fetchData()
@@ -272,9 +283,13 @@ const CamerasProvider = ({ children }: Props) => {
       const updatedCamera = clientCameraData.find((camera: MClientCameraList) => camera.cameraNo === cameraNo)
       if (!updatedCamera) return
 
+      const { lat, lon, flowPlanX, flowPlanY, ...rest } = updatedCamera
+      const filteredCamera: MClientCameraListForSave =
+        updatedCamera.flowPlanBindingYN === 'Y' ? { ...rest, flowPlanX, flowPlanY } : { ...rest, lat, lon }
+
       const res = await clientCameraAdditionalInfo({
         companyNo: companyNo,
-        cameraList: [updatedCamera]
+        cameraList: [filteredCamera]
       })
 
       console.log(res)

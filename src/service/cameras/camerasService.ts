@@ -1,7 +1,13 @@
 import { useMutation, useQuery } from 'react-query'
 import { EPath } from 'src/enum/camerasEnum'
 import { YN } from 'src/enum/commonEnum'
-import { MClientCameraList, MClientGroupCameraList, MFlowPlan, MFlowPlanUpdate } from 'src/model/cameras/CamerasModel'
+import {
+  MClientCameraList,
+  MClientCameraListForSave,
+  MClientGroupCameraList,
+  MFlowPlan,
+  MFlowPlanUpdate
+} from 'src/model/cameras/CamerasModel'
 import MResult from 'src/model/commonModel'
 import {
   createDelete,
@@ -246,7 +252,7 @@ export const useClientGroupDelete = () => {
 }
 
 export const useClientCameraAdditionalInfo = () => {
-  return useMutation((req: { companyNo: number; cameraList: MClientCameraList[] }) => {
+  return useMutation((req: { companyNo: number; cameraList: MClientCameraListForSave[] }) => {
     const url = EPath.CAMERAS_CLIENT_OF_COMPANY_ADDITIONAL_INFO.replace('{companyNo}', req.companyNo.toString())
 
     return createPatch<MResult>([url, req.cameraList])

@@ -110,19 +110,9 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
       renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
         return (
           <>
-            {row.isEdit ? (
-              <CustomTextFieldState
-                size='small'
-                value={row.cameraId}
-                onChange={e => {
-                  updateClientCameraData?.(row.cameraNo, { cameraId: e.target.value })
-                }}
-              />
-            ) : (
-              <Typography component='span' variant='inherit'>
-                {row.cameraId}
-              </Typography>
-            )}
+            <Typography component='span' variant='inherit'>
+              {row.cameraId}
+            </Typography>
           </>
         )
       }
@@ -251,11 +241,12 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
               onChange={async event => {
                 try {
                   const newStatus = event.target.checked ? YN.Y : YN.N
-                  await clientGroupStatus?.({
-                    cameraNo: row.cameraNo,
-                    companyNo: companyNo ?? 0,
-                    cameraStatus: newStatus
-                  })
+
+                  // await clientGroupStatus?.({
+                  //   cameraNo: row.cameraNo,
+                  //   companyNo: companyNo ?? 0,
+                  //   cameraStatus: newStatus
+                  // })
 
                   // API 호출이 성공한 후에만 상태 업데이트
                   updateClientCameraData?.(row.cameraNo, { cameraStatus: newStatus })
