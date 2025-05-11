@@ -328,3 +328,26 @@ export const getErrorMessage = (error: unknown): string => {
 
   return EErrorMessage.COMMON_ERROR;
 }
+
+export const isValidBizNumber = (bizNum: unknown): boolean => {
+  // string인지 검사
+  if (typeof bizNum !== "string") return false;
+
+  // 숫자만 남기기
+  const onlyDigits = bizNum.replace(/[^0-9]/g, '');
+  if (onlyDigits.length !== 10) return false;
+
+  const checkArray = [1, 3, 7, 1, 3, 7, 1, 3, 5];
+  const digits = onlyDigits.split('').map(Number);
+  let sum = 0;
+
+  for (let i = 0; i < 9; i++) {
+    sum += digits[i] * checkArray[i];
+  }
+
+  sum += Math.floor((digits[8] * 5) / 10); // 9번째 자리의 보정값 더하기
+
+  const checkDigit = (10 - (sum % 10)) % 10;
+
+  return digits[9] === checkDigit;
+};

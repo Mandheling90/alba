@@ -9,6 +9,7 @@ import { grayTextBackground, grayTextFieldStyle, requiredTextFieldStyle } from '
 import { YN } from 'src/enum/commonEnum'
 import { useModal } from 'src/hooks/useModal'
 import { IClientDetail } from 'src/model/client/clientModel'
+import { isValidBizNumber } from 'src/utils/CommonUtil'
 
 interface IStepOneContentProps {
   clientData: IClientDetail | null
@@ -28,7 +29,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
   onValidationChange,
   onDuplicateCheck
 }) => {
-  const { setSimpleDialogModalProps } = useModal()
+  const { setSimpleDialogModalProps, showModal } = useModal()
 
   const handleChange = (field: keyof IClientDetail) => (event: React.ChangeEvent<HTMLInputElement>) => {
     onDataChange({ [field]: event.target.value })
@@ -315,8 +316,18 @@ const StepOneContent: FC<IStepOneContentProps> = ({
             size='medium'
             variant='contained'
             onClick={() => {
+
               if (companyIdOrg !== clientData?.companyId) {
                 alert('중복확인을 해주세요')
+
+                return
+              }
+              
+              if(clientData.brn && !isValidBizNumber(clientData.brn)) {
+                setSimpleDialogModalProps({
+                  open: true,
+                  title: `사업자등록번호가 유효하지 않습니다.`
+                })
 
                 return
               }

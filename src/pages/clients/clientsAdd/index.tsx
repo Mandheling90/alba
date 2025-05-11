@@ -17,6 +17,8 @@ import {
 } from 'src/service/client/clientService'
 import StepOneContent from './StepOneContent'
 import StepTwoContent from './StepTwoContent'
+import { useModal } from 'src/hooks/useModal'
+import { getErrorMessage } from 'src/utils/CommonUtil'
 
 export const DEFAULT_CLIENT_DATA: IClientDetail = {
   companyNo: 0,
@@ -76,6 +78,7 @@ const Index: FC = ({}) => {
   const { mutateAsync: duplicateCheck } = useClientDuplicateCheck()
   const { mutateAsync: saveClient } = useClientSave()
   const { mutateAsync: updateClient } = useClientUpdate()
+  const { setSimpleDialogModalProps } = useModal()
 
   useEffect(() => {
     if (router.query.id) {
@@ -122,27 +125,36 @@ const Index: FC = ({}) => {
           onDataChange={handleStepOneDataChange}
           onNext={async () => {
             if (clientData) {
-              if (clientData?.companyNo === 0) {
-                const res = await saveClient(clientData)
+              try {
+                if (clientData?.companyNo === 0) {
+                  const res = await saveClient(clientData)
 
-                if (res.code !== EResultCode.SUCCESS) {
-                  alert(res.data.msg)
+                  if (res.code !== EResultCode.SUCCESS) {
+                    alert(res.data.msg)
 
-                  return
+                    return
+                  } else {
+                    setCompanyNo(res.data.companyNo)
+                  }
                 } else {
-                  setCompanyNo(res.data.companyNo)
-                }
-              } else {
-                const res = await updateClient(clientData)
+                  const res = await updateClient(clientData)
 
-                if (res.code !== EResultCode.SUCCESS) {
-                  alert(res.data.msg)
+                  if (res.code !== EResultCode.SUCCESS) {
+                    alert(res.data.msg)
 
-                  return
+                    return
+                  }
                 }
-              }
 
               activeStep === 0 && handleNext()
+              }
+              catch(e) {
+                setSimpleDialogModalProps({
+                  open: true,
+                  title: getErrorMessage(e),
+                })
+              }
+              
             }
           }}
           onReset={() => {
