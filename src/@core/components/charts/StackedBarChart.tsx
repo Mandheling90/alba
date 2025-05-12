@@ -16,7 +16,7 @@ const StackedBarChart = ({ containerId, data }: StackedBarChartProps) => {
           renderTo: containerId
         },
         title: {
-          text: '시간대별 방문자 수 (남성 vs 여성)',
+          text: '',
           align: 'left'
         },
         xAxis: {
