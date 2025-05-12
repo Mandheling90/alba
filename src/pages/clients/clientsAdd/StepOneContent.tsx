@@ -9,7 +9,6 @@ import { grayTextBackground, grayTextFieldStyle, requiredTextFieldStyle } from '
 import { YN } from 'src/enum/commonEnum'
 import { useModal } from 'src/hooks/useModal'
 import { IClientDetail } from 'src/model/client/clientModel'
-import { isValidBizNumber } from 'src/utils/CommonUtil'
 
 interface IStepOneContentProps {
   clientData: IClientDetail | null
@@ -48,6 +47,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
   }
 
   const theme = useTheme()
+
   const { direction } = theme
   const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
 
@@ -316,37 +316,24 @@ const StepOneContent: FC<IStepOneContentProps> = ({
             size='medium'
             variant='contained'
             onClick={() => {
-
               if (companyIdOrg !== clientData?.companyId) {
                 alert('중복확인을 해주세요')
 
                 return
               }
-              
-              if(clientData.brn && !isValidBizNumber(clientData.brn)) {
+
+              if (clientData.brn && (!/^\d+$/.test(clientData.brn) || clientData.brn.length !== 10)) {
                 setSimpleDialogModalProps({
                   open: true,
-                  title: `사업자등록번호가 유효하지 않습니다.`
+                  title: !/^\d+$/.test(clientData.brn)
+                    ? `사업자등록번호는 숫자만 입력 가능합니다.`
+                    : `사업자등록번호는 10자리이어야 합니다.`
                 })
 
                 return
               }
 
-              try {
-                setSimpleDialogModalProps({
-                  open: true,
-                  title: `고객사 ${(clientData?.companyNo ?? 0) > 0 ? '수정' : '등록'} 완료`
-                })
-
-                onNext()
-              } catch (error) {
-                setSimpleDialogModalProps({
-                  open: true,
-                  title: `고객사 등록 중 오류가 발생했습니다.`
-                })
-
-                console.log(error)
-              }
+              onNext()
             }}
             sx={{ mr: 4 }}
             disabled={!checkRequiredFields()}
