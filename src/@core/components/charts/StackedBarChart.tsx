@@ -35,15 +35,10 @@ const StackedBarChart = ({ containerId, data }: StackedBarChartProps) => {
           }
         },
         legend: {
-          align: 'left',
-          x: 70,
+          align: 'right',
+          x: -10,
           verticalAlign: 'top',
-          y: 70,
-          floating: true,
-          backgroundColor: Highcharts.defaultOptions.legend?.backgroundColor || 'white',
-          borderColor: '#CCC',
-          borderWidth: 1,
-          shadow: false
+          y: 0
         },
         tooltip: {
           headerFormat: '<b>{category}</b><br/>',

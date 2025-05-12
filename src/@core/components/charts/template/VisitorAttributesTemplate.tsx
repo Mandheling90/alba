@@ -17,7 +17,6 @@ import {
   IPyramidPieChart
 } from 'src/model/statistics/StatisticsModel'
 import DashboardMenu from 'src/pages/dashboard/menu/DashboardMenu'
-import ChartDetailSwiper from 'src/pages/dashboard/swiper/ChartDetailSwiper'
 import { exportToExcel } from 'src/utils/CommonUtil'
 import VisitorAttributesDepthTable from '../../table/depthTable/VisitorAttributesDepthTable'
 import PieChart from '../PieChart'
@@ -66,15 +65,14 @@ const VisitorAttributesTemplate: FC<{
                   `${barChartData?.startYear}년 ${barChartData?.startMonth}월 ${barChartData?.startDay}일 ${barChartData?.startHour}시 ~ ${barChartData?.endYear}년 ${barChartData?.endMonth}월 ${barChartData?.endDay}일 ${barChartData?.endHour}시`,
                   `총 ${barChartData?.totalPlaceCount} 곳`
                 ]}
-                marginBottom={-8}
               />
             </Grid>
-            <Grid item xs={9}>
+            <Grid item xs={12}>
               <Card>{barChartData && <StackedBarChart containerId='visitor-chart-example' data={barChartData} />}</Card>
             </Grid>
-            <Grid item xs={3}>
+            {/* <Grid item xs={3}>
               <ChartDetailSwiper height={'430px'} />
-            </Grid>
+            </Grid> */}
           </>
         )}
 
