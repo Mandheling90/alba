@@ -1,6 +1,6 @@
-import { ReactNode, createContext, useCallback, useEffect, useState } from 'react'
-import { useAuth } from 'src/hooks/useAuth'
+import { ReactNode, createContext, useCallback, useState } from 'react'
 import { AuthType } from 'src/model/commonModel'
+import { UserDataType } from './types'
 
 export type LayoutValuesType = {
   layoutDisplay: boolean
@@ -12,6 +12,9 @@ export type LayoutValuesType = {
   setCompanyId: (companyId: string) => void
   companyName: string
   setCompanyName: (companyName: string) => void
+
+  layoutUserInfo: UserDataType | null
+  setLayoutUserInfo: (layoutUserInfo: UserDataType | null) => void
 }
 
 // ** Defaults
@@ -24,7 +27,10 @@ const defaultProvider: LayoutValuesType = {
   companyId: '',
   setCompanyId: () => null,
   companyName: '',
-  setCompanyName: () => null
+  setCompanyName: () => null,
+
+  layoutUserInfo: null,
+  setLayoutUserInfo: () => null
 }
 
 const LayoutContext = createContext(defaultProvider)
@@ -34,42 +40,21 @@ type Props = {
 }
 
 const LayoutProvider = ({ children }: Props) => {
-  const { user } = useAuth()
-
-  useEffect(() => {
-    if (user?.userInfo?.authId === AuthType.ADMIN) {
-      setLayoutDisplay(true)
-    } else {
-      setLayoutDisplay(false)
-    }
-
-    if (user?.userInfo?.companyId) {
-      setCompanyId(user?.userInfo?.companyId)
-    }
-
-    if (user?.userInfo?.companyName) {
-      setCompanyName(user?.userInfo?.companyName)
-    }
-
-    if (user?.userInfo?.companyNo) {
-      setCompanyNo(user?.userInfo?.companyNo)
-    }
-  }, [user?.userInfo])
-
   const [layoutDisplay, setLayoutDisplay] = useState(defaultProvider.layoutDisplay)
-  const [companyId, setCompanyId] = useState(user?.userInfo?.companyId ?? defaultProvider.companyId)
-  const [companyName, setCompanyName] = useState(user?.userInfo?.companyName ?? defaultProvider.companyName)
-  const [companyNo, setCompanyNo] = useState(user?.userInfo?.companyNo ?? defaultProvider.companyNo)
+  const [companyId, setCompanyId] = useState(defaultProvider.companyId)
+  const [companyName, setCompanyName] = useState(defaultProvider.companyName)
+  const [companyNo, setCompanyNo] = useState(defaultProvider.companyNo)
+  const [layoutUserInfo, setLayoutUserInfo] = useState<UserDataType | null>(null)
 
   const handleSetLayoutDisplay = useCallback(
     (value: boolean) => {
-      if (user?.userInfo?.authId === AuthType.ADMIN) {
+      if (layoutUserInfo?.userInfo?.authId === AuthType.ADMIN) {
         setLayoutDisplay(value)
       } else {
         setLayoutDisplay(false)
       }
     },
-    [user?.userInfo?.authId]
+    [layoutUserInfo?.userInfo?.authId]
   )
 
   const values: LayoutValuesType = {
@@ -80,7 +65,9 @@ const LayoutProvider = ({ children }: Props) => {
     companyId,
     setCompanyId,
     companyName,
-    setCompanyName
+    setCompanyName,
+    layoutUserInfo,
+    setLayoutUserInfo
   }
 
   return <LayoutContext.Provider value={values}>{children}</LayoutContext.Provider>

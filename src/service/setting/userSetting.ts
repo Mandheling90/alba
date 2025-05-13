@@ -72,8 +72,10 @@ export const useAuthList = (params: { companyNo: number }) => {
   return useQuery<MResult<MAuthList[]>>([EPath.AUTH_LIST, params], {})
 }
 
-export const useAuthMenuList = (params: { authId: number }) => {
-  return useQuery<MResult<MAuthMenu>>([EPath.AUTH + `/${params.authId}`], {})
+export const useAuthMenuList = () => {
+  return useMutation((params: { authId: number }) => {
+    return createGet<MAuthMenu>([EPath.AUTH + `/${params.authId}`])
+  }, {})
 }
 
 export const useAddAuth = () => {

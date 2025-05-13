@@ -24,7 +24,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
 
   const [userData, setUserData] = useState<MAuthList[]>([])
 
-  const auth = useAuth()
+  const { user } = useAuth()
 
   useEffect(() => {
     setUserData(data.map(obj => ({ ...obj, display: true })))
@@ -49,6 +49,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
       renderCell: ({ row }: any) => {
         return (
           <Switch
+            disabled={row.authId === user?.userInfo?.authId}
             checked={row.dataStatus === YN.Y}
             onChange={event => {
               authStatusMod({ authId: row.authId, dataStatus: event.target.checked ? YN.Y : YN.N })
@@ -74,7 +75,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
           <>
             <IconButton
               sx={{ color: 'text.secondary' }}
-              disabled={row.id === auth?.user?.userInfo?.authId}
+              disabled={row.authId === user?.userInfo?.authId}
               onClick={e => {
                 setSelectedAuthList({ authId: row.authId, name: row.name, userAuthCount: row.userAuthCount })
               }}
@@ -84,7 +85,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
             </IconButton>
             <IconButton
               sx={{ color: 'text.secondary' }}
-              disabled={row.id === auth?.user?.userInfo?.authId}
+              disabled={row.authId === user?.userInfo?.authId}
               onClick={e => {
                 authDeleteFn(row.authId)
               }}

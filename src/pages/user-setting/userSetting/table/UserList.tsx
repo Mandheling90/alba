@@ -7,6 +7,7 @@ import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel
 import { getUserColumns } from 'src/@core/components/table/columns/userColumns'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
+import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
@@ -27,6 +28,7 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectUser, setSelectUser] = useState<MUserCompanyList>()
   const { mutateAsync: modStateUser } = useUserStateMod()
+  const { user } = useAuth()
 
   useEffect(() => {
     if (data && Array.isArray(data)) {
@@ -51,7 +53,8 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
     setUserData,
     setSelectUser,
     setIsOpen,
-    userDeleteFn
+    userDeleteFn,
+    userInfo: user?.userInfo
   })
 
   const handleCheckboxSelection = (selectedRows: any[]) => {

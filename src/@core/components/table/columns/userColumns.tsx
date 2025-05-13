@@ -1,6 +1,7 @@
 import { Box, IconButton, Switch, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import IconCustom from 'src/layouts/components/IconCustom'
+import { MUserInfo } from 'src/model/commonModel'
 
 interface UserColumnsProps {
   modStateUser?: (params: { userNo: number; userStatus: number }) => void
@@ -10,10 +11,11 @@ interface UserColumnsProps {
   setIsOpen?: (isOpen: boolean) => void
   userDeleteFn?: (userNo: number) => void
   columnFilter?: string[]
+  userInfo?: MUserInfo
 }
 
 const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridColDef> => {
-  const { modStateUser, userData, setUserData, setSelectUser, setIsOpen, userDeleteFn } = props
+  const { modStateUser, userData, setUserData, setSelectUser, setIsOpen, userDeleteFn, userInfo } = props
 
   return {
     name: {
@@ -92,6 +94,8 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
                 })
                 setUserData?.(updatedList)
               }}
+
+              // disabled={row.userId === userInfo?.userId}
             />
           </Box>
         )
@@ -113,6 +117,8 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
                 setSelectUser?.(row)
                 setIsOpen?.(true)
               }}
+
+              // disabled={row.userId === userInfo?.userId}
             >
               <IconCustom path='settingCard' icon='pen' />
             </IconButton>
@@ -121,6 +127,8 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
               onClick={e => {
                 userDeleteFn?.(row.userNo)
               }}
+
+              // disabled={row.userId === userInfo?.userId}
             >
               <IconCustom path='settingCard' icon='delete' />
             </IconButton>
