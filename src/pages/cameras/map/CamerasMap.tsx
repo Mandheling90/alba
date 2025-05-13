@@ -82,7 +82,9 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
     handleCancelClick,
     handleSaveClick,
     setSelectedCamera,
-    cameraPage
+    cameraPage,
+    mapModifyModCameraId,
+    setMapModifyModCameraId
   } = useCameras()
 
   useEffect(() => {
@@ -98,7 +100,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
   useEffect(() => {
     setFlowPlan(flowPlanData?.data ?? undefined)
     setFlowPlanOriginal(flowPlanData?.data ?? undefined)
-    if(!flowPlanData?.data?.flowPlanImgUrl){
+    if (!flowPlanData?.data?.flowPlanImgUrl) {
       setViewType({ type: 'map', size: 'half' })
     }
 
@@ -198,6 +200,12 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
           setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
         }
       })
+    } else if (mapModifyModCameraId) {
+      updateClientCameraData(mapModifyModCameraId, {
+        lat: mouseEvent.latLng.getLat(),
+        lon: mouseEvent.latLng.getLng()
+      })
+      setMapModifyModCameraId(null)
     }
   }
 
@@ -221,9 +229,15 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
             setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
           }
         })
+      } else if (mapModifyModCameraId) {
+        updateClientCameraData(mapModifyModCameraId, {
+          flowPlanX: x,
+          flowPlanY: y
+        })
+        setMapModifyModCameraId(null)
       }
     },
-    [selectedCamera]
+    [selectedCamera, mapModifyModCameraId]
   )
 
   const [simpleDialogModalProps, setSimpleDialogModalProps] = useState(INITIAL_DIALOG_PROPS)

@@ -67,7 +67,11 @@ const BoxContents: FC<IBoxContents> = ({
             sx={{
               fontWeight: 'bold',
               lineHeight: 1.2,
-              fontSize: '1rem'
+              fontSize: '1rem',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              width: '100%'
             }}
           >
             {title}
@@ -118,7 +122,11 @@ const BoxContents: FC<IBoxContents> = ({
             sx={{
               fontWeight: 'bold',
               fontSize: '0.875rem',
-              color: 'text.secondary'
+              color: 'text.secondary',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              width: '100%'
             }}
           >
             {text}

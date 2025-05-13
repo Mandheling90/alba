@@ -18,7 +18,7 @@ interface CameraColumnsProps {
   handleSaveClick?: (cameraNo?: number) => void
   isGroupModifyMode?: boolean
   viewType?: { type: string }
-  setMapModifyModCameraId?: (cameraNo: number) => void
+  setMapModifyModCameraId?: (cameraNo: number | null) => void
   mapModifyModCameraId?: number | null
   clientGroupStatus?: (params: { cameraNo: number; companyNo: number; cameraStatus: YN }) => Promise<any>
   companyNo?: number
@@ -220,7 +220,7 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
                 })
             }}
             onMapClick={() => {
-              viewType?.type === 'image' && setMapModifyModCameraId?.(row.cameraNo)
+              setMapModifyModCameraId?.(mapModifyModCameraId ? null : row.cameraNo)
             }}
             isMapActive={mapModifyModCameraId === row.cameraNo}
           />
