@@ -344,6 +344,7 @@ const SolutionServerList: FC<ISolutionRow> = ({
             borderRadius: '5px',
             padding: '10px'
           }}
+          placeholder='고객사에 설치된 패키지 솔루션 관련 내용을 텍스트로 입력하세요.'
           value={solutionList.serverList[0].remark}
           onChange={e => onUpdateServer(solutionList.serverList[0].serverId, 'remark', e.target.value)}
         />
