@@ -24,9 +24,6 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
 
   const [userData, setUserData] = useState<MAuthList[]>([])
 
-  const [isOpen, setIsOpen] = useState(false)
-  const [selectUser, setSelectUser] = useState<MAuthList>()
-
   const auth = useAuth()
 
   useEffect(() => {

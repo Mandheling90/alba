@@ -23,8 +23,10 @@ const UserSetting: FC = (): React.ReactElement => {
 
   const { data: UserCompanyList, refetch: UserCompanyListRefetch } = useUserCompanyList({ companyNo })
   const { data: AuthListData, refetch: AuthListRefetch } = useAuthList({ companyNo })
+
+  // 유저 등급별로 검색하도록 수정
   const { data: AuthMenuList, refetch: AuthMenuListRefetch } = useAuthMenuList({
-    authId: selectedAuthList.authId === 0 ? 1 : selectedAuthList.authId
+    authId: user?.userInfo?.authId ?? 1
   })
 
   useEffect(() => {
