@@ -46,7 +46,7 @@ export enum SOLUTION_TYPE_ID {
   NEX_REAL_3D = 8,
   NEX_REAL_AI = 9,
   NEX_REAL_AIBOX = 10,
-  PACKAGE = 99
+  PACKAGE = 11
 }
 
 // 서버를 사용하는 솔루션 ID 목록

@@ -44,8 +44,6 @@ const SolutionServerList: FC<ISolutionRow> = ({
   }, [solutionList.aiSolutionId])
 
   const renderSolutionComponent = (server: IServerList) => {
-    console.log(solutionList.aiSolutionName)
-
     switch (solutionList.aiSolutionId) {
       case SOLUTION_TYPE_ID.CVEDIA:
         return (
