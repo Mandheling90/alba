@@ -1,4 +1,4 @@
-import { Box, Button, Card, Grid, IconButton, TextField } from '@mui/material'
+import { Box, Button, Card, Grid, IconButton } from '@mui/material'
 import { FC, useCallback, useEffect, useState } from 'react'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import { CameraPageType } from 'src/context/CamerasContext'
@@ -6,6 +6,7 @@ import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
 import styled from 'styled-components'
 
+import CustomTextFieldState from 'src/@core/components/atom/CustomTextFieldState'
 import { generateColumns } from 'src/@core/components/table/columns/columnGenerator'
 import OneDepthTable from 'src/@core/components/table/depthTable/OneDepthTable'
 import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
@@ -42,7 +43,103 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   const layoutContext = useLayout()
   const [expandedRows, setExpandedRows] = useState<string[]>([])
   const [data, setData] = useState<DataState>({ dataList: [] })
-  const [editingValues, setEditingValues] = useState<Record<string, string>>({})
+  const [dataOrigin, setDataOrigin] = useState<DataState>({ dataList: [] })
+
+  const handleCancelClick = useCallback(
+    (key: string) => {
+      setData(prev => {
+        const newDataList = prev.dataList.map(item => {
+          if (item.key === key) {
+            const originItem = dataOrigin.dataList.find(origin => origin.key === key)
+            if (originItem) {
+              return {
+                ...originItem,
+                isEdit: false,
+                dataList: item.dataList
+              }
+            }
+          }
+
+          if (item.dataList) {
+            return {
+              ...item,
+              dataList: item.dataList.map(subItem => {
+                if (subItem.key === key) {
+                  const originParent = dataOrigin.dataList.find(origin => origin.dataList?.some(sub => sub.key === key))
+                  const originSubItem = originParent?.dataList?.find(origin => origin.key === key)
+                  if (originSubItem) {
+                    return { ...originSubItem, isEdit: false }
+                  }
+                }
+
+                return subItem
+              })
+            }
+          }
+
+          return item
+        })
+
+        return { dataList: newDataList }
+      })
+    },
+    [dataOrigin]
+  )
+
+  const handleSaveClick = useCallback(
+    (key: string) => {
+      setDataOrigin(prev => {
+        const newDataList = prev.dataList.map(item => {
+          if (item.key === key) {
+            const updatedItem = data.dataList.find(updated => updated.key === key)
+            if (updatedItem) {
+              return { ...updatedItem, isEdit: false }
+            }
+          }
+
+          if (item.dataList) {
+            return {
+              ...item,
+              dataList: item.dataList.map(subItem => {
+                if (subItem.key === key) {
+                  const updatedSubItem = item.dataList?.find(updated => updated.key === key)
+                  if (updatedSubItem) {
+                    return { ...updatedSubItem, isEdit: false }
+                  }
+                }
+
+                return subItem
+              })
+            }
+          }
+
+          return item
+        })
+
+        return { dataList: newDataList }
+      })
+
+      setData(prev => {
+        const newDataList = prev.dataList.map(item => {
+          if (item.key === key) {
+            return { ...item, isEdit: false }
+          }
+
+          if (item.dataList) {
+            return {
+              ...item,
+              dataList: item.dataList.map(subItem => (subItem.key === key ? { ...subItem, isEdit: false } : subItem))
+            }
+          }
+
+          return item
+        })
+
+        return { dataList: newDataList }
+      })
+    },
+    [data]
+  )
 
   const toggleRow = useCallback((key: string) => {
     setExpandedRows(prev => (prev.includes(key) ? prev.filter(row => row !== key) : [...prev, key]))
@@ -52,67 +149,24 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
     setData(prev => ({
       ...prev,
       dataList: prev.dataList.map(item => {
-        if (!item.dataList) return item
-
-        return {
-          ...item,
-          dataList: item.dataList.map(subItem => (subItem.key === key ? { ...subItem, ...updates } : subItem))
+        if (item.key === key) {
+          return { ...item, ...updates }
         }
+
+        if (item.dataList) {
+          return {
+            ...item,
+            dataList: item.dataList.map(subItem => (subItem.key === key ? { ...subItem, ...updates } : subItem))
+          }
+        }
+
+        return item
       })
     }))
   }, [])
-
-  const handleEditChange = useCallback((key: string, value: string) => {
-    setEditingValues(prev => ({
-      ...prev,
-      [key]: value
-    }))
-  }, [])
-
-  const handleEditClick = useCallback(
-    (key: string, currentValue: string) => {
-      setEditingValues(prev => ({
-        ...prev,
-        [key]: currentValue
-      }))
-      updateDataItem(key, { isEdit: true })
-    },
-    [updateDataItem]
-  )
-
-  const handleCancelClick = useCallback(
-    (key: string) => {
-      setEditingValues(prev => {
-        const newValues = { ...prev }
-        delete newValues[key]
-
-        return newValues
-      })
-      updateDataItem(key, { isEdit: false })
-    },
-    [updateDataItem]
-  )
-
-  const handleSaveClick = useCallback(
-    (key: string) => {
-      const newValue = editingValues[key]
-      updateDataItem(key, {
-        modifySettingName: newValue,
-        isEdit: false
-      })
-
-      setEditingValues(prev => {
-        const newValues = { ...prev }
-        delete newValues[key]
-
-        return newValues
-      })
-    },
-    [editingValues, updateDataItem]
-  )
 
   useEffect(() => {
-    setData({
+    const data = {
       dataList: [
         {
           key: '1',
@@ -131,7 +185,10 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
           ]
         }
       ]
-    })
+    }
+
+    setData(data)
+    setDataOrigin(data)
   }, [])
 
   const columnsTemp = generateColumns({
@@ -139,14 +196,16 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
       {
         field: `toggle`,
         headerName: ``,
-        type: 'string',
-        flex: 0.3
+        type: 'string'
+
+        // flex: 0.3
       },
       {
         field: `systemMenuName`,
         headerName: `시스템 메뉴명`,
-        type: 'string',
-        flex: 0.3
+        type: 'string'
+
+        // flex: 0.3
       },
       {
         field: `defaultSettingName`,
@@ -157,6 +216,23 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
       { field: 'modify', headerName: '편집', type: 'string', flex: 0.3 }
     ],
     customRenderers: {
+      systemMenuName: (params: any) => {
+        if (!params.row.systemMenuName) return <></>
+
+        return (
+          <Box>
+            {params.row.isEdit ? (
+              <CustomTextFieldState
+                size='small'
+                value={params.value}
+                onChange={e => updateDataItem(params.row.key, { systemMenuName: e.target.value })}
+              />
+            ) : (
+              params.value
+            )}
+          </Box>
+        )
+      },
       toggle: (params: any) => {
         return (
           <>
@@ -185,13 +261,15 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
         return <Box>{params.value}</Box>
       },
       modifySettingName: (params: any) => {
+        if (params.row.systemMenuName) return <></>
+
         return (
           <Box>
             {params.row.isEdit ? (
-              <TextField
+              <CustomTextFieldState
                 size='small'
-                value={editingValues[params.row.key] ?? params.value}
-                onChange={e => handleEditChange(params.row.key, e.target.value)}
+                value={params.value}
+                onChange={e => updateDataItem(params.row.key, { modifySettingName: e.target.value })}
               />
             ) : (
               params.value
@@ -202,15 +280,19 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
       modify: (params: any) => {
         return (
           <Box>
-            {!params.row.systemMenuName && (
-              <ModifyActions
-                row={params.row}
-                isModify={params.row.isEdit ?? false}
-                handleEditClick={() => handleEditClick(params.row.key, params.row.modifySettingName)}
-                handleCancelClick={() => handleCancelClick(params.row.key)}
-                handleSaveClick={() => handleSaveClick(params.row.key)}
-              />
-            )}
+            <ModifyActions
+              row={params.row}
+              isModify={params.row.isEdit}
+              handleEditClick={() => {
+                updateDataItem(params.row.key, { isEdit: true })
+              }}
+              handleCancelClick={() => {
+                handleCancelClick(params.row.key)
+              }}
+              handleSaveClick={() => {
+                handleSaveClick(params.row.key)
+              }}
+            />
           </Box>
         )
       }
