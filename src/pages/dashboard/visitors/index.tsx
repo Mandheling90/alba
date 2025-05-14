@@ -94,7 +94,7 @@ const Visitors: FC = ({}): React.ReactElement => {
           <PipelineTitle
             Icon={<IconCustom isCommon path='dashboard' icon='chart' style={{ width: 23, height: 23 }} />}
             title={[
-              '방문자수 통계',
+              '장소별 방문자수 통계',
               `${lineChart?.data?.year}년 ${lineChart?.data?.month}월 ${lineChart?.data?.day}일 0시 ~ ${
                 timeStr ?? lineChart?.data?.endHour
               }시`,

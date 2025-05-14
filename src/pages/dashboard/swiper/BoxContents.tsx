@@ -34,22 +34,14 @@ const BoxContents: FC<IBoxContents> = ({
         width: '100%',
         position: 'relative',
         cursor: 'pointer',
-        border: isSelected ? `2px solid ${color}` : 'none',
+        border: '2px solid transparent',
+        borderColor: isSelected ? color : '',
+        backgroundColor: isSelected ? `${color}20` : 'transparent',
         borderRadius: '8px',
+        transition: 'background-color 0.2s ease',
         '&:hover .center-text': {
           transform: 'translate(-50%, -50%) scale(1.1)'
         },
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: isSelected ? `${color}20` : 'transparent',
-          borderRadius: '8px',
-          transition: 'background-color 0.2s ease'
-        }
       }}
     >
       <Stack
@@ -57,7 +49,8 @@ const BoxContents: FC<IBoxContents> = ({
         sx={{
           position: 'absolute',
           top: 16,
-          left: 16
+          left: 16,
+          right: 16,
         }}
       >
         {titles.map((title, index) => (

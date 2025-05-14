@@ -100,7 +100,9 @@ const ChartDetailSwiper: FC<ChartDetailSwiperProps> = ({ data, height = '100%' }
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                  boxSizing: 'border-box',
                 }}
               >
                 <BoxContents
@@ -115,9 +117,9 @@ const ChartDetailSwiper: FC<ChartDetailSwiperProps> = ({ data, height = '100%' }
                   }
                   centerText={
                     subIndex === 0
-                      ? item.lastCount
+                      ? item.lastCount.toLocaleString()
                       : subIndex === 1
-                      ? item.currentCount
+                      ? item.currentCount.toLocaleString()
                       : subIndex === 2
                       ? `${calculateChangeRate(item.currentCount, item.lastCount)}`
                       : ''
