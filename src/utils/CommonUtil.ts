@@ -1,5 +1,6 @@
 import { saveAs } from 'file-saver'
 import { EErrorMessage } from 'src/enum/commonEnum'
+import { MAuthMenuList } from 'src/model/commonModel'
 
 // import { KIOSK_STATUS, POWER_TYPE } from 'src/enum/kisokEnum'
 // import { MMonitoringHealth } from 'src/model/monitoring/monitoringModel'
@@ -322,4 +323,8 @@ export const getErrorMessage = (error: unknown): string => {
   }
 
   return EErrorMessage.COMMON_ERROR
+}
+
+export const getAuthMenu = (authMenuList: MAuthMenuList[], menuId: number) => {
+  return authMenuList.find(menu => menu.menuId === menuId)
 }

@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { CameraPageType } from 'src/context/CamerasContext'
-import { YN } from 'src/enum/commonEnum'
+import { EMenuType, YN } from 'src/enum/commonEnum'
 import { useCameras } from 'src/hooks/useCameras'
 import { useLayout } from 'src/hooks/useLayout'
 import { MClientCameraList } from 'src/model/cameras/CamerasModel'
@@ -13,8 +13,10 @@ import styled from 'styled-components'
 import { getCameraColumns } from 'src/@core/components/table/columns/cameraColumns'
 import { getUserColumns } from 'src/@core/components/table/columns/userColumns'
 import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
+import { useAuth } from 'src/hooks/useAuth'
 import { MUserCompanyList } from 'src/model/userSetting/userSettingModel'
 import { useUserCompanyList } from 'src/service/setting/userSetting'
+import { getAuthMenu } from 'src/utils/CommonUtil'
 
 const ButtonHoverIconList = styled(Box)`
   display: flex;
@@ -42,6 +44,8 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
   const [selectedUser, setSelectedUser] = useState<MUserCompanyList | undefined>(undefined)
   const [accessibleCameraList, setAccessibleCameraList] = useState<number[]>([])
   const [orgAccessibleCameraList, setOrgAccessibleCameraList] = useState<number[]>([])
+
+  const { user } = useAuth()
 
   useEffect(() => {
     fetchData()
@@ -134,30 +138,32 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
               />
             </Box>
 
-            <Box sx={{ display: 'flex', gap: 3 }}>
-              <Button
-                variant={'outlined'}
-                onClick={async () => {
-                  await clientCameraUserAuthUpdate({
-                    companyNo,
-                    userNo: selectedUser?.userNo ?? 0,
-                    cameraNoList: accessibleCameraList.map(cameraNo => ({ cameraNo }))
-                  })
+            {getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['카메라관리'])?.createYn === YN.Y && (
+              <Box sx={{ display: 'flex', gap: 3 }}>
+                <Button
+                  variant={'outlined'}
+                  onClick={async () => {
+                    await clientCameraUserAuthUpdate({
+                      companyNo,
+                      userNo: selectedUser?.userNo ?? 0,
+                      cameraNoList: accessibleCameraList.map(cameraNo => ({ cameraNo }))
+                    })
 
-                  fetchClientCameraUserAuthData()
-                }}
-              >
-                저장
-              </Button>
-              <Button
-                variant={'outlined'}
-                onClick={() => {
-                  setAccessibleCameraList(orgAccessibleCameraList)
-                }}
-              >
-                취소
-              </Button>
-            </Box>
+                    fetchClientCameraUserAuthData()
+                  }}
+                >
+                  저장
+                </Button>
+                <Button
+                  variant={'outlined'}
+                  onClick={() => {
+                    setAccessibleCameraList(orgAccessibleCameraList)
+                  }}
+                >
+                  취소
+                </Button>
+              </Box>
+            )}
           </Box>
         </HorizontalScrollBox>
         <Box sx={{ display: 'flex', width: '100%', gap: 3 }}>
@@ -183,7 +189,11 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
               columns={cameraColumns}
               selectRowEvent={selectRowEvent}
               isAllView
-              onCheckboxSelectionChange={handleCheckboxSelectionChange}
+              onCheckboxSelectionChange={
+                getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['카메라관리'])?.createYn === YN.Y
+                  ? handleCheckboxSelectionChange
+                  : undefined
+              }
               defaultSelectedCheckboxes={accessibleCameraList}
               disableCheckboxSelection={!selectedUser}
               enablePointer

@@ -15,6 +15,8 @@ import styled from 'styled-components'
 
 import { getCameraColumns } from 'src/@core/components/table/columns/cameraColumns'
 import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
+import { EMenuType, YN } from 'src/enum/commonEnum'
+import { getAuthMenu } from 'src/utils/CommonUtil'
 import GroupList from './GroupList'
 
 const ButtonHoverIconList = styled(Box)`
@@ -83,7 +85,8 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
       clientGroupStatus,
       companyNo,
       columnFilter,
-      showGroupHeader: true
+      showGroupHeader: true,
+      userInfo: user?.userInfo
     })
     setColumns(newColumns)
   }, [cameraPage, isGroupMode, companyNo, isGroupModifyMode])
@@ -114,6 +117,9 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
     }
   }
 
+  console.log(getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['카메라위치등록']))
+  console.log(getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['고객사관리']))
+
   return (
     <Grid container>
       <Grid item xs={12}>
@@ -139,136 +145,142 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
                   }}
                 />
 
-                <ButtonHover
-                  display={
-                    <Button
-                      variant={'contained'}
-                      sx={{ width: '160px', height: '40px' }}
-                      startIcon={<IconCustom isCommon path='camera' icon='cameraAddDel' />}
-                    >
-                      등록 및 수정
-                    </Button>
-                  }
-                  hover={
-                    <Button
-                      variant={'contained'}
-                      sx={{ width: '160px', height: '40px', display: 'flex', justifyContent: 'space-between' }}
-                      onClick={() => {
-                        router.push({
-                          pathname: '/clients/clientsAdd',
-                          query: {
-                            mode: 'edit',
-                            id: companyNo
-                          }
-                        })
-                      }}
-                    >
-                      <ButtonHoverIconList
-
-                      // onClick={() => {
-                      //   console.log('add')
-                      // }}
+                {getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['고객사관리'])?.createYn === YN.Y && (
+                  <ButtonHover
+                    display={
+                      <Button
+                        variant={'contained'}
+                        sx={{ width: '160px', height: '40px' }}
+                        startIcon={<IconCustom isCommon path='camera' icon='cameraAddDel' />}
                       >
-                        <IconCustom isCommon path='camera' icon='cameraAdd' />
-                      </ButtonHoverIconList>
-                      <ButtonHoverIconList
-
-                      // onClick={() => {
-                      //   console.log('del')
-                      // }}
-                      >
-                        <IconCustom isCommon path='camera' icon='cameraDel' />
-                      </ButtonHoverIconList>
-                      <ButtonHoverIconList
-
-                      // onClick={() => {
-                      //   console.log('mod')
-                      // }}
-                      >
-                        <IconCustom isCommon path='camera' icon='cameraMod' />
-                      </ButtonHoverIconList>
-                    </Button>
-                  }
-                />
-
-                <ButtonHover
-                  display={
-                    <Button variant={'contained'} startIcon={<IconCustom isCommon path='camera' icon='group-add' />}>
-                      그룹생성
-                    </Button>
-                  }
-                  hover={
-                    <Button
-                      variant={'contained'}
-                      startIcon={<IconCustom isCommon path='camera' icon='group-open-blank' />}
-                      onClick={async () => {
-                        if (!clientGroupCameraData) return
-
-                        try {
-                          // const res = await clientGroupAdd({ userNo: user?.userInfo?.userNo ?? 0, name: '새로운 그룹' })
-                          // console.log(res.data.groupId)
-
-                          // 새로운 그룹 ID 생성 (기존 그룹 ID 중 최대값 + 1)
-                          const newGroupId = clientGroupCameraData.length + 1
-
-                          // 새로운 그룹 생성
-                          const newGroup: MClientGroupCameraList = {
-                            groupId: newGroupId,
-                            userNo: user?.userInfo?.userNo ?? 0,
-                            groupName: '새로운 그룹',
-                            groupItemList: []
-                          }
-
-                          // 그룹 데이터 업데이트
-                          setClientGroupCameraData(prevData => {
-                            if (!prevData) return [newGroup]
-
-                            return [...prevData, newGroup]
+                        등록 및 수정
+                      </Button>
+                    }
+                    hover={
+                      <Button
+                        variant={'contained'}
+                        sx={{ width: '160px', height: '40px', display: 'flex', justifyContent: 'space-between' }}
+                        onClick={() => {
+                          router.push({
+                            pathname: '/clients/clientsAdd',
+                            query: {
+                              mode: 'edit',
+                              id: companyNo
+                            }
                           })
+                        }}
+                      >
+                        <ButtonHoverIconList
 
-                          // 그룹 수정 모드 활성화
-                          setIsGroupMode(true)
-                          setGroupModifyId(newGroupId)
-                          setIsGroupModifyMode(true)
-                        } catch (error) {
-                          console.log(error)
-                        }
-                      }}
-                    >
-                      그룹생성
-                    </Button>
-                  }
-                />
-              </Box>
+                        // onClick={() => {
+                        //   console.log('add')
+                        // }}
+                        >
+                          <IconCustom isCommon path='camera' icon='cameraAdd' />
+                        </ButtonHoverIconList>
+                        <ButtonHoverIconList
 
-              <Box sx={{ display: 'flex', gap: 3 }}>
-                <Button
-                  variant={'outlined'}
-                  onClick={async () => {
-                    if (!isGroupMode) {
-                      handleSaveClick(undefined)
-                    } else {
-                      handleGroupSaveClick(undefined)
+                        // onClick={() => {
+                        //   console.log('del')
+                        // }}
+                        >
+                          <IconCustom isCommon path='camera' icon='cameraDel' />
+                        </ButtonHoverIconList>
+                        <ButtonHoverIconList
+
+                        // onClick={() => {
+                        //   console.log('mod')
+                        // }}
+                        >
+                          <IconCustom isCommon path='camera' icon='cameraMod' />
+                        </ButtonHoverIconList>
+                      </Button>
                     }
-                  }}
-                >
-                  저장
-                </Button>
-                <Button
-                  variant={'outlined'}
-                  onClick={() => {
-                    setSelectedCamera(null)
+                  />
+                )}
 
-                    if (!isGroupMode) {
-                      handleCancelClick(undefined)
-                    } else {
-                      handleGroupCancelClick(undefined)
+                {getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['카메라위치등록'])?.createYn === YN.Y && (
+                  <ButtonHover
+                    display={
+                      <Button variant={'contained'} startIcon={<IconCustom isCommon path='camera' icon='group-add' />}>
+                        그룹생성
+                      </Button>
                     }
-                  }}
-                >
-                  취소
-                </Button>
+                    hover={
+                      <Button
+                        variant={'contained'}
+                        startIcon={<IconCustom isCommon path='camera' icon='group-open-blank' />}
+                        onClick={async () => {
+                          if (!clientGroupCameraData) return
+
+                          try {
+                            // const res = await clientGroupAdd({ userNo: user?.userInfo?.userNo ?? 0, name: '새로운 그룹' })
+                            // console.log(res.data.groupId)
+
+                            // 새로운 그룹 ID 생성 (기존 그룹 ID 중 최대값 + 1)
+                            const newGroupId = clientGroupCameraData.length + 1
+
+                            // 새로운 그룹 생성
+                            const newGroup: MClientGroupCameraList = {
+                              groupId: newGroupId,
+                              userNo: user?.userInfo?.userNo ?? 0,
+                              groupName: '새로운 그룹',
+                              groupItemList: []
+                            }
+
+                            // 그룹 데이터 업데이트
+                            setClientGroupCameraData(prevData => {
+                              if (!prevData) return [newGroup]
+
+                              return [...prevData, newGroup]
+                            })
+
+                            // 그룹 수정 모드 활성화
+                            setIsGroupMode(true)
+                            setGroupModifyId(newGroupId)
+                            setIsGroupModifyMode(true)
+                          } catch (error) {
+                            console.log(error)
+                          }
+                        }}
+                      >
+                        그룹생성
+                      </Button>
+                    }
+                  />
+                )}
               </Box>
+              {getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['카메라위치등록'])?.updateYn === YN.Y && (
+                <Box sx={{ display: 'flex', gap: 3 }}>
+                  <Button
+                    variant={'outlined'}
+                    onClick={async () => {
+                      if (!isGroupMode) {
+                        handleSaveClick(undefined)
+                      } else {
+                        handleGroupSaveClick(undefined)
+                      }
+                    }}
+                  >
+                    저장
+                  </Button>
+
+                  <Button
+                    variant={'outlined'}
+                    onClick={() => {
+                      setSelectedCamera(null)
+
+                      if (!isGroupMode) {
+                        handleCancelClick(undefined)
+                      } else {
+                        handleGroupCancelClick(undefined)
+                      }
+                    }}
+                  >
+                    취소
+                  </Button>
+                </Box>
+              )}
             </Box>
           </HorizontalScrollBox>
           <CustomTable

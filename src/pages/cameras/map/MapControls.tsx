@@ -2,7 +2,11 @@ import { Box } from '@mui/material'
 import React from 'react'
 import MapSearch from 'src/@core/components/map/MapSearch'
 import { IViewType } from 'src/context/CamerasContext'
+import { EMenuType, YN } from 'src/enum/commonEnum'
+import { useAuth } from 'src/hooks/useAuth'
+import { useCameras } from 'src/hooks/useCameras'
 import IconCustom from 'src/layouts/components/IconCustom'
+import { getAuthMenu } from 'src/utils/CommonUtil'
 
 interface IMapControls {
   viewType: IViewType
@@ -19,6 +23,9 @@ const MapControls: React.FC<IMapControls> = ({
   newImageAddModeFn,
   imageUpdateFn
 }) => {
+  const { user } = useAuth()
+  const { cameraPage } = useCameras()
+
   return (
     <Box sx={{ my: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
       {viewType.type === 'map' && viewType.size === 'full' ? (
@@ -38,9 +45,17 @@ const MapControls: React.FC<IMapControls> = ({
       )}
 
       {newImageAddMode ? (
-        <Box sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => newImageAddModeFn()}>
-          <IconCustom isCommon path='camera' icon='image-add-mode' hoverIcon='image-add-mode-hovering' />
-        </Box>
+        <>
+          {cameraPage !== 'user-setting' &&
+            getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['카메라위치등록'])?.createYn === YN.Y && (
+              <Box
+                sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                onClick={() => newImageAddModeFn()}
+              >
+                <IconCustom isCommon path='camera' icon='image-add-mode' hoverIcon='image-add-mode-hovering' />
+              </Box>
+            )}
+        </>
       ) : (
         <Box
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}

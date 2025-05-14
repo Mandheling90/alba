@@ -4,10 +4,12 @@ import CustomTextFieldState from 'src/@core/components/atom/CustomTextFieldState
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import LatLonInput from 'src/@core/components/atom/LatLonInput'
 import SwitchCustom from 'src/@core/components/atom/SwitchCustom'
-import { YN } from 'src/enum/commonEnum'
+import { EMenuType, YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MClientCameraList } from 'src/model/cameras/CamerasModel'
 import { IAiSolutionService } from 'src/model/client/clientModel'
+import { MUserInfo } from 'src/model/commonModel'
+import { getAuthMenu } from 'src/utils/CommonUtil'
 import ModifyActions from '../../../../pages/cameras/table/ModifyActions'
 
 interface CameraColumnsProps {
@@ -24,6 +26,7 @@ interface CameraColumnsProps {
   companyNo?: number
   columnFilter?: string[]
   showGroupHeader?: boolean
+  userInfo?: MUserInfo
 }
 
 const createColumnDefinitions = (props: CameraColumnsProps): Record<string, GridColDef> => {
@@ -35,10 +38,7 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
     handleSaveClick,
     isGroupModifyMode,
     viewType,
-    setMapModifyModCameraId,
-    mapModifyModCameraId,
-    clientGroupStatus,
-    companyNo,
+    userInfo,
     showGroupHeader = true
   } = props
 
@@ -234,6 +234,7 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
             <Switch
+              disabled={getAuthMenu(userInfo?.authMenuList ?? [], EMenuType['카메라위치등록'])?.updateYn === YN.N}
               checked={row.cameraStatus === YN.Y}
               onChange={async event => {
                 try {
@@ -267,22 +268,26 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
       type: 'string',
       renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
         return (
-          <ModifyActions
-            row={row}
-            isModify={row.isEdit ?? false}
-            isGroupModifyMode={isGroupModifyMode ?? false}
-            handleEditClick={() => {
-              updateClientCameraData?.(row.cameraNo, { isEdit: true })
-            }}
-            handleCancelClick={() => {
-              handleCancelClick?.(row.cameraNo)
-              updateClientCameraData?.(row.cameraNo, { isEdit: false })
-            }}
-            handleSaveClick={() => {
-              handleSaveClick?.(row.cameraNo)
-              updateClientCameraData?.(row.cameraNo, { isEdit: false })
-            }}
-          />
+          <>
+            {getAuthMenu(userInfo?.authMenuList ?? [], EMenuType['카메라위치등록'])?.updateYn === YN.Y && (
+              <ModifyActions
+                row={row}
+                isModify={row.isEdit ?? false}
+                isGroupModifyMode={isGroupModifyMode ?? false}
+                handleEditClick={() => {
+                  updateClientCameraData?.(row.cameraNo, { isEdit: true })
+                }}
+                handleCancelClick={() => {
+                  handleCancelClick?.(row.cameraNo)
+                  updateClientCameraData?.(row.cameraNo, { isEdit: false })
+                }}
+                handleSaveClick={() => {
+                  handleSaveClick?.(row.cameraNo)
+                  updateClientCameraData?.(row.cameraNo, { isEdit: false })
+                }}
+              />
+            )}
+          </>
         )
       }
     }

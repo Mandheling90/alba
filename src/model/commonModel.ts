@@ -55,6 +55,15 @@ export interface MUserInfo {
   companyNo: number
   companyId: string
   companyName: string
+  authMenuList: MAuthMenuList[]
+}
+
+export interface MAuthMenuList {
+  menuId: number
+  createYn: YN
+  updateYn: YN
+  readYn: YN
+  deleteYn: YN
 }
 
 export interface MVerifyCodeReq {
