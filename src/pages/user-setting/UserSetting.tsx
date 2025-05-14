@@ -18,7 +18,7 @@ import UserList from './userSetting/table/UserList'
 
 const UserSetting: FC = (): React.ReactElement => {
   const userContext = useUser()
-  const { authList, setAuthList, selectedAuthList } = userContext
+  const { authList, setAuthList, selectedAuthList, setSelectedAuthList } = userContext
   const { layoutDisplay, companyNo } = useLayout()
   const { user } = useAuth()
 
@@ -36,7 +36,12 @@ const UserSetting: FC = (): React.ReactElement => {
       const res = await authMenuList({
         authId: selectedAuthList.authId !== 0 ? selectedAuthList.authId : filteredList[0].authId
       })
+
       setAuthMenuListData(res.data)
+
+      if (!selectedAuthList.authId) {
+        setSelectedAuthList({ authId: res.data.authId, name: res.data.authName, userAuthCount: 0 })
+      }
     }
   }
 
