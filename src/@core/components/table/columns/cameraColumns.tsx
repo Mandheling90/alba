@@ -202,6 +202,7 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
 
         return (
           <LatLonInput
+            cameraNo={row.cameraNo}
             lat={x}
             lon={y}
             isEditing={isEditing}
@@ -219,10 +220,6 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
                   lon: value ?? 0
                 })
             }}
-            onMapClick={() => {
-              setMapModifyModCameraId?.(mapModifyModCameraId ? null : row.cameraNo)
-            }}
-            isMapActive={mapModifyModCameraId === row.cameraNo}
           />
         )
       }

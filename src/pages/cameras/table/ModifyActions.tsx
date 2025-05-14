@@ -39,7 +39,13 @@ const ModifyActions: React.FC<ModifyActionsProps> = ({
           />
         </Box>
       ) : (
-        <Box sx={{ color: 'text.secondary', cursor: 'pointer' }} onClick={() => handleEditClick(row)}>
+        <Box
+          sx={{ color: 'text.secondary', cursor: 'pointer' }}
+          onClick={e => {
+            e.stopPropagation()
+            handleEditClick(row)
+          }}
+        >
           <IconCustom isCommon path='camera' icon='mod-off' hoverIcon='mod-on' />
         </Box>
       )}
@@ -48,7 +54,9 @@ const ModifyActions: React.FC<ModifyActionsProps> = ({
         <CustomTooltip title={isGroupModify ? '연결 해제' : '그룹 추가'} placement='top'>
           <Box
             sx={{ color: 'text.secondary', cursor: 'pointer' }}
-            onClick={() => {
+            onClick={e => {
+              e.stopPropagation()
+
               if (groupModifyId) {
                 if (isGroupModify) {
                   deleteGroupCamera(groupModifyId, row.cameraNo)

@@ -1,9 +1,11 @@
 import { Box, IconButton } from '@mui/material'
 import { FC } from 'react'
+import { useCameras } from 'src/hooks/useCameras'
 import IconCustom from 'src/layouts/components/IconCustom'
 import CustomTextFieldState from './CustomTextFieldState'
 
 interface LatLonInputProps {
+  cameraNo: number
   lat: number | null
   lon: number | null
   isEditing: boolean
@@ -22,15 +24,9 @@ const formatLatLon = (value: number): string => {
   return value.toFixed(6)
 }
 
-const LatLonInput: FC<LatLonInputProps> = ({
-  lat,
-  lon,
-  isEditing,
-  onLatChange,
-  onLonChange,
-  onMapClick,
-  isMapActive
-}) => {
+const LatLonInput: FC<LatLonInputProps> = ({ cameraNo, lat, lon, isEditing, onLatChange, onLonChange }) => {
+  const { mapModifyModCameraId, setMapModifyModCameraId } = useCameras()
+
   return (
     <Box
       sx={{
@@ -49,8 +45,18 @@ const LatLonInput: FC<LatLonInputProps> = ({
               onLatChange(parseFloat(e.target.value))
             }}
           />
-          <IconButton sx={{ color: 'text.secondary' }} onClick={onMapClick}>
-            <IconCustom isCommon path='camera' icon={`${!isMapActive ? 'map-point-small' : 'map-mod'}`} />
+          <IconButton
+            sx={{ color: 'text.secondary' }}
+            onClick={e => {
+              e.stopPropagation()
+              setMapModifyModCameraId?.(mapModifyModCameraId === cameraNo ? null : cameraNo)
+            }}
+          >
+            <IconCustom
+              isCommon
+              path='camera'
+              icon={`${cameraNo !== mapModifyModCameraId ? 'map-point-small' : 'map-mod'}`}
+            />
           </IconButton>
           <CustomTextFieldState
             size='small'
