@@ -5,7 +5,12 @@ import BarChart from 'src/@core/components/charts/BarChart'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { useCountBarChart, useCountLineChart, useCountLineChartPolling } from 'src/service/statistics/statisticsService'
+import {
+  useCountBarChart,
+  useCountCardInfo,
+  useCountLineChart,
+  useCountLineChartPolling
+} from 'src/service/statistics/statisticsService'
 import ChartDetailSwiper from '../swiper/ChartDetailSwiper'
 import VisitantList from '../table/VisitantList'
 
@@ -21,6 +26,7 @@ const Visitors: FC = ({}): React.ReactElement => {
   const { data: lineChart, isLoading: lineChartLoading, refetch: lineChartRefetch } = useCountLineChart()
   const { data: barChart, isLoading: barChartLoading, refetch: barChartRefetch } = useCountBarChart()
   const { mutateAsync: livePollingMutate } = useCountLineChartPolling()
+  const { data: cardInfo, refetch: cardInfoRefetch } = useCountCardInfo()
 
   // 날짜 변경 체크
   useEffect(() => {
@@ -42,10 +48,11 @@ const Visitors: FC = ({}): React.ReactElement => {
   useEffect(() => {
     const interval = setInterval(() => {
       barChartRefetch()
+      cardInfoRefetch()
     }, 30000)
 
     return () => clearInterval(interval)
-  }, [lineChartRefetch, barChartRefetch])
+  }, [lineChartRefetch, barChartRefetch, cardInfoRefetch])
 
   if (lineChartLoading || barChartLoading) {
     return <></>
@@ -80,7 +87,7 @@ const Visitors: FC = ({}): React.ReactElement => {
           </Card>
         </Grid>
         <Grid item xs={3}>
-          <ChartDetailSwiper height={'430px'} />
+          {cardInfo?.data && <ChartDetailSwiper height={'430px'} data={cardInfo?.data} />}
         </Grid>
 
         <Grid item xs={12}>

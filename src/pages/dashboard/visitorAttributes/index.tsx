@@ -10,6 +10,7 @@ import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
 import IconCustom from 'src/layouts/components/IconCustom'
 import {
   useCountBarChart,
+  useCountCardInfo,
   useCountLineChart,
   useCountLineChartPolling,
   useGenderAgeChart
@@ -30,6 +31,7 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
   const { data: genderAgeChart, refetch: genderAgeChartRefetch } = useGenderAgeChart()
   const { data: barChart, refetch: barChartRefetch } = useCountBarChart()
   const { mutateAsync: livePollingMutate } = useCountLineChartPolling()
+  const { data: cardInfo, refetch: cardInfoRefetch } = useCountCardInfo()
 
   // 날짜 변경 체크
   useEffect(() => {
@@ -52,10 +54,11 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
     const interval = setInterval(() => {
       barChartRefetch()
       genderAgeChartRefetch()
+      cardInfoRefetch()
     }, 30000)
 
     return () => clearInterval(interval)
-  }, [lineChartRefetch, genderAgeChartRefetch, barChartRefetch])
+  }, [lineChartRefetch, genderAgeChartRefetch, barChartRefetch, cardInfoRefetch])
 
   return (
     <StandardTemplate title={'방문자 특성 통계'}>
@@ -86,7 +89,7 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
           </Card>
         </Grid>
         <Grid item xs={3}>
-          <ChartDetailSwiper height={'430px'} />
+          {cardInfo?.data && <ChartDetailSwiper height={'430px'} data={cardInfo?.data} />}
         </Grid>
 
         <Grid item xs={12}>
