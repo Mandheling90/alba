@@ -39,8 +39,8 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
         </Grid>
       </Collapse>
 
-      <Grid item xs={12} style={{ height: isFullView ? '80vh' : '40vh', transition: 'height 0.3s ease' }}>
-        <CamerasMap height={isFullView ? '80vh' : '40vh'} />
+      <Grid item xs={12} style={{ height: isFullView ? '80vh' : '36vh', transition: 'height 0.3s ease' }}>
+        <CamerasMap height={isFullView ? '80vh' : '36vh'} />
       </Grid>
     </Grid>
   )
