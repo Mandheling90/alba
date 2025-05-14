@@ -1,6 +1,6 @@
 import { Box, Paper } from '@mui/material'
 import { FC } from 'react'
-import { useCountCardInfo } from 'src/service/statistics/statisticsService'
+import { ICardInfo } from 'src/model/statistics/StatisticsModel'
 import { calculateChangeRate } from 'src/utils/CommonUtil'
 import styled from 'styled-components'
 import 'swiper/css'
@@ -13,6 +13,7 @@ import BoxContents from './BoxContents'
 
 interface ChartDetailSwiperProps {
   height?: string | number
+  data: ICardInfo[]
 }
 
 const StyledSwiper = styled(Swiper)`
@@ -54,14 +55,8 @@ const StyledSwiper = styled(Swiper)`
   }
 `
 
-const ChartDetailSwiper: FC<ChartDetailSwiperProps> = ({ height = '100%' }): React.ReactElement => {
-  const { data: cardInfo, isLoading } = useCountCardInfo()
-
-  if (isLoading) {
-    return <></>
-  }
-
-  if (!cardInfo?.data || !Array.isArray(cardInfo.data) || cardInfo.data.length === 0) {
+const ChartDetailSwiper: FC<ChartDetailSwiperProps> = ({ data, height = '100%' }): React.ReactElement => {
+  if (!data || !Array.isArray(data) || data.length === 0) {
     return <></>
   }
 
@@ -90,7 +85,7 @@ const ChartDetailSwiper: FC<ChartDetailSwiperProps> = ({ height = '100%' }): Rea
         }}
       >
         <Box className='swiper-pagination' />
-        {cardInfo?.data?.map((item, index) => {
+        {data?.map((item, index) => {
           return Array.from({ length: 4 }).map((_, subIndex) => (
             <SwiperSlide
               key={`${item.currentDate}-${subIndex}`}
