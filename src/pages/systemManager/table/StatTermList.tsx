@@ -96,10 +96,39 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   const handleSaveClick = useCallback(
     async (key: string) => {
       try {
+        // 1뎁스와 2뎁스에서 key에 해당하는 항목 찾기
+        let targetItem = null
+        let targetValue = ''
+
+        // 1뎁스 검색
+        const depth1Item = data.dataList.find(item => item.key === key)
+        if (depth1Item) {
+          targetItem = depth1Item
+          targetValue = depth1Item.systemMenuName || ''
+        } else {
+          // 2뎁스 검색
+          for (const depth1Item of data.dataList) {
+            if (depth1Item.dataList) {
+              const depth2Item = depth1Item.dataList.find(item => item.key === key)
+              if (depth2Item) {
+                targetItem = depth2Item
+                targetValue = depth2Item.modifySettingName || ''
+                break
+              }
+            }
+          }
+        }
+
+        if (!targetItem) {
+          throw new Error('해당하는 항목을 찾을 수 없습니다.')
+        }
+
+        console.log('ck')
+
         const res = await configSingle({
           companyNo: companyNo,
           id: parseInt(key),
-          changeConfigValue: data.dataList.find(item => item.key === key)?.modifySettingName || ''
+          changeConfigValue: targetValue
         })
 
         setSimpleDialogModalProps({
@@ -163,7 +192,7 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
         })
       }
     },
-    [data]
+    [data.dataList, configSingle, companyNo, setSimpleDialogModalProps]
   )
 
   const toggleRow = useCallback((key: string) => {
