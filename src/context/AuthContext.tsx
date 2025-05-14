@@ -11,7 +11,6 @@ import { useRouter } from 'next/router'
 // ** Types
 import { EErrorMessage, ELocalStorageKey, EResultCode, ROLE } from 'src/enum/commonEnum'
 import { useLayout } from 'src/hooks/useLayout'
-import { AuthType } from 'src/model/commonModel'
 import { login, useGenerateCode, useMenuList, useUserDetailInfo } from 'src/service/commonService'
 import { useUserGroup } from 'src/service/setting/userSetting'
 import { AuthValuesType, ErrCallbackType, LoginParams, SuccessCallbackType, UserDataType } from './types'
@@ -140,7 +139,6 @@ const AuthProvider = ({ children }: Props) => {
           componentListInfo: menuList.data
         })
 
-        setLayoutDisplay(userInfo.data.authId === AuthType.ADMIN)
         setCompanyId(userInfo.data.companyId)
         setCompanyName(userInfo.data.companyName)
         setCompanyNo(userInfo.data.companyNo)

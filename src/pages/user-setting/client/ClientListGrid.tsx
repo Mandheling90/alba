@@ -1,15 +1,20 @@
 // ** MUI Imports
 import { Box, Card, IconButton, TextField } from '@mui/material'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
+import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
+import { AuthType } from 'src/model/commonModel'
 
 import ClientSimpleList from 'src/pages/user-setting/client/table/ClientSimpleList'
 import { useCompanySearchList } from 'src/service/client/clientService'
 
 const ClientListGrid: FC = (): React.ReactElement => {
+  const { user } = useAuth()
+  const { setLayoutDisplay } = useLayout()
+
   const [searchKeyword, setSearchKeyword] = useState('')
-  const { data, refetch } = useCompanySearchList({ keyword: '' })
+  const { data, refetch } = useCompanySearchList({ keyword: '', enabled: user?.userInfo?.authId === AuthType.ADMIN })
 
   const { setCompanyId, setCompanyName, setCompanyNo } = useLayout()
 
@@ -18,6 +23,12 @@ const ClientListGrid: FC = (): React.ReactElement => {
     setCompanyId(row.companyId)
     setCompanyName(row.companyName)
   }
+
+  useEffect(() => {
+    if (user?.userInfo?.authId !== AuthType.ADMIN) {
+      setLayoutDisplay(false)
+    }
+  }, [user?.userInfo?.authId])
 
   const filteredData =
     data?.data?.filter(

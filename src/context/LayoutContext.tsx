@@ -1,5 +1,4 @@
-import { ReactNode, createContext, useCallback, useState } from 'react'
-import { AuthType } from 'src/model/commonModel'
+import { ReactNode, createContext, useState } from 'react'
 import { UserDataType } from './types'
 
 export type LayoutValuesType = {
@@ -46,20 +45,20 @@ const LayoutProvider = ({ children }: Props) => {
   const [companyNo, setCompanyNo] = useState(defaultProvider.companyNo)
   const [layoutUserInfo, setLayoutUserInfo] = useState<UserDataType | null>(null)
 
-  const handleSetLayoutDisplay = useCallback(
-    (value: boolean) => {
-      if (layoutUserInfo?.userInfo?.authId === AuthType.ADMIN) {
-        setLayoutDisplay(value)
-      } else {
-        setLayoutDisplay(false)
-      }
-    },
-    [layoutUserInfo?.userInfo?.authId]
-  )
+  // const handleSetLayoutDisplay = useCallback(
+  //   (value: boolean) => {
+  //     if (layoutUserInfo?.userInfo?.authId === AuthType.ADMIN) {
+  //       setLayoutDisplay(value)
+  //     } else {
+  //       setLayoutDisplay(false)
+  //     }
+  //   },
+  //   [layoutUserInfo?.userInfo?.authId]
+  // )
 
   const values: LayoutValuesType = {
     layoutDisplay,
-    setLayoutDisplay: handleSetLayoutDisplay,
+    setLayoutDisplay,
     companyNo,
     setCompanyNo,
     companyId,

@@ -20,8 +20,8 @@ export const useClientList = (params: MClientListReq) => {
   return useQuery<MResult<MClientList>>([EPath.COMPANY_LIST, params], {})
 }
 
-export const useCompanySearchList = (params: { keyword: string }) => {
-  return useQuery<MResult<MCompanySearch[]>>([EPath.COMPANY_SEARCH, params], {})
+export const useCompanySearchList = (params: { keyword: string; enabled: boolean }) => {
+  return useQuery<MResult<MCompanySearch[]>>([EPath.COMPANY_SEARCH, params], { enabled: params.enabled })
 }
 
 export const useClientDetail = (companyNo?: number) => {
