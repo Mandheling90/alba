@@ -1,4 +1,4 @@
-import { Box, Button, Card, Grid } from '@mui/material'
+import { Box, Button, Grid } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import CustomTable from 'src/@core/components/table/CustomTable'
@@ -112,87 +112,85 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
   return (
     <Grid container>
       <Grid item xs={12}>
-        <Card>
-          <HorizontalScrollBox>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                m: 3,
-                gap: 3,
-                width: '100%'
-              }}
-            >
-              <Box sx={{ display: 'flex', gap: 3 }}>
-                <LayoutControlPanel
-                  menuName='고객사'
-                  companyId={companyId}
-                  companyName={companyName}
-                  onClick={() => {
-                    layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
-                  }}
-                />
-              </Box>
-
-              <Box sx={{ display: 'flex', gap: 3 }}>
-                <Button
-                  variant={'outlined'}
-                  onClick={async () => {
-                    await clientCameraUserAuthUpdate({
-                      companyNo,
-                      userNo: selectedUser?.userNo ?? 0,
-                      cameraNoList: accessibleCameraList.map(cameraNo => ({ cameraNo }))
-                    })
-
-                    fetchClientCameraUserAuthData()
-                  }}
-                >
-                  저장
-                </Button>
-                <Button
-                  variant={'outlined'}
-                  onClick={() => {
-                    setAccessibleCameraList(orgAccessibleCameraList)
-                  }}
-                >
-                  취소
-                </Button>
-              </Box>
-            </Box>
-          </HorizontalScrollBox>
-          <Box sx={{ display: 'flex', width: '100%', gap: 3 }}>
-            <Box sx={{ width: '50%' }}>
-              <CustomTable
-                id='userNo'
-                rows={userData}
-                columns={userColumns}
-                isAllView
-                enablePointer
-                selectRowEvent={e => {
-                  setSelectedUser(Object.keys(e).length === 0 ? undefined : e)
+        <HorizontalScrollBox>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              m: 3,
+              gap: 3,
+              width: '100%'
+            }}
+          >
+            <Box sx={{ display: 'flex', gap: 3 }}>
+              <LayoutControlPanel
+                menuName='고객사'
+                companyId={companyId}
+                companyName={companyName}
+                onClick={() => {
+                  layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
                 }}
               />
             </Box>
 
-            <Box sx={{ width: '50%' }}>
-              <CustomTable
-                combineTableId={'camera'}
-                id='cameraNo'
-                showMoreButton={false}
-                rows={clientCameraData ?? []}
-                columns={cameraColumns}
-                selectRowEvent={selectRowEvent}
-                isAllView
-                onCheckboxSelectionChange={handleCheckboxSelectionChange}
-                defaultSelectedCheckboxes={accessibleCameraList}
-                disableCheckboxSelection={!selectedUser}
-                enablePointer
-                showHeader
-              />
+            <Box sx={{ display: 'flex', gap: 3 }}>
+              <Button
+                variant={'outlined'}
+                onClick={async () => {
+                  await clientCameraUserAuthUpdate({
+                    companyNo,
+                    userNo: selectedUser?.userNo ?? 0,
+                    cameraNoList: accessibleCameraList.map(cameraNo => ({ cameraNo }))
+                  })
+
+                  fetchClientCameraUserAuthData()
+                }}
+              >
+                저장
+              </Button>
+              <Button
+                variant={'outlined'}
+                onClick={() => {
+                  setAccessibleCameraList(orgAccessibleCameraList)
+                }}
+              >
+                취소
+              </Button>
             </Box>
           </Box>
-        </Card>
+        </HorizontalScrollBox>
+        <Box sx={{ display: 'flex', width: '100%', gap: 3 }}>
+          <Box sx={{ width: '50%' }}>
+            <CustomTable
+              id='userNo'
+              rows={userData}
+              columns={userColumns}
+              isAllView
+              enablePointer
+              selectRowEvent={e => {
+                setSelectedUser(Object.keys(e).length === 0 ? undefined : e)
+              }}
+            />
+          </Box>
+
+          <Box sx={{ width: '50%' }}>
+            <CustomTable
+              combineTableId={'camera'}
+              id='cameraNo'
+              showMoreButton={false}
+              rows={clientCameraData ?? []}
+              columns={cameraColumns}
+              selectRowEvent={selectRowEvent}
+              isAllView
+              onCheckboxSelectionChange={handleCheckboxSelectionChange}
+              defaultSelectedCheckboxes={accessibleCameraList}
+              disableCheckboxSelection={!selectedUser}
+              enablePointer
+              showHeader
+            />
+          </Box>
+        </Box>
       </Grid>
     </Grid>
   )
