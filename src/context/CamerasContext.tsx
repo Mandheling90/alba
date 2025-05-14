@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useState } from 'react'
+import { ReactNode, createContext, useEffect, useRef, useState } from 'react'
 import SimpleDialogModal, { INITIAL_DIALOG_PROPS } from 'src/@core/components/molecule/SimpleDialogModal'
 import { SORT } from 'src/enum/commonEnum'
 import { useAuth } from 'src/hooks/useAuth'
@@ -185,6 +185,26 @@ const CamerasProvider = ({ children }: Props) => {
 
   const [simpleDialogModalProps, setSimpleDialogModalProps] = useState(INITIAL_DIALOG_PROPS)
 
+  const clientCameraDataRef = useRef(clientCameraData)
+  useEffect(() => {
+    clientCameraDataRef.current = clientCameraData
+  }, [clientCameraData])
+
+  const clientCameraDataOriginRef = useRef(clientCameraDataOrigin)
+  useEffect(() => {
+    clientCameraDataOriginRef.current = clientCameraDataOrigin
+  }, [clientCameraDataOrigin])
+
+  const clientGroupCameraDataRef = useRef(clientGroupCameraData)
+  useEffect(() => {
+    clientGroupCameraDataRef.current = clientGroupCameraData
+  }, [clientGroupCameraData])
+
+  const clientGroupCameraDataOriginRef = useRef(clientGroupCameraDataOrigin)
+  useEffect(() => {
+    clientGroupCameraDataOriginRef.current = clientGroupCameraDataOrigin
+  }, [clientGroupCameraDataOrigin])
+
   const clear = () => {
     // setLayoutDisplay(defaultProvider.layoutDisplay)
   }
@@ -254,12 +274,12 @@ const CamerasProvider = ({ children }: Props) => {
   }
 
   const handleSaveClick = async (cameraNo: number | undefined) => {
-    if (!clientCameraData) return
+    if (!clientCameraDataRef.current) return
 
     // 전체 저장의 경우
     if (!cameraNo) {
       try {
-        const filteredCameraData: MClientCameraListForSave[] = clientCameraData.map(camera => {
+        const filteredCameraData: MClientCameraListForSave[] = clientCameraDataRef.current.map(camera => {
           const { lat, lon, flowPlanX, flowPlanY, ...rest } = camera
 
           return camera.flowPlanBindingYN === 'Y' ? { ...rest, flowPlanX, flowPlanY } : { ...rest, lat, lon }
@@ -280,7 +300,9 @@ const CamerasProvider = ({ children }: Props) => {
 
     // 특정 카메라 저장의 경우
     try {
-      const updatedCamera = clientCameraData.find((camera: MClientCameraList) => camera.cameraNo === cameraNo)
+      const updatedCamera = clientCameraDataRef.current.find(
+        (camera: MClientCameraList) => camera.cameraNo === cameraNo
+      )
       if (!updatedCamera) return
 
       const { lat, lon, flowPlanX, flowPlanY, ...rest } = updatedCamera
@@ -295,7 +317,7 @@ const CamerasProvider = ({ children }: Props) => {
       console.log(res)
 
       setClientCameraDataOrigin(prevData => {
-        if (!prevData) return clientCameraData
+        if (!prevData) return clientCameraDataRef.current
 
         const existingIndex = prevData.findIndex((camera: MClientCameraList) => camera.cameraNo === cameraNo)
         if (existingIndex === -1) return prevData
@@ -313,11 +335,11 @@ const CamerasProvider = ({ children }: Props) => {
   }
 
   const handleCancelClick = (cameraNo: number | undefined) => {
-    if (!clientCameraDataOrigin) return
+    if (!clientCameraDataOriginRef.current) return
 
     if (!cameraNo) {
       // 전체 취소의 경우 origin 데이터로 복원
-      setClientCameraData(clientCameraDataOrigin)
+      setClientCameraData(clientCameraDataOriginRef.current)
 
       return
     }
@@ -331,7 +353,9 @@ const CamerasProvider = ({ children }: Props) => {
       if (existingIndex === -1) return prevData
 
       // origin 데이터에서 해당 카메라 찾기
-      const originalCamera = clientCameraDataOrigin.find((camera: MClientCameraList) => camera.cameraNo === cameraNo)
+      const originalCamera = clientCameraDataOriginRef.current?.find(
+        (camera: MClientCameraList) => camera.cameraNo === cameraNo
+      )
       if (!originalCamera) return prevData
 
       // 새로운 배열 생성 및 업데이트
@@ -344,12 +368,14 @@ const CamerasProvider = ({ children }: Props) => {
   }
 
   const handleGroupSaveClick = async (groupId: number | undefined) => {
-    if (!clientGroupCameraData) return
+    if (!clientGroupCameraDataRef.current) return
 
     if (!groupId) {
       // 전체 저장의 경우 현재 데이터를 origin으로 저장
-      const modifiedGroupList = clientGroupCameraData.map(group => {
-        const isExistingGroup = clientGroupCameraDataOrigin?.some(originGroup => originGroup.groupId === group.groupId)
+      const modifiedGroupList = clientGroupCameraDataRef.current.map(group => {
+        const isExistingGroup = clientGroupCameraDataOriginRef.current?.some(
+          originGroup => originGroup.groupId === group.groupId
+        )
 
         return {
           ...group,
@@ -365,10 +391,14 @@ const CamerasProvider = ({ children }: Props) => {
 
     // 특정 그룹 저장의 경우
     try {
-      const updatedGroup = clientGroupCameraData.find((group: MClientGroupCameraList) => group.groupId === groupId)
+      const updatedGroup = clientGroupCameraDataRef.current.find(
+        (group: MClientGroupCameraList) => group.groupId === groupId
+      )
       if (!updatedGroup) return
 
-      const isExistingGroup = clientGroupCameraDataOrigin?.some(originGroup => originGroup.groupId === groupId)
+      const isExistingGroup = clientGroupCameraDataOriginRef.current?.some(
+        originGroup => originGroup.groupId === groupId
+      )
       const modifiedGroup = {
         ...updatedGroup,
         groupId: isExistingGroup ? updatedGroup.groupId : 0
@@ -379,7 +409,7 @@ const CamerasProvider = ({ children }: Props) => {
       console.log(res)
 
       setClientGroupCameraDataOrigin(prevData => {
-        if (!prevData) return clientGroupCameraData
+        if (!prevData) return clientGroupCameraDataRef.current
 
         const existingIndex = prevData.findIndex((group: MClientGroupCameraList) => group.groupId === groupId)
         if (existingIndex === -1) return prevData
@@ -397,11 +427,11 @@ const CamerasProvider = ({ children }: Props) => {
   }
 
   const handleGroupCancelClick = (groupId: number | undefined) => {
-    if (!clientGroupCameraDataOrigin) return
+    if (!clientGroupCameraDataOriginRef.current) return
 
     if (!groupId) {
       // 전체 취소
-      setClientGroupCameraData(clientGroupCameraDataOrigin)
+      setClientGroupCameraData(clientGroupCameraDataOriginRef.current)
 
       return
     }
@@ -411,7 +441,7 @@ const CamerasProvider = ({ children }: Props) => {
       if (!prevData) return null
 
       // origin 데이터에서 해당 그룹 찾기
-      const originalGroup = clientGroupCameraDataOrigin.find(
+      const originalGroup = clientGroupCameraDataOriginRef.current?.find(
         (group: MClientGroupCameraList) => group.groupId === groupId
       )
 
@@ -484,14 +514,15 @@ const CamerasProvider = ({ children }: Props) => {
   }
 
   const removeDuplicateCameras = (): MClientCameraList[] => {
-    if (!groupModifyId) return clientCameraData ?? []
+    if (!groupModifyId) return clientCameraDataRef.current ?? []
 
     const groupCameraNos = new Set(
-      clientGroupCameraData?.find(group => group.groupId === groupModifyId)?.groupItemList.map(item => item.cameraNo) ??
-        []
+      clientGroupCameraDataRef.current
+        ?.find(group => group.groupId === groupModifyId)
+        ?.groupItemList.map(item => item.cameraNo) ?? []
     )
 
-    return clientCameraData?.filter(item => !groupCameraNos.has(item.cameraNo)) ?? []
+    return clientCameraDataRef.current?.filter(item => !groupCameraNos.has(item.cameraNo)) ?? []
   }
 
   const addClientCamera = (newCamera: MClientCameraList) => {
