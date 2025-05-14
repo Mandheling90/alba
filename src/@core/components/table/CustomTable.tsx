@@ -75,6 +75,10 @@ const CustomTable: FC<
   }
 
   const getSelectedRows = (selectedIds: any[]) => {
+    if (selectedRow && !selectedIds.find(id => id === selectedRow)) {
+      handleSetSelectedRow(null)
+    }
+
     return rows.filter(row => selectedIds.includes(row[id ?? 'id']))
   }
 
