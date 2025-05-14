@@ -4,6 +4,7 @@ import HighchartsReact from 'highcharts-react-official'
 import { memo, useState } from 'react'
 import { IPyramidPieChart } from 'src/model/statistics/StatisticsModel'
 import { areEqual } from 'src/utils/CommonUtil'
+import styled from 'styled-components'
 import RoundedBubble from '../atom/RoundedBubble'
 
 const PyramidChart = memo(({ data }: { data: IPyramidPieChart }) => {
@@ -181,11 +182,19 @@ const PyramidChart = memo(({ data }: { data: IPyramidPieChart }) => {
         </Box>
       )}
 
-      <HighchartsReact highcharts={Highcharts} options={options} />
+      <ChartWrapper>
+        <HighchartsReact highcharts={Highcharts} options={options} />
+      </ChartWrapper>
     </Box>
   )
 }, areEqual)
 
 PyramidChart.displayName = 'PyramidChart'
+
+const ChartWrapper = styled.div`
+  .highcharts-credits {
+    display: none;
+  }
+`
 
 export default PyramidChart

@@ -1,6 +1,7 @@
 import Highcharts from 'highcharts'
 import React, { useEffect } from 'react'
 import { ICountBarChart } from 'src/model/statistics/StatisticsModel'
+import styled from 'styled-components'
 
 const BarStackedChart: React.FC<{ data: ICountBarChart }> = ({ data }) => {
   useEffect(() => {
@@ -65,7 +66,17 @@ const BarStackedChart: React.FC<{ data: ICountBarChart }> = ({ data }) => {
     })
   }, [data])
 
-  return <div id='container' style={{ height: '400px', width: '100%' }} />
+  return (
+    <ChartWrapper>
+      <div id='container' style={{ height: '400px', width: '100%' }} />
+    </ChartWrapper>
+  )
 }
+
+const ChartWrapper = styled.div`
+  .highcharts-credits {
+    display: none;
+  }
+`
 
 export default BarStackedChart

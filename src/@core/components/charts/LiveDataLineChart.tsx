@@ -2,6 +2,7 @@ import Highcharts from 'highcharts/highstock'
 import { memo, useEffect, useRef } from 'react'
 import { ICountLineChartPolling, ILineDataList } from 'src/model/statistics/StatisticsModel'
 import { areEqual } from 'src/utils/CommonUtil'
+import styled from 'styled-components'
 
 interface ILiveDataLineChart {
   selected: number // 선택된 값
@@ -226,11 +227,21 @@ const LiveDataLineChart = memo(
       }
     }, [convertedData, convertedSecondData])
 
-    return <div id='container' />
+    return (
+      <ChartWrapper>
+        <div id='container' />
+      </ChartWrapper>
+    )
   },
   areEqual
 )
 
 LiveDataLineChart.displayName = 'LiveDataLineChart'
+
+const ChartWrapper = styled.div`
+  .highcharts-credits {
+    display: none;
+  }
+`
 
 export default LiveDataLineChart

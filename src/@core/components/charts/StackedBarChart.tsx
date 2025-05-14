@@ -1,6 +1,7 @@
 import Highcharts from 'highcharts'
 import { useEffect } from 'react'
 import { ICountBarChart } from 'src/model/statistics/StatisticsModel'
+import styled from 'styled-components'
 
 interface StackedBarChartProps {
   containerId: string
@@ -68,7 +69,17 @@ const StackedBarChart = ({ containerId, data }: StackedBarChartProps) => {
     }
   }, [containerId, data])
 
-  return <div id={containerId} />
+  return (
+    <ChartWrapper>
+      <div id={containerId} />
+    </ChartWrapper>
+  )
 }
+
+const ChartWrapper = styled.div`
+  .highcharts-credits {
+    display: none;
+  }
+`
 
 export default StackedBarChart

@@ -3,6 +3,7 @@ import HighchartsReact from 'highcharts-react-official'
 import { memo } from 'react'
 import { IPieChart } from 'src/model/statistics/StatisticsModel'
 import { areEqual } from 'src/utils/CommonUtil'
+import styled from 'styled-components'
 
 const PieChart = memo(({ data }: { data: IPieChart }) => {
   const options = {
@@ -54,9 +55,19 @@ const PieChart = memo(({ data }: { data: IPieChart }) => {
     ]
   }
 
-  return <HighchartsReact highcharts={Highcharts} options={options} />
+  return (
+    <ChartWrapper>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </ChartWrapper>
+  )
 }, areEqual)
 
 PieChart.displayName = 'PieChart'
+
+const ChartWrapper = styled.div`
+  .highcharts-credits {
+    display: none;
+  }
+`
 
 export default PieChart

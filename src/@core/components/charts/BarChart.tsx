@@ -3,6 +3,7 @@ import HighchartsReact from 'highcharts-react-official'
 import { memo, useEffect, useMemo } from 'react'
 import { IDashboardCountBarChart } from 'src/model/statistics/StatisticsModel'
 import { areEqual } from 'src/utils/CommonUtil'
+import styled from 'styled-components'
 
 interface IBarChart {
   onHover?: (category: string) => void // 선택된 값
@@ -91,9 +92,19 @@ const BarChart = memo(({ onHover, data }: IBarChart) => {
     }
   }, [])
 
-  return <HighchartsReact highcharts={Highcharts} options={options} />
+  return (
+    <ChartWrapper>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </ChartWrapper>
+  )
 }, areEqual)
 
 BarChart.displayName = 'BarChart'
+
+const ChartWrapper = styled.div`
+  .highcharts-credits {
+    display: none;
+  }
+`
 
 export default BarChart

@@ -1,6 +1,7 @@
 import Highcharts, { Chart as ChartType } from 'highcharts'
 import { useEffect, useRef } from 'react'
 import { IBarChart } from 'src/model/statistics/StatisticsModel'
+import styled from 'styled-components'
 import SwitchCustom from '../atom/SwitchCustom'
 
 interface SeriesData {
@@ -96,27 +97,35 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
   }
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <style>
-        {`
+    <ChartWrapper>
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <style>
+          {`
           .highcharts-title {
             display: none;
           }
         `}
-      </style>
-      <div id='location-chart-container' style={{ width: '100%', height: '100%' }} />
-      <div style={{ position: 'absolute', top: '10px', left: '50px' }}>
-        <SwitchCustom
-          width={90}
-          switchName={['전체', '개별']}
-          activeColor={['rgba(145, 85, 253, 1)', 'rgba(145, 85, 253, 1)']}
-          selected={true}
-          superSelected={false}
-          onChange={selected => handleSwitchChange(selected)}
-        />
+        </style>
+        <div id='location-chart-container' style={{ width: '100%', height: '100%' }} />
+        <div style={{ position: 'absolute', top: '10px', left: '50px' }}>
+          <SwitchCustom
+            width={90}
+            switchName={['전체', '개별']}
+            activeColor={['rgba(145, 85, 253, 1)', 'rgba(145, 85, 253, 1)']}
+            selected={true}
+            superSelected={false}
+            onChange={selected => handleSwitchChange(selected)}
+          />
+        </div>
       </div>
-    </div>
+    </ChartWrapper>
   )
 }
+
+const ChartWrapper = styled.div`
+  .highcharts-credits {
+    display: none;
+  }
+`
 
 export default HorizontalBarChartLocation

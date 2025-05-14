@@ -1,5 +1,6 @@
 // import Highcharts from 'highcharts/highstock'
 import React, { useEffect, useRef } from 'react'
+import styled from 'styled-components'
 
 // 샘플 데이터 생성 함수
 const generateSampleData = (count = 20): [number, number][] => {
@@ -163,7 +164,17 @@ const LiveDataLineChart: React.FC<ILiveDataLineChart> = ({ selected, data, secon
     }
   }, [data, secondData])
 
-  return <div ref={chartRef} />
+  return (
+    <ChartWrapper>
+      <div ref={chartRef} />
+    </ChartWrapper>
+  )
 }
+
+const ChartWrapper = styled.div`
+  .highcharts-credits {
+    display: none;
+  }
+`
 
 export default LiveDataLineChart

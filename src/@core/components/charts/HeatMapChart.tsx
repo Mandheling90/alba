@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { IHeatMapChart } from 'src/model/statistics/StatisticsModel'
 import { categoryPercentage } from 'src/utils/CommonUtil'
+import styled from 'styled-components'
 
 // Highcharts 모듈을 동적으로 로드
 let Highcharts: any
@@ -55,8 +56,6 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
       })
     }
   }, [Highcharts])
-
-  
 
   const options: Highcharts.Options = {
     chart: {
@@ -129,7 +128,10 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
           enabled: true,
           color: '#000000',
           formatter: function (this: any) {
-            return `${this.point.visitors}<br>(${categoryPercentage(this.point.visitors, this.point.male || 0)}%, ${categoryPercentage(this.point.visitors,this.point.female || 0)}%)`
+            return `${this.point.visitors}<br>(${categoryPercentage(
+              this.point.visitors,
+              this.point.male || 0
+            )}%, ${categoryPercentage(this.point.visitors, this.point.female || 0)}%)`
           }
         }
       }
@@ -152,7 +154,17 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
     }
   }
 
-  return Highcharts && HighchartsReact ? <HighchartsReact highcharts={Highcharts} options={options} /> : null
+  return Highcharts && HighchartsReact ? (
+    <ChartWrapper>
+      <HighchartsReact highcharts={Highcharts} options={options} />
+    </ChartWrapper>
+  ) : null
 }
+
+const ChartWrapper = styled.div`
+  .highcharts-credits {
+    display: none;
+  }
+`
 
 export default HeatMapChart

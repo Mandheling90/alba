@@ -59,8 +59,8 @@ interface State {
 const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState<boolean>(false)
   const [values, setValues] = useState<State>({
-    id: 'test1234',
-    password: 'Aa123456789!',
+    id: process.env.NEXT_PUBLIC_ENV_MODE === 'development' ? 'test1234' : '',
+    password: process.env.NEXT_PUBLIC_ENV_MODE === 'development' ? 'Aa123456789!' : '',
     showPassword: false
   })
   const [errorMessage, setErrorMessage] = useState('')

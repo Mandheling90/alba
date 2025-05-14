@@ -1,5 +1,6 @@
 import Highcharts, { Chart as ChartType } from 'highcharts'
 import { useEffect } from 'react'
+import styled from 'styled-components'
 
 const HorizontalBarChartLocation = () => {
   useEffect(() => {
@@ -173,7 +174,17 @@ const HorizontalBarChartLocation = () => {
     }
   }, [])
 
-  return <div id='location-chart-container' style={{ width: '100%', height: '500px' }} />
+  return (
+    <ChartWrapper>
+      <div id='location-chart-container' style={{ width: '100%', height: '500px' }} />
+    </ChartWrapper>
+  )
 }
+
+const ChartWrapper = styled.div`
+  .highcharts-credits {
+    display: none;
+  }
+`
 
 export default HorizontalBarChartLocation
