@@ -32,7 +32,7 @@ const StatTerm: FC<IStatTerm> = ({ selectClient }) => {
               </Typography>
             }
           />
-          <Box sx={{ height: '35vh', overflow: 'auto' }}>
+          <Box sx={{ height: '80vh', overflow: 'auto' }}>
             <StatTermList />
           </Box>
         </Grid>

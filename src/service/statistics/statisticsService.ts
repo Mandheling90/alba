@@ -6,6 +6,8 @@ import {
   IAgeGenderStatisticsTableResponse,
   ICameraList,
   ICardInfo,
+  IConfig,
+  IConfigMulti,
   ICountBarChart,
   ICountBarPieChart,
   ICountLineChartPolling,
@@ -28,7 +30,7 @@ import {
   MPieChart,
   MTable
 } from 'src/model/statistics/StatisticsModel'
-import { createDelete, createGet, createPatch, createPost } from 'src/module/reactQuery'
+import { createDelete, createGet, createPatch, createPost, createPut } from 'src/module/reactQuery'
 
 /**
  * 통계 데이터 파싱을 위한 공통 유틸리티 함수
@@ -453,5 +455,17 @@ export const useCountWeekDayBarPieChart = () => {
     const transformedParams = transformStatisticsParams(params)
 
     return createGet<ICountBarPieChart>([EPath.STATS_COUNT_WEEK_DAY_BAR_PIE_CHART, transformedParams])
+  }, {})
+}
+
+export const useConfig = (companyNo: number) => {
+  const url = EPath.STATS_CONFIG.replace('{companyNo}', companyNo.toString())
+
+  return useQuery<MResult<IConfig>>([url])
+}
+
+export const useConfigMulti = () => {
+  return useMutation((params: IConfigMulti) => {
+    return createPut<MResult>([EPath.STATS_CONFIG_MULTI, params])
   }, {})
 }

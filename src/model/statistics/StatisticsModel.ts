@@ -399,3 +399,29 @@ export interface ILineData {
     count: number
   }
 }
+
+export interface IConfig {
+  depth1List: IDepth1List[]
+}
+
+export interface IDepth1List {
+  id: number
+  menuName: string
+  menuPosition: string
+  defaultConfigValue: string
+  changeConfigValue: string
+  depth2List: IDepth2List[]
+}
+
+export interface IDepth2List {
+  id: number
+  menuName: string
+  menuPosition: string
+  defaultConfigValue: string
+  changeConfigValue: string
+}
+
+export interface IConfigMulti {
+  companyNo: number
+  depth1List: IDepth1List[]
+}

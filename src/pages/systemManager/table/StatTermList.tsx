@@ -2,7 +2,6 @@ import { Box, Button, Card, Grid, IconButton } from '@mui/material'
 import { FC, useCallback, useEffect, useState } from 'react'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import { CameraPageType } from 'src/context/CamerasContext'
-import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
 import styled from 'styled-components'
 
@@ -10,8 +9,10 @@ import CustomTextFieldState from 'src/@core/components/atom/CustomTextFieldState
 import { generateColumns } from 'src/@core/components/table/columns/columnGenerator'
 import OneDepthTable from 'src/@core/components/table/depthTable/OneDepthTable'
 import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
+import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
 import ModifyActions from 'src/pages/cameras/table/ModifyActions'
+import { useConfig, useConfigMulti } from 'src/service/statistics/statisticsService'
 
 const ButtonHoverIconList = styled(Box)`
   display: flex;
@@ -39,11 +40,14 @@ interface DataState {
 
 const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPage }) => {
   const { companyNo, companyId, companyName } = useLayout()
-  const { user } = useAuth()
+  const { data: configData, refetch } = useConfig(companyNo)
+  const { mutateAsync: configMulti } = useConfigMulti()
   const layoutContext = useLayout()
   const [expandedRows, setExpandedRows] = useState<string[]>([])
   const [data, setData] = useState<DataState>({ dataList: [] })
   const [dataOrigin, setDataOrigin] = useState<DataState>({ dataList: [] })
+
+  const { setSimpleDialogModalProps } = useModal()
 
   const handleCancelClick = useCallback(
     (key: string) => {
@@ -166,30 +170,23 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   }, [])
 
   useEffect(() => {
-    const data = {
-      dataList: [
-        {
-          key: '1',
-          systemMenuName: '방문자통계',
-          dataList: [
-            {
-              key: '1-1',
-              defaultSettingName: '금일방문객',
-              modifySettingName: '금일방문자수'
-            },
-            {
-              key: '1-2',
-              defaultSettingName: '전일방문객',
-              modifySettingName: '전일방문자수'
-            }
-          ]
-        }
-      ]
-    }
+    if (!configData?.data) return
 
-    setData(data)
-    setDataOrigin(data)
-  }, [])
+    const dataList = configData.data.depth1List.map(item => {
+      return {
+        key: item.id.toString(),
+        systemMenuName: item.menuName,
+        dataList: item.depth2List.map(subItem => ({
+          key: subItem.id.toString(),
+          defaultSettingName: subItem.defaultConfigValue,
+          modifySettingName: subItem.changeConfigValue
+        }))
+      }
+    })
+
+    setData({ dataList })
+    setDataOrigin({ dataList })
+  }, [configData])
 
   const columnsTemp = generateColumns({
     columns: [
@@ -329,7 +326,35 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
                 <Button
                   variant={'outlined'}
                   onClick={async () => {
-                    // 저장 로직 구현 필요
+                    try {
+                      await configMulti({
+                        companyNo: companyNo,
+                        depth1List: data.dataList.map(item => ({
+                          id: parseInt(item.key),
+                          menuName: item.systemMenuName || '',
+                          menuPosition: '0',
+                          defaultConfigValue: '',
+                          changeConfigValue: '',
+                          depth2List:
+                            item.dataList?.map(subItem => ({
+                              id: parseInt(subItem.key),
+                              menuName: '',
+                              menuPosition: '0',
+                              defaultConfigValue: subItem.defaultSettingName || '',
+                              changeConfigValue: subItem.modifySettingName || ''
+                            })) || []
+                        }))
+                      })
+
+                      setSimpleDialogModalProps({
+                        open: true,
+                        title: '저장이 완료되었습니다.'
+                      })
+
+                      refetch()
+                    } catch (error) {
+                      console.error(error)
+                    }
                   }}
                 >
                   저장
@@ -337,7 +362,7 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
                 <Button
                   variant={'outlined'}
                   onClick={() => {
-                    // 취소 로직 구현 필요
+                    setData(dataOrigin)
                   }}
                 >
                   취소

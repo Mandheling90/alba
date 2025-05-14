@@ -145,5 +145,8 @@ export const EPath = {
 
   STATS_COUNT_MONTHLY_TABLE: '/statistics/count/monthly/table',
   STATS_COUNT_MONTHLY_BAR_CHART: '/statistics/count/monthly/bar/chart',
-  STATS_COUNT_MONTHLY_BAR_PIE_CHART: '/statistics/count/monthly/bar/pie/chart'
+  STATS_COUNT_MONTHLY_BAR_PIE_CHART: '/statistics/count/monthly/bar/pie/chart',
+
+  STATS_CONFIG: '/statistics/config/{companyNo}',
+  STATS_CONFIG_MULTI: '/statistics/config/multi'
 } as const
