@@ -9,6 +9,7 @@ import CustomTextFieldState from 'src/@core/components/atom/CustomTextFieldState
 import { generateColumns } from 'src/@core/components/table/columns/columnGenerator'
 import OneDepthTable from 'src/@core/components/table/depthTable/OneDepthTable'
 import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
+import { EResultCode } from 'src/enum/commonEnum'
 import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
 import ModifyActions from 'src/pages/cameras/table/ModifyActions'
@@ -123,13 +124,15 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
           throw new Error('해당하는 항목을 찾을 수 없습니다.')
         }
 
-        console.log('ck')
-
         const res = await configSingle({
           companyNo: companyNo,
           id: parseInt(key),
           changeConfigValue: targetValue
         })
+
+        if (res.code !== EResultCode.SUCCESS) {
+          throw new Error('저장에 실패했습니다.')
+        }
 
         setSimpleDialogModalProps({
           open: true,
