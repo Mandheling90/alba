@@ -8,6 +8,7 @@ import {
   ICardInfo,
   IConfig,
   IConfigMulti,
+  IConfigSingle,
   ICountBarChart,
   ICountBarPieChart,
   ICountLineChartPolling,
@@ -467,5 +468,11 @@ export const useConfig = (companyNo: number) => {
 export const useConfigMulti = () => {
   return useMutation((params: IConfigMulti) => {
     return createPut<MResult>([EPath.STATS_CONFIG_MULTI, params])
+  }, {})
+}
+
+export const useConfigSingle = () => {
+  return useMutation((params: IConfigSingle) => {
+    return createPut<MResult>([EPath.STATS_CONFIG_SINGLE, params])
   }, {})
 }

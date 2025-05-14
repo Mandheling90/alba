@@ -425,3 +425,9 @@ export interface IConfigMulti {
   companyNo: number
   depth1List: IDepth1List[]
 }
+
+export interface IConfigSingle {
+  companyNo: number
+  id: number
+  changeConfigValue: string
+}

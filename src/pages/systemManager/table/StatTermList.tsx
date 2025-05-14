@@ -12,7 +12,8 @@ import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
 import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
 import ModifyActions from 'src/pages/cameras/table/ModifyActions'
-import { useConfig, useConfigMulti } from 'src/service/statistics/statisticsService'
+import { useConfig, useConfigMulti, useConfigSingle } from 'src/service/statistics/statisticsService'
+import { getErrorMessage } from 'src/utils/CommonUtil'
 
 const ButtonHoverIconList = styled(Box)`
   display: flex;
@@ -42,6 +43,8 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   const { companyNo, companyId, companyName } = useLayout()
   const { data: configData, refetch } = useConfig(companyNo)
   const { mutateAsync: configMulti } = useConfigMulti()
+  const { mutateAsync: configSingle } = useConfigSingle()
+
   const layoutContext = useLayout()
   const [expandedRows, setExpandedRows] = useState<string[]>([])
   const [data, setData] = useState<DataState>({ dataList: [] })
@@ -91,56 +94,74 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   )
 
   const handleSaveClick = useCallback(
-    (key: string) => {
-      setDataOrigin(prev => {
-        const newDataList = prev.dataList.map(item => {
-          if (item.key === key) {
-            const updatedItem = data.dataList.find(updated => updated.key === key)
-            if (updatedItem) {
-              return { ...updatedItem, isEdit: false }
-            }
-          }
+    async (key: string) => {
+      try {
+        const res = await configSingle({
+          companyNo: companyNo,
+          id: parseInt(key),
+          changeConfigValue: data.dataList.find(item => item.key === key)?.modifySettingName || ''
+        })
 
-          if (item.dataList) {
-            return {
-              ...item,
-              dataList: item.dataList.map(subItem => {
-                if (subItem.key === key) {
-                  const updatedSubItem = item.dataList?.find(updated => updated.key === key)
-                  if (updatedSubItem) {
-                    return { ...updatedSubItem, isEdit: false }
+        setSimpleDialogModalProps({
+          open: true,
+          title: '저장이 완료되었습니다.'
+        })
+
+        setDataOrigin(prev => {
+          const newDataList = prev.dataList.map(item => {
+            if (item.key === key) {
+              const updatedItem = data.dataList.find(updated => updated.key === key)
+              if (updatedItem) {
+                return { ...updatedItem, isEdit: false }
+              }
+            }
+
+            if (item.dataList) {
+              return {
+                ...item,
+                dataList: item.dataList.map(subItem => {
+                  if (subItem.key === key) {
+                    const updatedSubItem = item.dataList?.find(updated => updated.key === key)
+                    if (updatedSubItem) {
+                      return { ...updatedSubItem, isEdit: false }
+                    }
                   }
-                }
 
-                return subItem
-              })
+                  return subItem
+                })
+              }
             }
-          }
 
-          return item
+            return item
+          })
+
+          return { dataList: newDataList }
         })
 
-        return { dataList: newDataList }
-      })
-
-      setData(prev => {
-        const newDataList = prev.dataList.map(item => {
-          if (item.key === key) {
-            return { ...item, isEdit: false }
-          }
-
-          if (item.dataList) {
-            return {
-              ...item,
-              dataList: item.dataList.map(subItem => (subItem.key === key ? { ...subItem, isEdit: false } : subItem))
+        setData(prev => {
+          const newDataList = prev.dataList.map(item => {
+            if (item.key === key) {
+              return { ...item, isEdit: false }
             }
-          }
 
-          return item
+            if (item.dataList) {
+              return {
+                ...item,
+                dataList: item.dataList.map(subItem => (subItem.key === key ? { ...subItem, isEdit: false } : subItem))
+              }
+            }
+
+            return item
+          })
+
+          return { dataList: newDataList }
         })
-
-        return { dataList: newDataList }
-      })
+      } catch (error) {
+        setSimpleDialogModalProps({
+          open: true,
+          title: getErrorMessage(error)
+        })
+      }
     },
     [data]
   )
@@ -353,7 +374,10 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
 
                       refetch()
                     } catch (error) {
-                      console.error(error)
+                      setSimpleDialogModalProps({
+                        open: true,
+                        title: getErrorMessage(error)
+                      })
                     }
                   }}
                 >
