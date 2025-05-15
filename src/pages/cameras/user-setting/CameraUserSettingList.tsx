@@ -138,7 +138,7 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
               />
             </Box>
 
-            {getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['카메라관리'])?.createYn === YN.Y && (
+            {getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['사용자별카메라설정'])?.createYn === YN.Y && (
               <Box sx={{ display: 'flex', gap: 3 }}>
                 <Button
                   variant={'outlined'}
@@ -190,7 +190,7 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
               selectRowEvent={selectRowEvent}
               isAllView
               onCheckboxSelectionChange={
-                getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['카메라관리'])?.createYn === YN.Y
+                getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['사용자별카메라설정'])?.createYn === YN.Y
                   ? handleCheckboxSelectionChange
                   : undefined
               }
