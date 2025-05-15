@@ -12,6 +12,7 @@ import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
 import { EResultCode } from 'src/enum/commonEnum'
 import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
+import { IConfig, IDepth1List, IDepth2List } from 'src/model/statistics/StatisticsModel'
 import ModifyActions from 'src/pages/cameras/table/ModifyActions'
 import { useConfig, useConfigMulti, useConfigSingle } from 'src/service/statistics/statisticsService'
 import { getErrorMessage } from 'src/utils/CommonUtil'
@@ -47,18 +48,18 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   const { mutateAsync: configSingle } = useConfigSingle()
 
   const layoutContext = useLayout()
-  const [expandedRows, setExpandedRows] = useState<string[]>([])
-  const [data, setData] = useState<DataState>({ dataList: [] })
-  const [dataOrigin, setDataOrigin] = useState<DataState>({ dataList: [] })
+  const [expandedRows, setExpandedRows] = useState<number[]>([])
+  const [data, setData] = useState<IConfig>({ dataList: [] })
+  const [dataOrigin, setDataOrigin] = useState<IConfig>({ dataList: [] })
 
   const { setSimpleDialogModalProps } = useModal()
 
   const handleCancelClick = useCallback(
-    (key: string) => {
+    (id: number) => {
       setData(prev => {
         const newDataList = prev.dataList.map(item => {
-          if (item.key === key) {
-            const originItem = dataOrigin.dataList.find(origin => origin.key === key)
+          if (item.id === id) {
+            const originItem = dataOrigin.dataList.find(origin => origin.id === id)
             if (originItem) {
               return {
                 ...originItem,
@@ -72,9 +73,9 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
             return {
               ...item,
               dataList: item.dataList.map(subItem => {
-                if (subItem.key === key) {
-                  const originParent = dataOrigin.dataList.find(origin => origin.dataList?.some(sub => sub.key === key))
-                  const originSubItem = originParent?.dataList?.find(origin => origin.key === key)
+                if (subItem.id === id) {
+                  const originParent = dataOrigin.dataList.find(origin => origin.dataList?.some(sub => sub.id === id))
+                  const originSubItem = originParent?.dataList?.find(origin => origin.id === id)
                   if (originSubItem) {
                     return { ...originSubItem, isEdit: false }
                   }
@@ -95,25 +96,25 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   )
 
   const handleSaveClick = useCallback(
-    async (key: string) => {
+    async (id: number) => {
       try {
         // 1뎁스와 2뎁스에서 key에 해당하는 항목 찾기
         let targetItem = null
         let targetValue = ''
 
         // 1뎁스 검색
-        const depth1Item = data.dataList.find(item => item.key === key)
+        const depth1Item = data.dataList.find(item => item.id === id)
         if (depth1Item) {
           targetItem = depth1Item
-          targetValue = depth1Item.systemMenuName || ''
+          targetValue = depth1Item.menuName || ''
         } else {
           // 2뎁스 검색
           for (const depth1Item of data.dataList) {
             if (depth1Item.dataList) {
-              const depth2Item = depth1Item.dataList.find(item => item.key === key)
+              const depth2Item = depth1Item.dataList.find(item => item.id === id)
               if (depth2Item) {
                 targetItem = depth2Item
-                targetValue = depth2Item.modifySettingName || ''
+                targetValue = depth2Item.changeConfigValue || ''
                 break
               }
             }
@@ -126,7 +127,7 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
 
         const res = await configSingle({
           companyNo: companyNo,
-          id: parseInt(key),
+          id: id,
           changeConfigValue: targetValue
         })
 
@@ -141,8 +142,8 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
 
         setDataOrigin(prev => {
           const newDataList = prev.dataList.map(item => {
-            if (item.key === key) {
-              const updatedItem = data.dataList.find(updated => updated.key === key)
+            if (item.id === id) {
+              const updatedItem = data.dataList.find(updated => updated.id === id)
               if (updatedItem) {
                 return { ...updatedItem, isEdit: false }
               }
@@ -152,8 +153,8 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
               return {
                 ...item,
                 dataList: item.dataList.map(subItem => {
-                  if (subItem.key === key) {
-                    const updatedSubItem = item.dataList?.find(updated => updated.key === key)
+                  if (subItem.id === id) {
+                    const updatedSubItem = item.dataList?.find(updated => updated.id === id)
                     if (updatedSubItem) {
                       return { ...updatedSubItem, isEdit: false }
                     }
@@ -172,14 +173,14 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
 
         setData(prev => {
           const newDataList = prev.dataList.map(item => {
-            if (item.key === key) {
+            if (item.id === id) {
               return { ...item, isEdit: false }
             }
 
             if (item.dataList) {
               return {
                 ...item,
-                dataList: item.dataList.map(subItem => (subItem.key === key ? { ...subItem, isEdit: false } : subItem))
+                dataList: item.dataList.map(subItem => (subItem.id === id ? { ...subItem, isEdit: false } : subItem))
               }
             }
 
@@ -198,22 +199,22 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
     [data.dataList, configSingle, companyNo, setSimpleDialogModalProps]
   )
 
-  const toggleRow = useCallback((key: string) => {
-    setExpandedRows(prev => (prev.includes(key) ? prev.filter(row => row !== key) : [...prev, key]))
+  const toggleRow = useCallback((id: number) => {
+    setExpandedRows(prev => (prev.includes(id) ? prev.filter(row => row !== id) : [...prev, id]))
   }, [])
 
-  const updateDataItem = useCallback((key: string, updates: Partial<DataItem>) => {
+  const updateDataItem = useCallback((id: number, updates: Partial<IDepth1List | IDepth2List>) => {
     setData(prev => ({
       ...prev,
       dataList: prev.dataList.map(item => {
-        if (item.key === key) {
+        if (item.id === id) {
           return { ...item, ...updates }
         }
 
         if (item.dataList) {
           return {
             ...item,
-            dataList: item.dataList.map(subItem => (subItem.key === key ? { ...subItem, ...updates } : subItem))
+            dataList: item.dataList.map(subItem => (subItem.id === id ? { ...subItem, ...updates } : subItem))
           }
         }
 
@@ -225,20 +226,8 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   useEffect(() => {
     if (!configData?.data) return
 
-    const dataList = configData.data.depth1List.map(item => {
-      return {
-        key: item.id.toString(),
-        systemMenuName: item.menuName,
-        dataList: item.depth2List.map(subItem => ({
-          key: subItem.id.toString(),
-          defaultSettingName: subItem.defaultConfigValue,
-          modifySettingName: subItem.changeConfigValue
-        }))
-      }
-    })
-
-    setData({ dataList })
-    setDataOrigin({ dataList })
+    setData(configData.data)
+    setDataOrigin(configData.data)
   }, [configData])
 
   const columnsTemp = generateColumns({
@@ -247,27 +236,28 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
         field: `toggle`,
         headerName: ``,
         type: 'string'
-
-        // flex: 0.3
       },
       {
-        field: `systemMenuName`,
+        field: `menuName`,
         headerName: `시스템 메뉴명`,
         type: 'string'
-
-        // flex: 0.3
       },
       {
-        field: `defaultSettingName`,
+        field: `menuPosition`,
+        headerName: `메뉴 위치`,
+        type: 'string'
+      },
+      {
+        field: `defaultConfigValue`,
         headerName: `기본설정`,
         type: 'string'
       },
-      { field: 'modifySettingName', headerName: '변경설정', type: 'string' },
+      { field: 'changeConfigValue', headerName: '변경설정', type: 'string' },
       { field: 'modify', headerName: '편집', type: 'string', flex: 0.3 }
     ],
     customRenderers: {
-      systemMenuName: (params: any) => {
-        if (!params.row.systemMenuName) return <></>
+      menuName: (params: any) => {
+        if (!params.row.menuName) return <></>
 
         return (
           <Box>
@@ -275,7 +265,7 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
               <CustomTextFieldState
                 size='small'
                 value={params.value}
-                onChange={e => updateDataItem(params.row.key, { systemMenuName: e.target.value })}
+                onChange={e => updateDataItem(params.row.id, { menuName: e.target.value })}
               />
             ) : (
               params.value
@@ -286,19 +276,19 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
       toggle: (params: any) => {
         return (
           <>
-            {params.row.systemMenuName && (
+            {params.row.menuName && (
               <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
                 <Box sx={{ position: 'absolute', left: 0 }}>
                   <IconButton
                     onClick={(e: React.MouseEvent) => {
                       e.stopPropagation()
-                      toggleRow(params.row.key)
+                      toggleRow(params.row.id)
                     }}
                   >
                     <IconCustom
                       isCommon
                       path='table'
-                      icon={expandedRows.includes(params.row.key) ? 'unfolding' : 'folding'}
+                      icon={expandedRows.includes(params.row.id) ? 'unfolding' : 'folding'}
                     />
                   </IconButton>
                 </Box>
@@ -307,11 +297,11 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
           </>
         )
       },
-      defaultSettingName: (params: any) => {
-        return <Box>{params.value}</Box>
+      defaultConfigValue: (params: any) => {
+        return <>{!params.row.menuName && <Box>{params.value}</Box>}</>
       },
-      modifySettingName: (params: any) => {
-        if (params.row.systemMenuName) return <></>
+      changeConfigValue: (params: any) => {
+        if (params.row.menuName) return <></>
 
         return (
           <Box>
@@ -319,7 +309,7 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
               <CustomTextFieldState
                 size='small'
                 value={params.value}
-                onChange={e => updateDataItem(params.row.key, { modifySettingName: e.target.value })}
+                onChange={e => updateDataItem(params.row.id, { changeConfigValue: e.target.value })}
               />
             ) : (
               params.value
@@ -334,13 +324,13 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
               row={params.row}
               isModify={params.row.isEdit}
               handleEditClick={() => {
-                updateDataItem(params.row.key, { isEdit: true })
+                updateDataItem(params.row.id, { isEdit: true })
               }}
               handleCancelClick={() => {
-                handleCancelClick(params.row.key)
+                handleCancelClick(params.row.id)
               }}
               handleSaveClick={() => {
-                handleSaveClick(params.row.key)
+                handleSaveClick(params.row.id)
               }}
             />
           </Box>
@@ -382,21 +372,7 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
                     try {
                       await configMulti({
                         companyNo: companyNo,
-                        depth1List: data.dataList.map(item => ({
-                          id: parseInt(item.key),
-                          menuName: item.systemMenuName || '',
-                          menuPosition: '0',
-                          defaultConfigValue: '',
-                          changeConfigValue: '',
-                          depth2List:
-                            item.dataList?.map(subItem => ({
-                              id: parseInt(subItem.key),
-                              menuName: '',
-                              menuPosition: '0',
-                              defaultConfigValue: subItem.defaultSettingName || '',
-                              changeConfigValue: subItem.modifySettingName || ''
-                            })) || []
-                        }))
+                        dataList: data.dataList
                       })
 
                       setSimpleDialogModalProps({
@@ -427,7 +403,9 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
             </Box>
           </HorizontalScrollBox>
 
-          {data.dataList && <OneDepthTable data={data} columns={columnsTemp} expandedRows={expandedRows} />}
+          {data.dataList && (
+            <OneDepthTable data={data} columns={columnsTemp} expandedRows={expandedRows} keyField='id' />
+          )}
         </Card>
       </Grid>
     </Grid>

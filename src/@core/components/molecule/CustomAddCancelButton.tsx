@@ -14,7 +14,15 @@ const CustomAddCancelButton: React.FC<ICustomAddCancelButton> = ({ onSaveClick, 
       <ButtonHover
         display={<IconCustom isCommon path='camera' icon='save' />}
         hover={
-          <Typography component='span' variant='inherit' sx={buttonStyle} onClick={onSaveClick}>
+          <Typography
+            component='span'
+            variant='inherit'
+            sx={buttonStyle}
+            onClick={e => {
+              e.stopPropagation()
+              onSaveClick()
+            }}
+          >
             저장
           </Typography>
         }
@@ -23,7 +31,15 @@ const CustomAddCancelButton: React.FC<ICustomAddCancelButton> = ({ onSaveClick, 
       <ButtonHover
         display={<IconCustom isCommon path='camera' icon='cancel' />}
         hover={
-          <Typography component='span' variant='inherit' sx={buttonStyle} onClick={onCancelClick}>
+          <Typography
+            component='span'
+            variant='inherit'
+            sx={buttonStyle}
+            onClick={e => {
+              e.stopPropagation()
+              onCancelClick()
+            }}
+          >
             취소
           </Typography>
         }

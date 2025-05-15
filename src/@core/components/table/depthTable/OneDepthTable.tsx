@@ -7,10 +7,11 @@ import CustomTable from '../CustomTable'
 interface OneDepthTableProps {
   data: any
   columns: GridColDef[]
-  expandedRows: string[]
+  expandedRows: Array<string | number>
+  keyField?: string
 }
 
-const OneDepthTable: FC<OneDepthTableProps> = ({ data, columns, expandedRows }) => {
+const OneDepthTable: FC<OneDepthTableProps> = ({ data, columns, expandedRows, keyField = 'key' }) => {
   const renderDetailPanel = (row: any) => {
     return (
       <Box>
@@ -23,7 +24,7 @@ const OneDepthTable: FC<OneDepthTableProps> = ({ data, columns, expandedRows }) 
   return (
     <>
       {data.dataList.map((row: any, index: number) => (
-        <Box key={row.dateName}>
+        <Box key={row[keyField]}>
           <CustomTable
             id='dateName'
             columns={columns}
@@ -32,7 +33,7 @@ const OneDepthTable: FC<OneDepthTableProps> = ({ data, columns, expandedRows }) 
             showHeader={index === 0}
           />
           <DividerBar />
-          {expandedRows.includes(row.key) && renderDetailPanel(row)}
+          {expandedRows.includes(row[keyField] as string | number) && renderDetailPanel(row)}
         </Box>
       ))}
     </>

@@ -401,7 +401,7 @@ export interface ILineData {
 }
 
 export interface IConfig {
-  depth1List: IDepth1List[]
+  dataList: IDepth1List[]
 }
 
 export interface IDepth1List {
@@ -410,7 +410,9 @@ export interface IDepth1List {
   menuPosition: string
   defaultConfigValue: string
   changeConfigValue: string
-  depth2List: IDepth2List[]
+  dataList: IDepth2List[]
+
+  isEdit?: boolean
 }
 
 export interface IDepth2List {
@@ -419,11 +421,13 @@ export interface IDepth2List {
   menuPosition: string
   defaultConfigValue: string
   changeConfigValue: string
+
+  isEdit?: boolean
 }
 
 export interface IConfigMulti {
   companyNo: number
-  depth1List: IDepth1List[]
+  dataList: IDepth1List[]
 }
 
 export interface IConfigSingle {
