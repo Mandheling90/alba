@@ -23,10 +23,10 @@ const Visitors: FC = ({}): React.ReactElement => {
   const [lastCheckDate, setLastCheckDate] = useState<string>('')
   const [timeStr, setTimeStr] = useState<string | undefined>(undefined)
 
-  const { data: lineChart, isLoading: lineChartLoading, refetch: lineChartRefetch } = useCountLineChart()
-  const { data: barChart, isLoading: barChartLoading, refetch: barChartRefetch } = useCountBarChart()
+  const { data: lineChart, isLoading: lineChartLoading, refetch: lineChartRefetch } = useCountLineChart({ type: 1 })
+  const { data: barChart, isLoading: barChartLoading, refetch: barChartRefetch } = useCountBarChart({ type: 1 })
   const { mutateAsync: livePollingMutate } = useCountLineChartPolling()
-  const { data: cardInfo, refetch: cardInfoRefetch } = useCountCardInfo()
+  const { data: cardInfo, refetch: cardInfoRefetch } = useCountCardInfo({ type: 1 })
 
   // 날짜 변경 체크
   useEffect(() => {
@@ -79,7 +79,7 @@ const Visitors: FC = ({}): React.ReactElement => {
             <LiveDataLineChart
               selected={1}
               data={lineChart?.data?.lineDataList || []}
-              livePollingMutate={livePollingMutate}
+              livePollingMutate={params => livePollingMutate({ ...params, type: 1 })}
               onTimeStrChange={timeStr => {
                 setTimeStr(timeStr)
               }}

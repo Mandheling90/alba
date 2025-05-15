@@ -154,22 +154,22 @@ export const useOccupancyTable = () => {
   }, {})
 }
 
-export const useCountLineChart = () => {
-  return useQuery<MResult<ILineChartResponse>>([EPath.STATS_DASHBOARD_COUNT_LINE_CHART], {})
+export const useCountLineChart = (params: { type: number }) => {
+  return useQuery<MResult<ILineChartResponse>>([EPath.STATS_DASHBOARD_COUNT_LINE_CHART, params], {})
 }
 
 export const useCountLineChartPolling = () => {
-  return useMutation((params: { lastDate: string; lastTime: string }) => {
+  return useMutation((params: { lastDate: string; lastTime: string; type: number }) => {
     return createGet<ICountLineChartPolling>([EPath.STATS_DASHBOARD_COUNT_LINE_CHART_POLLING, params])
   }, {})
 }
 
-export const useCountCardInfo = () => {
-  return useQuery<MResult<ICardInfo[]>>([EPath.STATS_DASHBOARD_COUNT_CARD_INFO], {})
+export const useCountCardInfo = (params: { type: number }) => {
+  return useQuery<MResult<ICardInfo[]>>([EPath.STATS_DASHBOARD_COUNT_CARD_INFO, params], {})
 }
 
-export const useCountBarChart = () => {
-  return useQuery<MResult<IDashboardCountBarChart>>([EPath.STATS_DASHBOARD_COUNT_BAR_CHART], {})
+export const useCountBarChart = (params: { type: number }) => {
+  return useQuery<MResult<IDashboardCountBarChart>>([EPath.STATS_DASHBOARD_COUNT_BAR_CHART, params], {})
 }
 
 export const useGenderAgeChart = () => {
