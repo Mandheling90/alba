@@ -16,5 +16,6 @@ export const EPath = {
   CAMERAS_GROUP_GROUP: '/camera/group/{groupId}',
   CAMERAS_GROUP_GROUP_STATUS: '/camera/{cameraNo}/of-company/{companyNo}/status',
 
-  CAMERAS_CLIENT_OF_COMPANY_ADDITIONAL_INFO: '/camera/of-company/{companyNo}/additional-info'
+  CAMERAS_CLIENT_OF_COMPANY_ADDITIONAL_INFO: '/camera/of-company/{companyNo}/additional-info',
+  CAMERAS_CLIENT_OF_COMPANY_ADDITIONAL_INFO_V2: '/camera/v2/of-company/{companyNo}/additional-info'
 } as const

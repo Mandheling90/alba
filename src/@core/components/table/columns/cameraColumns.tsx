@@ -39,7 +39,9 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
     isGroupModifyMode,
     viewType,
     userInfo,
-    showGroupHeader = true
+    showGroupHeader = true,
+    clientGroupStatus,
+    companyNo
   } = props
 
   const groupHeaderRenderer = () => {
@@ -239,19 +241,14 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
               onChange={async event => {
                 try {
                   const newStatus = event.target.checked ? YN.Y : YN.N
-
-                  // await clientGroupStatus?.({
-                  //   cameraNo: row.cameraNo,
-                  //   companyNo: companyNo ?? 0,
-                  //   cameraStatus: newStatus
-                  // })
-
-                  // API 호출이 성공한 후에만 상태 업데이트
+                  await clientGroupStatus?.({
+                    cameraNo: row.cameraNo,
+                    companyNo: companyNo ?? 0,
+                    cameraStatus: newStatus
+                  })
                   updateClientCameraData?.(row.cameraNo, { cameraStatus: newStatus })
                 } catch (error) {
                   console.error('카메라 상태 변경 중 오류 발생:', error)
-
-                  // 에러 발생 시 스위치를 원래 상태로 되돌림
                   updateClientCameraData?.(row.cameraNo, { cameraStatus: row.cameraStatus })
                 }
               }}

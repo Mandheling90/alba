@@ -11,6 +11,7 @@ import {
 } from 'src/model/cameras/CamerasModel'
 import {
   useClientCameraAdditionalInfo,
+  useClientCameraAdditionalInfoV2,
   useClientCameraList,
   useClientGroupCameraItemAdd,
   useClientGroupCameraItemDelete,
@@ -159,6 +160,7 @@ const CamerasProvider = ({ children }: Props) => {
   const { mutateAsync: clientGroupCameraItemDelete } = useClientGroupCameraItemDelete()
   const { mutateAsync: clientGroupCameraItemAdd } = useClientGroupCameraItemAdd()
   const { mutateAsync: clientCameraAdditionalInfo } = useClientCameraAdditionalInfo()
+  const { mutateAsync: clientCameraAdditionalInfoV2 } = useClientCameraAdditionalInfoV2()
   const { mutateAsync: clientGroupUpdate } = useClientGroupUpdate()
 
   const [clientCameraData, setClientCameraData] = useState<MClientCameraList[] | null>(defaultProvider.clientCameraData)
@@ -279,14 +281,15 @@ const CamerasProvider = ({ children }: Props) => {
     // 전체 저장의 경우
     if (!cameraNo) {
       try {
-        const filteredCameraData: MClientCameraListForSave[] = clientCameraDataRef.current.map(camera => {
-          const { lat, lon, flowPlanX, flowPlanY, ...rest } = camera
+        const filteredCameraData: MClientCameraListForSave[] = clientCameraDataRef.current
+          .filter(camera => camera.isEdit)
+          .map(camera => {
+            const { lat, lon, flowPlanX, flowPlanY, ...rest } = camera
 
-          return camera.flowPlanBindingYN === 'Y' ? { ...rest, flowPlanX, flowPlanY } : { ...rest, lat, lon }
-        })
+            return camera.flowPlanBindingYN === 'Y' ? { ...rest, flowPlanX, flowPlanY } : { ...rest, lat, lon }
+          })
 
-        const res = await clientCameraAdditionalInfo({ companyNo: companyNo, cameraList: filteredCameraData })
-
+        const res = await clientCameraAdditionalInfoV2({ companyNo: companyNo, cameraList: filteredCameraData })
         console.log(res)
         fetchData()
 
@@ -309,7 +312,7 @@ const CamerasProvider = ({ children }: Props) => {
       const filteredCamera: MClientCameraListForSave =
         updatedCamera.flowPlanBindingYN === 'Y' ? { ...rest, flowPlanX, flowPlanY } : { ...rest, lat, lon }
 
-      const res = await clientCameraAdditionalInfo({
+      const res = await clientCameraAdditionalInfoV2({
         companyNo: companyNo,
         cameraList: [filteredCamera]
       })

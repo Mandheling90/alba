@@ -55,9 +55,8 @@ const ModifyActions: React.FC<ModifyActionsProps> = ({
           <Box
             sx={{ color: 'text.secondary', cursor: 'pointer' }}
             onClick={e => {
-              e.stopPropagation()
-
               if (groupModifyId) {
+                e.stopPropagation()
                 if (isGroupModify) {
                   deleteGroupCamera(groupModifyId, row.cameraNo)
                 } else {

@@ -259,6 +259,14 @@ export const useClientCameraAdditionalInfo = () => {
   }, {})
 }
 
+export const useClientCameraAdditionalInfoV2 = () => {
+  return useMutation((req: { companyNo: number; cameraList: MClientCameraListForSave[] }) => {
+    const url = EPath.CAMERAS_CLIENT_OF_COMPANY_ADDITIONAL_INFO_V2.replace('{companyNo}', req.companyNo.toString())
+
+    return createPatch<MResult>([url, req.cameraList])
+  }, {})
+}
+
 export const useClientGroupUpdate = () => {
   return useMutation((req: { companyNo: number; groupList: MClientGroupCameraList[] }) => {
     const url = EPath.CAMERAS_GROUP_OF_COMPANY.replace('{companyNo}', req.companyNo.toString())

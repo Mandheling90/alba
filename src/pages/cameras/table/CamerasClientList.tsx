@@ -117,9 +117,6 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
     }
   }
 
-  console.log(getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['카메라위치등록']))
-  console.log(getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['고객사관리']))
-
   return (
     <Grid container>
       <Grid item xs={12}>
@@ -253,6 +250,7 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
               {getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['카메라위치등록'])?.updateYn === YN.Y && (
                 <Box sx={{ display: 'flex', gap: 3 }}>
                   <Button
+                    disabled={!clientCameraData?.some(camera => camera.isEdit)}
                     variant={'outlined'}
                     onClick={async () => {
                       if (!isGroupMode) {
