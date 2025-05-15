@@ -65,8 +65,7 @@ const Visitors: FC = ({}): React.ReactElement => {
           <PipelineTitle
             Icon={<IconCustom isCommon path='dashboard' icon='calendar' style={{ width: 23, height: 23 }} />}
             title={[
-              '방문자수 통계',
-              `${lineChart?.data?.year}년 ${lineChart?.data?.month}월 ${lineChart?.data?.day}일 0시 ~ ${
+              `${lineChart?.data?.chartTitle}`, `${lineChart?.data?.year}년 ${lineChart?.data?.month}월 ${lineChart?.data?.day}일 0시 ~ ${
                 timeStr ?? lineChart?.data?.endHour
               }시`,
               `총 ${lineChart?.data?.totalPlaceCount} 곳`
@@ -94,7 +93,7 @@ const Visitors: FC = ({}): React.ReactElement => {
           <PipelineTitle
             Icon={<IconCustom isCommon path='dashboard' icon='chart' style={{ width: 23, height: 23 }} />}
             title={[
-              '장소별 방문자수 통계',
+              `${barChart?.data?.chartTitle}`,
               `${lineChart?.data?.year}년 ${lineChart?.data?.month}월 ${lineChart?.data?.day}일 0시 ~ ${
                 timeStr ?? lineChart?.data?.endHour
               }시`,
