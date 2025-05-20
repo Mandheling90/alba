@@ -204,12 +204,14 @@ export interface IBaseDashboardChartResponse {
 
 export interface ILineChartResponse extends IBaseDashboardChartResponse {
   lineDataList: ILineDataList[]
+  chartTitle: string
 }
 
 export interface IDashboardCountBarChart extends IBaseDashboardChartResponse {
   barDataList: IBarDataList[]
   exitCountList: IBarDataList[]
   xcategories: string[]
+  chartTitle: string
 }
 
 export interface IBarDataList {
