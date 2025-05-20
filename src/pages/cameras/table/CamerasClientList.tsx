@@ -89,7 +89,23 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
       userInfo: user?.userInfo
     })
     setColumns(newColumns)
-  }, [cameraPage, isGroupMode, companyNo, isGroupModifyMode])
+  }, [
+    cameraPage,
+    isGroupMode,
+    companyNo,
+    isGroupModifyMode,
+    clientCameraData,
+    clientGroupCameraData,
+    updateClientCameraData,
+    handleCancelClick,
+    handleSaveClick,
+    viewType,
+    setMapModifyModCameraId,
+    mapModifyModCameraId,
+    clientGroupStatus,
+    columnFilter,
+    user?.userInfo
+  ])
 
   const handleDragStart = (row: MClientCameraList) => {
     setDraggedRow(row)
@@ -222,7 +238,8 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
                               groupId: newGroupId,
                               userNo: user?.userInfo?.userNo ?? 0,
                               groupName: '새로운 그룹',
-                              groupItemList: []
+                              groupItemList: [],
+                              isNew: true
                             }
 
                             // 그룹 데이터 업데이트
@@ -253,11 +270,13 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
                     disabled={!clientCameraData?.some(camera => camera.isEdit)}
                     variant={'outlined'}
                     onClick={async () => {
-                      if (!isGroupMode) {
-                        handleSaveClick(undefined)
-                      } else {
-                        handleGroupSaveClick(undefined)
-                      }
+                      handleSaveClick(undefined)
+
+                      // if (!isGroupMode) {
+                      //   handleSaveClick(undefined)
+                      // } else {
+                      //   handleGroupSaveClick(undefined)
+                      // }
                     }}
                   >
                     저장

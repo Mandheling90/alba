@@ -1,5 +1,5 @@
 import { saveAs } from 'file-saver'
-import { EErrorMessage } from 'src/enum/commonEnum'
+import { EErrorMessage, YN } from 'src/enum/commonEnum'
 import { MAuthMenuList } from 'src/model/commonModel'
 
 // import { KIOSK_STATUS, POWER_TYPE } from 'src/enum/kisokEnum'
@@ -326,5 +326,15 @@ export const getErrorMessage = (error: unknown): string => {
 }
 
 export const getAuthMenu = (authMenuList: MAuthMenuList[], menuId: number) => {
+  // 개발용
+  if (process.env.NEXT_PUBLIC_ENV_MODE === 'development') {
+    return {
+      createYn: YN.Y,
+      updateYn: YN.Y,
+      readYn: YN.Y,
+      deleteYn: YN.Y
+    }
+  }
+
   return authMenuList.find(menu => menu.menuId === menuId)
 }

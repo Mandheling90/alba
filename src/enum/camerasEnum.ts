@@ -12,7 +12,6 @@ export const EPath = {
   CAMERAS_GROUP_GROUP_ITEM: '/camera/group/groupItem/{groupItem}',
   CAMERAS_GROUP_GROUP_ITEM_ADD: '/camera/group/{groupId}/item',
   CAMERAS_GROUP_OF_USER: '/camera/group/of-user/{userNo}',
-  CAMERAS_GROUP_OF_COMPANY: '/camera/of-company/{companyNo}/group',
   CAMERAS_GROUP_GROUP: '/camera/group/{groupId}',
   CAMERAS_GROUP_GROUP_STATUS: '/camera/{cameraNo}/of-company/{companyNo}/status',
 

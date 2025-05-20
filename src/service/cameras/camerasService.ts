@@ -208,6 +208,14 @@ export const useClientGroupCameraList = () => {
   }, {})
 }
 
+export const useClientGroupCameraAdd = () => {
+  return useMutation((req: { companyNo: number; clientGroupCameraAdd: MClientGroupCameraList }) => {
+    const url = EPath.CAMERAS_CLIENT_OF_COMPANY_GROUP.replace('{companyNo}', req.companyNo.toString())
+
+    return createPost<MClientGroupCameraList[]>([url, req.clientGroupCameraAdd])
+  }, {})
+}
+
 export const useClientGroupStatus = () => {
   return useMutation((req: { cameraNo: number; companyNo: number; cameraStatus: YN }) => {
     const url = EPath.CAMERAS_GROUP_GROUP_STATUS.replace('{cameraNo}', req.cameraNo.toString()).replace(
@@ -269,7 +277,7 @@ export const useClientCameraAdditionalInfoV2 = () => {
 
 export const useClientGroupUpdate = () => {
   return useMutation((req: { companyNo: number; groupList: MClientGroupCameraList[] }) => {
-    const url = EPath.CAMERAS_GROUP_OF_COMPANY.replace('{companyNo}', req.companyNo.toString())
+    const url = EPath.CAMERAS_CLIENT_OF_COMPANY_GROUP.replace('{companyNo}', req.companyNo.toString())
 
     return createPut<MResult>([url, req.groupList])
   }, {})

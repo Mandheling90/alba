@@ -1,7 +1,6 @@
 import { Box, Collapse, IconButton, TextField, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC, useContext, useEffect, useState } from 'react'
-import CustomTextFieldState from 'src/@core/components/atom/CustomTextFieldState'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
@@ -79,19 +78,9 @@ const GroupList: FC<IGroupList> = ({
                   icon={row.flowPlanBindingYN === YN.Y ? 'image-mode' : 'map-mode-full'}
                 />
 
-                {row.isEdit ? (
-                  <CustomTextFieldState
-                    size='small'
-                    value={row.cameraId}
-                    onChange={e => {
-                      updateGroupCameraData(group.groupId, row.cameraNo, { cameraId: e.target.value })
-                    }}
-                  />
-                ) : (
-                  <Typography component='span' variant='inherit'>
-                    {row.cameraId}
-                  </Typography>
-                )}
+                <Typography component='span' variant='inherit'>
+                  {row.cameraId}
+                </Typography>
               </Box>
             )
           }
@@ -117,9 +106,10 @@ const GroupList: FC<IGroupList> = ({
                   updateGroupCameraData(group.groupId, row.cameraNo, { isEdit: false })
                 }}
                 handleSaveClick={() => {
-                  handleSaveClick(row.cameraNo)
+                  handleSaveClick(row.cameraNo, group.groupId)
                   updateClientCameraData(row.cameraNo, { isEdit: false })
-                  updateGroupCameraData(group.groupId, row.cameraNo, { isEdit: false })
+
+                  // updateGroupCameraData(group.groupId, row.cameraNo, { isEdit: false })
                 }}
               />
             )
@@ -216,8 +206,7 @@ const GroupList: FC<IGroupList> = ({
           <Box display='flex' alignItems='center' gap={3} ml={5}>
             <CustomAddCancelButton
               onSaveClick={() => {
-                // handleGroupSaveClick(group.groupId)
-                handleGroupSaveClick(undefined)
+                handleGroupSaveClick(group.isNew === true ? undefined : group.groupId)
                 handleClose()
               }}
               onCancelClick={() => {
@@ -229,7 +218,13 @@ const GroupList: FC<IGroupList> = ({
               sx={{ display: 'flex', cursor: 'pointer' }}
               onClick={async () => {
                 try {
-                  deleteGroupCamera(group.groupId, undefined)
+                  if (group.isNew === true) {
+                    handleGroupCancelClick(group.groupId)
+                  } else {
+                    await clientGroupDelete({ groupId: group.groupId })
+                    deleteGroupCamera(group.groupId, undefined)
+                  }
+
                   handleClose()
                 } catch (error) {
                   console.log(error)
@@ -252,7 +247,12 @@ const GroupList: FC<IGroupList> = ({
             <IconButton
               onClick={async () => {
                 try {
-                  deleteGroupCamera(group.groupId, undefined)
+                  if (group.isNew === true) {
+                    handleGroupCancelClick(group.groupId)
+                  } else {
+                    await clientGroupDelete({ groupId: group.groupId })
+                    deleteGroupCamera(group.groupId, undefined)
+                  }
                 } catch (error) {
                   console.log(error)
                 }
