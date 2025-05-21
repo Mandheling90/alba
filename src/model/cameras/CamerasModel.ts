@@ -165,6 +165,7 @@ export interface MClientCameraListForSave {
 
   groupItemId?: number
   groupId?: number
+
   isEdit?: boolean // 프론트에서 사용
 }
 
@@ -173,6 +174,8 @@ export interface MClientGroupCameraList {
   userNo: number
   groupName: string
   groupItemList: MClientCameraList[]
+
+  isNew?: boolean // 프론트에서 사용
 }
 
 export interface MClientGroupList {

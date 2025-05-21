@@ -13,6 +13,7 @@ import {
   useClientCameraAdditionalInfo,
   useClientCameraAdditionalInfoV2,
   useClientCameraList,
+  useClientGroupCameraAdd,
   useClientGroupCameraItemAdd,
   useClientGroupCameraItemDelete,
   useClientGroupCameraList,
@@ -66,7 +67,7 @@ export type CamerasValuesType = {
     updatedFields: Partial<MClientCameraList | MClientGroupCameraList>
   ) => void
 
-  handleSaveClick: (cameraNo: number | undefined) => void
+  handleSaveClick: (cameraNo: number | undefined, groupId?: number) => void
   handleCancelClick: (cameraNo: number | undefined) => void
 
   handleGroupSaveClick: (groupId: number | undefined) => void
@@ -161,6 +162,7 @@ const CamerasProvider = ({ children }: Props) => {
   const { mutateAsync: clientGroupCameraItemAdd } = useClientGroupCameraItemAdd()
   const { mutateAsync: clientCameraAdditionalInfo } = useClientCameraAdditionalInfo()
   const { mutateAsync: clientCameraAdditionalInfoV2 } = useClientCameraAdditionalInfoV2()
+  const { mutateAsync: clientGroupCameraAdd } = useClientGroupCameraAdd()
   const { mutateAsync: clientGroupUpdate } = useClientGroupUpdate()
 
   const [clientCameraData, setClientCameraData] = useState<MClientCameraList[] | null>(defaultProvider.clientCameraData)
@@ -275,7 +277,7 @@ const CamerasProvider = ({ children }: Props) => {
     })
   }
 
-  const handleSaveClick = async (cameraNo: number | undefined) => {
+  const handleSaveClick = async (cameraNo: number | undefined, groupId?: number) => {
     if (!clientCameraDataRef.current) return
 
     // 전체 저장의 경우
@@ -330,6 +332,10 @@ const CamerasProvider = ({ children }: Props) => {
 
         return updatedCameraList
       })
+
+      if (groupId) {
+        updateGroupCameraData(groupId, cameraNo, { ...updatedCamera, isEdit: false })
+      }
     } catch (error) {
       console.error('추가 정보 저장 오류:', error)
 
@@ -374,7 +380,7 @@ const CamerasProvider = ({ children }: Props) => {
     if (!clientGroupCameraDataRef.current) return
 
     if (!groupId) {
-      // 전체 저장의 경우 현재 데이터를 origin으로 저장
+      // 그룹 추가
       const modifiedGroupList = clientGroupCameraDataRef.current.map(group => {
         const isExistingGroup = clientGroupCameraDataOriginRef.current?.some(
           originGroup => originGroup.groupId === group.groupId
@@ -386,8 +392,12 @@ const CamerasProvider = ({ children }: Props) => {
         }
       })
 
-      const res = await clientGroupUpdate({ companyNo: companyNo, groupList: modifiedGroupList })
-      fetchData()
+      const newGroup = modifiedGroupList.filter(group => group.isNew)
+
+      if (newGroup.length > 0) {
+        const res = await clientGroupCameraAdd({ companyNo: companyNo, clientGroupCameraAdd: newGroup[0] })
+        fetchData()
+      }
 
       return
     }
