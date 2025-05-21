@@ -5,7 +5,7 @@ import DialogCustomContent from './DialogCustomContent'
 export interface IDialogProps {
   open: boolean
   title: string
-  contents?: string
+  contents?: string | React.ReactNode
   confirmFn?: () => void
   isConfirm?: boolean
   resolve?: (value: boolean) => void
@@ -23,7 +23,7 @@ interface ModalProps {
   onClose: () => void
   onConfirm?: () => void
   title?: string
-  contents?: string
+  contents?: string | React.ReactNode
   buttonText?: string
   isConfirm?: boolean
   useClose?: boolean
@@ -69,19 +69,22 @@ const SimpleDialogModal: React.FC<ModalProps> = ({
 
         {contentsHtml && contentsHtml}
 
-        {contents && (
-          <Typography
-            id='modal-description'
-            sx={{ mt: 2, color: 'rgba(58, 53, 65, 0.6)', fontSize: 16, fontWeight: 400 }}
-          >
-            {contents.split('\n').map((line, index) => (
-              <React.Fragment key={index}>
-                {line}
-                <br />
-              </React.Fragment>
-            ))}
-          </Typography>
-        )}
+        {contents &&
+          (typeof contents === 'string' ? (
+            <Typography
+              id='modal-description'
+              sx={{ mt: 2, color: 'rgba(58, 53, 65, 0.6)', fontSize: 16, fontWeight: 400 }}
+            >
+              {contents.split('\n').map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </Typography>
+          ) : (
+            <Box sx={{ mt: 2 }}>{contents}</Box>
+          ))}
 
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 8, mb: 5 }}>
           {isConfirm ? (

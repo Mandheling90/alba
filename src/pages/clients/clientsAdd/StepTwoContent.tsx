@@ -1,10 +1,9 @@
 import { Box, Button, IconButton, SelectChangeEvent, Typography } from '@mui/material'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 
-import SimpleDialogModal from 'src/@core/components/molecule/SimpleDialogModal'
 import { YN } from 'src/enum/commonEnum'
 import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
@@ -30,16 +29,6 @@ import {
   useAiSolutionServerDelete
 } from 'src/service/client/clientService'
 import SolutionServerList from './SolutionServerList'
-
-// export const isServerAddable = (solutionId: number) => {
-//   return (
-//     solutionId === SOLUTION_USE_SERVER_TYPE_ID.CVEDIA ||
-//     solutionId === SOLUTION_USE_SERVER_TYPE_ID.NEXREALAIBOX ||
-//     solutionId === SOLUTION_USE_SERVER_TYPE_ID.SAFR ||
-//     solutionId === SOLUTION_USE_SERVER_TYPE_ID.FA_GATE ||
-//     solutionId === SOLUTION_USE_SERVER_TYPE_ID.PROAI_SERVER
-//   )
-// }
 
 export const DefaultPackageSolution = (PackageSolution?: MAiSolutionCompanyList, remark?: string): ISolutionList => {
   return {
@@ -72,7 +61,7 @@ interface IStepTwoContent {
 }
 
 const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, companyNo, refetch }) => {
-  const { setSimpleDialogModalProps, resetModal } = useModal()
+  const { setSimpleDialogModalProps, showModal, resetModal } = useModal()
 
   const { data } = useAiSolutionCompanyList()
   const { mutateAsync: saveAiSolutionCompany } = useAiSolutionCompanySave()
@@ -147,9 +136,12 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
     if (isServerSolution) {
       // 서버를 사용하는 솔루션인 경우, 서버가 있는지 확인
       if (solution.serverList && solution.serverList.length > 0) {
-        setWarningMessage('서버를 사용하는 솔루션은 모든 서버를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.')
+        // setWarningMessage('서버를 사용하는 솔루션은 모든 서버를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.')
+        await showModal({
+          title: '솔루션 정보 삭제',
+          contents: '서버를 사용하는 솔루션은 모든 서버를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.'
+        })
         setDeleteType('warning')
-        setDeleteModalOpen(true)
 
         return
       }
@@ -158,18 +150,18 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
       const hasInstances = solution.serverList.some(server => server.instanceList && server.instanceList.length > 0)
 
       if (hasInstances) {
-        setWarningMessage('모든 인스턴스를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.')
+        // setWarningMessage('모든 인스턴스를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.')
+        await showModal({
+          title: '솔루션 정보 삭제',
+          contents: '모든 인스턴스를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.'
+        })
         setDeleteType('warning')
-        setDeleteModalOpen(true)
 
         return
       }
     }
 
-    // 삭제 가능한 경우 삭제 모달 표시
-    setSelectedSolutionId(companySolutionId)
-    setDeleteType('solution')
-    setDeleteModalOpen(true)
+    handleConfirmDelete('solution', companySolutionId)
   }
 
   const handleDeleteServer = async (serverId: number) => {
@@ -178,120 +170,128 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
 
     if (server && server.instanceList && server.instanceList.length > 0) {
       // 인스턴스가 있는 경우 경고 메시지 표시
-      setWarningMessage(`서버를 삭제하기 전에 모든 인스턴스를 먼저 삭제해주세요.`)
+
+      await showModal({
+        title: '서버 정보 삭제',
+        contents: '서버에 포함되어 있는 모든 카메라 정보를 삭제 후 서버를 삭제할 수 있습니다.'
+      })
+
       setDeleteType('warning')
-      setDeleteModalOpen(true)
 
       return
     }
 
-    setSelectedServerId(serverId)
-    setDeleteType('server')
-    setDeleteModalOpen(true)
+    handleConfirmDelete('server', undefined, serverId)
   }
 
   const handleDeleteInstance = async (solutionIndex: number, serverId: number, instanceId: number) => {
-    setSelectedServerId(serverId)
-    setSelectedInstanceId(instanceId)
-    setDeleteType('instance')
-    setDeleteModalOpen(true)
+    handleConfirmDelete('instance', undefined, serverId, instanceId)
   }
 
-  const handleConfirmDelete = async () => {
-    try {
-      switch (deleteType) {
-        case 'solution':
-          if (selectedSolutionId) {
-            const isExistingSolution = originalAiData.current?.solutionList?.some(
-              solution => solution.companySolutionId === selectedSolutionId
-            )
+  const handleConfirmDelete = useCallback(
+    async (
+      deleteType: 'solution' | 'server' | 'instance' | 'warning',
+      selectedSolutionId?: number,
+      selectedServerId?: number,
+      selectedInstanceId?: number
+    ) => {
+      console.log(deleteType)
 
-            if (isExistingSolution) {
-              await deleteAiSolutionCompany({ companySolutionId: selectedSolutionId })
-              refetch()
-            } else {
-              setSolutionList(prev => prev.filter(solution => solution.companySolutionId !== selectedSolutionId))
-            }
-          }
-          break
-        case 'server':
-          if (selectedServerId) {
-            const isExistingServer = originalAiData.current?.solutionList?.some(solution =>
-              solution.serverList.some(server => server.serverId === selectedServerId)
-            )
-
-            if (isExistingServer) {
-              await deleteAiSolutionServer({ serverId: selectedServerId })
-              refetch()
-            } else {
-              setSolutionList(prev =>
-                prev.map(solution => ({
-                  ...solution,
-                  serverList: solution.serverList.filter(server => server.serverId !== selectedServerId)
-                }))
+      try {
+        switch (deleteType) {
+          case 'solution':
+            if (selectedSolutionId) {
+              const isExistingSolution = originalAiData.current?.solutionList?.some(
+                solution => solution.companySolutionId === selectedSolutionId
               )
-            }
-          }
-          break
-        case 'instance':
-          if (selectedServerId && selectedInstanceId) {
-            const isExistingInstance = originalAiData.current?.solutionList?.some(solution =>
-              solution.serverList.some(server =>
-                server.instanceList.some(instance => instance.instanceId === selectedInstanceId)
-              )
-            )
 
-            if (isExistingInstance) {
-              await deleteAiSolutionInstance({ instanceId: selectedInstanceId })
-              refetch()
-            } else {
-              setSolutionList(prev =>
-                prev.map(solution => ({
-                  ...solution,
-                  serverList: solution.serverList.map(server => {
-                    if (server.serverId === selectedServerId) {
-                      return {
-                        ...server,
-                        instanceList: server.instanceList.filter(instance => instance.instanceId !== selectedInstanceId)
+              if (isExistingSolution) {
+                await deleteAiSolutionCompany({ companySolutionId: selectedSolutionId })
+                refetch()
+              } else {
+                setSolutionList(prev => prev.filter(solution => solution.companySolutionId !== selectedSolutionId))
+              }
+            }
+            break
+          case 'server':
+            if (selectedServerId) {
+              const isExistingServer = originalAiData.current?.solutionList?.some(solution =>
+                solution.serverList.some(server => server.serverId === selectedServerId)
+              )
+
+              if (isExistingServer) {
+                await deleteAiSolutionServer({ serverId: selectedServerId })
+                refetch()
+              } else {
+                setSolutionList(prev =>
+                  prev.map(solution => ({
+                    ...solution,
+                    serverList: solution.serverList.filter(server => server.serverId !== selectedServerId)
+                  }))
+                )
+              }
+            }
+            break
+          case 'instance':
+            if (selectedServerId && selectedInstanceId) {
+              const isExistingInstance = originalAiData.current?.solutionList?.some(solution =>
+                solution.serverList.some(server =>
+                  server.instanceList.some(instance => instance.instanceId === selectedInstanceId)
+                )
+              )
+
+              if (isExistingInstance) {
+                await deleteAiSolutionInstance({ instanceId: selectedInstanceId })
+                refetch()
+              } else {
+                setSolutionList(prev =>
+                  prev.map(solution => ({
+                    ...solution,
+                    serverList: solution.serverList.map(server => {
+                      if (server.serverId === selectedServerId) {
+                        return {
+                          ...server,
+                          instanceList: server.instanceList.filter(
+                            instance => instance.instanceId !== selectedInstanceId
+                          )
+                        }
                       }
-                    }
 
-                    return server
-                  })
-                }))
-              )
+                      return server
+                    })
+                  }))
+                )
+              }
             }
-          }
-          break
-        case 'warning':
-          // 경고 메시지의 경우 아무 작업도 수행하지 않음
-          break
+            break
+          case 'warning':
+            // 경고 메시지의 경우 아무 작업도 수행하지 않음
+            break
+        }
+      } catch (error) {
+        console.error('삭제 중 오류 발생:', error)
+      } finally {
+        setDeleteModalOpen(false)
+        setSelectedSolutionId(null)
+        setSelectedServerId(null)
+        setSelectedInstanceId(null)
+        setWarningMessage('')
       }
-    } catch (error) {
-      console.error('삭제 중 오류 발생:', error)
-    } finally {
-      setDeleteModalOpen(false)
-      setSelectedSolutionId(null)
-      setSelectedServerId(null)
-      setSelectedInstanceId(null)
-      setWarningMessage('')
-    }
-  }
-
-  const getDeleteModalContent = () => {
-    switch (deleteType) {
-      case 'solution':
-        return '정말로 이 솔루션을 삭제하시겠습니까?'
-      case 'server':
-        return '정말로 이 서버를 삭제하시겠습니까?'
-      case 'instance':
-        return '정말로 이 인스턴스를 삭제하시겠습니까?'
-      case 'warning':
-        return warningMessage
-      default:
-        return ''
-    }
-  }
+    },
+    [
+      originalAiData,
+      deleteAiSolutionCompany,
+      deleteAiSolutionServer,
+      deleteAiSolutionInstance,
+      refetch,
+      setSolutionList,
+      setDeleteModalOpen,
+      setSelectedSolutionId,
+      setSelectedServerId,
+      setSelectedInstanceId,
+      setWarningMessage
+    ]
+  )
 
   const handleSelectChange = (companySolutionId: number) => (event: SelectChangeEvent) => {
     const aiSolutionIdTarget = event.target.value
@@ -524,8 +524,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
     })
   }
 
-  console.log(solutionList)
-
   return (
     <>
       <Box
@@ -614,7 +612,25 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                       {card.aiSolutionId === SOLUTION_TYPE_ID.NEX_REAL_AIBOX ? 'AIBOX 추가' : '서버 추가'}
                     </Button>
                   )}
-                  <IconButton onClick={() => handleDeleteSolution(card.companySolutionId)}>
+                  <IconButton
+                    onClick={() => {
+                      setSimpleDialogModalProps({
+                        open: true,
+                        title: '솔루션 정보 삭제',
+                        contents: (
+                          <Typography sx={{ color: 'rgba(58, 53, 65, 0.6)', fontSize: 16, fontWeight: 400 }}>
+                            선택하신 솔루션을 <b>삭제</b>하시겠습니까? 삭제후에는 <b>복원할 수 없습니다.</b>
+                          </Typography>
+                        ),
+                        isConfirm: true,
+                        confirmFn: () => {
+                          setTimeout(() => {
+                            handleDeleteSolution(card.companySolutionId)
+                          }, 100)
+                        }
+                      })
+                    }}
+                  >
                     <IconCustom isCommon icon={'DeleteOutline'} />
                   </IconButton>
                 </>
@@ -625,12 +641,42 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
               ) : (
                 <SolutionServerList
                   solutionList={card}
-                  onDelete={handleDeleteServer}
+                  onDelete={serviceId => {
+                    setSimpleDialogModalProps({
+                      open: true,
+                      title: '서버 정보 삭제',
+                      contents: (
+                        <Typography sx={{ color: 'rgba(58, 53, 65, 0.6)', fontSize: 16, fontWeight: 400 }}>
+                          선택하신 서버를 <b>삭제</b>하시겠습니까? 삭제후에는 <b>복원할 수 없습니다.</b>
+                        </Typography>
+                      ),
+                      isConfirm: true,
+                      confirmFn: () => {
+                        setTimeout(() => {
+                          handleDeleteServer(serviceId)
+                        }, 100)
+                      }
+                    })
+                  }}
                   onAdd={() => handleAddServer(index)}
                   onAddInstance={(serverId: number) => handleAddInstance(index, serverId)}
-                  onDeleteInstance={(serverId: number, instanceId: number) =>
-                    handleDeleteInstance(index, serverId, instanceId)
-                  }
+                  onDeleteInstance={(serverId: number, instanceId: number) => {
+                    setSimpleDialogModalProps({
+                      open: true,
+                      title: '카메라 정보 삭제',
+                      contents: (
+                        <Typography sx={{ color: 'rgba(58, 53, 65, 0.6)', fontSize: 16, fontWeight: 400 }}>
+                          선택하신 카메라를 <b>삭제</b>하시겠습니까? 삭제후에는 <b>복원할 수 없습니다.</b>
+                        </Typography>
+                      ),
+                      isConfirm: true,
+                      confirmFn: () => {
+                        setTimeout(() => {
+                          handleDeleteInstance(index, serverId, instanceId)
+                        }, 100)
+                      }
+                    })
+                  }}
                   onUpdateInstance={(serverId, instanceId, field, value) =>
                     handleUpdateInstance(card.companySolutionId, serverId, instanceId, field, value)
                   }
@@ -776,7 +822,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                     sx={{ mr: 4 }}
                     disabled={!isValidSolution(index)}
                   >
-                    {card.isNew ? '등록' : '수정'}
+                    저장
                   </Button>
 
                   <Button
@@ -805,22 +851,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
           </Box>
         ))}
       </Box>
-      <SimpleDialogModal
-        open={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        onConfirm={handleConfirmDelete}
-        title={`${
-          deleteType === 'solution'
-            ? '솔루션'
-            : deleteType === 'server'
-            ? '서버'
-            : deleteType === 'instance'
-            ? '인스턴스'
-            : '경고'
-        } ${deleteType === 'warning' ? '' : '삭제'}`}
-        contents={getDeleteModalContent()}
-        isConfirm={deleteType !== 'warning'}
-      />
     </>
   )
 }
