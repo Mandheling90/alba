@@ -39,18 +39,7 @@ const UserSetting: FC = (): React.ReactElement => {
 
     if (filteredList.length > 0) {
        
-      console.log("type:"+selectedAuthList.type)
-      if(selectedAuthList.type == CRUD.U){
-        const res = await authMenuList({
-         authId: selectedAuthList.authId !== 0 ? selectedAuthList.authId : filteredList[0].authId
-        })
-
-        setAuthMenuListData(res.data)
-
-        if (!selectedAuthList.authId) {
-          setSelectedAuthList({ authId: res.data.authId, name: res.data.authName, userAuthCount: 0, type:CRUD.U })
-        }
-      }else if(selectedAuthList.type == CRUD.C){
+      if(selectedAuthList.type == CRUD.C){
         const column = await authcolumnList()
       
         const columnArray: MAuthcolumnList[] = Array.isArray(column.data) ? column.data : [column.data];
@@ -62,6 +51,16 @@ const UserSetting: FC = (): React.ReactElement => {
           roles: columnArray
         };
       setAuthMenuListData(convertedData);
+      }else{
+        const res = await authMenuList({
+         authId: selectedAuthList.authId !== 0 ? selectedAuthList.authId : filteredList[0].authId
+        })
+
+        setAuthMenuListData(res.data)
+
+        if (!selectedAuthList.authId) {
+          setSelectedAuthList({ authId: res.data.authId, name: res.data.authName, userAuthCount: 0, type:CRUD.U })
+        }
       }
 
     }
