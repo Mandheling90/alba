@@ -14,7 +14,7 @@ interface IKioskMenu {
 const ClientsMenu: FC<IKioskMenu> = ({ refetch }) => {
   const { clientListReq, setClientListReq } = useClients()
 
-  const [searchKeyword, setSearchKeyword] = useState('')
+  const [searchKeyword, setSearchKeyword] = useState(clientListReq.keyword)
 
   return (
     <HorizontalScrollBox>
