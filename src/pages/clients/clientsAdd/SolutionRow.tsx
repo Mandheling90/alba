@@ -1,5 +1,5 @@
 import { Box, Chip, IconButton, InputAdornment, Stack, TextField } from '@mui/material'
-import { FC, KeyboardEvent, useRef, useState } from 'react'
+import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import { YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
@@ -40,6 +40,12 @@ const SolutionRow: FC<ISolutionRow> = ({
         value: item.aiServiceId.toString(),
         label: item.aiServiceName
       })) ?? []
+
+  useEffect(() => {
+    if (serviceOptions.length > 0 && !instance.aiServiceId) {
+      onUpdateInstance(serverId, instance.instanceId ?? 0, 'aiServiceId', serviceOptions[0].value)
+    }
+  }, [serviceOptions])
 
   const handleAddTag = () => {
     if (newTag.trim()) {
@@ -84,8 +90,6 @@ const SolutionRow: FC<ISolutionRow> = ({
         onChange={e => onUpdateInstance(serverId, instance.instanceId ?? 0, 'aiServiceId', e.target.value)}
         options={serviceOptions}
         width='200px'
-
-        // required
       />
 
       {useCameraId && (

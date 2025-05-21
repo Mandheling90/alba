@@ -47,7 +47,7 @@ const SolutionTemplate: FC<ISolutionServerProps> = ({
           <DividerBar />
 
           {server.instanceList.map(instance => (
-            <Box sx={{ mt: 2, mb: 2 }} key={instance.instanceId}>
+            <Box sx={{ mt: 2, mb: 2, ml: 11 }} key={instance.instanceId}>
               <SolutionRow
                 aiSolutionService={aiSolutionService}
                 solutionId={solutionId}

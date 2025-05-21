@@ -543,7 +543,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                 '해당 고객사에 등록된 솔루션이 없습니다'
               ) : (
                 <>
-                  총 {solutionList?.length || 0}개의 분석 솔루션과
+                  총 {solutionList?.length || 0}개의 분석 솔루션과{' '}
                   {solutionList?.reduce((acc: number, sol: ISolutionList) => acc + sol.serverList.length, 0) || 0}
                   개의 서비스가 등록되어 있습니다.
                 </>
@@ -639,166 +639,169 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                   }
                 />
               )}
-            </WindowCard>
 
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <div className='button-wrapper'>
-                <Button
-                  size='medium'
-                  variant='contained'
-                  onClick={async () => {
-                    // 필수값 검증
-                    const requiredFields = card.serverList
-                      .map(server => {
-                        const emptyFields = []
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <div className='button-wrapper'>
+                  <Button
+                    size='medium'
+                    variant='contained'
+                    onClick={async () => {
+                      // 필수값 검증
+                      const requiredFields = card.serverList
+                        .map(server => {
+                          const emptyFields = []
 
-                        // 서버 정보가 필요한 솔루션인 경우에만 서버 정보 검증
-                        if (isServerUsingSolution(card.aiSolutionId)) {
-                          if (!server.serverName) emptyFields.push('서버명')
-                          if (
-                            !server.serverIp &&
-                            card.aiSolutionId !== SOLUTION_TYPE_ID.FA_SIGNAGE &&
-                            card.aiSolutionId !== SOLUTION_TYPE_ID.FA_GATE
-                          )
-                            emptyFields.push('서버주소')
+                          // 서버 정보가 필요한 솔루션인 경우에만 서버 정보 검증
+                          if (isServerUsingSolution(card.aiSolutionId)) {
+                            if (!server.serverName) emptyFields.push('서버명')
+                            if (
+                              !server.serverIp &&
+                              card.aiSolutionId !== SOLUTION_TYPE_ID.FA_SIGNAGE &&
+                              card.aiSolutionId !== SOLUTION_TYPE_ID.FA_GATE
+                            )
+                              emptyFields.push('서버주소')
 
-                          if (card.aiSolutionId === SOLUTION_TYPE_ID.NEX_REAL_AIBOX) {
-                            if (!server.aiBoxId) emptyFields.push('AIBox ID')
-                            if (!server.aiBoxPassword) emptyFields.push('AIBox Password')
+                            if (card.aiSolutionId === SOLUTION_TYPE_ID.NEX_REAL_AIBOX) {
+                              if (!server.aiBoxId) emptyFields.push('AIBox ID')
+                              if (!server.aiBoxPassword) emptyFields.push('AIBox Password')
+                            }
+                            if (card.aiSolutionId === SOLUTION_TYPE_ID.SAFR) {
+                              if (!server.safrEventUrl) emptyFields.push('SAFR 이벤트 서버주소')
+                              if (!server.safrId) emptyFields.push('SAFR ID')
+                              if (!server.safrPassword) emptyFields.push('SAFR Password')
+                            }
                           }
-                          if (card.aiSolutionId === SOLUTION_TYPE_ID.SAFR) {
-                            if (!server.safrEventUrl) emptyFields.push('SAFR 이벤트 서버주소')
-                            if (!server.safrId) emptyFields.push('SAFR ID')
-                            if (!server.safrPassword) emptyFields.push('SAFR Password')
-                          }
-                        }
 
-                        // 인스턴스 필드 검증
-                        server.instanceList.forEach(instance => {
-                          if (!instance.aiServiceId) emptyFields.push('분석 서비스')
-                          if (!instance.cameraName) emptyFields.push('카메라명')
-                          if (!instance.cameraIp) emptyFields.push('카메라주소')
-                          if (isNonServerSolution(card.aiSolutionId)) {
-                            if (!instance.cameraId) emptyFields.push('카메라ID')
-                          }
-                          if (card.aiSolutionId === SOLUTION_TYPE_ID.SAFR) {
-                            if (!instance.cameraGroupId) emptyFields.push('카메라 그룹ID')
-                          }
+                          // 인스턴스 필드 검증
+                          server.instanceList.forEach(instance => {
+                            if (!instance.aiServiceId) emptyFields.push('분석 서비스')
+                            if (!instance.cameraName) emptyFields.push('카메라명')
+                            if (!instance.cameraIp) emptyFields.push('카메라주소')
+                            if (isNonServerSolution(card.aiSolutionId)) {
+                              if (!instance.cameraId) emptyFields.push('카메라ID')
+                            }
+                            if (card.aiSolutionId === SOLUTION_TYPE_ID.SAFR) {
+                              if (!instance.cameraGroupId) emptyFields.push('카메라 그룹ID')
+                            }
+                          })
+
+                          return emptyFields
+                        })
+                        .flat()
+
+                      if (requiredFields.length > 0) {
+                        setSimpleDialogModalProps({
+                          open: true,
+                          title: `등록 정보 입력 오류`,
+                          contents:
+                            '서버 및 서버에 연결할 카메라 정보를 등록하려면 * 로 표시된 필수값들을 모두 입력하여야 합니다.'
+
+                          // title: `다음 필수 항목을 입력해주세요:\n${requiredFields.join(', ')}`,
                         })
 
-                        return emptyFields
-                      })
-                      .flat()
+                        return
+                      }
 
-                    if (requiredFields.length > 0) {
-                      setSimpleDialogModalProps({
-                        open: true,
-                        title: `다음 필수 항목을 입력해주세요:\n${requiredFields.join(', ')}`,
-                        contents: ''
-                      })
+                      try {
+                        if (card.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE) {
+                          const isPackageExists = originalAiData.current?.solutionList?.some(
+                            solution => solution.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE
+                          )
 
-                      return
-                    }
-
-                    try {
-                      if (card.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE) {
-                        const isPackageExists = originalAiData.current?.solutionList?.some(
-                          solution => solution.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE
-                        )
-
-                        const packageSolutionData: IAiSolutionCompanyPackageParam = {
-                          companyNo: companyNo,
-                          remark: card.serverList[0].remark ?? ''
-                        }
-
-                        if (isPackageExists) {
-                          await updateAiSolutionCompanyPackage(packageSolutionData)
-                        } else {
-                          await saveAiSolutionCompanyPackage(packageSolutionData)
-                        }
-                      } else {
-                        const isNewCard = card.isNew
-
-                        // const isNewCard = !originalAiData.current?.solutionList?.some(
-                        //   solution => solution.companySolutionId === card.companySolutionId
-                        // )
-
-                        const solutionData = {
-                          ...card,
-                          companyNo,
-                          ...(card.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE && { serverList: [] })
-                        }
-
-                        if (isNewCard) {
-                          await saveAiSolutionCompany(solutionData)
-
-                          setSimpleDialogModalProps({
-                            open: true,
-                            title: '솔루션 등록 완료',
-                            contents: '솔루션 등록이 완료되었습니다.'
-                          })
-                        } else {
-                          // cameraNo가 0인 경우 instanceId도 0으로 설정
-                          const updatedSolutionData = {
-                            ...solutionData,
-                            serverList: solutionData.serverList.map(server => ({
-                              ...server,
-                              serverId: server.isNew ? 0 : server.serverId,
-                              instanceList: server.instanceList.map(instance => ({
-                                ...instance,
-                                instanceId: instance.cameraNo === 0 ? 0 : instance.instanceId
-                              }))
-                            }))
+                          const packageSolutionData: IAiSolutionCompanyPackageParam = {
+                            companyNo: companyNo,
+                            remark: card.serverList[0].remark ?? ''
                           }
 
-                          await updateAiSolutionCompany(updatedSolutionData)
+                          if (isPackageExists) {
+                            await updateAiSolutionCompanyPackage(packageSolutionData)
+                          } else {
+                            await saveAiSolutionCompanyPackage(packageSolutionData)
+                          }
+                        } else {
+                          const isNewCard = card.isNew
 
-                          setSimpleDialogModalProps({
-                            open: true,
-                            title: '솔루션 수정 완료',
-                            contents: '솔루션 수정이 완료되었습니다.'
-                          })
+                          // const isNewCard = !originalAiData.current?.solutionList?.some(
+                          //   solution => solution.companySolutionId === card.companySolutionId
+                          // )
+
+                          const solutionData = {
+                            ...card,
+                            companyNo,
+                            ...(card.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE && { serverList: [] })
+                          }
+
+                          if (isNewCard) {
+                            await saveAiSolutionCompany(solutionData)
+
+                            setSimpleDialogModalProps({
+                              open: true,
+                              title: '분석 솔루션 정보 저장',
+                              contents: `입력하신 ${solutionData.aiSolutionName} 솔루션 정보가 저장 되었습니다.`
+                            })
+                          } else {
+                            // cameraNo가 0인 경우 instanceId도 0으로 설정
+                            const updatedSolutionData = {
+                              ...solutionData,
+                              serverList: solutionData.serverList.map(server => ({
+                                ...server,
+                                serverId: server.isNew ? 0 : server.serverId,
+                                instanceList: server.instanceList.map(instance => ({
+                                  ...instance,
+                                  instanceId: instance.cameraNo === 0 ? 0 : instance.instanceId
+                                }))
+                              }))
+                            }
+
+                            await updateAiSolutionCompany(updatedSolutionData)
+
+                            setSimpleDialogModalProps({
+                              open: true,
+                              title: '분석 솔루션 정보 ',
+                              contents: `입력하신 ${solutionData.aiSolutionName} 솔루션 정보가 수정 되었습니다.`
+                            })
+                          }
                         }
-                      }
 
-                      refetch()
-                    } catch (error) {
+                        refetch()
+                      } catch (error) {
+                        setSimpleDialogModalProps({
+                          open: true,
+                          title: '솔루션 등록 오류',
+                          contents: '솔루션 등록 중 오류가 발생했습니다.'
+                        })
+                        console.error('솔루션 등록 오류:', error)
+                      }
+                    }}
+                    sx={{ mr: 4 }}
+                    disabled={!isValidSolution(index)}
+                  >
+                    {card.isNew ? '등록' : '수정'}
+                  </Button>
+
+                  <Button
+                    size='medium'
+                    color='secondary'
+                    variant='outlined'
+                    onClick={() => {
                       setSimpleDialogModalProps({
                         open: true,
-                        title: '솔루션 등록 오류',
-                        contents: '솔루션 등록 중 오류가 발생했습니다.'
+                        title: '입력 취소 확인',
+                        contents: `입력 중이던 ${card.aiSolutionName} 솔루션 정보가 모두 삭제됩니다. \r\n 정말 취소하겠습니까?`,
+                        isConfirm: true,
+                        confirmFn: () => {
+                          handleRevertToOriginalState(card.companySolutionId)
+                          resetModal()
+                        }
                       })
-                      console.error('솔루션 등록 오류:', error)
-                    }
-                  }}
-                  sx={{ mr: 4 }}
-                  disabled={!isValidSolution(index)}
-                >
-                  {card.isNew ? '등록' : '수정'}
-                </Button>
-
-                <Button
-                  size='medium'
-                  color='secondary'
-                  variant='outlined'
-                  onClick={() => {
-                    setSimpleDialogModalProps({
-                      open: true,
-                      title: '솔루션 초기화',
-                      contents: '솔루션 등록을 취소 하시겠습니까?',
-                      isConfirm: true,
-                      confirmFn: () => {
-                        handleRevertToOriginalState(card.companySolutionId)
-                        resetModal()
-                      }
-                    })
-                  }}
-                  disabled={false}
-                >
-                  취소
-                </Button>
-              </div>
-            </Box>
+                    }}
+                    disabled={false}
+                  >
+                    취소
+                  </Button>
+                </div>
+              </Box>
+            </WindowCard>
           </Box>
         ))}
       </Box>
