@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useState } from 'react'
-import { MAuthList, MAuthMenuList, MUserCompanyList, MUserGroup } from 'src/model/userSetting/userSettingModel'
+import { MAuthList, MAuthMenuList, MUserCompanyList, MUserGroup,MAuthcolumnList } from 'src/model/userSetting/userSettingModel'
 
 export type UserValuesType = {
   companyNo: number
@@ -25,6 +25,10 @@ export type UserValuesType = {
   selectedAuthList: MAuthList
   setSelectedAuthList: (value: MAuthList) => void
 
+  selectedAuthcolumnList: MAuthcolumnList[]
+  setSelectedAuthcolumnList: (value: MAuthcolumnList[]) => void
+
+  
   clear: () => void
 }
 
@@ -49,6 +53,9 @@ const defaultProvider: UserValuesType = {
   authMenuList: [],
   setAuthMenuList: () => null,
 
+  selectedAuthcolumnList: [],
+  setSelectedAuthcolumnList: () => null,
+
   selectedUser: [],
   setSelectedUser: () => null,
 
@@ -71,6 +78,9 @@ const UserProvider = ({ children }: Props) => {
   const [authMenuList, setAuthMenuList] = useState<MAuthMenuList[]>(defaultProvider.authMenuList)
   const [userCompanyList, setUserCompanyList] = useState<MUserCompanyList[]>(defaultProvider.userCompanyList)
   const [selectedUser, setSelectedUser] = useState<MUserCompanyList[]>(defaultProvider.selectedUser)
+  const [selectedAuthcolumnList, setSelectedAuthcolumnList] = useState<MAuthcolumnList[]>(defaultProvider.selectedAuthcolumnList)
+
+
 
   const clear = () => {
     setLayoutDisplay(defaultProvider.layoutDisplay)
@@ -78,6 +88,7 @@ const UserProvider = ({ children }: Props) => {
     setSelectedAuthList(defaultProvider.selectedAuthList)
     setAuthList(defaultProvider.authList)
     setAuthMenuList(defaultProvider.authMenuList)
+    setSelectedAuthcolumnList(defaultProvider.selectedAuthcolumnList)
     setUserCompanyList(defaultProvider.userCompanyList)
     setSelectedUser(defaultProvider.selectedUser)
   }
@@ -97,6 +108,8 @@ const UserProvider = ({ children }: Props) => {
     setAuthList,
     authMenuList,
     setAuthMenuList,
+    selectedAuthcolumnList,
+    setSelectedAuthcolumnList,
     selectedUser,
     setSelectedUser,
     clear
