@@ -118,8 +118,8 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
     setSolutionList(prev => [
       ...prev,
       {
-        aiSolutionId: 1,
-        aiSolutionName: 'CVEDIA',
+        aiSolutionId: 0,
+        aiSolutionName: '',
         companySolutionId: prev.length + 1,
         serverList: [],
         isNew: true
@@ -538,7 +538,8 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
         <Box mb={5}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Typography variant='h5'>
-              {solutionList?.length === 0 ? (
+              {solutionList?.filter(item => item.aiSolutionId !== 0).filter(item => item.isNew !== true).length ===
+              0 ? (
                 '해당 고객사에 등록된 솔루션이 없습니다'
               ) : (
                 <>
@@ -557,7 +558,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
           </Box>
           <Box>
             <Typography>
-              {solutionList?.length === 0
+              {solutionList?.filter(item => item.aiSolutionId !== 0).filter(item => item.isNew !== true).length === 0
                 ? '해당 고객사에 등록된 서비스가 없습니다'
                 : 'ProAI Edge는 카운팅 서비스에, CVEDIA는 밀집도분석 서비스에 사용됩니다.'}
             </Typography>
@@ -585,11 +586,18 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                     />
                   </Box>
                   <Box>
-                    {card.aiSolutionId !== SOLUTION_TYPE_ID.PACKAGE && (
+                    {card.aiSolutionId !== SOLUTION_TYPE_ID.PACKAGE && card.aiSolutionId !== 0 && (
                       <Typography>
                         총 {card.serverList.reduce((acc, server) => acc + server.instanceList.length, 0)}대의 카메라
                         항목이 있습니다.
                       </Typography>
+                    )}
+
+                    {card.aiSolutionId === 0 && (
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <IconCustom isCommon path='clients' icon='SOLUTION_CURSOR' />
+                        <Typography>등록할 솔루션을 선택하세요</Typography>
+                      </Box>
                     )}
                   </Box>
                 </Box>
@@ -613,7 +621,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
               }
             >
               {card.aiSolutionId === 0 ? (
-                <Typography>분석솔루션을 선택해주세요.</Typography>
+                <Typography>등록된 솔루션이 없습니다.</Typography>
               ) : (
                 <SolutionServerList
                   solutionList={card}
