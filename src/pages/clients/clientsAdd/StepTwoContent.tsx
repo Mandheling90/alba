@@ -300,7 +300,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
 
     if (
       aiSolutionId === SOLUTION_TYPE_ID.PACKAGE &&
-      solutionList.find(item => item.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE)
+      solutionList.some(item => item.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE)
     ) {
       alert('패키지 솔루션은 1개만 등록할 수 있습니다.')
 
@@ -547,7 +547,12 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                 </>
               )}
             </Typography>
-            <Button variant='contained' startIcon={<IconCustom isCommon icon='plus' />} onClick={handleAddSolution}>
+            <Button
+              variant='contained'
+              startIcon={<IconCustom isCommon icon='plus' />}
+              onClick={handleAddSolution}
+              disabled={solutionList.some(item => item.aiSolutionId === SOLUTION_TYPE_ID.PACKAGE)}
+            >
               분석솔루션 추가
             </Button>
           </Box>
@@ -574,7 +579,15 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                       onChange={handleSelectChange(card.companySolutionId)}
                       options={
                         data?.data
-                          ?.filter(item => item.dataStatus === YN.Y)
+                          ?.filter(item => {
+                            // 기본적으로 YN.Y인 항목만 필터링
+                            const isActive = item.dataStatus === YN.Y
+
+                            // solutionList가 1개 이상이고 PACKAGE 타입인 경우 제외
+                            const shouldExcludePackage = solutionList.length > 1 && item.id === SOLUTION_TYPE_ID.PACKAGE
+
+                            return isActive && !shouldExcludePackage
+                          })
                           .map(item => ({
                             key: `${item.id}_${item.name}`,
                             value: item.id.toString(),
