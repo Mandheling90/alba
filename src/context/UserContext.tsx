@@ -1,5 +1,12 @@
 import { ReactNode, createContext, useState } from 'react'
-import { MAuthList, MAuthMenuList, MUserCompanyList, MUserGroup,MAuthcolumnList } from 'src/model/userSetting/userSettingModel'
+import { CRUD } from 'src/enum/commonEnum'
+import {
+  MAuthList,
+  MAuthMenuList,
+  MAuthcolumnList,
+  MUserCompanyList,
+  MUserGroup
+} from 'src/model/userSetting/userSettingModel'
 
 export type UserValuesType = {
   companyNo: number
@@ -28,7 +35,6 @@ export type UserValuesType = {
   selectedAuthcolumnList: MAuthcolumnList[]
   setSelectedAuthcolumnList: (value: MAuthcolumnList[]) => void
 
-  
   clear: () => void
 }
 
@@ -41,7 +47,7 @@ const defaultProvider: UserValuesType = {
   setLayoutDisplay: () => null,
   userGroupInfo: [],
   setUserGroupInfo: () => null,
-  selectedAuthList: { authId: 0, name: '', userAuthCount: 0 },
+  selectedAuthList: { authId: 0, name: '', userAuthCount: 0, type: CRUD.R },
   setSelectedAuthList: () => null,
 
   userCompanyList: [],
@@ -78,9 +84,9 @@ const UserProvider = ({ children }: Props) => {
   const [authMenuList, setAuthMenuList] = useState<MAuthMenuList[]>(defaultProvider.authMenuList)
   const [userCompanyList, setUserCompanyList] = useState<MUserCompanyList[]>(defaultProvider.userCompanyList)
   const [selectedUser, setSelectedUser] = useState<MUserCompanyList[]>(defaultProvider.selectedUser)
-  const [selectedAuthcolumnList, setSelectedAuthcolumnList] = useState<MAuthcolumnList[]>(defaultProvider.selectedAuthcolumnList)
-
-
+  const [selectedAuthcolumnList, setSelectedAuthcolumnList] = useState<MAuthcolumnList[]>(
+    defaultProvider.selectedAuthcolumnList
+  )
 
   const clear = () => {
     setLayoutDisplay(defaultProvider.layoutDisplay)

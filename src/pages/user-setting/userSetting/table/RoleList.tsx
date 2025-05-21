@@ -19,6 +19,7 @@ interface IUserList {
 const RoleList: FC<IUserList> = ({ data, refetch }) => {
   const { mutateAsync: authDel } = useDelAuth()
   const { mutateAsync: authStatusMod } = useAuthStatusMod()
+
   //const { mutateAsync: authDel } = useUserAuthcolumnList()
 
   const { setSelectedAuthList } = useUser()
