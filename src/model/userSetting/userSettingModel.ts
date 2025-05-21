@@ -1,4 +1,4 @@
-import { YN } from 'src/enum/commonEnum'
+import { YN,CRUD } from 'src/enum/commonEnum'
 
 export interface MRole {
   menuId: number
@@ -76,6 +76,7 @@ export interface MAuthList {
   authId: number
   name: string
   userAuthCount: number
+  type:CRUD
 }
 
 export interface MAuthMenuList {
@@ -85,6 +86,16 @@ export interface MAuthMenuList {
   updateYn: YN
   deleteYn: YN
   readYn: YN
+}
+
+export interface MAuthcolumnList {
+  menuId: number
+  menuName: string
+  createYn: YN
+  updateYn: YN
+  deleteYn: YN
+  readYn: YN
+  data: MRole[]
 }
 
 export interface MAuthMenu {

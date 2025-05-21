@@ -41,6 +41,13 @@ export enum YN {
   D = 'D'
 }
 
+export enum CRUD {
+  C = 'C',
+  R = 'R',
+  U = 'U',
+  D = 'D'
+}
+
 export enum SORT {
   ASC = 'ASC',
   DESC = 'DESC'

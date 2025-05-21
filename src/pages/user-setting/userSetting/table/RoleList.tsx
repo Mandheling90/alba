@@ -4,12 +4,12 @@ import { Box, Button, IconButton, Switch, Typography } from '@mui/material'
 import Card from '@mui/material/Card'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import CustomTable from 'src/@core/components/table/CustomTable'
-import { YN } from 'src/enum/commonEnum'
+import { YN,CRUD } from 'src/enum/commonEnum'
 import { useAuth } from 'src/hooks/useAuth'
 import { useUser } from 'src/hooks/useUser'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { MAuthList } from 'src/model/userSetting/userSettingModel'
-import { useAuthStatusMod, useDelAuth } from 'src/service/setting/userSetting'
+import { MAuthList,MAuthcolumnList } from 'src/model/userSetting/userSettingModel'
+import { useAuthStatusMod, useDelAuth,useUserAuthcolumnList } from 'src/service/setting/userSetting'
 
 interface IUserList {
   data: MAuthList[]
@@ -19,10 +19,12 @@ interface IUserList {
 const RoleList: FC<IUserList> = ({ data, refetch }) => {
   const { mutateAsync: authDel } = useDelAuth()
   const { mutateAsync: authStatusMod } = useAuthStatusMod()
+  //const { mutateAsync: authDel } = useUserAuthcolumnList()
 
   const { setSelectedAuthList } = useUser()
-
+const { mutateAsync: authcolumnList } = useUserAuthcolumnList()
   const [userData, setUserData] = useState<MAuthList[]>([])
+  const [usercolumnList, setUsercolumnList] = useState<MAuthcolumnList[]>([])
 
   const { user } = useAuth()
 
@@ -77,7 +79,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
               sx={{ color: 'text.secondary' }}
               disabled={row.authId === user?.userInfo?.authId}
               onClick={e => {
-                setSelectedAuthList({ authId: row.authId, name: row.name, userAuthCount: row.userAuthCount })
+                setSelectedAuthList({ authId: row.authId, name: row.name, userAuthCount: row.userAuthCount, type:CRUD.U })
               }}
             >
               <IconCustom path='settingCard' icon='pen' />
@@ -108,7 +110,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
               variant={'contained'}
               startIcon={<IconCustom isCommon icon='plus' />}
               onClick={() => {
-                setSelectedAuthList({ authId: 0, name: '', userAuthCount: 0 })
+                setSelectedAuthList({ authId: 0, name: '', userAuthCount: 0, type:CRUD.C })
               }}
               sx={{
                 clipPath: 'polygon(0 0, 80% 0, 95% 50%, 80% 100%, 0 100%, 0% 50%)',

@@ -10,7 +10,8 @@ import {
   MRoleList,
   MUserArrDelete,
   MUserCompanyList,
-  MUserGroup
+  MUserGroup,
+  MAuthcolumnList
 } from 'src/model/userSetting/userSettingModel'
 import API from 'src/module/api'
 import { createDelete, createGet, createPatch, createPost, createPut } from 'src/module/reactQuery'
@@ -75,6 +76,12 @@ export const useAuthList = (params: { companyNo: number }) => {
 export const useAuthMenuList = () => {
   return useMutation((params: { authId: number }) => {
     return createGet<MAuthMenu>([EPath.AUTH + `/${params.authId}`])
+  }, {})
+}
+
+export const useUserAuthcolumnList = () => {
+  return useMutation(() => {
+    return createGet<MAuthcolumnList>([EPath.AUTH_MENU_LIST])
   }, {})
 }
 
