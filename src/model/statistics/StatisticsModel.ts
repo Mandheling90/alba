@@ -223,6 +223,7 @@ export interface IPyramidPieChart extends IBaseChartResponse {
   categories: string[]
   pyramidChart: IPyramidChart[]
   pieChart: IPieChart
+  chartTitle: string
 }
 
 export interface IPyramidChart {
