@@ -1,5 +1,6 @@
 import { Box, Button, TextField } from '@mui/material'
-import { FC, useState } from 'react'
+import { useRouter } from 'next/router'
+import { FC, useEffect, useState } from 'react'
 
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import { HorizontalScrollBox } from 'src/@core/styles/StyledComponents'
@@ -12,9 +13,32 @@ interface IKioskMenu {
 }
 
 const ClientsMenu: FC<IKioskMenu> = ({ refetch }) => {
-  const { clientListReq, setClientListReq } = useClients()
+  const { clientListReq, setClientListReq, clear } = useClients()
+  const router = useRouter()
+  const [searchKeyword, setSearchKeyword] = useState((router.query.keyword as string) || '')
 
-  const [searchKeyword, setSearchKeyword] = useState(clientListReq.keyword)
+  useEffect(() => {
+    if (router.query.keyword) {
+      setSearchKeyword(router.query.keyword as string)
+      setClientListReq({
+        ...clientListReq,
+        keyword: router.query.keyword as string
+      })
+    } else {
+      clear()
+    }
+  }, [router.query.keyword])
+
+  const handleSearch = () => {
+    setClientListReq({
+      ...clientListReq,
+      keyword: searchKeyword
+    })
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, keyword: searchKeyword }
+    })
+  }
 
   return (
     <HorizontalScrollBox>
@@ -48,25 +72,14 @@ const ClientsMenu: FC<IKioskMenu> = ({ refetch }) => {
           }}
           onKeyDown={e => {
             if (e.key === 'Enter') {
-              setClientListReq({
-                ...clientListReq,
-                keyword: searchKeyword
-              })
+              handleSearch()
             }
           }}
         />
       </Box>
 
       <Box sx={{ minWidth: 'fit-content' }}>
-        <Button
-          variant={'contained'}
-          onClick={() => {
-            setClientListReq({
-              ...clientListReq,
-              keyword: searchKeyword
-            })
-          }}
-        >
+        <Button variant={'contained'} onClick={handleSearch}>
           검색
         </Button>
       </Box>
