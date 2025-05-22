@@ -22,6 +22,7 @@ import Navigation from './components/vertical/navigation'
 import AppBar from './components/vertical/appBar'
 
 const VerticalLayoutWrapper = styled('div')({
+  columnGap: '50px',
   height: '100%',
   display: 'flex'
 })

@@ -60,6 +60,13 @@ const CustomStepContent = styled(StepContent)<{ stepindex: number; activestep: n
       visibility: 'visible !important',
       height: 'auto !important',
       transform: 'none !important'
+    },
+    '& .MuiPaper-root' : {
+      position: 'relative',
+      overflow: 'visible',
+      '&:focus-within' : {
+        border: '2px solid #9155FD',
+      }
     }
   })
 )
@@ -208,21 +215,22 @@ const Index: FC = ({}) => {
   ]
 
   return (
-    <StandardTemplate title={'고객사 관리'} useBackButton onBackButtonClick={() => router.back()}>
+    <StandardTemplate title={'고객사 및 솔루션 등록'} useBackButton onBackButtonClick={() => router.back()}>
       <StepperWrapper>
         <Stepper activeStep={activeStep} orientation='vertical' nonLinear>
           {steps.map((step, index) => {
             return (
               <Step key={index} className={clsx({ active: activeStep === index })} expanded={true}>
                 <StepLabel
+                  style={{columnGap: '20px'}}
                   StepIconComponent={props => (
                     <StepperCustomDot {...props} isValid={index === 0 ? isStepOneValid : false} />
                   )}
                 >
-                  <div className='step-label' style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div className='step-label' style={{ display: 'flex', alignItems: 'center' }}>
                     <Typography className='step-number'>{`0${index + 1}`}</Typography>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Typography fontWeight={500} fontSize={30}>
+                      <Typography fontWeight={500} fontSize={24}>
                         {step.title}
                       </Typography>
                       <IconButton onClick={() => toggleStep(index)}>
@@ -234,7 +242,7 @@ const Index: FC = ({}) => {
                 <CustomStepContent stepindex={index} activestep={activeStep}>
                   <Box sx={{ py: 3, display: expandedSteps[index] ? 'block' : 'none' }}>
                     <Grid container spacing={1}>
-                      <Grid item xs={12} sm={12} md={12} lg={12} xl={8}>
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={10}>
                         {step.content}
                       </Grid>
                     </Grid>
