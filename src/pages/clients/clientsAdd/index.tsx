@@ -153,11 +153,6 @@ const Index: FC = ({}) => {
                   }
                 }
 
-                setSimpleDialogModalProps({
-                  open: true,
-                  title: `고객사 ${(clientData?.companyNo ?? 0) > 0 ? '수정' : '등록'} 완료`
-                })
-
                 activeStep === 0 && handleNext()
               } catch (e) {
                 setSimpleDialogModalProps({

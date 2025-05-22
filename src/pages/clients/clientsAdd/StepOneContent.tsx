@@ -1,6 +1,6 @@
-import { Box, Button, Grid, SelectChangeEvent, TextField, Typography, useTheme } from '@mui/material'
+import { Box, Button, Grid, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
-import { ReactDatePickerProps } from 'react-datepicker'
+import AnimatedButton from 'src/@core/components/atom/AnimatedButton'
 import PickersRange from 'src/@core/components/atom/PickersRange'
 import SwitchCustom from 'src/@core/components/atom/SwitchCustom'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
@@ -46,11 +46,6 @@ const StepOneContent: FC<IStepOneContentProps> = ({
     onDataChange({ expireDate: start })
   }
 
-  const theme = useTheme()
-
-  const { direction } = theme
-  const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
-
   // 필수값 체크 함수 추가
   const checkRequiredFields = (): boolean => {
     if (!clientData) return false
@@ -75,6 +70,30 @@ const StepOneContent: FC<IStepOneContentProps> = ({
       }
     }
   }, [clientData])
+
+  const handleSaveClick = () => {
+    if (companyIdOrg !== clientData?.companyId) {
+      setSimpleDialogModalProps({
+        open: true,
+        title: '중복확인을 해주세요'
+      })
+
+      return
+    }
+
+    if (clientData.brn && (!/^\d+$/.test(clientData.brn) || clientData.brn.length !== 10)) {
+      setSimpleDialogModalProps({
+        open: true,
+        title: !/^\d+$/.test(clientData.brn)
+          ? `사업자등록번호는 숫자만 입력 가능합니다.`
+          : `사업자등록번호는 10자리이어야 합니다.`
+      })
+
+      return
+    }
+
+    onNext()
+  }
 
   return (
     <>
@@ -312,40 +331,30 @@ const StepOneContent: FC<IStepOneContentProps> = ({
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <div className='button-wrapper'>
-          <Button
+          <AnimatedButton
             size='medium'
             variant='contained'
-            onClick={() => {
-              if (companyIdOrg !== clientData?.companyId) {
-                alert('중복확인을 해주세요')
-
-                return
-              }
-
-              if (clientData.brn && (!/^\d+$/.test(clientData.brn) || clientData.brn.length !== 10)) {
-                setSimpleDialogModalProps({
-                  open: true,
-                  title: !/^\d+$/.test(clientData.brn)
-                    ? `사업자등록번호는 숫자만 입력 가능합니다.`
-                    : `사업자등록번호는 10자리이어야 합니다.`
-                })
-
-                return
-              }
-
-              onNext()
-            }}
+            onClick={handleSaveClick}
+            expandedText='고객사정보가 저장되었습니다'
+            collapsedText='저장'
             sx={{ mr: 4 }}
             disabled={!checkRequiredFields()}
-          >
-            {(clientData?.companyNo ?? 0) > 0 ? '수정' : '등록'}
-          </Button>
+          />
 
           <Button
             size='medium'
             color='secondary'
             variant='outlined'
             onClick={() => {
+              setSimpleDialogModalProps({
+                open: true,
+                title: '취소확인',
+                contents: '저장되지 않은 모든정보가 삭제됩니다. \n 정말 취소하시겠습니까?',
+                isConfirm: true,
+                confirmFn: () => {
+                  clientDataOrg && onDataChange(clientDataOrg)
+                }
+              })
               clientDataOrg && onDataChange(clientDataOrg)
             }}
           >
