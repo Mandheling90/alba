@@ -86,10 +86,6 @@ const SolutionRow: FC<ISolutionRow> = ({
     }
   }
 
-  console.log(solutionId)
-
-  console.log(SOLUTION_TYPE_ID.SAFR)
-
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
       <CustomSelectBox
@@ -101,9 +97,12 @@ const SolutionRow: FC<ISolutionRow> = ({
 
       {useCameraId && (
         <TextField
+          disabled={!instance.isNew}
           size='small'
           value={instance.cameraId}
-          onChange={e => onUpdateInstance(serverId, instance.instanceId ?? 0, 'cameraId', e.target.value)}
+          onChange={e => {
+            onUpdateInstance(serverId, instance.instanceId ?? 0, 'cameraId', e.target.value)
+          }}
           label='카메라ID'
           variant='outlined'
           placeholder={`카메라ID`}
