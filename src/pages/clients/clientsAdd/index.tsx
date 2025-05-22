@@ -208,7 +208,7 @@ const Index: FC = ({}) => {
   ]
 
   return (
-    <StandardTemplate title={'고객사 관리'}>
+    <StandardTemplate title={'고객사 관리'} useBackButton onBackButtonClick={() => router.back()}>
       <StepperWrapper>
         <Stepper activeStep={activeStep} orientation='vertical' nonLinear>
           {steps.map((step, index) => {
