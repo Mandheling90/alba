@@ -6,9 +6,10 @@ import ButtonHover from '../atom/ButtonHover'
 interface ICustomAddCancelButton {
   onSaveClick: () => void
   onCancelClick: () => void
+  text?: string[]
 }
 
-const CustomAddCancelButton: React.FC<ICustomAddCancelButton> = ({ onSaveClick, onCancelClick }) => {
+const CustomAddCancelButton: React.FC<ICustomAddCancelButton> = ({ onSaveClick, onCancelClick, text }) => {
   return (
     <>
       <ButtonHover
@@ -23,7 +24,7 @@ const CustomAddCancelButton: React.FC<ICustomAddCancelButton> = ({ onSaveClick, 
               onSaveClick()
             }}
           >
-            저장
+            {text?.[0] ?? '저장'}
           </Typography>
         }
       />
@@ -40,7 +41,7 @@ const CustomAddCancelButton: React.FC<ICustomAddCancelButton> = ({ onSaveClick, 
               onCancelClick()
             }}
           >
-            취소
+            {text?.[1] ?? '취소'}
           </Typography>
         }
       />

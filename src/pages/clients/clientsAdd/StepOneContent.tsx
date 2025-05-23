@@ -138,6 +138,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                               setCompanyIdOrg(clientData?.companyId || '')
                               setDuplicateResult(null)
                             }}
+                            text={['사용', '취소']}
                           />
                         </Box>
                       )}
