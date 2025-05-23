@@ -372,46 +372,6 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                 >
                   취소
                 </Button>
-
-                {/* <Button
-                  size='medium'
-                  variant='contained'
-                  onClick={() => {
-                    if (companyIdOrg !== clientData?.companyId) {
-                      alert('중복확인을 해주세요')
-
-                      return
-                    }
-
-                    if (clientData.brn && (!/^\d+$/.test(clientData.brn) || clientData.brn.length !== 10)) {
-                      setSimpleDialogModalProps({
-                        open: true,
-                        title: !/^\d+$/.test(clientData.brn)
-                          ? `사업자등록번호는 숫자만 입력 가능합니다.`
-                          : `사업자등록번호는 10자리이어야 합니다.`
-                      })
-
-                      return
-                    }
-
-                    onNext()
-                  }}
-                  sx={{ mr: 4 }}
-                  disabled={!checkRequiredFields()}
-                >
-                  {(clientData?.companyNo ?? 0) > 0 ? '수정' : '저장'}
-                </Button>
-
-                <Button
-                  size='medium'
-                  color='primary'
-                  variant='outlined'
-                  onClick={() => {
-                    clientDataOrg && onDataChange(clientDataOrg)
-                  }}
-                >
-                  취소
-                </Button> */}
               </Box>
             </Grid>
           </Grid>
