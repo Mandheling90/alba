@@ -12,7 +12,7 @@ import CustomTable from 'src/@core/components/table/CustomTable'
 
 import { YN } from 'src/enum/commonEnum'
 import { useClients } from 'src/hooks/useClients'
-import { useModal } from 'src/hooks/useModal'
+import { useCustomModal, useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MList } from 'src/model/client/clientModel'
 import { useClientDelete, useClientReportGenerationStatusUpdate } from 'src/service/client/clientService'
@@ -26,6 +26,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
   const router = useRouter()
 
   const { setSimpleDialogModalProps } = useModal()
+  const { setCustomSimpleDialogModalProps } = useCustomModal()
 
   const { mutateAsync: deleteClient } = useClientDelete()
   const { mutateAsync: updateReportGenerationStatus } = useClientReportGenerationStatusUpdate()
@@ -306,8 +307,30 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
             <IconButton
               sx={{ color: 'text.secondary' }}
               onClick={async () => {
-                await deleteClient({ companyNos: [row.companyNo] })
-                refetch()
+                setCustomSimpleDialogModalProps({
+                  open: true,
+                  title: '고객사 정보 삭제 확인',
+                  contents:
+                    '선택하신 고객사 정보를 정말 삭제하시겠습니까? \r\n 삭제 시 고객사 정보 및 고객사 관련 카메라 정보 및 통계정보도 모두 삭제됩니다.',
+                  actions: [
+                    {
+                      label: '취소',
+                      variant: 'contained'
+                    },
+                    {
+                      label: '삭제',
+                      variant: 'outlined',
+                      onClick: async () => {
+                        try {
+                          await deleteClient({ companyNos: [row.companyNo] })
+                          refetch()
+                        } catch (error) {
+                          console.log(error)
+                        }
+                      }
+                    }
+                  ]
+                })
               }}
             >
               <IconCustom isCommon icon='DeleteOutline' />

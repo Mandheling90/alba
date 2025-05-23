@@ -1,8 +1,9 @@
-"use client"
+'use client'
 import { ReactNode, createContext, useState } from 'react'
-import SimpleDialogModal, { CustomIDialogProps, CUSTOM_INITIAL_DIALOG_PROPS } from 'src/@core/components/molecule/CustomDialogModal'
-import CustomDialogModal from 'src/@core/components/molecule/CustomDialogModal'
-
+import CustomDialogModal, {
+  CUSTOM_INITIAL_DIALOG_PROPS,
+  CustomIDialogProps
+} from 'src/@core/components/molecule/CustomDialogModal'
 
 export type CustomModalValuesType = {
   customSimpleDialogModalProps: CustomIDialogProps
