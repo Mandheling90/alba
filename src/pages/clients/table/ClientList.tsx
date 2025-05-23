@@ -198,15 +198,9 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
                       <Typography sx={{ mt: 2, color: 'rgba(58, 53, 65, 0.6)', fontSize: 16, fontWeight: 400 }}>
                         <b>총 {row.analysisChannels}개</b>의 분석채널이 아래의 서비스 항목으로 등록되어 있습니다.
                         <ul>
-                          {Object.entries(
-                            row.serviceTypes.reduce((acc: { [key: string]: number }, curr) => {
-                              acc[curr] = (acc[curr] || 0) + 1
-
-                              return acc
-                            }, {})
-                          ).map(([serviceType, count]) => (
-                            <li key={serviceType}>
-                              {serviceType} : {count}대
+                          {row.serviceInfos.map((item, index) => (
+                            <li key={index}>
+                              {item.serviceName} : {item.serviceCount}대
                             </li>
                           ))}
                         </ul>

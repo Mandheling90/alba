@@ -124,6 +124,12 @@ export interface MList {
   reportEmail: string
   accountStatus: YN
   accountStatusStr: string
+  serviceInfos: IServiceInfo[]
+}
+
+export interface IServiceInfo {
+  serviceName: string
+  serviceCount: number
 }
 
 // 공통 고객사 정보 인터페이스
