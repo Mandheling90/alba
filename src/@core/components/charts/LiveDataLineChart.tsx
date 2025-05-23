@@ -23,8 +23,8 @@ const LiveDataLineChart = memo(
       return data.map(item => [item.timestamp, item.count])
     }
 
-    const convertedData = convertDataFormat(data[0].dataList)
-    const convertedSecondData = convertDataFormat(data[1].dataList)
+    const convertedData = data?.[0]?.dataList ? convertDataFormat(data[0].dataList) : []
+    const convertedSecondData = data?.[1]?.dataList ? convertDataFormat(data[1].dataList) : []
 
     useEffect(() => {
       const style = document.createElement('style')
