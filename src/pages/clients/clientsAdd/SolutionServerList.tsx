@@ -350,13 +350,15 @@ const SolutionServerList: FC<ISolutionRow> = ({
         />
       ) : (
         <>
-          {isServerUsingSolution(solutionList.aiSolutionId) && solutionList.serverList.length === 0 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
-              <IconButton onClick={() => onAddInstance(0)}>
-                <IconCustom isCommon icon={'add-button'} />
-              </IconButton>
-            </Box>
-          )}
+          {isServerUsingSolution(solutionList.aiSolutionId) &&
+            solutionList.serverList.length === 0 &&
+            solutionList.serverList.length > 0 && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
+                <IconButton onClick={() => onAddInstance(0)}>
+                  <IconCustom isCommon icon={'add-button'} />
+                </IconButton>
+              </Box>
+            )}
 
           {solutionList.serverList.map(server => (
             <Box sx={{ width: '100%' }} key={server.serverId}>

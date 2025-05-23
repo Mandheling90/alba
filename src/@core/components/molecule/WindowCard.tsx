@@ -17,7 +17,8 @@ const WindowCard: FC<WindowCardProps> = ({ title, leftContent, rightContent, chi
           p: 3,
           display: 'flex',
           alignItems: 'center',
-          gap: 2
+          gap: 2,
+          borderRadius: '6px 6px 0 0'
         }}
       >
         {leftContent && <Box>{leftContent}</Box>}

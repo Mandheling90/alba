@@ -1,13 +1,16 @@
 // ** MUI Imports
 
-import { Grid, Typography } from '@mui/material'
+import { Grid, IconButton, Typography } from '@mui/material'
 import { FC } from 'react'
 import PageHeader from 'src/@core/components/page-header'
+import IconCustom from 'src/layouts/components/IconCustom'
 
 const StandardTemplate: FC<{
   title: string
   children: React.ReactNode
-}> = ({ title, children }) => {
+  useBackButton?: boolean
+  onBackButtonClick?: () => void
+}> = ({ title, children, useBackButton, onBackButtonClick }) => {
   return (
     <Grid spacing={2} container>
       <Grid
@@ -24,7 +27,23 @@ const StandardTemplate: FC<{
         <Grid item xs={12} sx={{ mt: 5, mb: 10 }}>
           <PageHeader
             title={
-              <Typography variant='h4' sx={{ fontWeight: 500, ml: 1, lineHeight: '32px', fontSize: '33px' }}>
+              <Typography
+                variant='h4'
+                sx={{
+                  fontWeight: 500,
+                  ml: 1,
+                  lineHeight: '32px',
+                  fontSize: '33px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 3
+                }}
+              >
+                {useBackButton && (
+                  <IconButton onClick={onBackButtonClick}>
+                    <IconCustom isCommon icon='arrow_left3' />
+                  </IconButton>
+                )}
                 {title}
               </Typography>
             }

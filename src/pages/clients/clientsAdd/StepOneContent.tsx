@@ -1,6 +1,6 @@
-import { Box, Button, Grid, SelectChangeEvent, TextField, Typography, useTheme } from '@mui/material'
+import { Box, Button, Grid, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
-import { ReactDatePickerProps } from 'react-datepicker'
+import AnimatedButton from 'src/@core/components/atom/AnimatedButton'
 import PickersRange from 'src/@core/components/atom/PickersRange'
 import SwitchCustom from 'src/@core/components/atom/SwitchCustom'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
@@ -9,6 +9,7 @@ import { grayTextBackground, grayTextFieldStyle, requiredTextFieldStyle } from '
 import { YN } from 'src/enum/commonEnum'
 import { useModal } from 'src/hooks/useModal'
 import { IClientDetail } from 'src/model/client/clientModel'
+import styled from 'styled-components'
 
 interface IStepOneContentProps {
   clientData: IClientDetail | null
@@ -46,11 +47,6 @@ const StepOneContent: FC<IStepOneContentProps> = ({
     onDataChange({ expireDate: start })
   }
 
-  const theme = useTheme()
-
-  const { direction } = theme
-  const popperPlacement: ReactDatePickerProps['popperPlacement'] = direction === 'ltr' ? 'bottom-start' : 'bottom-end'
-
   // 필수값 체크 함수 추가
   const checkRequiredFields = (): boolean => {
     if (!clientData) return false
@@ -76,18 +72,43 @@ const StepOneContent: FC<IStepOneContentProps> = ({
     }
   }, [clientData])
 
+  const handleSaveClick = () => {
+    if (companyIdOrg !== clientData?.companyId) {
+      setSimpleDialogModalProps({
+        open: true,
+        title: '중복확인을 해주세요'
+      })
+
+      return
+    }
+
+    if (clientData.brn && (!/^\d+$/.test(clientData.brn) || clientData.brn.length !== 10)) {
+      setSimpleDialogModalProps({
+        open: true,
+        title: !/^\d+$/.test(clientData.brn)
+          ? `사업자등록번호는 숫자만 입력 가능합니다.`
+          : `사업자등록번호는 10자리이어야 합니다.`
+      })
+
+      return
+    }
+
+    onNext()
+  }
+
   return (
-    <>
-      <Box>
-        <WindowCard title='고객사 정보'>
-          <Grid container spacing={1}>
-            <Grid item xs={6}>
+    <WindowCard title='고객사 정보'>
+      <ScrollContainer>
+        <ScrollContainerInner>
+          <Grid container spacing={3}>
+            <Grid item xs={7}>
               <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
                 <Typography
                   fontSize={20}
                   fontWeight={500}
                   variant='h6'
                   sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                  align={'left'}
                 >
                   고객사ID
                 </Typography>
@@ -122,9 +143,15 @@ const StepOneContent: FC<IStepOneContentProps> = ({
               </Box>
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
-                <Typography fontSize={20} fontWeight={500} variant='h6' sx={{ minWidth: '90px', whiteSpace: 'nowrap' }}>
+                <Typography
+                  fontSize={20}
+                  fontWeight={500}
+                  variant='h6'
+                  sx={{ minWidth: '90px', whiteSpace: 'nowrap' }}
+                  align={'right'}
+                >
                   고객사명
                 </Typography>
                 <TextField
@@ -144,6 +171,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   fontWeight={500}
                   variant='h6'
                   sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                  align={'left'}
                 >
                   고객사주소
                 </Typography>
@@ -164,6 +192,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   fontWeight={500}
                   variant='h6'
                   sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                  align={'left'}
                 >
                   사업자등록번호
                 </Typography>
@@ -184,6 +213,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   fontWeight={500}
                   variant='h6'
                   sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                  align={'right'}
                 >
                   사업자 현재 상태
                 </Typography>
@@ -211,6 +241,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   fontWeight={500}
                   variant='h6'
                   sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                  align={'left'}
                 >
                   계약기간설정
                 </Typography>
@@ -235,15 +266,16 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   fontWeight={500}
                   variant='h6'
                   sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                  align={'left'}
                 >
                   리포트생성
                 </Typography>
                 <SwitchCustom
-                  width={100}
+                  width={90}
                   switchName={['사용', '미사용']}
                   selected={clientData?.reportGeneration === YN.Y}
                   onChange={handleSwitchChange('reportGeneration')}
-                  activeColor={['#9155FD', '#696969']}
+                  activeColor={['#9155FD', '#a5a5a5']}
                 />
               </Box>
             </Grid>
@@ -255,6 +287,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   fontWeight={500}
                   variant='h6'
                   sx={{ minWidth: '110px', whiteSpace: 'nowrap' }}
+                  align={'right'}
                 >
                   리포트수신
                 </Typography>
@@ -275,15 +308,16 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   fontWeight={500}
                   variant='h6'
                   sx={{ minWidth: '160px', whiteSpace: 'nowrap' }}
+                  align={'left'}
                 >
                   고객사계정
                 </Typography>
                 <SwitchCustom
-                  width={100}
+                  width={90}
                   switchName={['활성', '비활성']}
                   selected={clientData?.accountStatus === YN.Y}
                   onChange={handleSwitchChange('accountStatus')}
-                  activeColor={['#9155FD', '#F57A52']}
+                  activeColor={['#9155FD', '#a5a5a5']}
                 />
               </Box>
             </Grid>
@@ -294,67 +328,66 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   fontWeight={500}
                   variant='h6'
                   sx={{ minWidth: '110px', whiteSpace: 'nowrap' }}
+                  align={'right'}
                 >
                   퇴장객 분석
                 </Typography>
                 <SwitchCustom
-                  width={100}
+                  width={90}
                   switchName={['활성', '비활성']}
                   selected={clientData?.exitDisplayYn === YN.Y}
                   onChange={handleSwitchChange('exitDisplayYn')}
-                  activeColor={['#9155FD', '#F57A52']}
+                  activeColor={['#9155FD', '#a5a5a5']}
                 />
               </Box>
             </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <AnimatedButton
+                  size='medium'
+                  variant='contained'
+                  onClick={handleSaveClick}
+                  expandedText='고객사정보가 저장되었습니다'
+                  collapsedText='저장'
+                  sx={{ mr: 4 }}
+                  disabled={!checkRequiredFields()}
+                />
+
+                <Button
+                  size='medium'
+                  color='secondary'
+                  variant='outlined'
+                  onClick={() => {
+                    setSimpleDialogModalProps({
+                      open: true,
+                      title: '취소확인',
+                      contents: '저장되지 않은 모든정보가 삭제됩니다. \n 정말 취소하시겠습니까?',
+                      isConfirm: true,
+                      confirmFn: () => {
+                        clientDataOrg && onDataChange(clientDataOrg)
+                      }
+                    })
+                    clientDataOrg && onDataChange(clientDataOrg)
+                  }}
+                >
+                  취소
+                </Button>
+              </Box>
+            </Grid>
           </Grid>
-        </WindowCard>
-      </Box>
-
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <div className='button-wrapper'>
-          <Button
-            size='medium'
-            variant='contained'
-            onClick={() => {
-              if (companyIdOrg !== clientData?.companyId) {
-                alert('중복확인을 해주세요')
-
-                return
-              }
-
-              if (clientData.brn && (!/^\d+$/.test(clientData.brn) || clientData.brn.length !== 10)) {
-                setSimpleDialogModalProps({
-                  open: true,
-                  title: !/^\d+$/.test(clientData.brn)
-                    ? `사업자등록번호는 숫자만 입력 가능합니다.`
-                    : `사업자등록번호는 10자리이어야 합니다.`
-                })
-
-                return
-              }
-
-              onNext()
-            }}
-            sx={{ mr: 4 }}
-            disabled={!checkRequiredFields()}
-          >
-            {(clientData?.companyNo ?? 0) > 0 ? '수정' : '등록'}
-          </Button>
-
-          <Button
-            size='medium'
-            color='secondary'
-            variant='outlined'
-            onClick={() => {
-              clientDataOrg && onDataChange(clientDataOrg)
-            }}
-          >
-            취소
-          </Button>
-        </div>
-      </Box>
-    </>
+        </ScrollContainerInner>
+      </ScrollContainer>
+    </WindowCard>
   )
 }
+
+const ScrollContainer = styled.div`
+  overflow-x: auto;
+  max-width: 100%;
+`
+const ScrollContainerInner = styled.div`
+  // 100% 의 값과 1000px의 값 중 큰 값을 사용
+  width: max(1000px, 100%);
+`
 
 export default StepOneContent

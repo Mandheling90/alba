@@ -2,6 +2,7 @@ import { Box, Grid, IconButton, Step, StepContent, StepLabel, Stepper, Typograph
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import StepperCustomDot from 'src/@core/components/atom/StepperCustomDot'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import StepperWrapper from 'src/@core/styles/mui/stepper'
@@ -34,7 +35,7 @@ export const DEFAULT_CLIENT_DATA: IClientDetail = {
   reportEmail: '',
   accountStatus: YN.Y,
   accountStatusStr: '',
-  exitDisplayYn: YN.Y,
+  exitDisplayYn: YN.N,
   exitDisplayYnStr: ''
 }
 
@@ -60,6 +61,13 @@ const CustomStepContent = styled(StepContent)<{ stepindex: number; activestep: n
       visibility: 'visible !important',
       height: 'auto !important',
       transform: 'none !important'
+    },
+    '& .MuiPaper-root' : {
+      position: 'relative',
+      overflow: 'visible',
+      '&:focus-within' : {
+        border: '2px solid #9155FD',
+      }
     }
   })
 )
@@ -153,11 +161,6 @@ const Index: FC = ({}) => {
                   }
                 }
 
-                setSimpleDialogModalProps({
-                  open: true,
-                  title: `고객사 ${(clientData?.companyNo ?? 0) > 0 ? '수정' : '등록'} 완료`
-                })
-
                 activeStep === 0 && handleNext()
               } catch (e) {
                 setSimpleDialogModalProps({
@@ -180,7 +183,9 @@ const Index: FC = ({}) => {
           onDuplicateCheck={async () => {
             try {
               const res = await duplicateCheck(clientData?.companyId)
-              alert(res.data.message)
+              toast(res.data.message, {
+                position: 'top-center'
+              })
               if (res.data.duplicateYn === YN.N) {
                 return false
               } else {
@@ -208,21 +213,22 @@ const Index: FC = ({}) => {
   ]
 
   return (
-    <StandardTemplate title={'고객사 관리'}>
+    <StandardTemplate title={'고객사 및 솔루션 등록'} useBackButton onBackButtonClick={() => router.back()}>
       <StepperWrapper>
         <Stepper activeStep={activeStep} orientation='vertical' nonLinear>
           {steps.map((step, index) => {
             return (
               <Step key={index} className={clsx({ active: activeStep === index })} expanded={true}>
                 <StepLabel
+                  style={{columnGap: '20px'}}
                   StepIconComponent={props => (
                     <StepperCustomDot {...props} isValid={index === 0 ? isStepOneValid : false} />
                   )}
                 >
-                  <div className='step-label' style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div className='step-label' style={{ display: 'flex', alignItems: 'center' }}>
                     <Typography className='step-number'>{`0${index + 1}`}</Typography>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Typography fontWeight={500} fontSize={30}>
+                      <Typography fontWeight={500} fontSize={24}>
                         {step.title}
                       </Typography>
                       <IconButton onClick={() => toggleStep(index)}>
@@ -234,7 +240,7 @@ const Index: FC = ({}) => {
                 <CustomStepContent stepindex={index} activestep={activeStep}>
                   <Box sx={{ py: 3, display: expandedSteps[index] ? 'block' : 'none' }}>
                     <Grid container spacing={1}>
-                      <Grid item xs={12} sm={12} md={12} lg={12} xl={8}>
+                      <Grid item xs={12} sm={12} md={12} lg={12} xl={10}>
                         {step.content}
                       </Grid>
                     </Grid>

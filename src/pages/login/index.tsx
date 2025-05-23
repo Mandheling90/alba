@@ -109,15 +109,15 @@ const LoginPage = () => {
             <Typography variant='h5' sx={{ fontWeight: 600, mb: 1.5 }}>
               로그인
             </Typography>
-            <Typography variant='body2'>사용자 이메일 계정으로 로그인해 주세요. </Typography>
+            <Typography variant='body2'>사용자 ID와 비밀번호를 입력하여 로그인해 주세요. </Typography>
           </Box>
           <form noValidate autoComplete='off' onSubmit={onSubmit}>
             <TextField
               value={values.id}
               autoFocus
               fullWidth
-              id='Email'
-              label='이메일'
+              id='id'
+              label='ID'
               sx={{ mb: 4 }}
               onChange={handleChange('id')}
             />

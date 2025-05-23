@@ -11,6 +11,8 @@ export type ClientsValuesType = {
 
   selectClientData: MList[]
   setSelectClientData: (value: MList[]) => void
+
+  clear: () => void
 }
 
 // ** Defaults
@@ -27,7 +29,9 @@ const defaultProvider: ClientsValuesType = {
   setClientListReq: () => null,
 
   selectClientData: [],
-  setSelectClientData: () => []
+  setSelectClientData: () => [],
+
+  clear: () => null
 }
 
 const ClientsContext = createContext(defaultProvider)
@@ -49,7 +53,11 @@ const ClientsProvider = ({ children }: Props) => {
     clientListReq,
     setClientListReq,
     selectClientData,
-    setSelectClientData
+    setSelectClientData,
+    clear: () => {
+      setClientListReq(defaultProvider.clientListReq)
+      setSelectClientData(defaultProvider.selectClientData)
+    }
   }
 
   return <ClientsContext.Provider value={values}>{children}</ClientsContext.Provider>

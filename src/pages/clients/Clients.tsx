@@ -11,9 +11,14 @@ import ClientsMenu from './menu/ClientsMenu'
 import ClientList from './table/ClientList'
 
 const Contents: FC = (): React.ReactElement => {
-  const { clientListReq } = useClients()
-
+  const { clientListReq, clear } = useClients()
   const { data, refetch } = useClientList(clientListReq)
+
+  // useEffect(() => {
+  //   return () => {
+  //     clear()
+  //   }
+  // }, [])
 
   if (!data) {
     return <></>

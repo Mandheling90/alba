@@ -3,7 +3,7 @@ import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import { YN } from 'src/enum/commonEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { IAiSolutionService, IInstanceList } from 'src/model/client/clientModel'
+import { IAiSolutionService, IInstanceList, SOLUTION_TYPE_ID } from 'src/model/client/clientModel'
 
 interface ISolutionRow {
   aiSolutionService: IAiSolutionService[]
@@ -43,7 +43,10 @@ const SolutionRow: FC<ISolutionRow> = ({
 
   useEffect(() => {
     if (serviceOptions.length > 0 && !instance.aiServiceId) {
-      onUpdateInstance(serverId, instance.instanceId ?? 0, 'aiServiceId', serviceOptions[0].value)
+      const defaultIndex = solutionId === SOLUTION_TYPE_ID.SAFR ? 2 : 0
+      if (serviceOptions[defaultIndex]) {
+        onUpdateInstance(serverId, instance.instanceId ?? 0, 'aiServiceId', serviceOptions[defaultIndex].value)
+      }
     }
   }, [serviceOptions])
 
@@ -94,9 +97,12 @@ const SolutionRow: FC<ISolutionRow> = ({
 
       {useCameraId && (
         <TextField
+          disabled={!instance.isNew}
           size='small'
           value={instance.cameraId}
-          onChange={e => onUpdateInstance(serverId, instance.instanceId ?? 0, 'cameraId', e.target.value)}
+          onChange={e => {
+            onUpdateInstance(serverId, instance.instanceId ?? 0, 'cameraId', e.target.value)
+          }}
           label='카메라ID'
           variant='outlined'
           placeholder={`카메라ID`}
