@@ -4,6 +4,13 @@ import { ICountLineChartPolling, ILineDataList } from 'src/model/statistics/Stat
 import { areEqual } from 'src/utils/CommonUtil'
 import styled from 'styled-components'
 
+declare module 'highcharts' {
+  interface Series {
+    pulse?: any
+    markerGroup?: any
+  }
+}
+
 interface ILiveDataLineChart {
   selected: number // 선택된 값
   data: ILineDataList[]
@@ -41,6 +48,40 @@ const LiveDataLineChart = memo(
     }, [])
 
     useEffect(() => {
+      // 펄스 효과를 위한 이벤트 핸들러 추가
+      Highcharts.addEvent(
+        Highcharts.Series,
+        'addPoint',
+        (e: { point: Highcharts.Point; target: Highcharts.Series }) => {
+          const point = e.point,
+            series = e.target
+
+          if (!series.pulse) {
+            series.pulse = series.chart.renderer.circle().add(series.markerGroup)
+          }
+
+          setTimeout(() => {
+            series.pulse
+              .attr({
+                x: series.xAxis.toPixels(point.x ?? 0, true),
+                y: series.yAxis.toPixels(point.y ?? 0, true),
+                r: 2,
+                opacity: 1,
+                fill: series.color
+              })
+              .animate(
+                {
+                  r: 20,
+                  opacity: 0
+                },
+                {
+                  duration: 1000
+                }
+              )
+          }, 1)
+        }
+      )
+
       const chart = Highcharts.stockChart('container', {
         chart: {
           events: {

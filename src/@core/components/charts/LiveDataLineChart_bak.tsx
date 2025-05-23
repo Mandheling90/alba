@@ -2,6 +2,13 @@
 import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 
+declare module 'highcharts' {
+  interface Series {
+    pulse?: any
+    markerGroup?: any
+  }
+}
+
 // 샘플 데이터 생성 함수
 const generateSampleData = (count = 20): [number, number][] => {
   const data: [number, number][] = []
@@ -15,7 +22,7 @@ const generateSampleData = (count = 20): [number, number][] => {
 }
 
 // 사용 예시 컴포넌트
-export const LiveDataLineChartExample: React.FC = () => {
+const LiveDataLineChartExample: React.FC = () => {
   const initialData = generateSampleData()
   const initialData2 = generateSampleData()
 
@@ -52,6 +59,40 @@ const LiveDataLineChart: React.FC<ILiveDataLineChart> = ({ selected, data, secon
       if (typeof HeatmapModule === 'function') {
         HeatmapModule(Highcharts)
       }
+
+      // 펄스 효과를 위한 이벤트 핸들러 추가
+      Highcharts.addEvent(
+        Highcharts.Series,
+        'addPoint',
+        (e: { point: Highcharts.Point; target: Highcharts.Series }) => {
+          const point = e.point,
+            series = e.target
+
+          if (!series.pulse) {
+            series.pulse = series.chart.renderer.circle().add(series.markerGroup)
+          }
+
+          setTimeout(() => {
+            series.pulse
+              .attr({
+                x: series.xAxis.toPixels(point.x ?? 0, true),
+                y: series.yAxis.toPixels(point.y ?? 0, true),
+                r: 2,
+                opacity: 1,
+                fill: series.color
+              })
+              .animate(
+                {
+                  r: 20,
+                  opacity: 0
+                },
+                {
+                  duration: 1000
+                }
+              )
+          }, 1)
+        }
+      )
 
       // 차트 생성
       const options: Highcharts.Options = {
@@ -177,4 +218,4 @@ const ChartWrapper = styled.div`
   }
 `
 
-export default LiveDataLineChart
+export default LiveDataLineChartExample
