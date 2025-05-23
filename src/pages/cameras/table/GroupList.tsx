@@ -1,19 +1,21 @@
-import { Box, Collapse, IconButton, TextField, Typography } from '@mui/material'
+import { Box, Collapse, IconButton, Switch, TextField, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { FC, useContext, useEffect, useState } from 'react'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import DividerBar from 'src/@core/components/atom/DividerBar'
+import LatLonInput from 'src/@core/components/atom/LatLonInput'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import PipeLine from 'src/@core/components/table/PipeLine'
 import { CamerasContext } from 'src/context/CamerasContext'
 import { TableContext } from 'src/context/TableContext'
-import { YN } from 'src/enum/commonEnum'
-import { useModal } from 'src/hooks/useModal'
+import { EMenuType, YN } from 'src/enum/commonEnum'
+import { useAuth } from 'src/hooks/useAuth'
+import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MClientCameraList, MClientGroupCameraList } from 'src/model/cameras/CamerasModel'
-import { useClientGroupDelete } from 'src/service/cameras/camerasService'
-import { getErrorMessage } from 'src/utils/CommonUtil'
+import { useClientGroupDelete, useClientGroupStatus } from 'src/service/cameras/camerasService'
+import { getAuthMenu } from 'src/utils/CommonUtil'
 import ModifyActions from './ModifyActions'
 
 interface IGroupList {
@@ -43,22 +45,21 @@ const GroupList: FC<IGroupList> = ({
     handleCancelClick,
     groupModifyId,
     setGroupModifyId,
-    selectedCamera,
-    setSelectedCamera,
     updateGroupCameraData,
-    setIsGroupModifyMode,
     handleGroupCancelClick,
     handleGroupSaveClick,
     deleteGroupCamera,
-    updateClientCameraData
+    updateClientCameraData,
+    viewType
   } = useContext(CamerasContext)
-
-  const { showModal } = useModal()
 
   const { setSelectedRow } = useContext(TableContext)
   const [groupOpen, setGroupOpen] = useState(true)
   const [selectGroup, setSelectGroup] = useState(false)
   const { mutateAsync: clientGroupDelete } = useClientGroupDelete()
+  const { mutateAsync: clientGroupStatus } = useClientGroupStatus()
+  const { companyNo } = useLayout()
+  const { user } = useAuth()
 
   const updatedClientColumns = (clientColumns: GridColDef[]): GridColDef[] => {
     return clientColumns.map(column => {
@@ -115,6 +116,76 @@ const GroupList: FC<IGroupList> = ({
 
                   // updateGroupCameraData(group.groupId, row.cameraNo, { isEdit: false })
                 }}
+              />
+            )
+          }
+        }
+      }
+      if (column.field === 'cameraStatus') {
+        return {
+          ...column,
+          renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
+            return (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+                <Switch
+                  disabled={
+                    getAuthMenu(user?.userInfo?.authMenuList ?? [], EMenuType['카메라위치등록'])?.updateYn === YN.N
+                  }
+                  checked={row.cameraStatus === YN.Y}
+                  onChange={async event => {
+                    try {
+                      const newStatus = event.target.checked ? YN.Y : YN.N
+                      await clientGroupStatus({
+                        cameraNo: row.cameraNo,
+                        companyNo: companyNo ?? 0,
+                        cameraStatus: newStatus
+                      })
+                      updateClientCameraData(row.cameraNo, { cameraStatus: newStatus })
+                      updateGroupCameraData(group.groupId, row.cameraNo, { cameraStatus: newStatus })
+                    } catch (error) {
+                      console.error('카메라 상태 변경 중 오류 발생:', error)
+                      updateClientCameraData(row.cameraNo, { cameraStatus: row.cameraStatus })
+                      updateGroupCameraData(group.groupId, row.cameraNo, { cameraStatus: row.cameraStatus })
+                    }
+                  }}
+                />
+              </Box>
+            )
+          }
+        }
+      }
+      if (column.field === 'zonePoints') {
+        console.log('is group')
+
+        return {
+          ...column,
+          renderCell: ({ row }: GridRenderCellParams<MClientCameraList>) => {
+            const isEditing = row.isEdit ?? false
+
+            const x = row.flowPlanBindingYN === YN.Y ? row.flowPlanX ?? 0 : row.lat ?? 0
+            const y = row.flowPlanBindingYN === YN.Y ? row.flowPlanY ?? 0 : row.lon ?? 0
+
+            return (
+              <LatLonInput
+                cameraNo={row.cameraNo}
+                lat={x}
+                lon={y}
+                isEditing={isEditing}
+                onLatChange={value => {
+                  viewType?.type === 'image' &&
+                    updateClientCameraData?.(row.cameraNo, {
+                      lat: value ?? 0,
+                      lon: y
+                    })
+                }}
+                onLonChange={value => {
+                  viewType?.type === 'image' &&
+                    updateClientCameraData?.(row.cameraNo, {
+                      lat: x,
+                      lon: value ?? 0
+                    })
+                }}
+                groupId={group.groupId}
               />
             )
           }
@@ -250,9 +321,7 @@ const GroupList: FC<IGroupList> = ({
                     deleteGroupCamera(group.groupId, undefined)
                   }
                 } catch (error) {
-                  showModal({
-                    title: getErrorMessage(error)
-                  })
+                  console.log(error)
                 }
               }}
             >

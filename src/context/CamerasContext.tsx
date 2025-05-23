@@ -46,6 +46,9 @@ export type CamerasValuesType = {
   groupModifyId: number | null
   setGroupModifyId: React.Dispatch<React.SetStateAction<number | null>>
 
+  groupMapModifyId: number | null
+  setGroupMapModifyId: React.Dispatch<React.SetStateAction<number | null>>
+
   isGroupModifyMode: boolean
   setIsGroupModifyMode: React.Dispatch<React.SetStateAction<boolean>>
 
@@ -108,6 +111,9 @@ const defaultProvider: CamerasValuesType = {
   groupModifyId: null,
   setGroupModifyId: () => null,
 
+  groupMapModifyId: null,
+  setGroupMapModifyId: () => null,
+
   isGroupModifyMode: false,
   setIsGroupModifyMode: () => null,
 
@@ -165,6 +171,7 @@ const CamerasProvider = ({ children }: Props) => {
   const { mutateAsync: clientGroupCameraAdd } = useClientGroupCameraAdd()
   const { mutateAsync: clientGroupUpdate } = useClientGroupUpdate()
 
+  const [groupMapModifyId, setGroupMapModifyId] = useState<number | null>(defaultProvider.groupMapModifyId)
   const [clientCameraData, setClientCameraData] = useState<MClientCameraList[] | null>(defaultProvider.clientCameraData)
   const [clientCameraDataOrigin, setClientCameraDataOrigin] = useState<MClientCameraList[] | null>(
     defaultProvider.clientCameraDataOrigin
@@ -652,7 +659,9 @@ const CamerasProvider = ({ children }: Props) => {
     addGroupCamera,
     deleteGroupCamera,
     cameraPage,
-    setCameraPage
+    setCameraPage,
+    groupMapModifyId,
+    setGroupMapModifyId
   }
 
   return (

@@ -84,7 +84,10 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
     setSelectedCamera,
     cameraPage,
     mapModifyModCameraId,
-    setMapModifyModCameraId
+    setMapModifyModCameraId,
+    updateGroupCameraData,
+    groupMapModifyId,
+    setGroupMapModifyId
   } = useCameras()
 
   useEffect(() => {
@@ -205,7 +208,17 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
         lat: mouseEvent.latLng.getLat(),
         lon: mouseEvent.latLng.getLng()
       })
+
       setMapModifyModCameraId(null)
+
+      if (groupMapModifyId) {
+        updateGroupCameraData(groupMapModifyId, mapModifyModCameraId, {
+          lat: mouseEvent.latLng.getLat(),
+          lon: mouseEvent.latLng.getLng()
+        })
+
+        setGroupMapModifyId(null)
+      }
     }
   }
 
@@ -235,6 +248,15 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
           flowPlanY: y
         })
         setMapModifyModCameraId(null)
+
+        if (groupMapModifyId) {
+          updateGroupCameraData(groupMapModifyId, mapModifyModCameraId, {
+            flowPlanX: x,
+            flowPlanY: y
+          })
+
+          setGroupMapModifyId(null)
+        }
       }
     },
     [selectedCamera, mapModifyModCameraId]

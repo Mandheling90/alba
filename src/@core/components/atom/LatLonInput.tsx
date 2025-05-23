@@ -6,6 +6,7 @@ import CustomTextFieldState from './CustomTextFieldState'
 
 interface LatLonInputProps {
   cameraNo: number
+  groupId?: number
   lat: number | null
   lon: number | null
   isEditing: boolean
@@ -24,8 +25,8 @@ const formatLatLon = (value: number): string => {
   return value.toFixed(6)
 }
 
-const LatLonInput: FC<LatLonInputProps> = ({ cameraNo, lat, lon, isEditing, onLatChange, onLonChange }) => {
-  const { mapModifyModCameraId, setMapModifyModCameraId } = useCameras()
+const LatLonInput: FC<LatLonInputProps> = ({ cameraNo, groupId, lat, lon, isEditing, onLatChange, onLonChange }) => {
+  const { mapModifyModCameraId, setMapModifyModCameraId, groupMapModifyId, setGroupMapModifyId } = useCameras()
 
   return (
     <Box
@@ -50,6 +51,8 @@ const LatLonInput: FC<LatLonInputProps> = ({ cameraNo, lat, lon, isEditing, onLa
             onClick={e => {
               e.stopPropagation()
               setMapModifyModCameraId?.(mapModifyModCameraId === cameraNo ? null : cameraNo)
+
+              groupId && setGroupMapModifyId?.(groupMapModifyId === groupId ? null : groupId)
             }}
           >
             <IconCustom
