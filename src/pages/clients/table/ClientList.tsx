@@ -275,9 +275,9 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
             <BorderNameTag
-              name={row.accountStatus ? '활성상태' : '비활성상태'}
-              background={row.accountStatus ? '#9155fd21' : '#FF4C5121'}
-              color={row.accountStatus ? '#9155FD' : '#FF4C51'}
+              name={row.accountStatus === YN.Y ? '활성상태' : '비활성상태'}
+              background={row.accountStatus === YN.Y ? '#9155fd21' : '#FF4C5121'}
+              color={row.accountStatus === YN.Y ? '#9155FD' : '#FF4C51'}
             />
           </Box>
         )
