@@ -9,9 +9,11 @@ import PipeLine from 'src/@core/components/table/PipeLine'
 import { CamerasContext } from 'src/context/CamerasContext'
 import { TableContext } from 'src/context/TableContext'
 import { YN } from 'src/enum/commonEnum'
+import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MClientCameraList, MClientGroupCameraList } from 'src/model/cameras/CamerasModel'
 import { useClientGroupDelete } from 'src/service/cameras/camerasService'
+import { getErrorMessage } from 'src/utils/CommonUtil'
 import ModifyActions from './ModifyActions'
 
 interface IGroupList {
@@ -50,6 +52,8 @@ const GroupList: FC<IGroupList> = ({
     deleteGroupCamera,
     updateClientCameraData
   } = useContext(CamerasContext)
+
+  const { showModal } = useModal()
 
   const { setSelectedRow } = useContext(TableContext)
   const [groupOpen, setGroupOpen] = useState(true)
@@ -139,14 +143,6 @@ const GroupList: FC<IGroupList> = ({
       handleClose()
     }
   }, [])
-
-  // useEffect(() => {
-  //   if (JSON.stringify(selectedCamera) === JSON.stringify(group.groupItemList)) {
-  //     setSelectGroup(true)
-  //   } else {
-  //     setSelectGroup(false)
-  //   }
-  // }, [selectedCamera])
 
   if (isGroupModifyMode && group.groupId !== groupModifyId) {
     return null
@@ -254,7 +250,9 @@ const GroupList: FC<IGroupList> = ({
                     deleteGroupCamera(group.groupId, undefined)
                   }
                 } catch (error) {
-                  console.log(error)
+                  showModal({
+                    title: getErrorMessage(error)
+                  })
                 }
               }}
             >

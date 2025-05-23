@@ -1,23 +1,27 @@
 import { Box, Button, Grid, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import AnimatedButton from 'src/@core/components/atom/AnimatedButton'
+import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import PickersRange from 'src/@core/components/atom/PickersRange'
 import SwitchCustom from 'src/@core/components/atom/SwitchCustom'
+import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 import { grayTextBackground, grayTextFieldStyle, requiredTextFieldStyle } from 'src/@core/styles/TextFieldStyle'
 import { YN } from 'src/enum/commonEnum'
 import { useModal } from 'src/hooks/useModal'
 import { IClientDetail } from 'src/model/client/clientModel'
+import { MAuthDuplicate } from 'src/model/commonModel'
+import { useClientDuplicateCheck } from 'src/service/client/clientService'
+import { getErrorMessage } from 'src/utils/CommonUtil'
 import styled from 'styled-components'
 
 interface IStepOneContentProps {
   clientData: IClientDetail | null
   onDataChange: (data: Partial<IClientDetail>) => void
-  onNext: () => void
-  onReset: () => void
+  onNext: () => Promise<boolean>
   onValidationChange?: (isValid: boolean) => void
-  onDuplicateCheck: () => Promise<boolean>
+  useExitDisplay: boolean
 }
 
 // 첫 번째 스텝 컴포넌트
@@ -25,10 +29,11 @@ const StepOneContent: FC<IStepOneContentProps> = ({
   clientData,
   onDataChange,
   onNext,
-  onReset,
   onValidationChange,
-  onDuplicateCheck
+  useExitDisplay
 }) => {
+  const { mutateAsync: duplicateCheck } = useClientDuplicateCheck()
+
   const { setSimpleDialogModalProps, showModal } = useModal()
 
   const handleChange = (field: keyof IClientDetail) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +65,8 @@ const StepOneContent: FC<IStepOneContentProps> = ({
   const [companyIdOrg, setCompanyIdOrg] = useState(clientData?.companyId || '')
   const [clientDataOrg, setClientDataOrg] = useState<IClientDetail | null>(null)
 
+  const [duplicateResult, setDuplicateResult] = useState<MAuthDuplicate | null>(null)
+
   useEffect(() => {
     if ((clientData?.companyNo ?? 0) > 0) {
       if (!clientDataOrg) {
@@ -72,14 +79,14 @@ const StepOneContent: FC<IStepOneContentProps> = ({
     }
   }, [clientData])
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async (): Promise<boolean> => {
     if (companyIdOrg !== clientData?.companyId) {
       setSimpleDialogModalProps({
         open: true,
         title: '중복확인을 해주세요'
       })
 
-      return
+      return false
     }
 
     if (clientData.brn && (!/^\d+$/.test(clientData.brn) || clientData.brn.length !== 10)) {
@@ -90,10 +97,12 @@ const StepOneContent: FC<IStepOneContentProps> = ({
           : `사업자등록번호는 10자리이어야 합니다.`
       })
 
-      return
+      return false
     }
 
-    onNext()
+    const result = await onNext()
+
+    return result
   }
 
   return (
@@ -112,23 +121,56 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                 >
                   고객사ID
                 </Typography>
-                <TextField
-                  disabled={(clientData?.companyNo ?? 0) > 0}
-                  size='small'
-                  value={clientData?.companyId || ''}
-                  onChange={handleChange('companyId')}
-                  placeholder='필수입력'
-                  sx={{ ...requiredTextFieldStyle, ...grayTextFieldStyle }}
-                />
+                <CustomTooltip
+                  title={
+                    <>
+                      {duplicateResult?.duplicateYn === YN.Y ? (
+                        duplicateResult.message
+                      ) : (
+                        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                          사용 가능한 ID입니다.
+                          <CustomAddCancelButton
+                            onCancelClick={() => {
+                              onDataChange({ companyId: '' })
+                              setDuplicateResult(null)
+                            }}
+                            onSaveClick={() => {
+                              setCompanyIdOrg(clientData?.companyId || '')
+                              setDuplicateResult(null)
+                            }}
+                          />
+                        </Box>
+                      )}
+                    </>
+                  }
+                  placement='bottom'
+                  backgroundColor='#9155fd4a'
+                  open={duplicateResult !== null}
+                  onClose={() => {
+                    setDuplicateResult(null)
+                  }}
+                >
+                  <TextField
+                    disabled={(clientData?.companyNo ?? 0) > 0}
+                    size='small'
+                    value={clientData?.companyId || ''}
+                    onChange={handleChange('companyId')}
+                    placeholder='필수입력'
+                    sx={{ ...requiredTextFieldStyle, ...grayTextFieldStyle }}
+                  />
+                </CustomTooltip>
                 <Button
                   size='medium'
                   variant='contained'
                   disabled={companyIdOrg === clientData?.companyId}
                   onClick={async () => {
-                    const isDuplicate = await onDuplicateCheck()
-
-                    if (!isDuplicate) {
-                      setCompanyIdOrg(clientData?.companyId || '')
+                    try {
+                      const res = await duplicateCheck(clientData?.companyId)
+                      setDuplicateResult(res.data)
+                    } catch (error) {
+                      showModal({
+                        title: getErrorMessage(error)
+                      })
                     }
                   }}
                   sx={{
@@ -333,6 +375,7 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                   퇴장객 분석
                 </Typography>
                 <SwitchCustom
+                  disabled={!useExitDisplay}
                   width={90}
                   switchName={['활성', '비활성']}
                   selected={clientData?.exitDisplayYn === YN.Y}

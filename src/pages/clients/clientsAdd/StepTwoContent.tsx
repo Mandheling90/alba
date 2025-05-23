@@ -75,12 +75,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
 
   const [solutionList, setSolutionList] = useState<ISolutionList[]>([])
   const originalAiData = useRef<IAiSolutionCompanyList | undefined>(undefined)
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [selectedSolutionId, setSelectedSolutionId] = useState<number | null>(null)
-  const [deleteType, setDeleteType] = useState<'solution' | 'server' | 'instance' | 'warning'>('solution')
-  const [selectedServerId, setSelectedServerId] = useState<number | null>(null)
-  const [selectedInstanceId, setSelectedInstanceId] = useState<number | null>(null)
-  const [warningMessage, setWarningMessage] = useState<string>('')
 
   useEffect(() => {
     if (aiData?.packageInfo?.packageYn === 'P') {
@@ -141,7 +135,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
           title: '솔루션 정보 삭제',
           contents: '서버를 사용하는 솔루션은 모든 서버를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.'
         })
-        setDeleteType('warning')
 
         return
       }
@@ -155,7 +148,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
           title: '솔루션 정보 삭제',
           contents: '모든 인스턴스를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.'
         })
-        setDeleteType('warning')
 
         return
       }
@@ -175,8 +167,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
         title: '서버 정보 삭제',
         contents: '서버에 포함되어 있는 모든 카메라 정보를 삭제 후 서버를 삭제할 수 있습니다.'
       })
-
-      setDeleteType('warning')
 
       return
     }
@@ -270,12 +260,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
         }
       } catch (error) {
         console.error('삭제 중 오류 발생:', error)
-      } finally {
-        setDeleteModalOpen(false)
-        setSelectedSolutionId(null)
-        setSelectedServerId(null)
-        setSelectedInstanceId(null)
-        setWarningMessage('')
       }
     },
     [
@@ -284,12 +268,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
       deleteAiSolutionServer,
       deleteAiSolutionInstance,
       refetch,
-      setSolutionList,
-      setDeleteModalOpen,
-      setSelectedSolutionId,
-      setSelectedServerId,
-      setSelectedInstanceId,
-      setWarningMessage
+      setSolutionList
     ]
   )
 

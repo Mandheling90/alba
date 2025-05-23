@@ -1,4 +1,3 @@
-import { grey } from '@mui/material/colors'
 import { styled } from '@mui/material/styles'
 import React, { useEffect, useState } from 'react'
 
@@ -12,6 +11,7 @@ interface ISwitchCustom {
 
   onChange?: (selected: boolean) => void
   onSuperChange?: (selected: boolean) => void
+  disabled?: boolean
 }
 
 const SwitchCustom: React.FC<ISwitchCustom> = ({
@@ -22,7 +22,8 @@ const SwitchCustom: React.FC<ISwitchCustom> = ({
   selected = true,
   superSelected = false,
   onChange,
-  onSuperChange
+  onSuperChange,
+  disabled = false
 }) => {
   const [isToggled, setIsToggled] = useState(selected)
   const [isSuperToggled, setIsSuperToggled] = useState(superSelected)
@@ -33,6 +34,8 @@ const SwitchCustom: React.FC<ISwitchCustom> = ({
   }, [selected, superSelected])
 
   const handleToggle = () => {
+    if (disabled) return
+
     if (isSuperChange) {
       // isSuperChange가 true인 경우 미선택된 항목의 배경색만 토글
       setIsSuperToggled(!isSuperToggled)
@@ -51,6 +54,7 @@ const SwitchCustom: React.FC<ISwitchCustom> = ({
       isSuperChange={isSuperChange}
       isSuperToggled={isSuperToggled}
       borderColor={activeColor[1]}
+      disabled={disabled}
     >
       <Side isToggled={isToggled} isSuperChange={isSuperChange} isSuperToggled={isSuperToggled} isLeft={true}>
         {switchName[0]}
@@ -68,16 +72,18 @@ const Container = styled('div')<{
   isSuperChange: boolean
   isSuperToggled: boolean
   borderColor: string
-}>(({ isWidth, theme, isSuperChange, isSuperToggled, borderColor }) => ({
+  disabled?: boolean
+}>(({ isWidth, theme, isSuperChange, isSuperToggled, borderColor, disabled }) => ({
   display: 'flex',
   borderRadius: '6px',
   overflow: 'hidden',
   position: 'relative',
-  cursor: 'pointer',
+  cursor: disabled ? 'not-allowed' : 'pointer',
   border: `1px solid ${borderColor}`,
   minWidth: `${isWidth}px`,
   width: `${isWidth}px`,
   backgroundColor: '#ffffff',
+  opacity: disabled ? 0.5 : 1,
 
   ...(isSuperChange
     ? {

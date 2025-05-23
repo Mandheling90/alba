@@ -1,13 +1,14 @@
 import { Button, ButtonProps } from '@mui/material'
 import { FC, useEffect, useRef, useState } from 'react'
 
-interface AnimatedButtonProps extends ButtonProps {
+interface AnimatedButtonProps extends Omit<ButtonProps, 'onClick'> {
   expandDuration?: number
   collapseDuration?: number
   expandedText?: string
   collapsedText?: string
   onAnimationComplete?: () => void
   textPadding?: number // 텍스트 좌우 패딩
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => Promise<boolean> | boolean
 }
 
 const AnimatedButton: FC<AnimatedButtonProps> = ({
@@ -37,7 +38,10 @@ const AnimatedButton: FC<AnimatedButtonProps> = ({
 
   const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
-      onClick(event)
+      const result = await onClick(event)
+      if (!result) {
+        return
+      }
     }
 
     setIsAnimating(true)

@@ -2,7 +2,6 @@ import { Box, Grid, IconButton, Step, StepContent, StepLabel, Stepper, Typograph
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
 import StepperCustomDot from 'src/@core/components/atom/StepperCustomDot'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import StepperWrapper from 'src/@core/styles/mui/stepper'
@@ -62,11 +61,11 @@ const CustomStepContent = styled(StepContent)<{ stepindex: number; activestep: n
       height: 'auto !important',
       transform: 'none !important'
     },
-    '& .MuiPaper-root' : {
+    '& .MuiPaper-root': {
       position: 'relative',
       overflow: 'visible',
-      '&:focus-within' : {
-        border: '2px solid #9155FD',
+      '&:focus-within': {
+        border: '2px solid #9155FD'
       }
     }
   })
@@ -132,69 +131,52 @@ const Index: FC = ({}) => {
           clientData={clientData}
           onDataChange={handleStepOneDataChange}
           onNext={async () => {
-            if (clientData) {
-              try {
-                if (clientData?.companyNo === 0) {
-                  const res = await saveClient(clientData)
+            if (!clientData) return false
 
-                  if (res.code !== EResultCode.SUCCESS) {
-                    setSimpleDialogModalProps({
-                      open: true,
-                      title: getErrorMessage(res.data.msg)
-                    })
+            try {
+              if (clientData?.companyNo === 0) {
+                const res = await saveClient(clientData)
 
-                    return
-                  } else {
-                    setClientData(res.data)
-                    setCompanyNo(res.data.companyNo)
-                  }
+                if (res.code !== EResultCode.SUCCESS) {
+                  setSimpleDialogModalProps({
+                    open: true,
+                    title: getErrorMessage(res.data.msg)
+                  })
+
+                  return false
                 } else {
-                  const res = await updateClient(clientData)
-
-                  if (res.code !== EResultCode.SUCCESS) {
-                    setSimpleDialogModalProps({
-                      open: true,
-                      title: getErrorMessage(res.data.msg)
-                    })
-
-                    return
-                  }
+                  setClientData(res.data)
+                  setCompanyNo(res.data.companyNo)
                 }
+              } else {
+                const res = await updateClient(clientData)
 
-                activeStep === 0 && handleNext()
-              } catch (e) {
-                setSimpleDialogModalProps({
-                  open: true,
-                  title: getErrorMessage(e)
-                })
+                if (res.code !== EResultCode.SUCCESS) {
+                  setSimpleDialogModalProps({
+                    open: true,
+                    title: getErrorMessage(res.data.msg)
+                  })
+
+                  return false
+                }
               }
-            }
-          }}
-          onReset={() => {
-            setClientData({
-              ...DEFAULT_CLIENT_DATA
 
-              // solutions: clientData?.solutions || []
-            })
+              activeStep === 0 && handleNext()
+
+              return true
+            } catch (e) {
+              setSimpleDialogModalProps({
+                open: true,
+                title: getErrorMessage(e)
+              })
+
+              return false
+            }
           }}
           onValidationChange={(isValid: boolean) => {
             setIsStepOneValid(isValid)
           }}
-          onDuplicateCheck={async () => {
-            try {
-              const res = await duplicateCheck(clientData?.companyId)
-              toast(res.data.message, {
-                position: 'top-center'
-              })
-              if (res.data.duplicateYn === YN.N) {
-                return false
-              } else {
-                return true
-              }
-            } catch (error) {
-              return true
-            }
-          }}
+          useExitDisplay={(aiData?.data?.solutionList.length ?? 0) > 0}
         />
       )
     },
@@ -220,7 +202,7 @@ const Index: FC = ({}) => {
             return (
               <Step key={index} className={clsx({ active: activeStep === index })} expanded={true}>
                 <StepLabel
-                  style={{columnGap: '20px'}}
+                  style={{ columnGap: '20px' }}
                   StepIconComponent={props => (
                     <StepperCustomDot {...props} isValid={index === 0 ? isStepOneValid : false} />
                   )}
