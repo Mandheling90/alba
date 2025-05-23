@@ -2,6 +2,7 @@ import { Box, Grid, IconButton, Step, StepContent, StepLabel, Stepper, Typograph
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { FC, useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
 import StepperCustomDot from 'src/@core/components/atom/StepperCustomDot'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import StepperWrapper from 'src/@core/styles/mui/stepper'
@@ -34,7 +35,7 @@ export const DEFAULT_CLIENT_DATA: IClientDetail = {
   reportEmail: '',
   accountStatus: YN.Y,
   accountStatusStr: '',
-  exitDisplayYn: YN.Y,
+  exitDisplayYn: YN.N,
   exitDisplayYnStr: ''
 }
 
@@ -175,7 +176,9 @@ const Index: FC = ({}) => {
           onDuplicateCheck={async () => {
             try {
               const res = await duplicateCheck(clientData?.companyId)
-              alert(res.data.message)
+              toast(res.data.message, {
+                position: 'top-center'
+              })
               if (res.data.duplicateYn === YN.N) {
                 return false
               } else {
