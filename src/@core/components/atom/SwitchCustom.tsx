@@ -50,7 +50,7 @@ const SwitchCustom: React.FC<ISwitchCustom> = ({
       isWidth={width}
       isSuperChange={isSuperChange}
       isSuperToggled={isSuperToggled}
-      borderColor={activeColor[0]}
+      borderColor={activeColor[1]}
     >
       <Side isToggled={isToggled} isSuperChange={isSuperChange} isSuperToggled={isSuperToggled} isLeft={true}>
         {switchName[0]}
@@ -70,15 +70,14 @@ const Container = styled('div')<{
   borderColor: string
 }>(({ isWidth, theme, isSuperChange, isSuperToggled, borderColor }) => ({
   display: 'flex',
-  borderRadius: '4px',
+  borderRadius: '6px',
   overflow: 'hidden',
   position: 'relative',
   cursor: 'pointer',
   border: `1px solid ${borderColor}`,
-  padding: '3px',
   minWidth: `${isWidth}px`,
   width: `${isWidth}px`,
-  backgroundColor: '#f5f5f5',
+  backgroundColor: '#ffffff',
 
   ...(isSuperChange
     ? {
@@ -114,7 +113,7 @@ const Side = styled('div')<{
   height: '100%',
   lineHeight: '1',
   padding: '5px 0',
-  color: isToggled ? '#fff' : isSuperChange ? (isSuperToggled ? '#fff' : grey[700]) : grey[700],
+  color: isToggled ? '#fff' : isSuperChange ? (isSuperToggled ? '#fff' : '#bdbdbd') : '#bdbdbd',
   fontSize: '12px',
   zIndex: 1
 }))
