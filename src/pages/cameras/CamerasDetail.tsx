@@ -1,4 +1,4 @@
-import { Box, Collapse, Grid, Typography } from '@mui/material'
+import { Box, Card, Collapse, Grid, Typography } from '@mui/material'
 import { FC, useContext, useEffect, useState } from 'react'
 import PageHeader from 'src/@core/components/page-header'
 import { CamerasContext } from 'src/context/CamerasContext'
@@ -34,7 +34,9 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
             }
           />
           <Box sx={{ height: '35vh', overflow: 'auto' }}>
-            <CamerasClientList />
+            <Card sx={{ minHeight: '35vh' }}>
+              <CamerasClientList />
+            </Card>
           </Box>
         </Grid>
       </Collapse>
