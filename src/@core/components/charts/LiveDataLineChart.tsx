@@ -60,6 +60,12 @@ const LiveDataLineChart = memo(
               }
 
               intervalIdRef.current = setInterval(async function () {
+                if (!convertedData || convertedData.length === 0) {
+                  console.error('No data available in convertedData')
+
+                  return
+                }
+
                 const lastTimestamp = convertedData[convertedData.length - 1][0]
 
                 const date = new Date(lastTimestamp)
