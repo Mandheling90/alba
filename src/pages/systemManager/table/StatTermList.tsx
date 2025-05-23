@@ -1,9 +1,7 @@
 import { Box, Button, Card, Grid, IconButton } from '@mui/material'
 import { FC, useCallback, useEffect, useState } from 'react'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
-import { CameraPageType } from 'src/context/CamerasContext'
 import { useLayout } from 'src/hooks/useLayout'
-import styled from 'styled-components'
 
 import CustomTextFieldState from 'src/@core/components/atom/CustomTextFieldState'
 import { generateColumns } from 'src/@core/components/table/columns/columnGenerator'
@@ -17,31 +15,7 @@ import ModifyActions from 'src/pages/cameras/table/ModifyActions'
 import { useConfig, useConfigMulti, useConfigSingle } from 'src/service/statistics/statisticsService'
 import { getErrorMessage } from 'src/utils/CommonUtil'
 
-const ButtonHoverIconList = styled(Box)`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`
-
-interface CamerasClientListProps {
-  columnFilter?: string[]
-  cameraPage?: CameraPageType
-}
-
-interface DataItem {
-  key: string
-  systemMenuName?: string
-  defaultSettingName?: string
-  modifySettingName?: string
-  isEdit?: boolean
-  dataList?: DataItem[]
-}
-
-interface DataState {
-  dataList: DataItem[]
-}
-
-const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPage }) => {
+const StatTermList: FC = () => {
   const { companyNo, companyId, companyName } = useLayout()
   const { data: configData, refetch } = useConfig(companyNo)
   const { mutateAsync: configMulti } = useConfigMulti()
@@ -403,8 +377,8 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
             </Box>
           </HorizontalScrollBox>
 
-          {data.dataList && (
-            <OneDepthTable data={data} columns={columnsTemp} expandedRows={expandedRows} keyField='id' />
+          {configData?.data && (
+            <OneDepthTable data={configData?.data} columns={columnsTemp} expandedRows={expandedRows} keyField='id' />
           )}
         </Card>
       </Grid>
@@ -412,4 +386,4 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   )
 }
 
-export default CamerasClientList
+export default StatTermList
