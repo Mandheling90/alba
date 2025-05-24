@@ -520,8 +520,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                 '해당 고객사에 등록된 솔루션이 없습니다'
               ) : (
                 <>
-                  총 {solutionList?.length || 0}개의 분석 솔루션과{' '}
-                  {solutionList?.reduce((acc: number, sol: ISolutionList) => acc + sol.serverList.length, 0) || 0}
+                  총 {aiData?.totalSolutionCount}개의 분석 솔루션과 {aiData?.totalServiceCount}
                   개의 서비스가 등록되어 있습니다.
                 </>
               )}
@@ -539,11 +538,20 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
             <DividerBar />
           </Box>
           <Box>
-            <Typography>
-              {solutionList?.filter(item => item.aiSolutionId !== 0).filter(item => item.isNew !== true).length === 0
-                ? '해당 고객사에 등록된 서비스가 없습니다'
-                : 'ProAI Edge는 카운팅 서비스에, CVEDIA는 밀집도분석 서비스에 사용됩니다.'}
-            </Typography>
+            {solutionList?.filter(item => item.aiSolutionId !== 0).filter(item => item.isNew !== true).length === 0 ? (
+              '해당 고객사에 등록된 서비스가 없습니다'
+            ) : (
+              <Typography>
+                {aiData?.serviceInfos
+                  .map(
+                    (item, index, array) =>
+                      `'${item.serviceName}' 서비스에 총 ${item.serviceCount}개의 카메라${
+                        index < array.length - 1 ? '와 ' : '가 '
+                      }${index === array.length - 1 ? '등록되었습니다.' : ''}`
+                  )
+                  .join(' ')}
+              </Typography>
+            )}
           </Box>
         </Box>
 

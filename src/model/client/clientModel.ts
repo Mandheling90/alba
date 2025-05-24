@@ -108,6 +108,14 @@ export interface MClientList {
   size: number
   totalCount: number
   list: MList[]
+  companySummaryInfo: ICompanySummaryInfo
+}
+
+export interface ICompanySummaryInfo {
+  totalCount: number
+  contractCount: number
+  expectedCount: number
+  expireCount: number
 }
 
 export interface MList {
@@ -233,6 +241,10 @@ export interface IAiSolutionCompanyList {
     solutionCount: number
   }[]
   solutionList: ISolutionList[]
+
+  serviceInfos: IServiceInfo[]
+  totalServiceCount: number
+  totalSolutionCount: number
 }
 
 export interface IService {

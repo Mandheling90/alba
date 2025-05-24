@@ -38,12 +38,14 @@ const Contents: FC = (): React.ReactElement => {
           <Grid item sm={12} xs={12}>
             <Box>
               <Typography variant='h6' fontWeight={500} sx={{ mt: 5, mb: 3 }}>
-                등록 고객사는 총 {data?.data?.totalCount}곳입니다.
+                등록 고객사는 총 {data?.data?.companySummaryInfo?.totalCount}곳입니다.
               </Typography>
               <DividerBar />
               <Typography variant='body2' sx={{ fontSize: 16, mt: 3, mb: 3 }}>
-                전체 등록 고객사 {data?.data?.totalCount}곳 중 계약중 {data?.data?.totalCount}곳, 계약 만료 예정{' '}
-                {data?.data?.totalCount}곳, 계약 만료 {data?.data?.totalCount}곳 입니다.
+                전체 등록 고객사 {data?.data?.companySummaryInfo?.totalCount}곳 중 계약중{' '}
+                {data?.data?.companySummaryInfo?.contractCount}곳, 계약 만료 예정{' '}
+                {data?.data?.companySummaryInfo?.expectedCount}곳, 계약 만료{' '}
+                {data?.data?.companySummaryInfo?.expireCount}곳 입니다.
               </Typography>
             </Box>
           </Grid>

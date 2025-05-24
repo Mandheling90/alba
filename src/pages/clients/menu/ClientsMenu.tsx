@@ -30,6 +30,12 @@ const ClientsMenu: FC<IKioskMenu> = ({ refetch }) => {
   }, [router.query.keyword])
 
   const handleSearch = () => {
+    if (searchKeyword === router.query.keyword) {
+      refetch()
+
+      return
+    }
+
     setClientListReq({
       ...clientListReq,
       keyword: searchKeyword
