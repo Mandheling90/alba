@@ -26,8 +26,11 @@ export type UserValuesType = {
   authMenuList: MAuthMenuList[]
   setAuthMenuList: (value: MAuthMenuList[]) => void
 
-  selectedUser: MUserCompanyList[]
-  setSelectedUser: (value: MUserCompanyList[]) => void
+  selectedUser: MUserCompanyList | undefined
+  setSelectedUser: (value: MUserCompanyList | undefined) => void
+
+  selectedUserList: MUserCompanyList[]
+  setSelectedUserList: (value: MUserCompanyList[]) => void
 
   selectedAuthList: MAuthList
   setSelectedAuthList: (value: MAuthList) => void
@@ -62,8 +65,11 @@ const defaultProvider: UserValuesType = {
   selectedAuthcolumnList: [],
   setSelectedAuthcolumnList: () => null,
 
-  selectedUser: [],
+  selectedUser: undefined,
   setSelectedUser: () => null,
+
+  selectedUserList: [],
+  setSelectedUserList: () => null,
 
   clear: () => null
 }
@@ -83,10 +89,11 @@ const UserProvider = ({ children }: Props) => {
   const [authList, setAuthList] = useState<MAuthList[]>(defaultProvider.authList)
   const [authMenuList, setAuthMenuList] = useState<MAuthMenuList[]>(defaultProvider.authMenuList)
   const [userCompanyList, setUserCompanyList] = useState<MUserCompanyList[]>(defaultProvider.userCompanyList)
-  const [selectedUser, setSelectedUser] = useState<MUserCompanyList[]>(defaultProvider.selectedUser)
+  const [selectedUserList, setSelectedUserList] = useState<MUserCompanyList[]>(defaultProvider.selectedUserList)
   const [selectedAuthcolumnList, setSelectedAuthcolumnList] = useState<MAuthcolumnList[]>(
     defaultProvider.selectedAuthcolumnList
   )
+  const [selectedUser, setSelectedUser] = useState<MUserCompanyList | undefined>(defaultProvider.selectedUser)
 
   const clear = () => {
     setLayoutDisplay(defaultProvider.layoutDisplay)
@@ -96,6 +103,7 @@ const UserProvider = ({ children }: Props) => {
     setAuthMenuList(defaultProvider.authMenuList)
     setSelectedAuthcolumnList(defaultProvider.selectedAuthcolumnList)
     setUserCompanyList(defaultProvider.userCompanyList)
+    setSelectedUserList(defaultProvider.selectedUserList)
     setSelectedUser(defaultProvider.selectedUser)
   }
 
@@ -116,6 +124,8 @@ const UserProvider = ({ children }: Props) => {
     setAuthMenuList,
     selectedAuthcolumnList,
     setSelectedAuthcolumnList,
+    selectedUserList,
+    setSelectedUserList,
     selectedUser,
     setSelectedUser,
     clear

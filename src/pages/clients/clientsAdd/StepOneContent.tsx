@@ -4,8 +4,8 @@ import AnimatedButton from 'src/@core/components/atom/AnimatedButton'
 import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import PickersRange from 'src/@core/components/atom/PickersRange'
 import SwitchCustom from 'src/@core/components/atom/SwitchCustom'
-import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
 import CustomSelectBox from 'src/@core/components/molecule/CustomSelectBox'
+import DuplicateCheckResult from 'src/@core/components/molecule/DuplicateCheckResult'
 import WindowCard from 'src/@core/components/molecule/WindowCard'
 import { grayTextBackground, grayTextFieldStyle, requiredTextFieldStyle } from 'src/@core/styles/TextFieldStyle'
 import { YN } from 'src/enum/commonEnum'
@@ -123,26 +123,17 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                 </Typography>
                 <CustomTooltip
                   title={
-                    <>
-                      {duplicateResult?.duplicateYn === YN.Y ? (
-                        duplicateResult.message
-                      ) : (
-                        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                          사용 가능한 ID입니다.
-                          <CustomAddCancelButton
-                            onCancelClick={() => {
-                              onDataChange({ companyId: '' })
-                              setDuplicateResult(null)
-                            }}
-                            onSaveClick={() => {
-                              setCompanyIdOrg(clientData?.companyId || '')
-                              setDuplicateResult(null)
-                            }}
-                            text={['사용', '취소']}
-                          />
-                        </Box>
-                      )}
-                    </>
+                    <DuplicateCheckResult
+                      duplicateResult={duplicateResult}
+                      onCancel={() => {
+                        onDataChange({ companyId: '' })
+                        setDuplicateResult(null)
+                      }}
+                      onConfirm={() => {
+                        setCompanyIdOrg(clientData?.companyId || '')
+                        setDuplicateResult(null)
+                      }}
+                    />
                   }
                   placement='bottom'
                   backgroundColor='#9155fd4a'

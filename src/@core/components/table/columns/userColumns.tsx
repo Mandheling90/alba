@@ -44,7 +44,7 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
       field: 'name2',
       headerName: '사용자 ID',
       headerAlign: 'center',
-      flex: 0.9,
+      flex: 0.8,
       align: 'center',
       type: 'string',
       renderCell: ({ row }: GridRenderCellParams) => {
@@ -59,7 +59,7 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
       field: 'mailAddress',
       headerName: '이메일 주소',
       headerAlign: 'center',
-      flex: 0.9,
+      flex: 1.2,
       align: 'center',
       type: 'string'
     },
@@ -67,7 +67,7 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
       field: 'authName',
       headerName: '권한',
       headerAlign: 'center',
-      flex: 1,
+      flex: 0.8,
       align: 'center',
       type: 'string'
     },
@@ -75,7 +75,7 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
       field: 'userStatus',
       headerName: '상태',
       headerAlign: 'center',
-      flex: 0.5,
+      flex: 0.6,
       align: 'center',
       type: 'string',
       renderCell: ({ row }: GridRenderCellParams) => {
@@ -105,7 +105,7 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
       field: 'updateDelete',
       headerName: '수정 및 삭제',
       headerAlign: 'center',
-      flex: 0.5,
+      flex: 0.6,
       align: 'center',
       type: 'string',
       renderCell: ({ row }: GridRenderCellParams) => {

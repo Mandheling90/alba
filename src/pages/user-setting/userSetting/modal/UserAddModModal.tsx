@@ -17,7 +17,7 @@ import {
   TextField,
   Typography
 } from '@mui/material'
-import { EResultCode, YN } from 'src/enum/commonEnum'
+import { EResultCode } from 'src/enum/commonEnum'
 import { MUserCompanyList } from 'src/model/userSetting/userSettingModel'
 
 // import { useUserSettingStore } from 'src/pages/user-setting'
@@ -27,7 +27,7 @@ import { useLayout } from 'src/hooks/useLayout'
 import { useModal } from 'src/hooks/useModal'
 import { useUser } from 'src/hooks/useUser'
 import { useUserDuplicate, useUserMod, useUserSave } from 'src/service/setting/userSetting'
-import { isValidPassword, isValidEmail, getErrorMessage } from 'src/utils/CommonUtil'
+import { getErrorMessage, isValidEmail, isValidPassword } from 'src/utils/CommonUtil'
 
 interface IRoleAddModal {
   isOpen: boolean
@@ -156,10 +156,10 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
 
     if (!userInfo.mailAddress) {
       errors.mailAddress = '이메일을 입력해주세요'
-      isValid = false;
+      isValid = false
     } else if (!isValidEmail(userInfo.mailAddress)) {
       errors.mailAddress = '이메일 형식을 확인해주세요'
-      isValid = false;
+      isValid = false
     }
 
     setErrors(errors)
@@ -237,21 +237,16 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
                 try {
                   const res = await userDuplicate({ userId: text })
 
-                  await showModal({
-                    title: '중복확인',
-                    contents: res.data.message
-                  })
-
-                  if (res.data?.duplicateYn === YN.N) {
-                    setUserInfo({ ...userInfo, userId: text })
-
-                    return true
-                  } else {
-                    return false
-                  }
+                  return res.data
                 } catch (err) {
-                  return false
+                  console.log(err)
                 }
+              }}
+              onCancel={() => {
+                setUserInfo({ ...userInfo, userId: '' })
+              }}
+              onConfirm={(text: string) => {
+                setUserInfo({ ...userInfo, userId: text })
               }}
               size='small'
               label='사용자 ID'
@@ -427,17 +422,17 @@ const RoleAddModModal: FC<IRoleAddModal> = ({ isOpen, isSelfUserMod = false, sel
                       setSimpleDialogModalProps({
                         open: true,
                         title: '사용자 등록',
-                        contents: '새로운 사용자 등록에 성공했습니다.'
+                        contents: '새로운 사용자가 등록되었습니다.'
                       })
                     }
                   }
                   onSubmitAfter?.()
                   onClose()
                 } catch (e) {
-                  // console.log(e);
+                  console.log(e)
                   setSimpleDialogModalProps({
                     open: true,
-                    title: getErrorMessage(e),
+                    title: getErrorMessage(e)
                   })
                 }
               }

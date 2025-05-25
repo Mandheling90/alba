@@ -6,33 +6,33 @@ import styled from 'styled-components'
 import PageSizeSelect from './PageSizeSelect'
 
 interface IRowSelect {
-  selectRowEvent?: (row: any) => void
-  onCheckboxSelectionChange?: (selectedRows: any[]) => void
-  onDragStart?: (row: any) => void
-  onDragEnd?: () => void
-  initialSelectedRow?: any
+  selectRowEvent?: (row: any) => void /** 행 선택 시 실행될 이벤트 핸들러 */
+  onCheckboxSelectionChange?: (selectedRows: any[]) => void /** 체크박스 선택 변경 시 실행될 이벤트 핸들러 */
+  onDragStart?: (row: any) => void /** 드래그 시작 시 실행될 이벤트 핸들러 */
+  onDragEnd?: () => void /** 드래그 종료 시 실행될 이벤트 핸들러 */
+  initialSelectedRow?: any /** 초기에 선택된 행 */
 }
 
 interface IPageSizeSelect {
-  showMoreButton?: boolean
-  rows: any[]
-  columns: any[]
+  showMoreButton?: boolean /** 더보기 버튼 표시 여부 */
+  rows: any[] /** 테이블에 표시될 데이터 행 */
+  columns: any[] /** 테이블 컬럼 정의 */
 }
-
 interface TableWrapperProps {
   $showMoreButton: boolean
 }
 
 interface IGridOptions {
-  id?: string
-  isAllView?: boolean
-  enablePointer?: boolean
-  showHeader?: boolean
-  combineTableId?: string
-  hideRows?: boolean
-  requireSingleSelection?: boolean
-  defaultSelectedCheckboxes?: any[]
-  disableCheckboxSelection?: boolean
+  id?: string /** 테이블의 고유 식별자 */
+  isAllView?: boolean /** 전체 데이터를 한 번에 표시할지 여부 */
+  enablePointer?: boolean /** 행 클릭 시 포인터 커서 표시 여부 */
+  showHeader?: boolean /** 테이블 헤더 표시 여부 */
+  combineTableId?: string /** 다른 테이블과 결합할 때 사용하는 테이블 ID */
+  hideRows?: boolean /** 행 숨김 여부 */
+  requireSingleSelection?: boolean /** 단일 선택만 허용할지 여부 */
+  defaultSelectedCheckboxes?: any[] /** 기본적으로 선택된 체크박스 목록 */
+  disableCheckboxSelection?: boolean /** 체크박스 선택 비활성화 여부 */
+  externalCheckboxControl?: boolean /** 외부에서만 체크박스 선택을 제어할지 여부 */
 }
 
 const CustomTable: FC<
@@ -55,7 +55,8 @@ const CustomTable: FC<
   initialSelectedRow,
   hideRows = false,
   requireSingleSelection = false,
-  disableCheckboxSelection = false
+  disableCheckboxSelection = false,
+  externalCheckboxControl = false
 }) => {
   const { selectedRow: combineselectedRows, setSelectedRowFn } = useContext(TableContext)
   const [pageSize, setPageSize] = useState(isAllView ? 100 : 25)
@@ -63,6 +64,10 @@ const CustomTable: FC<
   const [selectedCheckboxes, setSelectedCheckboxes] = useState<any[]>(defaultSelectedCheckboxes ?? [])
   const [localSelectedRow, setLocalSelectedRow] = useState<any>(initialSelectedRow)
   const [isCheckboxDisabled, setIsCheckboxDisabled] = useState(disableCheckboxSelection)
+
+  useEffect(() => {
+    setLocalSelectedRow(initialSelectedRow)
+  }, [initialSelectedRow])
 
   const selectedRow = combineTableId ? combineselectedRows[combineTableId] : localSelectedRow
 
@@ -113,22 +118,26 @@ const CustomTable: FC<
             return isSelectedByClick ? 'selected-by-click' : isHighlighted ? 'highlighted-row' : ''
           }}
           onRowClick={(row: any) => {
-            if (selectRowEvent) {
-              if (selectedRow === row.id && !requireSingleSelection) {
-                handleSetSelectedRow(null)
-                selectRowEvent({})
-              } else {
-                handleSetSelectedRow(row.id)
-                selectRowEvent(row.row)
+            if (!externalCheckboxControl) {
+              if (selectRowEvent) {
+                if (selectedRow === row.id && !requireSingleSelection) {
+                  handleSetSelectedRow(null)
+                  selectRowEvent({})
+                } else {
+                  handleSetSelectedRow(row.id)
+                  selectRowEvent(row.row)
+                }
               }
             }
           }}
           onRowSelectionModelChange={(selectedIds: any[]) => {
-            // 체크박스 선택 상태만 관리
-            setSelectedCheckboxes(selectedIds)
-            if (onCheckboxSelectionChange) {
-              const selectedRows = getSelectedRows(selectedIds)
-              onCheckboxSelectionChange(selectedRows)
+            if (!externalCheckboxControl) {
+              // 체크박스 선택 상태만 관리
+              setSelectedCheckboxes(selectedIds)
+              if (onCheckboxSelectionChange) {
+                const selectedRows = getSelectedRows(selectedIds)
+                onCheckboxSelectionChange(selectedRows)
+              }
             }
           }}
           rowSelectionModel={[

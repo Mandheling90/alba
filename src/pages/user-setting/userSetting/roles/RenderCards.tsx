@@ -11,6 +11,7 @@ import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 
 // ** Icon Imports
+import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MRoleList, MUserGroup } from 'src/model/userSetting/userSettingModel'
 import { useUserGroup, useUserGroupDel } from 'src/service/setting/userSetting'
@@ -29,6 +30,8 @@ const RenderCards: FC<IRolesCards> = ({ data, refetch }) => {
 
   const { mutateAsync: deleteGroup } = useUserGroupDel()
   const { mutateAsync: groupMutate } = useUserGroup()
+
+  const { setSimpleDialogModalProps } = useModal()
 
   const getGroupInfo = async () => {
     const res = await groupMutate({ id: data.id })
@@ -106,17 +109,28 @@ const RenderCards: FC<IRolesCards> = ({ data, refetch }) => {
                   sx={{ color: 'text.secondary', float: 'right' }}
                   onClick={async () => {
                     if (data.users && data.users > 0) {
-                      alert('해당 권한을 사용하는 모든 유저를 먼저 삭제해주세요')
+                      setSimpleDialogModalProps({
+                        open: true,
+                        title: '해당 권한을 사용하는 모든 유저를 먼저 삭제해주세요'
+                      })
 
                       return
                     }
 
-                    const result = window.confirm('정말 삭제하시겠습니까?')
-
-                    if (result) {
-                      await deleteGroup({ groupId: data.id })
-                      refetch()
-                    }
+                    setSimpleDialogModalProps({
+                      open: true,
+                      title: '사용자권한 삭제',
+                      contents: (
+                        <Typography>
+                          선택하신 <b>권한을</b> 정말 <b>삭제</b>하시겠습니까? 삭제 후에는 <b>복원할 수 없습니다.</b>
+                        </Typography>
+                      ),
+                      isConfirm: true,
+                      confirmFn: async () => {
+                        await deleteGroup({ groupId: data.id })
+                        refetch()
+                      }
+                    })
                   }}
                 >
                   <IconCustom path='settingCard' icon='delete' />

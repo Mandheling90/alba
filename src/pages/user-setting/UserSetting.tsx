@@ -6,20 +6,25 @@ import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PageHeader from 'src/@core/components/page-header'
 
 import SlidingLayout from 'src/@core/components/layout/SlidingLayout'
+import { CRUD, YN } from 'src/enum/commonEnum'
 import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
 import { useUser } from 'src/hooks/useUser'
-import { MAuthMenu,MAuthcolumnList } from 'src/model/userSetting/userSettingModel'
-import { useAuthList, useAuthMenuList, useUserCompanyList,useUserAuthcolumnList } from 'src/service/setting/userSetting'
+import { MAuthMenu, MAuthcolumnList } from 'src/model/userSetting/userSettingModel'
+import {
+  useAuthList,
+  useAuthMenuList,
+  useUserAuthcolumnList,
+  useUserCompanyList
+} from 'src/service/setting/userSetting'
 import ClientListGrid from './client/ClientListGrid'
 import RoleAdd from './userSetting/roles/RoleAdd'
 import RoleList from './userSetting/table/RoleList'
 import UserList from './userSetting/table/UserList'
-import { YN,CRUD } from 'src/enum/commonEnum'
 
 const UserSetting: FC = (): React.ReactElement => {
   const userContext = useUser()
-  const { authList, setAuthList, selectedAuthList, setSelectedAuthList,selectedAuthcolumnList,setSelectedAuthcolumnList  } = userContext
+  const { authList, setAuthList, selectedAuthList, setSelectedAuthList } = userContext
   const { layoutDisplay, companyNo } = useLayout()
   const { user } = useAuth()
 
@@ -31,38 +36,34 @@ const UserSetting: FC = (): React.ReactElement => {
   const [authMenuListData, setAuthMenuListData] = useState<MAuthMenu>()
 
   const { mutateAsync: authcolumnList } = useUserAuthcolumnList()
-  const [authcolumnListData, setAuthcolumnListData] = useState<MAuthMenu>()
-
 
   const fetchData = async () => {
     const filteredList = authList.filter(auth => auth.authId !== user?.userInfo?.authId)
 
     if (filteredList.length > 0) {
-       
-      if(selectedAuthList.type == CRUD.C){
+      if (selectedAuthList.type == CRUD.C) {
         const column = await authcolumnList()
-      
-        const columnArray: MAuthcolumnList[] = Array.isArray(column.data) ? column.data : [column.data];
+
+        const columnArray: MAuthcolumnList[] = Array.isArray(column.data) ? column.data : [column.data]
         const convertedData: MAuthMenu = {
-          authId: 0,            
+          authId: 0,
           authName: '',
           dataStatus: YN.Y,
           dataStatusStr: YN.Y,
           roles: columnArray
-        };
-      setAuthMenuListData(convertedData);
-      }else{
+        }
+        setAuthMenuListData(convertedData)
+      } else {
         const res = await authMenuList({
-         authId: selectedAuthList.authId !== 0 ? selectedAuthList.authId : filteredList[0].authId
+          authId: selectedAuthList.authId !== 0 ? selectedAuthList.authId : filteredList[0].authId
         })
 
         setAuthMenuListData(res.data)
 
         if (!selectedAuthList.authId) {
-          setSelectedAuthList({ authId: res.data.authId, name: res.data.authName, userAuthCount: 0, type:CRUD.U })
+          setSelectedAuthList({ authId: res.data.authId, name: res.data.authName, userAuthCount: 0, type: CRUD.U })
         }
       }
-
     }
   }
 
@@ -103,11 +104,14 @@ const UserSetting: FC = (): React.ReactElement => {
       <Grid item xs={12} sx={{ maxHeight: '42vh', overflow: 'auto' }}>
         <Grid container spacing={5}>
           <Grid item xs={5}>
-            <RoleList data={authList ?? []} refetch={refetch} />
+            <Card sx={{ minHeight: '35vh', maxHeight: '35vh', overflow: 'auto' }}>
+              <RoleList data={authList ?? []} refetch={refetch} />
+            </Card>
           </Grid>
           <Grid item xs={7}>
-            <RoleAdd data={authMenuListData} refetch={refetch} />
-            
+            <Card sx={{ minHeight: '35vh', maxHeight: '35vh', overflow: 'auto' }}>
+              <RoleAdd data={authMenuListData} refetch={refetch} />
+            </Card>
           </Grid>
         </Grid>
       </Grid>

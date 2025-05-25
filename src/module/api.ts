@@ -1,6 +1,6 @@
 import axios, { AxiosResponseHeaders, HttpStatusCode, InternalAxiosRequestConfig, RawAxiosResponseHeaders } from 'axios'
 import get from 'lodash/get'
-import { EApiResultCode, EErrorMessage, ELocalStorageKey, EResultCode } from 'src/enum/commonEnum'
+import { EApiResultCode, ELocalStorageKey, EResultCode } from 'src/enum/commonEnum'
 import MResult from 'src/model/commonModel'
 
 export interface AxiosResponseCustom<T = any, D = any> {
@@ -126,13 +126,14 @@ API.interceptors.response.use(
     if (error.response && error.response.status) {
       console.log(JSON.stringify(error.response))
 
-      let msg = error.response.data.msg
+      let msg = error.response.data.message ?? error.response.data.msg
       let isAlert = false
 
       switch (error.response.status) {
         case HttpStatusCode.BadRequest:
           console.log('HttpStatusCode.BadRequest')
-          msg = get(error.response, 'data.msg', EErrorMessage.LOGIN_FALL)
+
+          // msg = get(error.response, 'data.msg', EErrorMessage.LOGIN_FALL)
           break
         case HttpStatusCode.Unauthorized:
           console.log('HttpStatusCode.Unauthorized')

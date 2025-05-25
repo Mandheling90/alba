@@ -1,16 +1,17 @@
 import { FC, useEffect, useState } from 'react'
 
-import { Box, Button, Card, Checkbox, Typography } from '@mui/material'
+import { Box, Button, Checkbox, Typography } from '@mui/material'
 import { GridRenderCellParams } from '@mui/x-data-grid'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import DuplicateText from 'src/@core/components/molecule/DuplicateText'
 import CustomTable from 'src/@core/components/table/CustomTable'
 import { EResultCode, YN } from 'src/enum/commonEnum'
+import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
 import { useModal } from 'src/hooks/useModal'
 import { useUser } from 'src/hooks/useUser'
 import { MAuthMenu, MRole } from 'src/model/userSetting/userSettingModel'
-import { useAddAuth, useAuthDuplicate, useModAuth, useUserGroup } from 'src/service/setting/userSetting'
+import { useAddAuth, useAuthDuplicate, useModAuth } from 'src/service/setting/userSetting'
 
 interface IRoleAddModal {
   data?: MAuthMenu
@@ -18,17 +19,21 @@ interface IRoleAddModal {
 }
 
 const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
-  const { showModal } = useModal()
-
-  const { mutateAsync: groupMutate } = useUserGroup()
   const { selectedAuthList } = useUser()
   const { companyNo } = useLayout()
+  const { user } = useAuth()
+  const { setSimpleDialogModalProps } = useModal()
 
   const [rows, setRows] = useState<MRole[]>([])
   const [originalRows, setOriginalRows] = useState<MRole[]>([])
   const [selectedAuthListName, setSelectedAuthListName] = useState('')
   const [originalAuthListName, setOriginalAuthListName] = useState('')
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false)
+  const [isDisabled, setIsDisabled] = useState(user?.userInfo?.authId === selectedAuthList.authId)
+
+  useEffect(() => {
+    setIsDisabled(user?.userInfo?.authId === selectedAuthList.authId)
+  }, [user?.userInfo?.authId, selectedAuthList.authId])
 
   useEffect(() => {
     if (data) {
@@ -175,7 +180,13 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
   }
 
   return (
-    <Card>
+    <Box
+      sx={{
+        pointerEvents: isDisabled ? 'none' : 'auto',
+        opacity: isDisabled ? 0.5 : 1,
+        position: 'relative'
+      }}
+    >
       <Box sx={{ display: 'flex', alignItems: 'center', m: 5 }}>
         <Typography variant='h5' component='span' mr={5}>
           {selectedAuthList.authId === 0 ? '새로운 권한 이름' : '권한 이름'}
@@ -188,27 +199,22 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
             try {
               const res = await authDuplicate({ authName: text, companyNo: companyNo })
 
-              await showModal({
-                title: '중복확인',
-                contents: res.data.message
-              })
-
-              if (res.data?.duplicateYn === YN.N) {
-                setSelectedAuthListName(text)
-
-                return true
-              } else {
-                return false
-              }
+              return res.data
             } catch (err) {
-              return false
+              console.log(err)
             }
+          }}
+          onCancel={() => {
+            setSelectedAuthListName('')
+          }}
+          onConfirm={(text: string) => {
+            setSelectedAuthListName(text)
           }}
           size='small'
         />
       </Box>
 
-      <Box sx={{ minHeight: '23vh', maxHeight: '23vh', overflow: 'auto' }}>
+      <Box>
         <Box sx={{ overflow: 'auto' }}>
           <CustomTable id='menuId' showMoreButton={true} rows={rows} columns={columns} isAllView />
 
@@ -222,18 +228,24 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
           type='submit'
           variant='contained'
           onClick={async () => {
-            if (selectedAuthListName === '') {
-              alert('권한 이름을 입력해주세요')
+            if (isDuplicate) {
+              setSimpleDialogModalProps({
+                open: true,
+                title: '중복체크를 해주세요'
+              })
 
               return
-            } else if (isDuplicate) {
-              alert('중복체크를 해주세요.')
+            } else if (selectedAuthListName === '') {
+              setSimpleDialogModalProps({
+                open: true,
+                title: '권한 이름을 입력해주세요'
+              })
 
               return
             }
 
             // 추가
-            if (selectedAuthList.authId === 0) {
+            else if (selectedAuthList.authId === 0) {
               const req = {
                 companyNo: companyNo,
                 authName: selectedAuthListName,
@@ -287,7 +299,7 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
           취소
         </Button>
       </Box>
-    </Card>
+    </Box>
   )
 }
 
