@@ -96,7 +96,15 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
               isCommon
               path='camera'
               style={{ width: '25px', height: '25px' }}
-              icon={row.flowPlanBindingYN === YN.Y ? 'image-mode' : 'map-mode-full'}
+              icon={
+                row.flowPlanBindingYN === YN.Y
+                  ? viewType?.type === 'image'
+                    ? 'image-mode'
+                    : 'image-mode-disable'
+                  : viewType?.type === 'map'
+                  ? 'map-mode-full'
+                  : 'map-mode-full-disable'
+              }
             />
           </Box>
         )

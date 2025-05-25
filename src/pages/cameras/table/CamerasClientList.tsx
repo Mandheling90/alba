@@ -10,7 +10,7 @@ import { useCameras } from 'src/hooks/useCameras'
 import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MClientCameraList, MClientGroupCameraList } from 'src/model/cameras/CamerasModel'
-import { useClientGroupAdd, useClientGroupStatus } from 'src/service/cameras/camerasService'
+import { useClientGroupStatus } from 'src/service/cameras/camerasService'
 import styled from 'styled-components'
 
 import { getCameraColumns } from 'src/@core/components/table/columns/cameraColumns'
@@ -50,7 +50,6 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
     clientCameraDataOrigin,
     fetchData,
     removeDuplicateCameras,
-    handleGroupSaveClick,
     addGroupCamera,
     handleGroupCancelClick
   } = useCameras()
@@ -63,7 +62,6 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   const [isGroupMode, setIsGroupMode] = useState<boolean>(false)
   const [columns, setColumns] = useState<any[]>([])
 
-  const { mutateAsync: clientGroupAdd } = useClientGroupAdd()
   const { mutateAsync: clientGroupStatus } = useClientGroupStatus()
   const router = useRouter()
 
@@ -122,10 +120,6 @@ const CamerasClientList: FC<CamerasClientListProps> = ({ columnFilter, cameraPag
   }
 
   const selectRowEvent = (row: MClientCameraList) => {
-    // if (viewType.type === 'image' && row.flowPlanBindingYN === YN.N) {
-    //   return
-    // }
-
     if (Object.keys(row).length === 0) {
       setSelectedCamera(null)
     } else {

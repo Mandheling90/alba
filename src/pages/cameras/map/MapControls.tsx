@@ -40,7 +40,12 @@ const MapControls: React.FC<IMapControls> = ({
           sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
           onClick={() => setViewType({ type: 'map', size: 'half' })}
         >
-          <IconCustom isCommon path='camera' icon='map-mode-full' hoverIcon='map-mode-full-hovering' />
+          <IconCustom
+            isCommon
+            path='camera'
+            icon={viewType.type === 'image' ? 'map-mode-full-disable' : 'map-mode-full'}
+            hoverIcon={viewType.type === 'image' ? 'map-mode-full-hovering-disable' : 'map-mode-full-hovering'}
+          />
         </Box>
       )}
 
@@ -66,7 +71,12 @@ const MapControls: React.FC<IMapControls> = ({
             })
           }}
         >
-          <IconCustom isCommon path='camera' icon='image-mode' hoverIcon='image-mode-hovering' />
+          <IconCustom
+            isCommon
+            path='camera'
+            icon={viewType.type === 'map' ? 'image-mode-disable' : 'image-mode'}
+            hoverIcon={viewType.type === 'map' ? 'image-mode-hovering-disable' : 'image-mode-hovering'}
+          />
         </Box>
       )}
 

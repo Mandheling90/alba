@@ -201,6 +201,10 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
           updateClientCameraData(selectedCamera[0].cameraNo, updateInfo)
           setSelectedCamera([{ ...selectedCamera[0], ...updateInfo }])
           setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
+
+          setTimeout(() => {
+            handleSaveClick(selectedCamera[0].cameraNo)
+          }, 100)
         }
       })
     } else if (mapModifyModCameraId) {
@@ -240,6 +244,10 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
             updateClientCameraData(selectedCamera[0].cameraNo, updateInfo)
             setSelectedCamera([{ ...selectedCamera[0], ...updateInfo }])
             setSimpleDialogModalProps(INITIAL_DIALOG_PROPS)
+
+            setTimeout(() => {
+              handleSaveClick(selectedCamera[0].cameraNo)
+            }, 100)
           }
         })
       } else if (mapModifyModCameraId) {
