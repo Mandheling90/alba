@@ -81,7 +81,7 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
       field: 'authName',
       headerName: '권한',
       headerAlign: 'center',
-      flex: 0.8,
+      flex: 0.6,
       align: 'center',
       type: 'string'
     },
