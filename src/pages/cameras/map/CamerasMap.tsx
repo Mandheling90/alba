@@ -365,7 +365,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
   ]
 
   return (
-    <Grid container>
+    <Grid container direction={'column'} wrap='nowrap' height={'100%'}>
       <FileUploader ref={fileInputRef} onFileSelect={handleFileUpload} accept='image/*' style={{ display: 'none' }} />
       <SimpleDialogModal
         open={simpleDialogModalProps.open}
@@ -378,7 +378,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
         isConfirm
       />
 
-      <Grid item xs={12}>
+      <Grid item xs={12} style={{flex:'0 0 auto', height:'auto'}}>
         <MapControls
           viewType={viewType}
           setViewType={setViewType}
@@ -403,7 +403,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
           }}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} style={{flex: '1'}}>
         <Box style={{ width: '100%', height: height, position: 'relative' }}>
           {viewType.size === 'full' && <CameraSelecter />}
 
