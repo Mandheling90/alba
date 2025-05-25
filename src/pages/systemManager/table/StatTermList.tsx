@@ -258,16 +258,17 @@ const StatTermList: FC = () => {
         return <>{!params.row.menuName && <Box>{params.value}</Box>}</>
       },
       changeConfigValue: (params: any) => {
+        const isMenu = params.row.menuName ? true : false
+        const value = isMenu ? params.row.menuName : params.value
+
         return (
           <Box>
             {params.row.isEdit ? (
               <CustomTextFieldState
                 size='small'
-                value={params.row.menuName ? params.row.menuName : params.value}
+                value={value}
                 onChange={e => {
-                  console.log(e.target.value)
-
-                  if (params.row.menuName) {
+                  if (isMenu) {
                     updateDataItem(params.row.id, { menuName: e.target.value })
                   } else {
                     updateDataItem(params.row.id, { changeConfigValue: e.target.value })
@@ -280,7 +281,7 @@ const StatTermList: FC = () => {
                 }}
               />
             ) : (
-              params.value
+              value
             )}
           </Box>
         )
