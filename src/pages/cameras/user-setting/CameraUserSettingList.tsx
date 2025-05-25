@@ -91,7 +91,8 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
 
     const newColumns2 = getUserColumns({
       userData,
-      columnFilter: ['name', 'name2', 'authName']
+      columnFilter: ['name', 'name2', 'authName'],
+      isShowTooltip: true,
     })
     setUserColumns(newColumns2)
   }, [cameraPage])

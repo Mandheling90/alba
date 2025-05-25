@@ -2,6 +2,7 @@ import { Box, IconButton, Switch, Typography } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { MUserInfo } from 'src/model/commonModel'
+import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 
 interface UserColumnsProps {
   modStateUser?: (params: { userNo: number; userStatus: number }) => void
@@ -11,11 +12,12 @@ interface UserColumnsProps {
   setIsOpen?: (isOpen: boolean) => void
   userDeleteFn?: (userNo: number) => void
   columnFilter?: string[]
-  userInfo?: MUserInfo
+  userInfo?: MUserInfo,
+  isShowTooltip?: boolean
 }
 
 const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridColDef> => {
-  const { modStateUser, userData, setUserData, setSelectUser, setIsOpen, userDeleteFn, userInfo } = props
+  const { modStateUser, userData, setUserData, setSelectUser, setIsOpen, userDeleteFn, userInfo, isShowTooltip } = props
 
   return {
     name: {
@@ -27,7 +29,7 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
       type: 'string',
       renderCell: ({ row }: GridRenderCellParams) => {
         return (
-          <Typography noWrap sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', gap: 1 }}>
+          <>
             <IconCustom
               path='avatars'
               style={{ width: '30px', height: '30px', borderRadius: '50%' }}
@@ -35,8 +37,20 @@ const createColumnDefinitions = (props: UserColumnsProps): Record<string, GridCo
               isCommon
               usePng
             />
-            {row.name}
-          </Typography>
+            <Box sx={{ maxWidth:'calc(100% - 30px)' }} style={{paddingLeft: '5px'}} >
+            {isShowTooltip ? (
+              <CustomTooltip title={row.name} key={row.userNo} placement='top' >
+                <Typography noWrap sx={{ color: 'text.secondary', }}>
+                  {row.name}
+                </Typography>
+              </CustomTooltip>
+            ): (
+                <Typography noWrap sx={{ color: 'text.secondary', }}>
+                  {row.name}
+                </Typography>
+            )}
+            </Box>
+          </>
         )
       }
     },
