@@ -230,23 +230,6 @@ const StatTermList: FC = () => {
       { field: 'modify', headerName: '편집', type: 'string', flex: 0.3 }
     ],
     customRenderers: {
-      menuName: (params: any) => {
-        if (!params.row.menuName) return <></>
-
-        return (
-          <Box>
-            {params.row.isEdit ? (
-              <CustomTextFieldState
-                size='small'
-                value={params.value}
-                onChange={e => updateDataItem(params.row.id, { menuName: e.target.value })}
-              />
-            ) : (
-              params.value
-            )}
-          </Box>
-        )
-      },
       toggle: (params: any) => {
         return (
           <>
@@ -275,15 +258,26 @@ const StatTermList: FC = () => {
         return <>{!params.row.menuName && <Box>{params.value}</Box>}</>
       },
       changeConfigValue: (params: any) => {
-        if (params.row.menuName) return <></>
-
         return (
           <Box>
             {params.row.isEdit ? (
               <CustomTextFieldState
                 size='small'
-                value={params.value}
-                onChange={e => updateDataItem(params.row.id, { changeConfigValue: e.target.value })}
+                value={params.row.menuName ? params.row.menuName : params.value}
+                onChange={e => {
+                  console.log(e.target.value)
+
+                  if (params.row.menuName) {
+                    updateDataItem(params.row.id, { menuName: e.target.value })
+                  } else {
+                    updateDataItem(params.row.id, { changeConfigValue: e.target.value })
+                  }
+                }}
+                onKeyDown={e => {
+                  if (e.key === ' ') {
+                    e.stopPropagation()
+                  }
+                }}
               />
             ) : (
               params.value
@@ -377,9 +371,7 @@ const StatTermList: FC = () => {
             </Box>
           </HorizontalScrollBox>
 
-          {configData?.data && (
-            <OneDepthTable data={configData?.data} columns={columnsTemp} expandedRows={expandedRows} keyField='id' />
-          )}
+          {data && <OneDepthTable data={data} columns={columnsTemp} expandedRows={expandedRows} keyField='id' />}
         </Card>
       </Grid>
     </Grid>
