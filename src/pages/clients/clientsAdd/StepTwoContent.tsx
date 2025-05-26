@@ -562,8 +562,9 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <Box>
                     <CustomSelectBox
-                      value={card.aiSolutionId.toString()}
+                      value={card.aiSolutionId === 0 ? '' : card.aiSolutionId.toString()}
                       onChange={handleSelectChange(card.companySolutionId)}
+                      placeholder='분석 솔루션 선택'
                       options={
                         data?.data
                           ?.filter(item => {
