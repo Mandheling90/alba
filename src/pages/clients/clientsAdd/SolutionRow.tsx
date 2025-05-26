@@ -194,6 +194,7 @@ const SolutionRow: FC<ISolutionRow> = ({
             )
           }}
           inputRef={inputRef}
+          required
         />
       </Box>
 

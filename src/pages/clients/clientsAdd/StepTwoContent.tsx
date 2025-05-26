@@ -28,6 +28,7 @@ import {
   useAiSolutionInstanceDelete,
   useAiSolutionServerDelete
 } from 'src/service/client/clientService'
+import { getErrorMessage } from 'src/utils/CommonUtil'
 import SolutionServerList from './SolutionServerList'
 
 export const DefaultPackageSolution = (PackageSolution?: MAiSolutionCompanyList, remark?: string): ISolutionList => {
@@ -724,6 +725,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                             if (!instance.aiServiceId) emptyFields.push('분석 서비스')
                             if (!instance.cameraName) emptyFields.push('카메라명')
                             if (!instance.cameraIp) emptyFields.push('카메라주소')
+                            if (instance.areaNameList.length === 0) emptyFields.push('분석영역명')
                             if (isNonServerSolution(card.aiSolutionId)) {
                               if (!instance.cameraId) emptyFields.push('카메라ID')
                             }
@@ -815,7 +817,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                         setSimpleDialogModalProps({
                           open: true,
                           title: '솔루션 등록 오류',
-                          contents: '솔루션 등록 중 오류가 발생했습니다.'
+                          contents: getErrorMessage(error)
                         })
                         console.error('솔루션 등록 오류:', error)
                       }
