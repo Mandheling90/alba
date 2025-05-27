@@ -402,7 +402,8 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                         clientDataOrg && onDataChange(clientDataOrg)
                       }
                     })
-                    clientDataOrg && onDataChange(clientDataOrg)
+
+                    // clientDataOrg && onDataChange(clientDataOrg)
                   }}
                 >
                   취소

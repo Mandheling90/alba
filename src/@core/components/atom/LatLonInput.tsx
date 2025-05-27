@@ -45,6 +45,11 @@ const LatLonInput: FC<LatLonInputProps> = ({ cameraNo, groupId, lat, lon, isEdit
             onChange={e => {
               onLatChange(parseFloat(e.target.value))
             }}
+            onKeyDown={e => {
+              if (e.key === ' ' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                e.stopPropagation()
+              }
+            }}
           />
           <IconButton
             sx={{ color: 'text.secondary' }}

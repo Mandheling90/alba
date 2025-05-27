@@ -144,6 +144,11 @@ const createColumnDefinitions = (props: CameraColumnsProps): Record<string, Grid
                 onChange={e => {
                   updateClientCameraData?.(row.cameraNo, { cameraName: e.target.value })
                 }}
+                onKeyDown={e => {
+                  if (e.key === ' ' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    e.stopPropagation()
+                  }
+                }}
               />
             ) : (
               <Typography component='span' variant='inherit'>
