@@ -131,7 +131,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
       const hasInstances = solution.serverList.some(server => server.instanceList && server.instanceList.length > 0)
 
       if (hasInstances) {
-        // setWarningMessage('모든 인스턴스를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.')
         await showModal({
           title: '솔루션 정보 삭제',
           contents: '모든 인스턴스를 먼저 삭제한 후 솔루션을 삭제할 수 있습니다.'
@@ -790,11 +789,11 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                             await saveAiSolutionCompanyPackage(packageSolutionData)
                           }
                         } else {
-                          const isNewCard = card.isNew
+                          // const isNewCard = card.isNew
 
-                          // const isNewCard = !originalAiData.current?.solutionList?.some(
-                          //   solution => solution.companySolutionId === card.companySolutionId
-                          // )
+                          const isNewCard = !originalAiData.current?.solutionList?.some(
+                            solution => solution.companySolutionId === card.companySolutionId
+                          )
 
                           const solutionData = {
                             ...card,
