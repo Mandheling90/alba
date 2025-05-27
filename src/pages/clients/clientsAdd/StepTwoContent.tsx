@@ -98,19 +98,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
     onDataChange({ solutions: solutionList } as any)
   }, [solutionList])
 
-  const handleAddSolution = () => {
-    setSolutionList(prev => [
-      ...prev,
-      {
-        aiSolutionId: 0,
-        aiSolutionName: '',
-        companySolutionId: prev.length + 1,
-        serverList: [],
-        isNew: true
-      }
-    ])
-  }
-
   const handleDeleteSolution = async (companySolutionId: number) => {
     // 솔루션 정보 찾기
     const solution = solutionList.find(item => item.companySolutionId === companySolutionId)
@@ -176,7 +163,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
   }
 
   const handleDeleteInstance = async (solutionIndex: number, serverId: number, instanceId: number) => {
-    handleConfirmDelete('instance', undefined, serverId, instanceId)
+    handleConfirmDelete('instance', solutionIndex, serverId, instanceId)
   }
 
   const handleConfirmDelete = useCallback(
@@ -186,8 +173,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
       selectedServerId?: number,
       selectedInstanceId?: number
     ) => {
-      console.log(deleteType)
-
       try {
         switch (deleteType) {
           case 'solution':
@@ -224,7 +209,8 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
             }
             break
           case 'instance':
-            if (selectedServerId && selectedInstanceId) {
+            // 서버 하위의 인스턴스 삭제일 경우
+            if (selectedInstanceId) {
               const isExistingInstance = originalAiData.current?.solutionList?.some(solution =>
                 solution.serverList.some(server =>
                   server.instanceList.some(instance => instance.instanceId === selectedInstanceId)
@@ -235,23 +221,43 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                 await deleteAiSolutionInstance({ instanceId: selectedInstanceId })
                 refetch()
               } else {
-                setSolutionList(prev =>
-                  prev.map(solution => ({
-                    ...solution,
-                    serverList: solution.serverList.map(server => {
-                      if (server.serverId === selectedServerId) {
+                if (selectedServerId) {
+                  setSolutionList(prev =>
+                    prev.map(solution => ({
+                      ...solution,
+                      serverList: solution.serverList.map(server => {
+                        if (server.serverId === selectedServerId) {
+                          return {
+                            ...server,
+                            instanceList: server.instanceList.filter(
+                              instance => instance.instanceId !== selectedInstanceId
+                            )
+                          }
+                        }
+
+                        return server
+                      })
+                    }))
+                  )
+                } else {
+                  setSolutionList(prev =>
+                    prev.map(solution => {
+                      if (solution.companySolutionId === selectedSolutionId) {
                         return {
-                          ...server,
-                          instanceList: server.instanceList.filter(
-                            instance => instance.instanceId !== selectedInstanceId
-                          )
+                          ...solution,
+                          serverList: solution.serverList.map(server => ({
+                            ...server,
+                            instanceList: server.instanceList.filter(
+                              instance => instance.instanceId !== selectedInstanceId
+                            )
+                          }))
                         }
                       }
 
-                      return server
+                      return solution
                     })
-                  }))
-                )
+                  )
+                }
               }
             }
             break
@@ -290,8 +296,6 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
     setSolutionList(prev =>
       prev.map(card => {
         if (card.companySolutionId === companySolutionId) {
-          console.log('Updating solution with companySolutionId:', companySolutionId)
-
           if (isServerUsingSolution(aiSolutionId)) {
             return {
               ...card,
@@ -326,6 +330,23 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
         return card
       })
     )
+  }
+
+  const handleAddSolution = () => {
+    setSolutionList(prev => {
+      const newSolutionId = prev.length > 0 ? Math.max(...prev.map(s => s.companySolutionId)) + 1 : 1
+
+      return [
+        ...prev,
+        {
+          aiSolutionId: 0,
+          aiSolutionName: '',
+          companySolutionId: newSolutionId,
+          serverList: [],
+          isNew: true
+        }
+      ]
+    })
   }
 
   const handleAddServer = (solutionIndex: number) => {
@@ -674,7 +695,7 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                       isConfirm: true,
                       confirmFn: () => {
                         setTimeout(() => {
-                          handleDeleteInstance(index, serverId, instanceId)
+                          handleDeleteInstance(card.companySolutionId, serverId, instanceId)
                         }, 100)
                       }
                     })
@@ -725,7 +746,8 @@ const StepTwoContent: FC<IStepTwoContent> = ({ aiData, onDataChange, disabled, c
                             if (!instance.aiServiceId) emptyFields.push('분석 서비스')
                             if (!instance.cameraName) emptyFields.push('카메라명')
                             if (!instance.cameraIp) emptyFields.push('카메라주소')
-                            if (instance.areaNameList.length === 0) emptyFields.push('분석영역명')
+                            if (instance.areaNameList.length === 0 && card.aiSolutionId !== SOLUTION_TYPE_ID.SAFR)
+                              emptyFields.push('분석영역명')
                             if (isNonServerSolution(card.aiSolutionId)) {
                               if (!instance.cameraId) emptyFields.push('카메라ID')
                             }

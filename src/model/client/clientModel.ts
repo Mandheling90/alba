@@ -296,6 +296,7 @@ export interface ISolutionServerProps {
   useCameraId?: boolean
   useCameraGroup?: boolean
   useInstance?: boolean
+  useAreaNameList?: boolean
   children?: React.ReactNode
 }
 

@@ -12,6 +12,7 @@ interface ISolutionRow {
   useCameraId?: boolean
   useCameraGroup?: boolean
   useInstance?: boolean
+  useAreaNameList?: boolean
   instance: IInstanceList
   onDeleteInstance: (serverId: number, instanceId: number) => void
   onUpdateInstance: (serverId: number, instanceId: number, field: string, value: any) => void
@@ -24,6 +25,7 @@ const SolutionRow: FC<ISolutionRow> = ({
   useCameraId = false,
   useCameraGroup = false,
   useInstance = false,
+  useAreaNameList = true,
   instance,
   onDeleteInstance,
   onUpdateInstance
@@ -152,51 +154,54 @@ const SolutionRow: FC<ISolutionRow> = ({
         placeholder={`카메라주소`}
         required
       />
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, minWidth: '200px' }}>
-        <TextField
-          size='small'
-          value={newTag}
-          onChange={e => setNewTag(e.target.value)}
-          onKeyDown={handleKeyDown}
-          label='분석영역명'
-          variant='outlined'
-          placeholder='새로운 분석영역명 입력'
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    overflowX: 'auto',
-                    '&::-webkit-scrollbar': {
-                      height: '4px'
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                      backgroundColor: 'rgba(0,0,0,0.2)',
-                      borderRadius: '4px'
-                    },
-                    maxWidth: '300px'
-                  }}
-                >
-                  <Stack direction='row' spacing={1} sx={{ flexWrap: 'nowrap' }}>
-                    {Array.isArray(instance.areaNameList) &&
-                      instance.areaNameList.map((tag, index) => (
-                        <Chip
-                          key={index}
-                          label={tag.instanceModelName}
-                          onDelete={() => handleDeleteTag(tag.instanceModelName)}
-                          size='small'
-                        />
-                      ))}
-                  </Stack>
-                </Box>
-              </InputAdornment>
-            )
-          }}
-          inputRef={inputRef}
-          required
-        />
-      </Box>
+
+      {useAreaNameList && (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, minWidth: '200px' }}>
+          <TextField
+            size='small'
+            value={newTag}
+            onChange={e => setNewTag(e.target.value)}
+            onKeyDown={handleKeyDown}
+            label='분석영역명'
+            variant='outlined'
+            placeholder='새로운 분석영역명 입력'
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      overflowX: 'auto',
+                      '&::-webkit-scrollbar': {
+                        height: '4px'
+                      },
+                      '&::-webkit-scrollbar-thumb': {
+                        backgroundColor: 'rgba(0,0,0,0.2)',
+                        borderRadius: '4px'
+                      },
+                      maxWidth: '300px'
+                    }}
+                  >
+                    <Stack direction='row' spacing={1} sx={{ flexWrap: 'nowrap' }}>
+                      {Array.isArray(instance.areaNameList) &&
+                        instance.areaNameList.map((tag, index) => (
+                          <Chip
+                            key={index}
+                            label={tag.instanceModelName}
+                            onDelete={() => handleDeleteTag(tag.instanceModelName)}
+                            size='small'
+                          />
+                        ))}
+                    </Stack>
+                  </Box>
+                </InputAdornment>
+              )
+            }}
+            inputRef={inputRef}
+            required
+          />
+        </Box>
+      )}
 
       <IconButton onClick={() => onDeleteInstance(serverId, instance.instanceId ?? 0)}>
         <IconCustom isCommon icon={'DeleteOutline'} />

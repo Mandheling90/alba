@@ -17,7 +17,8 @@ const SolutionTemplate: FC<ISolutionServerProps> = ({
   children,
   useCameraId = false,
   useCameraGroup = false,
-  useInstance = false
+  useInstance = false,
+  useAreaNameList = true
 }) => {
   const [isFold, setIsFold] = useState(false)
 
@@ -59,6 +60,7 @@ const SolutionTemplate: FC<ISolutionServerProps> = ({
                 key={instance.instanceId}
                 instance={instance}
                 onUpdateInstance={onUpdateInstance}
+                useAreaNameList={useAreaNameList}
               />
             </Box>
           ))}

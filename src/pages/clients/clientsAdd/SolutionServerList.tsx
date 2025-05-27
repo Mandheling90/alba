@@ -1,5 +1,6 @@
-import { Box, IconButton, TextareaAutosize, TextField } from '@mui/material'
+import { Box, IconButton, InputAdornment, TextareaAutosize, TextField } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
+import Icon from 'src/@core/components/icon'
 import IconCustom from 'src/layouts/components/IconCustom'
 import {
   IAiSolutionService,
@@ -35,6 +36,7 @@ const SolutionServerList: FC<ISolutionRow> = ({
 }) => {
   const { mutateAsync: getAiSolutionService } = useAiSolutionService()
   const [aiSolutionService, setAiSolutionService] = useState<IAiSolutionService[]>([])
+  const [showPassword, setShowPassword] = useState(false)
   useEffect(() => {
     getAiSolutionService({ solutionId: solutionList.aiSolutionId }).then(res => {
       if (res.data) {
@@ -93,6 +95,7 @@ const SolutionServerList: FC<ISolutionRow> = ({
             onAddInstance={onAddInstance}
             useCameraId={true}
             useCameraGroup={true}
+            useAreaNameList={false}
           >
             <TextField
               size='small'
@@ -139,9 +142,18 @@ const SolutionServerList: FC<ISolutionRow> = ({
               label='SAFR PassWord'
               variant='outlined'
               placeholder={`SAFR PassWord`}
-              type='password'
+              type={showPassword ? 'text' : 'password'}
               required
               onChange={e => onUpdateServer(server.serverId, 'safrPassword', e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position='end'>
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge='end'>
+                      <Icon icon={showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
             />
           </SolutionTemplate>
         )
@@ -293,9 +305,18 @@ const SolutionServerList: FC<ISolutionRow> = ({
               label='AIBox PassWord'
               variant='outlined'
               placeholder={`AIBox PassWord`}
-              type='password'
+              type={showPassword ? 'text' : 'password'}
               required
               onChange={e => onUpdateServer(server.serverId, 'aiBoxPassword', e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position='end'>
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge='end'>
+                      <Icon icon={showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
             />
           </SolutionTemplate>
         )
