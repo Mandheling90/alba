@@ -53,6 +53,16 @@ const MapSearch: FC<IMapSearch> = ({ onSearch, textFieldColor, useSearchButton =
     })
   }, 500)
 
+  const searchFn = () => {
+    const firstResult = placesList[0]
+    setMapInfo({
+      ...mapInfo,
+      center: { lat: Number(firstResult.y), lon: Number(firstResult.x) },
+      mapLevel: 3
+    })
+    onSearch?.(Number(firstResult.y), Number(firstResult.x))
+  }
+
   return (
     <Autocomplete
       freeSolo
@@ -80,9 +90,14 @@ const MapSearch: FC<IMapSearch> = ({ onSearch, textFieldColor, useSearchButton =
           params={params}
           label={'지도 위치 검색'}
           onClick={() => {
-            // console.log('onClick')
+            searchFn()
           }}
           textFieldColor={textFieldColor}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && placesList.length > 0) {
+              searchFn()
+            }
+          }}
         />
       )}
     />

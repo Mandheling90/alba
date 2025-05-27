@@ -10,6 +10,7 @@ interface ITextFieldSearch {
   onClick?: (value: string) => void
   textFieldColor?: string
   useSearchButton?: boolean
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -18,7 +19,8 @@ const TextFieldSearch: FC<ITextFieldSearch> = ({
   label,
   onClick = undefined,
   textFieldColor = '#00000000',
-  useSearchButton = false
+  useSearchButton = false,
+  onKeyDown
 }): React.ReactElement => {
   const [fontSize, setFontSize] = useState(true)
   const [text, setText] = useState('')
@@ -43,6 +45,7 @@ const TextFieldSearch: FC<ITextFieldSearch> = ({
             setText(e.target.value)
           }
         }}
+        onKeyDown={onKeyDown}
         InputProps={{
           ...params?.InputProps,
           type: 'search',
