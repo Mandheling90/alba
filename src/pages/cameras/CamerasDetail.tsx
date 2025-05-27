@@ -23,26 +23,33 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
   }, [viewType.size])
 
   return (
-    <Grid container>
-      <Collapse in={!isFullView} timeout={300} style={{ width: '100%' }}>
-        <Grid item xs={12}>
-          <PageHeader
-            title={
-              <Typography variant='h5' sx={{ fontSize: 24, fontWeight: 500, mb: 5 }}>
-                고객사 카메라 목록
-              </Typography>
-            }
-          />
-          <Box sx={{ height: '35vh', overflow: 'auto' }}>
-            <Card sx={{ minHeight: '35vh' }}>
-              <CamerasClientList />
-            </Card>
-          </Box>
-        </Grid>
+    <Grid container wrap='nowrap' direction={'column'} style={{height: '100%'}}>
+      <Collapse in={!isFullView} timeout={300} 
+        style={{ width: '100%', height: '100%'}} sx={{
+          '& .MuiCollapse-wrapper': {
+            height: '100%'
+          },
+          '& .MuiCollapse-wrapperInner': {
+            display: 'grid', gridTemplateRows: 'auto 1fr', gridTemplateColumns: '100%'
+          }
+        }}>
+        <PageHeader
+          title={
+            <Typography variant='h5' sx={{ fontSize: 24, fontWeight: 500, mb: 5 }}>
+              고객사 카메라 목록
+            </Typography>
+          }
+        />
+        <Box height={'100%'} sx={{overflow: 'auto', borderRadius: '6px'}}>
+          <Card>
+            <CamerasClientList />
+          </Card>
+        </Box>
       </Collapse>
 
       <Grid item xs={12} style={{ height: isFullView ? '80vh' : '36vh', transition: 'height 0.3s ease' }}>
-        <CamerasMap height={isFullView ? '80vh' : '36vh'} />
+        {/* <CamerasMap height={isFullView ? '80vh' : '36vh'} /> */}
+        <CamerasMap height={'100%'} />
       </Grid>
     </Grid>
   )
