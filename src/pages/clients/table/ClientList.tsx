@@ -80,7 +80,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       field: 'companyName',
       headerName: '고객사명',
       headerAlign: 'center',
-      flex: 0.7,
+      flex: 0.6,
       renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -95,7 +95,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       field: 'address',
       headerName: '주소',
       headerAlign: 'center',
-      flex: 1,
+      flex: 0.8,
       renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -160,7 +160,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       headerName: '솔루션 유형',
       headerAlign: 'center',
       align: 'center',
-      flex: 0.7,
+      flex: 0.6,
       renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
@@ -250,7 +250,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       field: 'reportEmail',
       headerName: '리포트 수신',
       headerAlign: 'center',
-      flex: 0.8,
+      flex: 0.6,
       renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -265,7 +265,7 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
       field: 'accountStatus',
       headerName: '계정 상태',
       headerAlign: 'center',
-      flex: 0.4,
+      flex: 0.3,
       renderCell: ({ row }: GridRenderCellParams<MList>) => {
         return (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
@@ -281,7 +281,8 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
     {
       field: 'updateDelete',
       headerName: '수정 및 삭제',
-      flex: 0.4,
+      headerAlign: 'center',
+      flex: 0.5,
       renderCell: ({ row }: any) => {
         return (
           <>
