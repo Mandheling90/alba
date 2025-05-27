@@ -9,12 +9,24 @@ interface PickerProps {
   end?: Date | number
   start?: Date | number
   useIcon?: boolean
-
   placeholderColor?: string
+  alwaysShowIcon?: boolean
+  clearable?: boolean
 }
 
 const PickersComponent = forwardRef(
-  ({ label, readOnly = true, useIcon = false, placeholderColor, ...restProps }: PickerProps, ref) => {
+  (
+    {
+      label,
+      readOnly = true,
+      useIcon = false,
+      placeholderColor,
+      alwaysShowIcon = false,
+      clearable = false,
+      ...restProps
+    }: PickerProps,
+    ref
+  ) => {
     if (restProps.start && restProps.end) {
       const startDate = format(restProps.start, 'yyyy-MM-dd')
       const endDate = restProps.end !== null ? ` - ${format(restProps.end, 'yyyy-MM-dd')}` : null
@@ -27,8 +39,22 @@ const PickersComponent = forwardRef(
           {...restProps}
           value={value}
           size='small'
+          InputProps={{
+            readOnly: true,
+            startAdornment:
+              useIcon || alwaysShowIcon ? (
+                <InputAdornment position='start'>
+                  <IconCustom icon='carbon_calendar' isCommon />
+                </InputAdornment>
+              ) : null,
+            endAdornment: clearable ? (
+              <InputAdornment position='end'>
+                {/* <IconCustom icon='mdi:close' isCommon style={{ cursor: 'pointer' }} /> */}
+              </InputAdornment>
+            ) : null
+          }}
           InputLabelProps={{
-            style: { color: placeholderColor, opacity: placeholderColor ? 0.5 : 1 } // 원하는 색상으로 label 색상 설정
+            style: { color: placeholderColor, opacity: placeholderColor ? 0.5 : 1 }
           }}
         />
       )
@@ -45,8 +71,22 @@ const PickersComponent = forwardRef(
           label={label || ''}
           {...(readOnly && { inputProps: { readOnly: true } })}
           size='small'
+          InputProps={{
+            readOnly: true,
+            startAdornment:
+              useIcon || alwaysShowIcon ? (
+                <InputAdornment position='start'>
+                  <IconCustom icon='carbon_calendar' isCommon />
+                </InputAdornment>
+              ) : null,
+            endAdornment: clearable ? (
+              <InputAdornment position='end'>
+                {/* <IconCustom icon='mdi:close' isCommon style={{ cursor: 'pointer' }} /> */}
+              </InputAdornment>
+            ) : null
+          }}
           InputLabelProps={{
-            style: { color: placeholderColor, opacity: placeholderColor ? 0.5 : 1 } // 원하는 색상으로 label 색상 설정
+            style: { color: placeholderColor, opacity: placeholderColor ? 0.5 : 1 }
           }}
         />
       )
@@ -60,17 +100,23 @@ const PickersComponent = forwardRef(
         size='small'
         InputProps={{
           readOnly: true,
-          startAdornment: useIcon ? (
-            <InputAdornment position='start'>
-              <IconCustom icon='carbon_calendar' isCommon />
+          startAdornment:
+            useIcon || alwaysShowIcon ? (
+              <InputAdornment position='start'>
+                <IconCustom icon='carbon_calendar' isCommon />
+              </InputAdornment>
+            ) : null,
+          endAdornment: clearable ? (
+            <InputAdornment position='end'>
+              {/* <IconCustom icon='mdi:close' isCommon style={{ cursor: 'pointer' }} /> */}
             </InputAdornment>
           ) : null
         }}
         InputLabelProps={{
           shrink: false,
           style: {
-            paddingLeft: useIcon ? '34px' : '0',
-            color: placeholderColor ? placeholderColor : undefined, // 원하는 색상으로 label 색상 설정
+            paddingLeft: useIcon || alwaysShowIcon ? '34px' : '0',
+            color: placeholderColor ? placeholderColor : undefined,
             opacity: placeholderColor ? 0.5 : 1
           }
         }}

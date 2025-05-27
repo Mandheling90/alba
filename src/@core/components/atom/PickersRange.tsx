@@ -29,7 +29,10 @@ const PickersRange = ({
   placeholderColor,
   inputStyle,
   useNotDefaultStyle = false,
-  isSingleDate = false
+  isSingleDate = false,
+  alwaysShowIcon = false,
+  clearable = true,
+  showTwoCalendars = false
 }: {
   label?: string
   width?: number
@@ -45,6 +48,9 @@ const PickersRange = ({
   inputStyle?: React.CSSProperties
   useNotDefaultStyle?: boolean
   isSingleDate?: boolean
+  alwaysShowIcon?: boolean
+  clearable?: boolean
+  showTwoCalendars?: boolean
 }) => {
   const theme = useTheme()
   const { direction } = theme
@@ -129,7 +135,7 @@ const PickersRange = ({
       <DatePicker
         ref={datePickerRef}
         selectsRange={!isSingleDate}
-        isClearable={!isDisabled}
+        isClearable={clearable && !isDisabled}
         endDate={isSingleDate ? undefined : endDate}
         selected={startDate}
         startDate={isSingleDate ? undefined : startDate}
@@ -137,6 +143,7 @@ const PickersRange = ({
         onChange={handleOnChange}
         shouldCloseOnSelect={isSingleDate}
         popperPlacement={popperPlacement}
+        monthsShown={showTwoCalendars ? 2 : 1}
         customInput={
           <PickersComponent
             label={
@@ -152,6 +159,8 @@ const PickersRange = ({
             end={endDate as Date | number}
             useIcon={useIcon}
             placeholderColor={placeholderColor && !startDate && !endDate ? placeholderColor : undefined}
+            alwaysShowIcon={alwaysShowIcon}
+            clearable={clearable}
           />
         }
         disabled={isDisabled}

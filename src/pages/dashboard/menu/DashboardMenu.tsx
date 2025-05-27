@@ -77,6 +77,8 @@ const DashboardMenu: FC<IDashboardMenu> = ({ refetch, useAgeSelect = false, stat
           selectedStartDate={dateRange[0]}
           selectedEndDate={dateRange[1]}
           width={280}
+          alwaysShowIcon
+          clearable={false}
         />
       </FlexBox>
 
@@ -99,21 +101,39 @@ const DashboardMenu: FC<IDashboardMenu> = ({ refetch, useAgeSelect = false, stat
             <Box display={'flex'} alignItems={'center'} mr={2}>
               <IconCustom isCommon icon='time' />
             </Box>
+
             <TimePicker
               hour={startTime[0]}
               onChange={(hour, minute) => {
                 setStartTime([hour, minute])
+
+                return {
+                  openTooltip: hour > endTime[0],
+                  tooltipText: '시작 시간은 끝시간 이전이어야 합니다.',
+                  arrowPosition: 'left'
+                }
               }}
+              tooltipClear={startTime[0] < endTime[0]}
             />
             <Typography variant='inherit' sx={{ marginX: 1 }}>
               ~
             </Typography>
-            <TimePicker
-              hour={endTime[0]}
-              onChange={(hour, minute) => {
-                setEndTime([hour, minute])
-              }}
-            />
+
+            <Box>
+              <TimePicker
+                hour={endTime[0]}
+                onChange={(hour, minute) => {
+                  setEndTime([hour, minute])
+
+                  return {
+                    openTooltip: hour < startTime[0],
+                    tooltipText: '끝 시간은 시작 시간 이후여야 합니다.',
+                    arrowPosition: 'right'
+                  }
+                }}
+                tooltipClear={startTime[0] < endTime[0]}
+              />
+            </Box>
           </Box>
         </Box>
       </FlexBox>

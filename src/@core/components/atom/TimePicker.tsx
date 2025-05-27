@@ -1,7 +1,7 @@
 import { Box, List, ListItem, ListItemButton, Modal } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
-import { scrollbarSx } from './scrollbarStyles'
+import CustomTooltip from './CustomTooltip'
 
 const TimePickerWrapper = styled.div`
   display: inline-block;
@@ -25,31 +25,76 @@ const modalStyle = {
   position: 'absolute' as const,
   width: 80,
   borderRadius: '5px',
-  bgcolor: 'background.paper',
-  border: '1px solid rgba(145, 85, 253, 1)',
-  boxShadow: 24,
-  maxHeight: 200, // 모달의 최대 높이
-  overflowY: 'auto' // 스크롤 가능하도록 설정
+  bgcolor: 'transparent',
+  boxShadow: 'none',
+  maxHeight: 200,
+  overflowY: 'auto',
+  '&::-webkit-scrollbar': {
+    display: 'none'
+  },
+  msOverflowStyle: 'none',
+  scrollbarWidth: 'none',
+  maskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)',
+  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%)'
 }
 
+const ListItemStyled = styled(ListItemButton)`
+  display: flex;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: rgba(0, 0, 0, 0.87);
+  position: relative;
+  z-index: 2;
+`
+
+const ListContainer = styled(List)`
+  position: relative;
+  padding: 80px 0;
+  background: transparent;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.12);
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+`
+
+interface ITimePickerOnChangeRes {
+  openTooltip: boolean
+  tooltipText: string
+  arrowPosition?: 'left' | 'center' | 'right'
+}
 interface ITimePicker {
   hour: number
   minute?: number
-  onChange: (hour: number, minute: number) => void
+  onChange: (hour: number, minute: number) => ITimePickerOnChangeRes | void
+  tooltipClear?: boolean
 }
 
-const TimePicker: React.FC<ITimePicker> = ({ hour, minute, onChange }) => {
+const TimePicker: React.FC<ITimePicker> = ({ hour, minute, onChange, tooltipClear }) => {
   const [selectedHour, setSelectedHour] = useState<number>(hour)
   const [selectedMinute, setSelectedMinute] = useState<number>(minute ?? 0)
   const [openHourModal, setOpenHourModal] = useState<boolean>(false)
   const [openMinuteModal, setOpenMinuteModal] = useState<boolean>(false)
   const [hourModalPosition, setHourModalPosition] = useState({ top: 0, left: 0 })
   const [minuteModalPosition, setMinuteModalPosition] = useState({ top: 0, left: 0 })
+  const [tooltipInfo, setTooltipInfo] = useState<ITimePickerOnChangeRes>()
 
   useEffect(() => {
     setSelectedHour(hour)
     setSelectedMinute(minute ?? 0)
   }, [hour, minute])
+
+  useEffect(() => {
+    if (tooltipClear) {
+      setTooltipInfo(undefined)
+    }
+  }, [tooltipClear])
 
   const hourListRef = useRef<HTMLUListElement | null>(null)
   const minuteListRef = useRef<HTMLUListElement | null>(null)
@@ -123,7 +168,17 @@ const TimePicker: React.FC<ITimePicker> = ({ hour, minute, onChange }) => {
   return (
     <TimePickerWrapper>
       <TimeInputs>
-        <TimeInput onClick={handleHourClick}>{selectedHour.toString().padStart(2, '0')}</TimeInput>시{' '}
+        <CustomTooltip
+          title={tooltipInfo?.tooltipText}
+          placement='bottom'
+          backgroundColor='rgba(58, 53, 65, 0.6)'
+          color='rgba(255, 255, 255, 0.87)'
+          open={tooltipInfo?.openTooltip ?? false}
+          arrowPosition={tooltipInfo?.arrowPosition ?? 'center'}
+        >
+          <TimeInput onClick={handleHourClick}>{selectedHour.toString().padStart(2, '0')}</TimeInput>
+        </CustomTooltip>
+        시{' '}
         {minute ? (
           <TimeInput onClick={handleMinuteClick}>{selectedMinute.toString().padStart(2, '0')}</TimeInput>
         ) : (
@@ -132,69 +187,87 @@ const TimePicker: React.FC<ITimePicker> = ({ hour, minute, onChange }) => {
         분
       </TimeInputs>
 
-      <Modal open={openHourModal} onClose={handleCloseHourModal}>
+      <Modal
+        open={openHourModal}
+        onClose={handleCloseHourModal}
+        slotProps={{
+          backdrop: {
+            sx: {
+              backgroundColor: 'transparent'
+            }
+          }
+        }}
+      >
         <Box
           sx={{
-            ...scrollbarSx,
             ...modalStyle,
             top: `${hourModalPosition.top}px`,
             left: `${hourModalPosition.left}px`,
-            transform: 'translate(-50%, -50%)' // 중앙에 위치하도록 설정
+            transform: 'translate(-50%, -50%)'
           }}
           ref={hourListRef}
         >
-          <List>
+          <ListContainer>
             {hours.map(hour => (
               <ListItem key={hour} disablePadding>
-                <ListItemButton
-                  sx={{ display: 'flex', justifyContent: 'center' }}
+                <ListItemStyled
                   selected={hour === selectedHour}
                   data-value={hour}
                   onClick={() => {
                     setSelectedHour(hour)
                     handleCloseHourModal()
+                    const res = onChange(hour, selectedMinute)
 
-                    onChange(hour, selectedMinute)
+                    if (res) {
+                      setTooltipInfo(res)
+                    }
                   }}
                 >
                   {hour.toString().padStart(2, '0')}
-                </ListItemButton>
+                </ListItemStyled>
               </ListItem>
             ))}
-          </List>
+          </ListContainer>
         </Box>
       </Modal>
 
-      <Modal open={openMinuteModal} onClose={handleCloseMinuteModal}>
+      <Modal
+        open={openMinuteModal}
+        onClose={handleCloseMinuteModal}
+        slotProps={{
+          backdrop: {
+            sx: {
+              backgroundColor: 'transparent'
+            }
+          }
+        }}
+      >
         <Box
           sx={{
-            ...scrollbarSx,
             ...modalStyle,
             top: `${minuteModalPosition.top}px`,
             left: `${minuteModalPosition.left}px`,
-            transform: 'translate(-50%, -50%)' // 중앙에 위치하도록 설정
+            transform: 'translate(-50%, -50%)'
           }}
           ref={minuteListRef}
         >
-          <List>
+          <ListContainer>
             {minutes.map(minute => (
               <ListItem key={minute} disablePadding>
-                <ListItemButton
-                  sx={{ display: 'flex', justifyContent: 'center' }}
+                <ListItemStyled
                   selected={minute === selectedMinute}
                   data-value={minute}
                   onClick={() => {
                     setSelectedMinute(minute)
                     handleCloseMinuteModal()
-
                     onChange(selectedHour, minute)
                   }}
                 >
                   {minute.toString().padStart(2, '0')}
-                </ListItemButton>
+                </ListItemStyled>
               </ListItem>
             ))}
-          </List>
+          </ListContainer>
         </Box>
       </Modal>
     </TimePickerWrapper>
