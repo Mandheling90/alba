@@ -15,6 +15,7 @@ import { MAuthDuplicate } from 'src/model/commonModel'
 import { useClientDuplicateCheck } from 'src/service/client/clientService'
 import { getErrorMessage } from 'src/utils/CommonUtil'
 import styled from 'styled-components'
+import { DEFAULT_CLIENT_DATA } from '.'
 
 interface IStepOneContentProps {
   clientData: IClientDetail | null
@@ -76,6 +77,8 @@ const StepOneContent: FC<IStepOneContentProps> = ({
       if (companyIdOrg === '') {
         setCompanyIdOrg(clientData?.companyId || '')
       }
+    } else {
+      setClientDataOrg(DEFAULT_CLIENT_DATA)
     }
   }, [clientData])
 
@@ -402,8 +405,6 @@ const StepOneContent: FC<IStepOneContentProps> = ({
                         clientDataOrg && onDataChange(clientDataOrg)
                       }
                     })
-
-                    // clientDataOrg && onDataChange(clientDataOrg)
                   }}
                 >
                   취소
