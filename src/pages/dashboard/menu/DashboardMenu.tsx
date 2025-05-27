@@ -79,6 +79,7 @@ const DashboardMenu: FC<IDashboardMenu> = ({ refetch, useAgeSelect = false, stat
           width={280}
           alwaysShowIcon
           clearable={false}
+          showTwoCalendars
         />
       </FlexBox>
 
