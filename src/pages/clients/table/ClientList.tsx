@@ -193,14 +193,15 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
                 setSimpleDialogModalProps({
                   open: true,
                   title: `서비스 항목별 분석채널 수 현황`,
+                  size: 'small',
                   contents: (
                     <Box>
-                      <Typography sx={{ mt: 2, color: 'rgba(58, 53, 65, 0.6)', fontSize: 16, fontWeight: 400 }}>
+                      <Typography sx={{ mt: 2, color: 'rgba(58, 53, 65, 0.6)', fontSize: 14, fontWeight: 400 }}>
                         <b>총 {row.analysisChannels}개</b>의 분석채널이 아래의 서비스 항목으로 등록되어 있습니다.
                         <ul>
                           {row.serviceInfos.map((item, index) => (
                             <li key={index}>
-                              {item.serviceName} : {item.serviceCount}대
+                              <b>{item.serviceName}</b> : {item.serviceCount}대
                             </li>
                           ))}
                         </ul>

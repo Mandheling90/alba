@@ -66,6 +66,7 @@ const ModalProvider = ({ children }: Props) => {
         isConfirm={simpleDialogModalProps.isConfirm}
         onConfirm={simpleDialogModalProps.confirmFn}
         resolve={simpleDialogModalProps.resolve}
+        size={simpleDialogModalProps.size}
       />
       {children}
     </ModalContext.Provider>

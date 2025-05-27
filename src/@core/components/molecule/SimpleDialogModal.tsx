@@ -9,13 +9,15 @@ export interface IDialogProps {
   confirmFn?: () => void
   isConfirm?: boolean
   resolve?: (value: boolean) => void
+  size?: 'small' | 'medium' | 'large'
 }
 
 export const INITIAL_DIALOG_PROPS: IDialogProps = {
   open: false,
   title: '',
   contents: '',
-  isConfirm: false
+  isConfirm: false,
+  size: 'medium'
 }
 
 interface ModalProps {
@@ -29,6 +31,7 @@ interface ModalProps {
   useClose?: boolean
   contentsHtml?: React.ReactNode
   resolve?: (value: boolean) => void
+  size?: 'small' | 'medium' | 'large'
 }
 
 const SimpleDialogModal: React.FC<ModalProps> = ({
@@ -41,7 +44,8 @@ const SimpleDialogModal: React.FC<ModalProps> = ({
   isConfirm,
   useClose = true,
   contentsHtml,
-  resolve
+  resolve,
+  size = 'medium'
 }) => {
   const handleClose = () => {
     onClose()
@@ -55,7 +59,13 @@ const SimpleDialogModal: React.FC<ModalProps> = ({
   }
 
   return (
-    <Dialog fullWidth maxWidth='sm' scroll='body' onClose={handleClose} open={open}>
+    <Dialog
+      fullWidth
+      maxWidth={size === 'small' ? 'xs' : size === 'large' ? 'md' : 'sm'}
+      scroll='body'
+      onClose={handleClose}
+      open={open}
+    >
       <DialogCustomContent onClose={handleClose} useClose={useClose}>
         {title && (
           <Typography
