@@ -54,12 +54,14 @@ const ClientsButtonList: FC<IKioskButtonList> = ({ refetch }) => {
                   onClick: async () => {
                     try {
                       await deleteClient({ companyNos: selectClientData.map(c => c.companyNo) })
-                      setSimpleDialogModalProps({
-                        open: true,
-                        title: '고객사 정보 삭제 확인',
-                        contents: '선택하신 고객사 정보가 모두 삭제되었습니다'
-                      })
                       await refetch()
+                      setTimeout(() => {
+                        setSimpleDialogModalProps({
+                          open: true,
+                          title: '고객사 정보 삭제 확인',
+                          contents: '선택하신 고객사 정보가 모두 삭제되었습니다'
+                        })
+                      }, 100)
                     } catch (error) {
                       console.log(error)
                     }

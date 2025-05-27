@@ -317,7 +317,14 @@ const ClientList: FC<IClientList> = ({ data, refetch }) => {
                       onClick: async () => {
                         try {
                           await deleteClient({ companyNos: [row.companyNo] })
-                          refetch()
+                          await refetch()
+                          setTimeout(() => {
+                            setSimpleDialogModalProps({
+                              open: true,
+                              title: '고객사 정보 삭제 확인',
+                              contents: '선택하신 고객사 정보가 모두 삭제되었습니다'
+                            })
+                          }, 100)
                         } catch (error) {
                           console.log(error)
                         }
