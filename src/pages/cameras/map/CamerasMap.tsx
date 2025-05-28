@@ -98,7 +98,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
 
       relayout()
     }, 500)
-  }, [height, layoutDisplay, isDragging])
+  }, [height, layoutDisplay, isDragging, viewType.size])
 
   useEffect(() => {
     setFlowPlan(flowPlanData?.data ?? undefined)
@@ -378,7 +378,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
         isConfirm
       />
 
-      <Grid item xs={12} style={{flex:'0 0 auto', height:'auto'}}>
+      <Grid item xs={12} style={{ flex: '0 0 auto', height: 'auto' }}>
         <MapControls
           viewType={viewType}
           setViewType={setViewType}
@@ -403,7 +403,7 @@ const CamerasMap: React.FC<ICamerasMap> = ({ height = '500px' }) => {
           }}
         />
       </Grid>
-      <Grid item xs={12} style={{flex: '1'}}>
+      <Grid item xs={12} style={{ flex: '1' }}>
         <Box style={{ width: '100%', height: height, position: 'relative' }}>
           {viewType.size === 'full' && <CameraSelecter />}
 

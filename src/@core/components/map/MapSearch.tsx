@@ -55,12 +55,15 @@ const MapSearch: FC<IMapSearch> = ({ onSearch, textFieldColor, useSearchButton =
 
   const searchFn = () => {
     const firstResult = placesList[0]
-    setMapInfo({
-      ...mapInfo,
-      center: { lat: Number(firstResult.y), lon: Number(firstResult.x) },
-      mapLevel: 3
-    })
-    onSearch?.(Number(firstResult.y), Number(firstResult.x))
+
+    if (firstResult) {
+      setMapInfo({
+        ...mapInfo,
+        center: { lat: Number(firstResult.y), lon: Number(firstResult.x) },
+        mapLevel: 3
+      })
+      onSearch?.(Number(firstResult.y), Number(firstResult.x))
+    }
   }
 
   return (
