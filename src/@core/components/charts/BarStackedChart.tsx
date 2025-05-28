@@ -9,12 +9,19 @@ const BarStackedChart: React.FC<{ data: ICountBarChart }> = ({ data }) => {
     Highcharts.chart({
       chart: {
         renderTo: 'container',
-        type: 'column'
+        type: 'column',
+        scrollablePlotArea: {
+          minWidth: data.xcategories.length * 50, // 카테고리당 50px씩 확보
+          scrollPositionX: 0
+        }
       },
       title: {
         text: '24시간 입장자 및 퇴장자 비교'
       },
       xAxis: {
+        scrollbar: {
+          enabled: true
+        },
         categories: data.xcategories,
         title: {
           text: data.xtitle
