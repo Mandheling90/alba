@@ -99,7 +99,7 @@ const TimePicker: React.FC<ITimePicker> = ({ hour, minute, onChange, tooltipClea
   const hourListRef = useRef<HTMLUListElement | null>(null)
   const minuteListRef = useRef<HTMLUListElement | null>(null)
 
-  const hours = Array.from({ length: 24 }, (_, i) => i)
+  const hours = Array.from({ length: 25 }, (_, i) => i)
   const minutes = Array.from({ length: 60 }, (_, i) => i)
 
   const handleHourClick = (event: React.MouseEvent) => {

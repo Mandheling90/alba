@@ -61,7 +61,7 @@ const StatisticsProvider = ({ children }: Props) => {
     const newStatistics = {
       ...newStatisticsReq,
       startTime: '00',
-      endTime: '23',
+      endTime: '24',
       cameraNos: req?.data?.cameraList ? req.data.cameraList.map(camera => camera.cameraNo) : [],
       ageType: 'ALL'
     }

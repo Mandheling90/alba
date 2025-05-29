@@ -41,7 +41,7 @@ const DashboardMenu: FC<IDashboardMenu> = ({ refetch, useAgeSelect = false, stat
   ])
 
   const [startTime, setStartTime] = useState<number[]>([Number(statisticsReq.startTime ?? '0'), 0])
-  const [endTime, setEndTime] = useState<number[]>([Number(statisticsReq.endTime ?? '23'), 59])
+  const [endTime, setEndTime] = useState<number[]>([Number(statisticsReq.endTime ?? '24'), 59])
 
   const [selectedAgeValues, setSelectedAgeValues] = useState<string[]>(
     statisticsReq.ageType ? statisticsReq.ageType.split(',').map(value => value.trim()) : ['ALL']
