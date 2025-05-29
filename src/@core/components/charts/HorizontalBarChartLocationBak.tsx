@@ -1,4 +1,5 @@
-import Highcharts, { Chart as ChartType } from 'highcharts'
+import type { Options } from 'highcharts'
+import Highcharts from 'highcharts/highstock'
 import { useEffect, useRef } from 'react'
 import { IBarChart } from 'src/model/statistics/StatisticsModel'
 import styled from 'styled-components'
@@ -14,22 +15,18 @@ interface HorizontalBarChartLocationProps {
 }
 
 const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) => {
-  const chartRef = useRef<ChartType | null>(null)
+  const chartRef = useRef<Highcharts.Chart | null>(null)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      chartRef.current = Highcharts.chart({
+      const isScrollEnabled = data.xcategories.length > Number(process.env.NEXT_PUBLIC_CHART_SCROLL_COUNT)
+
+      const commonOptions: Options = {
         chart: {
           renderTo: 'location-chart-container',
           type: 'spline',
-          ...(data.xcategories.length >= Number(process.env.NEXT_PUBLIC_CHART_SCROLL_COUNT) && {
-            scrollablePlotArea: {
-              minWidth: data.xcategories.length * 50,
-              scrollPositionX: 0
-            }
-          }),
           events: {
-            load: function (this: ChartType) {
+            load: function (this: Highcharts.Chart) {
               if (this.series && this.series.length > 0) {
                 this.series[0].onMouseOver()
               }
@@ -44,20 +41,31 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
         },
         xAxis: {
           categories: data.xcategories,
+          type: 'category',
+          crosshair: false,
           title: {
             text: data.xtitle
+          },
+          labels: {
+            style: {
+              fontSize: '12px'
+            },
+            formatter: function (this: Highcharts.AxisLabelsFormatterContextObject) {
+              return data.xcategories[this.pos]
+            }
           }
         },
         yAxis: {
+          min: 0,
+          crosshair: false,
           title: {
             text: data.ytitle
-          },
-          allowDecimals: false,
-          min: 0
+          }
         },
         tooltip: {
-          headerFormat: '<b>{series.name}</b><br>',
-          pointFormat: '{point.x}: {point.y}명'
+          shared: false,
+          headerFormat: '',
+          pointFormat: '{series.name}: {point.y}명'
         },
         plotOptions: {
           series: {
@@ -89,7 +97,38 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
           lineWidth: 2,
           visible: true
         }))
-      })
+      }
+
+      const stockOptions: Options = {
+        ...commonOptions,
+        navigator: {
+          enabled: isScrollEnabled,
+          xAxis: {
+            labels: {
+              enabled: false
+            }
+          },
+          series: data.chartDataList.map(data => ({
+            type: 'spline' as const,
+            name: data.name,
+            data: data.dataList,
+            lineWidth: 2,
+            visible: true
+          }))
+        },
+        rangeSelector: {
+          enabled: isScrollEnabled
+        },
+        scrollbar: {
+          enabled: isScrollEnabled
+        }
+      }
+
+      if (isScrollEnabled) {
+        chartRef.current = Highcharts.stockChart(stockOptions)
+      } else {
+        chartRef.current = Highcharts.chart(commonOptions)
+      }
     }
   }, [data])
 
@@ -130,6 +169,9 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
 
 const ChartWrapper = styled.div`
   .highcharts-credits {
+    display: none;
+  }
+  .highcharts-range-selector-group {
     display: none;
   }
 `

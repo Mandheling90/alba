@@ -1,5 +1,4 @@
-import type { Options } from 'highcharts'
-import Highcharts from 'highcharts/highstock'
+import Highcharts from 'highcharts'
 import { useEffect } from 'react'
 import { ICountBarChart } from 'src/model/statistics/StatisticsModel'
 import styled from 'styled-components'
@@ -12,16 +11,16 @@ interface StackedBarChartProps {
 const StackedBarChart = ({ containerId, data }: StackedBarChartProps) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const isScrollEnabled = data.xaxisDataList.length > Number(process.env.NEXT_PUBLIC_CHART_SCROLL_COUNT)
-
-      const commonOptions: Options = {
+      Highcharts.chart({
         chart: {
           type: 'column',
           renderTo: containerId,
-          panning: {
-            enabled: false,
-            type: 'x' as const
-          }
+          ...(data.xaxisDataList.length >= Number(process.env.NEXT_PUBLIC_CHART_SCROLL_COUNT) && {
+            scrollablePlotArea: {
+              minWidth: data.xaxisDataList.length * 50,
+              scrollPositionX: 0
+            }
+          })
         },
         title: {
           text: '',
@@ -29,17 +28,8 @@ const StackedBarChart = ({ containerId, data }: StackedBarChartProps) => {
         },
         xAxis: {
           categories: data.xaxisDataList,
-          type: 'category',
           title: {
             text: data.xtitle
-          },
-          labels: {
-            style: {
-              fontSize: '12px'
-            },
-            formatter: function (this: Highcharts.AxisLabelsFormatterContextObject) {
-              return data.xaxisDataList[this.pos]
-            }
           }
         },
         yAxis: {
@@ -58,24 +48,15 @@ const StackedBarChart = ({ containerId, data }: StackedBarChartProps) => {
           y: 0
         },
         tooltip: {
-          headerFormat: '',
+          headerFormat: '<b>{category}</b><br/>',
           pointFormat: '{series.name}: {point.y}<br/>총 방문자: {point.stackTotal}'
         },
         plotOptions: {
           column: {
             stacking: 'normal',
-            borderWidth: 0,
             dataLabels: {
-              enabled: true,
-              formatter: function (this: Highcharts.Point) {
-                return this.y === 0 ? '' : this.y
-              }
+              enabled: true
             }
-          },
-          series: {
-            enableMouseTracking: true,
-            stickyTracking: false,
-            animation: false
           }
         },
         series: [
@@ -90,43 +71,7 @@ const StackedBarChart = ({ containerId, data }: StackedBarChartProps) => {
             data: data.chartDataList[1].dataList
           }
         ]
-      }
-
-      const stockOptions: Options = {
-        ...commonOptions,
-        navigator: {
-          enabled: isScrollEnabled,
-          xAxis: {
-            labels: {
-              enabled: false
-            }
-          },
-          series: [
-            {
-              type: 'column',
-              name: data.chartDataList[0].name,
-              data: data.chartDataList[0].dataList
-            },
-            {
-              type: 'column',
-              name: data.chartDataList[1].name,
-              data: data.chartDataList[1].dataList
-            }
-          ]
-        },
-        rangeSelector: {
-          enabled: isScrollEnabled
-        },
-        scrollbar: {
-          enabled: isScrollEnabled
-        }
-      }
-
-      if (isScrollEnabled) {
-        Highcharts.stockChart(stockOptions)
-      } else {
-        Highcharts.chart(commonOptions)
-      }
+      })
     }
   }, [containerId, data])
 
@@ -139,9 +84,6 @@ const StackedBarChart = ({ containerId, data }: StackedBarChartProps) => {
 
 const ChartWrapper = styled.div`
   .highcharts-credits {
-    display: none;
-  }
-  .highcharts-range-selector-group {
     display: none;
   }
 `

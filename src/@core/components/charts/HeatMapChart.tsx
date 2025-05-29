@@ -62,7 +62,13 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
       type: 'heatmap',
       marginTop: 40,
       marginBottom: 80,
-      plotBorderWidth: 1
+      plotBorderWidth: 1,
+      ...(data.xaxisCategories.length >= Number(process.env.NEXT_PUBLIC_CHART_SCROLL_COUNT) && {
+        scrollablePlotArea: {
+          minWidth: data.xaxisCategories.length * 50,
+          scrollPositionX: 0
+        }
+      })
     },
     title: {
       text: '시간별 연령별 방문자수 및 성별 비율',
