@@ -24,7 +24,7 @@ const VisitorAttributesStatisticsDaily: FC = (): React.ReactElement => {
     useVisitorAttributesReport({
       page,
       tableType: ETableType.DAILY,
-      daysToSubtract: 6,
+      daysToSubtract: 1,
       countBarChart: { mutateAsync: genderAgeBarChart, isLoading: genderAgeBarChartLoading },
       countPyramidPieChart: { mutateAsync: genderAgePyramidPieChart, isLoading: genderAgePyramidPieChartLoading },
       countHeatmapChart: { mutateAsync: genderAgeHeatmapChart, isLoading: genderAgeHeatmapChartLoading },

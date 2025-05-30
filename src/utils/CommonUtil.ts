@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import { saveAs } from 'file-saver'
 import { EErrorMessage, YN } from 'src/enum/commonEnum'
 import { MAuthMenuList } from 'src/model/commonModel'
@@ -337,4 +338,68 @@ export const getAuthMenu = (authMenuList: MAuthMenuList[], menuId: number) => {
   }
 
   return authMenuList.find(menu => menu.menuId === menuId)
+}
+
+// 현재 날짜를 기준으로 해당 주의 시작일과 종료일 계산 1
+export const getCurrentWeekDates_bak = () => {
+  const today = new Date()
+  const dayOfWeek = today.getDay() // 0: 일요일, 1: 월요일, ..., 6: 토요일
+  const startDate = new Date(today)
+  startDate.setDate(today.getDate() - dayOfWeek) // 해당 주의 시작일 (일요일)
+  const endDate = new Date(today)
+  endDate.setDate(today.getDate() + (6 - dayOfWeek)) // 해당 주의 종료일 (토요일)
+
+  return {
+    startDate: format(startDate, 'yyyy-MM-dd'),
+    endDate: format(endDate, 'yyyy-MM-dd')
+  }
+}
+
+// 현재 날짜를 기준으로 해당 주의 월요일부터 다음 주의 일요일까지 계산 2
+export const getCurrentWeekDates = () => {
+  const today = new Date()
+  const dayOfWeek = today.getDay() // 0: 일요일, 1: 월요일, ..., 6: 토요일
+  const startDate = new Date(today)
+  startDate.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1)) // 해당 주의 시작일 (월요일)
+  const endDate = new Date(today)
+  endDate.setDate(today.getDate() + (7 - dayOfWeek)) // 다음 주의 종료일 (일요일)
+
+  return {
+    startDate: format(startDate, 'yyyy-MM-dd'),
+    endDate: format(endDate, 'yyyy-MM-dd')
+  }
+}
+
+// 현재 날짜가 속한 주의 이전 주 월요일부터 현재 날짜까지 계산
+export const getCurrentAndPreviousWeekDates = () => {
+  const today = new Date()
+  const dayOfWeek = today.getDay() // 0: 일요일, 1: 월요일, ..., 6: 토요일
+
+  // 이전 주의 시작일 (월요일)
+  const previousWeekStart = new Date(today)
+  previousWeekStart.setDate(today.getDate() - (dayOfWeek === 0 ? 13 : dayOfWeek + 6))
+
+  // 종료일은 현재 날짜로 설정
+  const endDate = new Date(today)
+
+  return {
+    startDate: format(previousWeekStart, 'yyyy-MM-dd'),
+    endDate: format(endDate, 'yyyy-MM-dd')
+  }
+}
+
+// 현재 날짜가 속한 전월 1일부터 현재 날짜까지 계산
+export const getCurrentAndPreviousMonthDates = () => {
+  const today = new Date()
+
+  // 전월 1일 계산
+  const previousMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1)
+
+  // 종료일은 현재 날짜로 설정
+  const endDate = new Date(today)
+
+  return {
+    startDate: format(previousMonthStart, 'yyyy-MM-dd'),
+    endDate: format(endDate, 'yyyy-MM-dd')
+  }
 }

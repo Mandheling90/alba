@@ -9,6 +9,7 @@ import {
   useGenderAgeWeeklyPyramidPieChart,
   useGenderAgeWeeklyTable
 } from 'src/service/statistics/statisticsService'
+import { getCurrentAndPreviousWeekDates } from 'src/utils/CommonUtil'
 
 const VisitorAttributesStatisticsWeekly: FC = (): React.ReactElement => {
   const { mutateAsync: genderAgeBarChart, isLoading: genderAgeBarChartLoading } = useGenderAgeWeeklyBarChart()
@@ -20,11 +21,14 @@ const VisitorAttributesStatisticsWeekly: FC = (): React.ReactElement => {
 
   const page = EStatisticsPage.VISITOR_ATTRIBUTES_STATISTICS
 
+  const { startDate, endDate } = getCurrentAndPreviousWeekDates()
+
   const { currentStatistics, barChartData, pyramidPieChartData, heatmapChartData, tableData, fetchData, isLoading } =
     useVisitorAttributesReport({
       page,
       tableType: ETableType.WEEKLY,
-      daysToSubtract: 29,
+      startDate,
+      endDate,
       countBarChart: { mutateAsync: genderAgeBarChart, isLoading: genderAgeBarChartLoading },
       countPyramidPieChart: { mutateAsync: genderAgePyramidPieChart, isLoading: genderAgePyramidPieChartLoading },
       countHeatmapChart: { mutateAsync: genderAgeHeatmapChart, isLoading: genderAgeHeatmapChartLoading },

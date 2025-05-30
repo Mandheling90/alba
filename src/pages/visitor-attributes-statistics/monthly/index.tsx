@@ -9,6 +9,7 @@ import {
   useGenderAgeMonthlyPyramidPieChart,
   useGenderAgeMonthlyTable
 } from 'src/service/statistics/statisticsService'
+import { getCurrentAndPreviousMonthDates } from 'src/utils/CommonUtil'
 
 const VisitorAttributesStatisticsMonthly: FC = (): React.ReactElement => {
   const { mutateAsync: genderAgeBarChart, isLoading: genderAgeBarChartLoading } = useGenderAgeMonthlyBarChart()
@@ -20,11 +21,14 @@ const VisitorAttributesStatisticsMonthly: FC = (): React.ReactElement => {
 
   const page = EStatisticsPage.VISITOR_ATTRIBUTES_STATISTICS
 
+  const { startDate, endDate } = getCurrentAndPreviousMonthDates()
+
   const { currentStatistics, barChartData, pyramidPieChartData, heatmapChartData, tableData, fetchData, isLoading } =
     useVisitorAttributesReport({
       page,
       tableType: ETableType.MONTHLY,
-      daysToSubtract: 60,
+      startDate,
+      endDate,
       countBarChart: { mutateAsync: genderAgeBarChart, isLoading: genderAgeBarChartLoading },
       countPyramidPieChart: { mutateAsync: genderAgePyramidPieChart, isLoading: genderAgePyramidPieChartLoading },
       countHeatmapChart: { mutateAsync: genderAgeHeatmapChart, isLoading: genderAgeHeatmapChartLoading },

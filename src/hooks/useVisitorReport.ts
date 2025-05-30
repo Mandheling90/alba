@@ -10,6 +10,8 @@ interface UseVisitorReportProps {
   tableType: ETableType
   daysToSubtract?: number
   useSameDay?: boolean
+  startDate?: string
+  endDate?: string
   countBarChart: {
     mutateAsync: (req: IStatisticsContextReq) => Promise<{ data: ICountBarChart }>
     isLoading: boolean
@@ -27,8 +29,10 @@ interface UseVisitorReportProps {
 export const useVisitorReport = ({
   page,
   tableType,
-  daysToSubtract = 0,
+  daysToSubtract,
   useSameDay = false,
+  startDate,
+  endDate,
   countBarChart,
   countBarPieChart,
   countTable
@@ -43,7 +47,12 @@ export const useVisitorReport = ({
     async (req?: IStatisticsContextReq) => {
       const today = new Date()
       const formattedToday = format(today, 'yyyy-MM-dd')
-      const formattedDaysAgo = useSameDay ? formattedToday : format(subDays(today, daysToSubtract), 'yyyy-MM-dd')
+
+      // startDate와 endDate가 제공된 경우 해당 값을 사용하고,
+      // 그렇지 않은 경우 daysToSubtract와 useSameDay를 사용하여 날짜 계산
+      const formattedStartDate =
+        startDate || (useSameDay ? formattedToday : format(subDays(today, daysToSubtract || 0), 'yyyy-MM-dd'))
+      const formattedEndDate = endDate || formattedToday
 
       let statistics: IStatisticsContextReq
 
@@ -57,8 +66,8 @@ export const useVisitorReport = ({
         statistics =
           statisticsReq.find(item => item.page === page) ??
           (await statisticsDefultSet({
-            startDate: formattedDaysAgo,
-            endDate: formattedToday,
+            startDate: formattedStartDate,
+            endDate: formattedEndDate,
             tableType: tableType,
             page: page
           }))
@@ -94,7 +103,9 @@ export const useVisitorReport = ({
       statisticsReqUpdate,
       tableType,
       daysToSubtract,
-      useSameDay
+      useSameDay,
+      startDate,
+      endDate
     ]
   )
 

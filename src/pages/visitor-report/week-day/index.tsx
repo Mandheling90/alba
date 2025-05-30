@@ -8,6 +8,7 @@ import {
   useCountWeekDayBarPieChart,
   useCountWeekDayTable
 } from 'src/service/statistics/statisticsService'
+import { getCurrentWeekDates } from 'src/utils/CommonUtil'
 
 const VisitorReportWeekDay: FC = (): React.ReactElement => {
   const { mutateAsync: countBarChart, isLoading: countBarChartLoading } = useCountWeekDayBarChart()
@@ -16,10 +17,13 @@ const VisitorReportWeekDay: FC = (): React.ReactElement => {
 
   const page = EStatisticsPage.VISITOR_REPORT
 
+  const { startDate, endDate } = getCurrentWeekDates()
+
   const { currentStatistics, barChartData, barPieChartData, barTableData, fetchData, isLoading } = useVisitorReport({
     page,
     tableType: ETableType.WEEKDAY,
-    daysToSubtract: 6,
+    startDate,
+    endDate,
     countBarChart: { mutateAsync: countBarChart, isLoading: countBarChartLoading },
     countBarPieChart: { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading },
     countTable: { mutateAsync: countTable, isLoading: countTableLoading }

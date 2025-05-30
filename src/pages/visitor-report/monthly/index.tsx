@@ -8,6 +8,7 @@ import {
   useCountMonthlyBarPieChart,
   useCountMonthlyTable
 } from 'src/service/statistics/statisticsService'
+import { getCurrentAndPreviousMonthDates } from 'src/utils/CommonUtil'
 
 const VisitorReportMonthly: FC = (): React.ReactElement => {
   const { mutateAsync: countBarChart, isLoading: countBarChartLoading } = useCountMonthlyBarChart()
@@ -15,11 +16,13 @@ const VisitorReportMonthly: FC = (): React.ReactElement => {
   const { mutateAsync: countTable, isLoading: countTableLoading } = useCountMonthlyTable()
 
   const page = EStatisticsPage.VISITOR_REPORT
+  const { startDate, endDate } = getCurrentAndPreviousMonthDates()
 
   const { currentStatistics, barChartData, barPieChartData, barTableData, fetchData, isLoading } = useVisitorReport({
     page,
     tableType: ETableType.MONTHLY,
-    daysToSubtract: 60,
+    startDate,
+    endDate,
     countBarChart: { mutateAsync: countBarChart, isLoading: countBarChartLoading },
     countBarPieChart: { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading },
     countTable: { mutateAsync: countTable, isLoading: countTableLoading }
