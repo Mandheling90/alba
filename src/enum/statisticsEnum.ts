@@ -6,12 +6,14 @@ export enum KIOSK_STATUS {
 }
 
 export enum EStatisticsPage {
+  VISITOR_REPORT = 'visitor-report',
   HOURLY = 'visitor-report-hourly',
   DAILY = 'visitor-report-daily',
   WEEK_DAY = 'visitor-report-week-day',
   WEEKLY = 'visitor-report-weekly',
   MONTHLY = 'visitor-report-monthly',
 
+  VISITOR_ATTRIBUTES_STATISTICS = 'visitor-attributes-statistics',
   HOURLY_ATTRIBUTES = 'visitor-attributes-statistics-hourly',
   DAILY_ATTRIBUTES = 'visitor-attributes-statistics-daily',
   WEEK_DAY_ATTRIBUTES = 'visitor-attributes-statistics-week-day',

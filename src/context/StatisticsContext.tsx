@@ -50,11 +50,11 @@ const StatisticsProvider = ({ children }: Props) => {
 
   const statisticsDefultSet = async (newStatisticsReq: IStatisticsContextReq) => {
     // 동일한 page가 이미 존재하는지 확인
-    const existingPage = statisticsReq.find(req => req.page === newStatisticsReq.page)
+    // const existingPage = statisticsReq.find(req => req.page === newStatisticsReq.page)
 
-    if (existingPage) {
-      return existingPage
-    }
+    // if (existingPage) {
+    //   return existingPage
+    // }
 
     const req = await searchCameraList({ companyNo: user?.userInfo?.companyNo ?? 0 })
 
@@ -66,15 +66,23 @@ const StatisticsProvider = ({ children }: Props) => {
       ageType: 'ALL'
     }
 
-    setStatisticsReq(prev => [...prev, newStatistics])
+    // setStatisticsReq(prev => [...prev, newStatistics])
 
     return newStatistics
   }
 
   const statisticsReqUpdate = async (newStatisticsReq: IStatisticsContextReq) => {
-    setStatisticsReq(prev =>
-      prev.map(req => (req.page === newStatisticsReq.page ? { ...req, ...newStatisticsReq } : req))
-    )
+    const existingPage = statisticsReq.find(req => req.page === newStatisticsReq.page)
+
+    console.log(existingPage)
+
+    if (existingPage) {
+      setStatisticsReq(prev =>
+        prev.map(req => (req.page === newStatisticsReq.page ? { ...req, ...newStatisticsReq } : req))
+      )
+    } else {
+      setStatisticsReq(prev => [...prev, newStatisticsReq])
+    }
   }
 
   const values: StatisticsValuesType = {

@@ -1,10 +1,8 @@
-import { format } from 'date-fns'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import VisitorTemplate from 'src/@core/components/charts/template/VisitorTemplate'
-import { ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
+import { ETableType } from 'src/context/StatisticsContext'
 import { EStatisticsPage } from 'src/enum/statisticsEnum'
-import { useStatistics } from 'src/hooks/useStatistics'
-import { ICountBarChart, ICountBarPieChart, ITableData } from 'src/model/statistics/StatisticsModel'
+import { useVisitorReport } from 'src/hooks/useVisitorReport'
 import {
   useCountHourlyBarChart,
   useCountHourlyBarPieChart,
@@ -12,74 +10,36 @@ import {
 } from 'src/service/statistics/statisticsService'
 
 const VisitorReportHourly: FC = (): React.ReactElement => {
-  const { statisticsReq, statisticsDefultSet, statisticsReqUpdate } = useStatistics()
   const { mutateAsync: countBarChart, isLoading: countBarChartLoading } = useCountHourlyBarChart()
   const { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading } = useCountHourlyBarPieChart()
-  const { mutateAsync: countBarTable, isLoading: countBarTableLoading } = useCountHourlyBarTable()
+  const { mutateAsync: countTable, isLoading: countTableLoading } = useCountHourlyBarTable()
 
   const page = EStatisticsPage.HOURLY
-  const [barChartData, setBarChartData] = useState<ICountBarChart>()
-  const [barPieChartData, setBarPieChartData] = useState<ICountBarPieChart>()
-  const [tableData, setTableData] = useState<ITableData>()
 
-  const fetchData = useCallback(
-    async (req?: IStatisticsContextReq) => {
-      const today = new Date()
-      const formattedToday = format(today, 'yyyy-MM-dd')
-
-      const statistics =
-        req ||
-        (await statisticsDefultSet({
-          startDate: formattedToday,
-          endDate: formattedToday,
-          tableType: ETableType.HOURLY,
-          page: page
-        }))
-
-      const res = await countBarChart(statistics)
-      setBarChartData(res.data)
-
-      const resPie = await countBarPieChart(statistics)
-      setBarPieChartData(resPie.data)
-
-      const resTableData = await countBarTable(statistics)
-      const tableDataWithKeys = {
-        ...resTableData.data,
-        dataList: resTableData.data.dataList.map((item, index) => ({
-          ...item,
-          key: `table-item-${index}}`,
-          dataList: item.dataList?.map((subItem, subIndex) => ({
-            ...subItem,
-            key: `table-sub-item-${index}-${subIndex}}`
-          }))
-        }))
-      }
-      setTableData(tableDataWithKeys)
-
-      if (req) {
-        statisticsReqUpdate({
-          ...req
-        })
-      }
-    },
-    [countBarChart, countBarPieChart, countBarTable, page, statisticsDefultSet, statisticsReqUpdate]
-  )
+  const { currentStatistics, barChartData, barPieChartData, barTableData, fetchData, isLoading } = useVisitorReport({
+    page,
+    tableType: ETableType.HOURLY,
+    useSameDay: true,
+    countBarChart: { mutateAsync: countBarChart, isLoading: countBarChartLoading },
+    countBarPieChart: { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading },
+    countTable: { mutateAsync: countTable, isLoading: countTableLoading }
+  })
 
   useEffect(() => {
     fetchData()
   }, [])
 
-  const currentStatistics = statisticsReq.find(item => item.page === page)
-
-  if (!currentStatistics || countBarChartLoading || countBarPieChartLoading || countBarTableLoading) return <></>
+  if (!currentStatistics || isLoading) return <></>
 
   return (
     <VisitorTemplate
       statisticsReq={currentStatistics}
-      refetch={fetchData}
+      refetch={req => {
+        fetchData(req)
+      }}
       barChartData={barChartData}
       barPieChartData={barPieChartData}
-      tableData={tableData}
+      tableData={barTableData}
     />
   )
 }

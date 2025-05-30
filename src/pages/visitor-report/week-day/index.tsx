@@ -1,10 +1,8 @@
-import { format, subDays } from 'date-fns'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import VisitorTemplate from 'src/@core/components/charts/template/VisitorTemplate'
-import { ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
+import { ETableType } from 'src/context/StatisticsContext'
 import { EStatisticsPage } from 'src/enum/statisticsEnum'
-import { useStatistics } from 'src/hooks/useStatistics'
-import { ICountBarChart, ICountBarPieChart, ITableData } from 'src/model/statistics/StatisticsModel'
+import { useVisitorReport } from 'src/hooks/useVisitorReport'
 import {
   useCountWeekDayBarChart,
   useCountWeekDayBarPieChart,
@@ -12,73 +10,33 @@ import {
 } from 'src/service/statistics/statisticsService'
 
 const VisitorReportWeekDay: FC = (): React.ReactElement => {
-  const { statisticsReq, statisticsDefultSet, statisticsReqUpdate } = useStatistics()
   const { mutateAsync: countBarChart, isLoading: countBarChartLoading } = useCountWeekDayBarChart()
   const { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading } = useCountWeekDayBarPieChart()
   const { mutateAsync: countTable, isLoading: countTableLoading } = useCountWeekDayTable()
 
-  const page = EStatisticsPage.WEEK_DAY
-  const [barChartData, setBarChartData] = useState<ICountBarChart>()
-  const [barPieChartData, setBarPieChartData] = useState<ICountBarPieChart>()
-  const [barTableData, setBarTableData] = useState<ITableData>()
+  const page = EStatisticsPage.VISITOR_REPORT
 
-  const fetchData = useCallback(
-    async (req?: IStatisticsContextReq) => {
-      const today = new Date()
-      const threeDaysAgo = subDays(today, 6)
-      const formattedToday = format(today, 'yyyy-MM-dd')
-      const formattedThreeDaysAgo = format(threeDaysAgo, 'yyyy-MM-dd')
-
-      const statistics =
-        req ||
-        (await statisticsDefultSet({
-          startDate: formattedThreeDaysAgo,
-          endDate: formattedToday,
-          tableType: ETableType.WEEKDAY,
-          page: page
-        }))
-
-      const res = await countBarChart(statistics)
-      setBarChartData(res.data)
-
-      const resPie = await countBarPieChart(statistics)
-      setBarPieChartData(resPie.data)
-
-      const resTableData = await countTable(statistics)
-      const tableDataWithKeys = {
-        ...resTableData.data,
-        dataList: resTableData.data.dataList.map((item, index) => ({
-          ...item,
-          key: `table-item-${index}}`,
-          dataList: item.dataList?.map((subItem, subIndex) => ({
-            ...subItem,
-            key: `table-sub-item-${index}-${subIndex}}`
-          }))
-        }))
-      }
-      setBarTableData(tableDataWithKeys)
-
-      if (req) {
-        statisticsReqUpdate({
-          ...req
-        })
-      }
-    },
-    [countBarChart, countBarPieChart, countTable, page, statisticsDefultSet, statisticsReqUpdate]
-  )
+  const { currentStatistics, barChartData, barPieChartData, barTableData, fetchData, isLoading } = useVisitorReport({
+    page,
+    tableType: ETableType.WEEKDAY,
+    daysToSubtract: 6,
+    countBarChart: { mutateAsync: countBarChart, isLoading: countBarChartLoading },
+    countBarPieChart: { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading },
+    countTable: { mutateAsync: countTable, isLoading: countTableLoading }
+  })
 
   useEffect(() => {
     fetchData()
   }, [])
 
-  const currentStatistics = statisticsReq.find(item => item.page === page)
-
-  if (!currentStatistics || countBarChartLoading || countBarPieChartLoading || countTableLoading) return <></>
+  if (!currentStatistics || isLoading) return <></>
 
   return (
     <VisitorTemplate
       statisticsReq={currentStatistics}
-      refetch={fetchData}
+      refetch={req => {
+        fetchData(req)
+      }}
       barChartData={barChartData}
       barPieChartData={barPieChartData}
       tableData={barTableData}

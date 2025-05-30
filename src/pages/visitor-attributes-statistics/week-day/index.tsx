@@ -1,15 +1,8 @@
-import { format, subDays } from 'date-fns'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useEffect } from 'react'
 import VisitorAttributesTemplate from 'src/@core/components/charts/template/VisitorAttributesTemplate'
-import { ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext'
+import { ETableType } from 'src/context/StatisticsContext'
 import { EStatisticsPage } from 'src/enum/statisticsEnum'
-import { useStatistics } from 'src/hooks/useStatistics'
-import {
-  IAgeGenderStatisticsTableResponse,
-  ICountBarChart,
-  IHeatMapChart,
-  IPyramidPieChart
-} from 'src/model/statistics/StatisticsModel'
+import { useVisitorAttributesReport } from 'src/hooks/useVisitorAttributesReport'
 import {
   useGenderAgeWeekDayBarChart,
   useGenderAgeWeekDayHeatmapChart,
@@ -17,8 +10,7 @@ import {
   useGenderAgeWeekDayTable
 } from 'src/service/statistics/statisticsService'
 
-const VisitorAttributesStatisticsWeekDay: FC = ({}): React.ReactElement => {
-  const { statisticsReq, statisticsDefultSet, statisticsReqUpdate } = useStatistics()
+const VisitorAttributesStatisticsWeekDay: FC = (): React.ReactElement => {
   const { mutateAsync: genderAgeBarChart, isLoading: genderAgeBarChartLoading } = useGenderAgeWeekDayBarChart()
   const { mutateAsync: genderAgePyramidPieChart, isLoading: genderAgePyramidPieChartLoading } =
     useGenderAgeWeekDayPyramidPieChart()
@@ -26,83 +18,24 @@ const VisitorAttributesStatisticsWeekDay: FC = ({}): React.ReactElement => {
     useGenderAgeWeekDayHeatmapChart()
   const { mutateAsync: genderAgeTable, isLoading: genderAgeTableLoading } = useGenderAgeWeekDayTable()
 
-  const page = EStatisticsPage.WEEK_DAY_ATTRIBUTES
-  const [barChartData, setBarChartData] = useState<ICountBarChart>()
-  const [pyramidPieChartData, setPyramidPieChartData] = useState<IPyramidPieChart>()
-  const [heatmapChartData, setHeatmapChartData] = useState<IHeatMapChart>()
-  const [tableData, setTableData] = useState<IAgeGenderStatisticsTableResponse>()
+  const page = EStatisticsPage.VISITOR_ATTRIBUTES_STATISTICS
 
-  const fetchData = useCallback(
-    async (req?: IStatisticsContextReq) => {
-      const today = new Date()
-      const threeDaysAgo = subDays(today, 60)
-      const formattedToday = format(today, 'yyyy-MM-dd')
-      const formattedThreeDaysAgo = format(threeDaysAgo, 'yyyy-MM-dd')
-
-      const statistics =
-        req ||
-        (await statisticsDefultSet({
-          startDate: formattedThreeDaysAgo,
-          endDate: formattedToday,
-          tableType: ETableType.WEEKDAY,
-          page: page
-        }))
-
-      const res = await genderAgeBarChart(statistics)
-      setBarChartData(res.data)
-
-      const resPie = await genderAgePyramidPieChart(statistics)
-      setPyramidPieChartData(resPie.data)
-
-      const resTable = await genderAgeHeatmapChart(statistics)
-      setHeatmapChartData(resTable.data)
-
-      const resTableData = await genderAgeTable(statistics)
-      const tableDataWithKeys = {
-        ...resTableData.data,
-        dataList: resTableData.data.dataList.map((item, index) => ({
-          ...item,
-          key: `table-item-${index}}`,
-          dataList: item.dataList?.map((subItem, subIndex) => ({
-            ...subItem,
-            key: `table-sub-item-${index}-${subIndex}}`
-          }))
-        }))
-      }
-      setTableData(tableDataWithKeys)
-
-      if (req) {
-        statisticsReqUpdate({
-          ...req
-        })
-      }
-    },
-    [
-      statisticsDefultSet,
+  const { currentStatistics, barChartData, pyramidPieChartData, heatmapChartData, tableData, fetchData, isLoading } =
+    useVisitorAttributesReport({
       page,
-      genderAgeBarChart,
-      genderAgePyramidPieChart,
-      genderAgeHeatmapChart,
-      genderAgeTable,
-      statisticsReqUpdate
-    ]
-  )
+      tableType: ETableType.WEEKDAY,
+      daysToSubtract: 60,
+      countBarChart: { mutateAsync: genderAgeBarChart, isLoading: genderAgeBarChartLoading },
+      countPyramidPieChart: { mutateAsync: genderAgePyramidPieChart, isLoading: genderAgePyramidPieChartLoading },
+      countHeatmapChart: { mutateAsync: genderAgeHeatmapChart, isLoading: genderAgeHeatmapChartLoading },
+      countTable: { mutateAsync: genderAgeTable, isLoading: genderAgeTableLoading }
+    })
 
   useEffect(() => {
     fetchData()
   }, [])
 
-  const currentStatistics = statisticsReq.find(item => item.page === page)
-
-  if (
-    !currentStatistics ||
-    genderAgeBarChartLoading ||
-    genderAgePyramidPieChartLoading ||
-    genderAgeHeatmapChartLoading ||
-    genderAgeTableLoading
-  ) {
-    return <></>
-  }
+  if (!currentStatistics || isLoading) return <></>
 
   return (
     <VisitorAttributesTemplate
@@ -111,7 +44,9 @@ const VisitorAttributesStatisticsWeekDay: FC = ({}): React.ReactElement => {
       pyramidPieChartData={pyramidPieChartData}
       heatmapChartData={heatmapChartData}
       tableData={tableData}
-      refetch={fetchData}
+      refetch={req => {
+        fetchData(req)
+      }}
     />
   )
 }
