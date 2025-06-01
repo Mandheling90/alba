@@ -1,4 +1,4 @@
-import { Box, Collapse, Grid, Typography } from '@mui/material'
+import { Box, Card, Collapse, Grid, Typography } from '@mui/material'
 import { FC, useContext, useEffect, useState } from 'react'
 import PageHeader from 'src/@core/components/page-header'
 import { CamerasContext } from 'src/context/CamerasContext'
@@ -27,13 +27,15 @@ const StatTerm: FC<IStatTerm> = ({ selectClient }) => {
         <Grid item xs={12}>
           <PageHeader
             title={
-              <Typography variant='h5' sx={{ fontSize: 24, fontWeight: 500, mb: 5 }}>
+              <Typography variant='h5' sx={{ fontSize: 24, fontWeight: 500, mb: 2 }}>
                 통계 용어 관리
               </Typography>
             }
           />
-          <Box sx={{ height: '80vh', overflow: 'auto' }}>
-            <StatTermList />
+          <Box sx={{ height: 'calc(85vh - 60px)', overflow: 'auto' }}>
+            <Card>
+              <StatTermList />
+            </Card>
           </Box>
         </Grid>
       </Collapse>

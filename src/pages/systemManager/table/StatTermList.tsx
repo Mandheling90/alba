@@ -1,4 +1,4 @@
-import { Box, Button, Card, Grid, IconButton } from '@mui/material'
+import { Box, Button, IconButton } from '@mui/material'
 import { FC, useCallback, useEffect, useState } from 'react'
 import LayoutControlPanel from 'src/@core/components/molecule/LayoutControlPanel'
 import { useLayout } from 'src/hooks/useLayout'
@@ -302,73 +302,69 @@ const StatTermList: FC = () => {
   })
 
   return (
-    <Grid container>
-      <Grid item xs={12}>
-        <Card>
-          <HorizontalScrollBox>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                m: 3,
-                gap: 3,
-                width: '100%'
+    <>
+      <HorizontalScrollBox>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            m: 3,
+            gap: 3,
+            width: '100%'
+          }}
+        >
+          <Box sx={{ display: 'flex', gap: 3 }}>
+            <LayoutControlPanel
+              menuName='고객사'
+              companyId={companyId}
+              companyName={companyName}
+              onClick={() => {
+                layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
+              }}
+            />
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 3 }}>
+            <Button
+              variant={'outlined'}
+              onClick={async () => {
+                try {
+                  await configMulti({
+                    companyNo: companyNo,
+                    dataList: data.dataList
+                  })
+
+                  setSimpleDialogModalProps({
+                    open: true,
+                    title: '저장이 완료되었습니다.'
+                  })
+
+                  refetch()
+                } catch (error) {
+                  setSimpleDialogModalProps({
+                    open: true,
+                    title: getErrorMessage(error)
+                  })
+                }
               }}
             >
-              <Box sx={{ display: 'flex', gap: 3 }}>
-                <LayoutControlPanel
-                  menuName='고객사'
-                  companyId={companyId}
-                  companyName={companyName}
-                  onClick={() => {
-                    layoutContext.setLayoutDisplay(!layoutContext.layoutDisplay)
-                  }}
-                />
-              </Box>
+              저장
+            </Button>
+            <Button
+              variant={'outlined'}
+              onClick={() => {
+                setData(dataOrigin)
+              }}
+            >
+              취소
+            </Button>
+          </Box>
+        </Box>
+      </HorizontalScrollBox>
 
-              <Box sx={{ display: 'flex', gap: 3 }}>
-                <Button
-                  variant={'outlined'}
-                  onClick={async () => {
-                    try {
-                      await configMulti({
-                        companyNo: companyNo,
-                        dataList: data.dataList
-                      })
-
-                      setSimpleDialogModalProps({
-                        open: true,
-                        title: '저장이 완료되었습니다.'
-                      })
-
-                      refetch()
-                    } catch (error) {
-                      setSimpleDialogModalProps({
-                        open: true,
-                        title: getErrorMessage(error)
-                      })
-                    }
-                  }}
-                >
-                  저장
-                </Button>
-                <Button
-                  variant={'outlined'}
-                  onClick={() => {
-                    setData(dataOrigin)
-                  }}
-                >
-                  취소
-                </Button>
-              </Box>
-            </Box>
-          </HorizontalScrollBox>
-
-          {data && <OneDepthTable data={data} columns={columnsTemp} expandedRows={expandedRows} keyField='id' />}
-        </Card>
-      </Grid>
-    </Grid>
+      {data && <OneDepthTable data={data} columns={columnsTemp} expandedRows={expandedRows} keyField='id' />}
+    </>
   )
 }
 
