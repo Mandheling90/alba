@@ -72,7 +72,7 @@ const PyramidChart = memo(({ data }: { data: IPyramidPieChart }) => {
         formatter: function (this: Highcharts.AxisLabelsFormatterContextObject): string {
           const value = typeof this.value === 'number' ? this.value : 0
 
-          return Math.abs(value).toString()
+          return Math.abs(value).toLocaleString()
         }
       },
       accessibility: {
@@ -135,7 +135,7 @@ const PyramidChart = memo(({ data }: { data: IPyramidPieChart }) => {
           this.point.category +
           '</b><br/>' +
           '방문자수: ' +
-          count +
+          count.toLocaleString() +
           '명<br/>' +
           genderLabel +
           ': ' +

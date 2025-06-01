@@ -56,8 +56,9 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
           min: 0
         },
         tooltip: {
-          headerFormat: '<b>{series.name}</b><br>',
-          pointFormat: '{point.x}: {point.y}명'
+          shared: false,
+          headerFormat: '',
+          pointFormat: '{series.name}: {point.y}명'
         },
         plotOptions: {
           series: {

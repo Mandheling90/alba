@@ -46,7 +46,7 @@ const BarStackedChart: React.FC<{ data: ICountBarChart }> = ({ data }) => {
           dataLabels: {
             enabled: true,
             formatter: function () {
-              return this.y === 0 ? '' : this.y
+              return this.y === 0 ? '' : (this.y ?? 0).toLocaleString()
             }
           }
         }

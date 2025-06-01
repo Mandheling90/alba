@@ -119,9 +119,9 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
 
         return `<b>시간대: ${this.series.xAxis.categories[this.x]}</b><br>
                 <b>연령: ${this.series.yAxis.categories[this.y]}</b><br>
-                방문자수: ${this.visitors || 0}<br>
-                남성: ${this.male}명(${formatPercentage(this.male || 0)}%)<br>
-                여성: ${this.female}명(${formatPercentage(this.female || 0)}%)`
+                방문자수: ${(this.visitors || 0).toLocaleString()}<br>
+                남성: ${(this.male || 0).toLocaleString()}명(${formatPercentage(this.male || 0)}%)<br>
+                여성: ${(this.female || 0).toLocaleString()}명(${formatPercentage(this.female || 0)}%)`
       }
     },
     series: [
@@ -134,7 +134,7 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
           enabled: true,
           color: '#000000',
           formatter: function (this: any) {
-            return `${this.point.visitors}<br>(${categoryPercentage(
+            return `${(this.point.visitors || 0).toLocaleString()}<br>(${categoryPercentage(
               this.point.visitors,
               this.point.male || 0
             )}%, ${categoryPercentage(this.point.visitors, this.point.female || 0)}%)`

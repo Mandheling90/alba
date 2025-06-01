@@ -149,7 +149,7 @@ const VisitorAttributesTemplate: FC<{
                         padding: '2px'
                       }}
                     >
-                      {tableData?.totalManCount}
+                      {tableData?.totalManCount.toLocaleString()}
                     </Typography>
                     명 | 여성 전체
                     <Typography
@@ -162,7 +162,7 @@ const VisitorAttributesTemplate: FC<{
                         padding: '2px'
                       }}
                     >
-                      {tableData?.totalWomanCount}
+                      {tableData?.totalWomanCount.toLocaleString()}
                     </Typography>
                     명
                   </Typography>

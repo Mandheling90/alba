@@ -218,7 +218,8 @@ const LiveDataLineChart = memo(
         },
         tooltip: {
           headerFormat: '<b>{point.x:%m월%d일 %H:%M}</b><br/>',
-          pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y:.1f}</b><br/>',
+          pointFormat:
+            '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y.toLocaleString()}</b><br/>',
           shared: true
         },
         plotOptions: {
