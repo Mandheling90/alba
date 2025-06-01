@@ -1,4 +1,4 @@
-import { Box, Card, Collapse, Grid, Typography } from '@mui/material'
+import { Card, Collapse, Grid, Typography } from '@mui/material'
 import { FC, useContext, useEffect, useState } from 'react'
 import PageHeader from 'src/@core/components/page-header'
 import { CamerasContext } from 'src/context/CamerasContext'
@@ -32,11 +32,10 @@ const StatTerm: FC<IStatTerm> = ({ selectClient }) => {
               </Typography>
             }
           />
-          <Box sx={{ height: 'calc(85vh - 60px)', overflow: 'auto' }}>
-            <Card>
-              <StatTermList />
-            </Card>
-          </Box>
+
+          <Card sx={{ minHeight: 'calc(85vh - 60px)', height: 'calc(85vh - 60px)', overflow: 'auto' }}>
+            <StatTermList />
+          </Card>
         </Grid>
       </Collapse>
     </Grid>
