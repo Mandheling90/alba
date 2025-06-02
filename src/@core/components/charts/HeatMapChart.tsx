@@ -71,10 +71,11 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
       })
     },
     title: {
-      text: '시간별 연령별 방문자수 및 성별 비율',
-      style: {
-        fontSize: '1em'
-      }
+      text: ''
+
+      // style: {
+      //   fontSize: '1em'
+      // }
     },
     xAxis: {
       categories: data.xaxisCategories
