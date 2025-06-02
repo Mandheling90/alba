@@ -49,10 +49,20 @@ const Visitors: FC = ({}): React.ReactElement => {
     const interval = setInterval(() => {
       barChartRefetch()
       cardInfoRefetch()
+
+      // lineChart?.data?.lineDataList가 없거나 빈 배열일 경우 30초 후에 lineChartRefetch 실행
+      if (
+        !lineChart?.data?.lineDataList ||
+        lineChart.data.lineDataList.length === 0 ||
+        lineChart.data.lineDataList[0].dataList.length === 0 ||
+        lineChart.data.lineDataList[1].dataList.length === 0
+      ) {
+        lineChartRefetch()
+      }
     }, 30000)
 
     return () => clearInterval(interval)
-  }, [lineChartRefetch, barChartRefetch, cardInfoRefetch])
+  }, [lineChartRefetch, barChartRefetch, cardInfoRefetch, lineChart?.data?.lineDataList])
 
   if (lineChartLoading || barChartLoading) {
     return <></>
