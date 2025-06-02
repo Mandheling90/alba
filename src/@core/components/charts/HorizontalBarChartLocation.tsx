@@ -40,7 +40,33 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
           enabled: true,
           align: 'right',
           verticalAlign: 'top',
-          useHTML: true
+          useHTML: true,
+          layout: 'horizontal',
+          maxHeight: 40,
+          itemWidth: 110,
+          itemStyle: {
+            textOverflow: 'ellipsis',
+            padding: '0px 0px 6px 0px'
+          },
+          navigation: {
+            activeColor: '#3E576F',
+            animation: true,
+            arrowSize: 12,
+            inactiveColor: '#CCC',
+            style: {
+              fontWeight: 'bold',
+              color: '#333',
+              fontSize: '12px',
+              position: 'absolute'
+            }
+          },
+
+          x: 40,
+
+          symbolWidth: 12,
+          symbolHeight: 12,
+          itemDistance: 10,
+          padding: 5
         },
         xAxis: {
           categories: data.xcategories,
@@ -114,9 +140,9 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
         `}
         </style>
         <div id='location-chart-container' style={{ width: '100%', height: '100%' }} />
-        <div style={{ position: 'absolute', top: '10px', left: '50px' }}>
+        <div style={{ position: 'absolute', top: '10px', left: '20px' }}>
           <SwitchCustom
-            width={90}
+            width={60}
             switchName={['전체', '개별']}
             activeColor={['rgba(145, 85, 253, 1)', 'rgba(145, 85, 253, 1)']}
             selected={true}
