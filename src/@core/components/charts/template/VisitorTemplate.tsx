@@ -107,7 +107,7 @@ const VisitorTemplate: FC<{
                         padding: '2px'
                       }}
                     >
-                      {tableData?.totalInCount}
+                      {tableData?.totalInCount.toLocaleString()}
                     </Typography>
                     명 | 전체 퇴장객 수
                     <Typography
@@ -120,7 +120,7 @@ const VisitorTemplate: FC<{
                         padding: '2px'
                       }}
                     >
-                      {tableData?.totalOutCount}
+                      {tableData?.totalOutCount.toLocaleString()}
                     </Typography>
                     명
                   </Typography>
