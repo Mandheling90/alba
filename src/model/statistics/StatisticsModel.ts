@@ -190,6 +190,8 @@ export interface IBaseChartResponse {
   endHour: string
   totalPlaceCount: number
   yname: string
+  tableHeaders?: string[]
+  tableTopHeaders?: string[]
 }
 
 export interface IBaseDashboardChartResponse {

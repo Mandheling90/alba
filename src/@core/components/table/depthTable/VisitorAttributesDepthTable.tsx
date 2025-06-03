@@ -279,16 +279,59 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
   const columns2 = getColumns2()
   const coverColumns = getColumns3()
 
+  const filteredCoverColumns = coverColumns.filter(
+    column =>
+      (column.field !== 'temp2' && column.field !== 'temp3') ||
+      (column.field === 'temp2' && data.tableTopHeaders?.includes('남자')) ||
+      (column.field === 'temp3' && data.tableTopHeaders?.includes('여자'))
+  )
+
+  const filteredColumns = columns.filter(
+    column =>
+      (column.field !== 'totalM0' &&
+        column.field !== 'totalM10' &&
+        column.field !== 'totalM20' &&
+        column.field !== 'totalM30' &&
+        column.field !== 'totalM40' &&
+        column.field !== 'totalM50' &&
+        column.field !== 'totalM60' &&
+        column.field !== 'totalF0' &&
+        column.field !== 'totalF10' &&
+        column.field !== 'totalF20' &&
+        column.field !== 'totalF30' &&
+        column.field !== 'totalF40' &&
+        column.field !== 'totalF50' &&
+        column.field !== 'totalF60' &&
+        column.field !== 'totalManCount' &&
+        column.field !== 'totalWomanCount') ||
+      (column.field === 'totalM0' && data.tableHeaders?.includes('10대이하')) ||
+      (column.field === 'totalM10' && data.tableHeaders?.includes('10대')) ||
+      (column.field === 'totalM20' && data.tableHeaders?.includes('20대')) ||
+      (column.field === 'totalM30' && data.tableHeaders?.includes('30대')) ||
+      (column.field === 'totalM40' && data.tableHeaders?.includes('40대')) ||
+      (column.field === 'totalM50' && data.tableHeaders?.includes('50대')) ||
+      (column.field === 'totalM60' && data.tableHeaders?.includes('60대이상')) ||
+      (column.field === 'totalF0' && data.tableHeaders?.includes('10대이하')) ||
+      (column.field === 'totalF10' && data.tableHeaders?.includes('10대')) ||
+      (column.field === 'totalF20' && data.tableHeaders?.includes('20대')) ||
+      (column.field === 'totalF30' && data.tableHeaders?.includes('30대')) ||
+      (column.field === 'totalF40' && data.tableHeaders?.includes('40대')) ||
+      (column.field === 'totalF50' && data.tableHeaders?.includes('50대')) ||
+      (column.field === 'totalF60' && data.tableHeaders?.includes('60대이상')) ||
+      (column.field === 'totalManCount' && data.tableHeaders?.includes('남자')) ||
+      (column.field === 'totalWomanCount' && data.tableHeaders?.includes('여자'))
+  )
+
   return (
     <>
-      <CustomTable columns={coverColumns} rows={[]} isAllView hideRows />
+      <CustomTable columns={filteredCoverColumns} rows={[]} isAllView hideRows />
 
       {tableType === ETableType.WEEKDAY || tableType === ETableType.WEEKLY ? (
-        <CustomTable columns={columns} rows={data.dataList} isAllView />
+        <CustomTable columns={filteredColumns} rows={data.dataList} isAllView />
       ) : tableDisplayType === ETableDisplayType.TIME_PLACE ? (
-        <TimePlaceDepthTable data={data} columns={columns} columns2={columns2} expandedRows={expandedRows} />
+        <TimePlaceDepthTable data={data} columns={filteredColumns} columns2={columns2} expandedRows={expandedRows} />
       ) : (
-        <OneDepthTable data={data} columns={columns} expandedRows={expandedRows} />
+        <OneDepthTable data={data} columns={filteredColumns} expandedRows={expandedRows} />
       )}
     </>
   )

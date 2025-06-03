@@ -61,15 +61,19 @@ const StackedBarChart = ({ containerId, data }: StackedBarChartProps) => {
         },
         series: [
           {
-            name: data.chartDataList[0].name,
-            type: 'column',
-            data: data.chartDataList[0].dataList
+            name: data.chartDataList[0]?.name ?? '데이터1',
+            type: 'column' as const,
+            data: data.chartDataList[0]?.dataList ?? []
           },
-          {
-            name: data.chartDataList[1].name,
-            type: 'column',
-            data: data.chartDataList[1].dataList
-          }
+          ...(data.chartDataList[1]
+            ? [
+                {
+                  name: data.chartDataList[1].name,
+                  type: 'column' as const,
+                  data: data.chartDataList[1].dataList
+                }
+              ]
+            : [])
         ]
       })
     }

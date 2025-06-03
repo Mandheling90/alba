@@ -109,20 +109,25 @@ const VisitorTemplate: FC<{
                     >
                       {tableData?.totalInCount.toLocaleString()}
                     </Typography>
-                    명 | 전체 퇴장객 수
-                    <Typography
-                      component='span'
-                      sx={{
-                        fontWeight: 'bold',
-                        color: 'primary.main',
-                        border: '1px solid rgba(58, 53, 65, 0.87)',
-                        borderRadius: '5px',
-                        padding: '2px'
-                      }}
-                    >
-                      {tableData?.totalOutCount.toLocaleString()}
-                    </Typography>
                     명
+                    {tableData?.totalOutCount && (
+                      <>
+                        | 전체 퇴장객 수
+                        <Typography
+                          component='span'
+                          sx={{
+                            fontWeight: 'bold',
+                            color: 'primary.main',
+                            border: '1px solid rgba(58, 53, 65, 0.87)',
+                            borderRadius: '5px',
+                            padding: '2px'
+                          }}
+                        >
+                          {tableData?.totalOutCount.toLocaleString()}
+                        </Typography>
+                        명
+                      </>
+                    )}
                   </Typography>
                 </Box>
 

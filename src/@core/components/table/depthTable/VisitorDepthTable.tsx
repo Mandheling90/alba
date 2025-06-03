@@ -274,14 +274,38 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
   const columns = getColumns()
   const columns2 = getColumns2()
 
+  // data.tableHeaders에 "입장객" 또는 "퇴장객"이 없는 경우 해당 컬럼 제외
+  const filteredColumns = columns.filter(
+    column =>
+      (column.field !== 'totalInCount' && column.field !== 'totalOutCount') ||
+      (column.field === 'totalInCount' && data.tableHeaders?.includes('입장객')) ||
+      (column.field === 'totalOutCount' && data.tableHeaders?.includes('퇴장객'))
+  )
+  const filteredColumns2 = columns2.filter(
+    column =>
+      (column.field !== 'inCount' &&
+        column.field !== 'outCount' &&
+        column.field !== 'totalInCount' &&
+        column.field !== 'totalOutCount') ||
+      (column.field === 'inCount' && data.tableHeaders?.includes('입장객')) ||
+      (column.field === 'outCount' && data.tableHeaders?.includes('퇴장객')) ||
+      (column.field === 'totalInCount' && data.tableHeaders?.includes('입장객')) ||
+      (column.field === 'totalOutCount' && data.tableHeaders?.includes('퇴장객'))
+  )
+
   return (
     <>
       {tableType === ETableType.WEEKDAY || tableType === ETableType.WEEKLY ? (
-        <CustomTable columns={columns} rows={data.dataList} isAllView />
+        <CustomTable columns={filteredColumns} rows={data.dataList} isAllView />
       ) : tableDisplayType === ETableDisplayType.TIME_PLACE ? (
-        <TimePlaceDepthTable data={data} columns={columns} columns2={columns2} expandedRows={expandedRows} />
+        <TimePlaceDepthTable
+          data={data}
+          columns={filteredColumns}
+          columns2={filteredColumns2}
+          expandedRows={expandedRows}
+        />
       ) : (
-        <OneDepthTable data={data} columns={columns} expandedRows={expandedRows} />
+        <OneDepthTable data={data} columns={filteredColumns} expandedRows={expandedRows} />
       )}
     </>
   )

@@ -59,18 +59,22 @@ const BarStackedChart: React.FC<{ data: ICountBarChart }> = ({ data }) => {
       },
       series: [
         {
-          type: 'column',
-          name: data.chartDataList[0].name,
-          data: data.chartDataList[0].dataList,
+          type: 'column' as const,
+          name: data.chartDataList[0]?.name ?? '데이터1',
+          data: data.chartDataList[0]?.dataList ?? [],
           color: '#544FC5',
           pointPlacement: -0.2
         },
-        {
-          type: 'column',
-          name: data.chartDataList[1].name,
-          data: data.chartDataList[1].dataList,
-          color: '#2CAFFE'
-        }
+        ...(data.chartDataList[1]
+          ? [
+              {
+                type: 'column' as const,
+                name: data.chartDataList[1].name,
+                data: data.chartDataList[1].dataList,
+                color: '#2CAFFE'
+              }
+            ]
+          : [])
       ]
     })
   }, [data])
