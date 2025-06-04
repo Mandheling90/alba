@@ -124,7 +124,11 @@ const LiveDataLineChart = memo(
                   lastTime: timeStr
                 })
 
-                if (!lastPoint.data || lastPoint.data.lineDataList.length === 0) {
+                if (
+                  !lastPoint?.data ||
+                  !Array.isArray(lastPoint.data.lineDataList) ||
+                  lastPoint.data.lineDataList.length === 0
+                ) {
                   console.error('No response from livePollingMutate')
 
                   return
