@@ -46,12 +46,14 @@ const VisitantList: FC<IVisitantList> = ({ data, xcategories, selected = '', ref
       field: 'previousDayInOut',
       headerName: `${visitantData[1]?.name || '이전'}(${getFormattedDate(yesterday)})`,
       headerAlign: 'center',
+      type: 'number',
       flex: 1
     },
     {
       field: 'currentDayInOut',
       headerName: `${visitantData[0]?.name || '현재'}(${getFormattedDate(today)})`,
       headerAlign: 'center',
+      type: 'number',
       flex: 1
     },
     {
@@ -59,6 +61,7 @@ const VisitantList: FC<IVisitantList> = ({ data, xcategories, selected = '', ref
       headerName: '증감',
       headerAlign: 'center',
       align: 'center',
+      type: 'number',
       flex: 1,
       renderCell: ({ row }: GridRenderCellParams<MVisitantList>) => {
         return (
