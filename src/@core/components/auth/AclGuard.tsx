@@ -46,10 +46,12 @@ const AclGuard = (props: AclGuardProps) => {
     if (auth.user && auth.user.role && !guestGuard && router.route === '/') {
       const homeRoute = getHomeRoute(
         auth.user.role,
-        auth.user.componentListInfo
-          ?.find(item => item.title === '대쉬보드')
-          ?.children.find(item2 => item2.title === '방문자수 통계')
-          ? '/dashboard/visitors'
+        Array.isArray(auth.user.componentListInfo)
+          ? auth.user.componentListInfo
+              ?.find(item => item.title === '대쉬보드')
+              ?.children.find(item2 => item2.title === '방문자수 통계')
+            ? '/dashboard/visitors'
+            : '/dashboard/visitorAttributes'
           : '/dashboard/visitorAttributes'
       )
       router.replace(homeRoute)

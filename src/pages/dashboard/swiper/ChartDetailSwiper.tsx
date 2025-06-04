@@ -102,7 +102,7 @@ const ChartDetailSwiper: FC<ChartDetailSwiperProps> = ({ data, height = '100%' }
                   alignItems: 'center',
                   justifyContent: 'center',
                   overflow: 'hidden',
-                  boxSizing: 'border-box',
+                  boxSizing: 'border-box'
                 }}
               >
                 <BoxContents
@@ -126,7 +126,7 @@ const ChartDetailSwiper: FC<ChartDetailSwiperProps> = ({ data, height = '100%' }
                   }
                   bottomTexts={
                     subIndex === 3
-                      ? [`오전 : ${item.morningLabel}`, `오후 : ${item.afternoonLabel}`, item.dustValue]
+                      ? [`오전 : ${item.morningLabel ?? ''}`, `오후 : ${item.afternoonLabel ?? ''}`, item.dustValue]
                       : []
                   }
                   color={index % 2 === 0 ? '#38A3FA' : '#544FC5'}
