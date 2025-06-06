@@ -1,13 +1,13 @@
-import { Box, IconButton } from '@mui/material'
+import { Box } from '@mui/material'
 import { FC, useState } from 'react'
 
 import { ETableDisplayType, ETableType } from 'src/context/StatisticsContext'
-import IconCustom from 'src/layouts/components/IconCustom'
 import { IAgeGenderStatisticsTableResponse, ITableHeaders } from 'src/model/statistics/StatisticsModel'
 import { generateColumns } from '../columns/columnGenerator'
 import CustomTable from '../CustomTable'
 import OneDepthTable from './OneDepthTable'
 import TimePlaceDepthTable from './TimePlaceDepthTable'
+import ToggleButton from './ToggleButton'
 
 interface DepthTableProps {
   tableType: ETableType
@@ -90,22 +90,14 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
               }
 
               return (
-                <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
-                  <Box sx={{ position: 'absolute', left: depth === 2 ? 0 : 30 }}>
-                    <IconButton
-                      onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation()
-                        toggleRow(params.row.key)
-                      }}
-                    >
-                      <IconCustom
-                        isCommon
-                        path='table'
-                        icon={expandedRows.includes(params.row.key) ? 'unfolding' : 'folding'}
-                      />
-                    </IconButton>
-                  </Box>
-                </Box>
+                <ToggleButton
+                  depth={depth}
+                  isExpanded={expandedRows.includes(params.row.key)}
+                  onToggle={(e: React.MouseEvent) => {
+                    e.stopPropagation()
+                    toggleRow(params.row.key)
+                  }}
+                />
               )
             },
             dateName: (params: any) => {

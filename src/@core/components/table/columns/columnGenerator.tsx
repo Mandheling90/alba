@@ -14,6 +14,7 @@ interface ColumnConfig {
   editable?: boolean
   sortable?: boolean
   filterable?: boolean
+  isEmpty?: boolean
 }
 
 interface ColumnGeneratorProps {
@@ -41,6 +42,13 @@ export const generateColumns = (props: ColumnGeneratorProps): GridColDef[] => {
       editable: column.editable || false,
       sortable: column.sortable !== false,
       filterable: column.filterable !== false
+    }
+
+    // 빈 컬럼인 경우 빈 렌더러 추가
+    if (column.isEmpty) {
+      baseColumn.renderCell = () => <></>
+
+      return baseColumn
     }
 
     // 커스텀 렌더러가 있는 경우 적용

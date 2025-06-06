@@ -1,13 +1,13 @@
-import { Box, IconButton } from '@mui/material'
+import { Box, Typography, useTheme } from '@mui/material'
 import { FC, useState } from 'react'
 
 import { ETableDisplayType, ETableType } from 'src/context/StatisticsContext'
-import IconCustom from 'src/layouts/components/IconCustom'
 import { ITableData } from 'src/model/statistics/StatisticsModel'
 import { generateColumns } from '../columns/columnGenerator'
 import CustomTable from '../CustomTable'
 import OneDepthTable from './OneDepthTable'
 import TimePlaceDepthTable from './TimePlaceDepthTable'
+import ToggleButton from './ToggleButton'
 
 interface DepthTableProps {
   tableType: ETableType
@@ -15,8 +15,55 @@ interface DepthTableProps {
   data: ITableData
 }
 
+const WeatherRenderer = ({ morning, after }: { morning?: string; after?: string }) => {
+  const theme = useTheme()
+
+  if (!morning || !after) {
+    return <></>
+  }
+
+  return (
+    <Box
+      sx={{
+        width: '100%',
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'column', md: 'column', lg: 'column', xl: 'row' },
+        justifyContent: { xs: 'center', sm: 'center', md: 'center', lg: 'center', xl: 'space-between' },
+        alignItems: 'center'
+      }}
+    >
+      <Typography
+        fontSize={12}
+        sx={{
+          whiteSpace: 'nowrap',
+          opacity: 0.9,
+          [`@media (min-width:${theme.breakpoints.values.xl}px)`]: {
+            fontSize: 14
+          }
+        }}
+      >
+        오전 : {morning}
+      </Typography>
+      <Typography
+        fontSize={12}
+        sx={{
+          whiteSpace: 'nowrap',
+          opacity: 0.9,
+          [`@media (min-width:${theme.breakpoints.values.xl}px)`]: {
+            fontSize: 14
+          }
+        }}
+      >
+        오후 : {after}
+      </Typography>
+    </Box>
+  )
+}
+
 const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) => {
   const [expandedRows, setExpandedRows] = useState<string[]>([])
+  const theme = useTheme()
 
   const toggleRow = (key: string) => {
     setExpandedRows(prev => {
@@ -49,87 +96,20 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
     return false
   })
 
+  const toggleFlex = 0.4
+  const weatherFlex = 1.2
+
   const getColumns = () => {
     switch (tableType) {
       case ETableType.HOURLY:
         return generateColumns({
           columns: [
             {
-              field: `dateName`,
-              headerName: `${tableDisplayType === 'time' ? '날짜' : '날짜 및 시간대'}`,
-              type: 'string'
+              field: `toggle`,
+              headerName: ``,
+              type: 'string',
+              flex: toggleFlex
             },
-            {
-              field: `${tableDisplayType === 'time' ? 'dateNameTemp' : 'totalPlaceName'}`,
-              headerName: `${tableDisplayType === 'time' ? '시간대' : '장소'}`,
-              type: 'string'
-            },
-            ...defaultColumns
-          ],
-          customRenderers: {
-            dateName: (params: any) => {
-              const depth = checkDataListDepth(params.row)
-
-              return tableDisplayType === 'time' ? (
-                <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
-                  {depth === 2 && (
-                    <>
-                      <Box sx={{ position: 'absolute', left: 0 }}>
-                        <IconButton
-                          onClick={(e: React.MouseEvent) => {
-                            e.stopPropagation()
-                            toggleRow(params.row.key)
-                          }}
-                        >
-                          {depth === 2 && (
-                            <IconCustom
-                              isCommon
-                              path='table'
-                              icon={expandedRows.includes(params.row.key) ? 'unfolding' : 'folding'}
-                            />
-                          )}
-                        </IconButton>
-                      </Box>
-                      <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
-                    </>
-                  )}
-                </Box>
-              ) : (
-                <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
-                  <Box sx={{ position: 'absolute', left: depth === 2 ? 0 : 30 }}>
-                    <IconButton
-                      onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation()
-                        toggleRow(params.row.key)
-                      }}
-                    >
-                      <IconCustom
-                        isCommon
-                        path='table'
-                        icon={expandedRows.includes(params.row.key) ? 'unfolding' : 'folding'}
-                      />
-                    </IconButton>
-                  </Box>
-                  <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
-                </Box>
-              )
-            },
-            dateNameTemp: (params: any) => {
-              const depth = checkDataListDepth(params.row)
-
-              return (
-                <>
-                  {tableDisplayType === 'time' && depth === 1 && (
-                    <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
-                  )}
-                </>
-              )
-            }
-          }
-        })
-      case ETableType.DAILY:
-        return generateColumns({
-          columns: [
             {
               field: `dateName`,
               headerName: `${tableDisplayType === 'time' ? '날짜' : '날짜 및 시간대'}`,
@@ -141,54 +121,101 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
               type: 'string'
             },
             ...defaultColumns,
-            { field: 'morningWeather', headerName: '날씨', type: 'string' },
-            { field: 'morningTemperature', headerName: '기온', type: 'string' },
+            { field: 'weather', headerName: '날씨', type: 'string', flex: weatherFlex },
+            { field: 'temperature', headerName: '기온', type: 'string', flex: weatherFlex },
             { field: 'dust', headerName: '미세먼지', type: 'string' }
           ],
           customRenderers: {
+            toggle: (params: any) => {
+              const depth = checkDataListDepth(params.row)
+
+              if (tableDisplayType === 'time' && depth === 1) {
+                return <></>
+              }
+
+              return (
+                <ToggleButton
+                  depth={depth}
+                  isExpanded={expandedRows.includes(params.row.key)}
+                  onToggle={(e: React.MouseEvent) => {
+                    e.stopPropagation()
+                    toggleRow(params.row.key)
+                  }}
+                />
+              )
+            },
+            dateNameTemp: (params: any) => {
+              const depth = checkDataListDepth(params.row)
+
+              return (
+                <>
+                  {tableDisplayType === 'time' && depth === 1 && (
+                    <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
+                  )}
+                </>
+              )
+            },
+            weather: (params: any) => {
+              return <WeatherRenderer morning={params.row.morningWeather} after={params.row.afterWeather} />
+            },
+            temperature: (params: any) => {
+              return <WeatherRenderer morning={params.row.morningTemperature} after={params.row.afterTemperature} />
+            }
+          }
+        })
+      case ETableType.DAILY:
+        return generateColumns({
+          columns: [
+            {
+              field: `toggle`,
+              headerName: ``,
+              type: 'string',
+              flex: toggleFlex
+            },
+            {
+              field: `dateName`,
+              headerName: `${tableDisplayType === 'time' ? '날짜' : '날짜 및 시간대'}`,
+              type: 'string'
+            },
+            {
+              field: `${tableDisplayType === 'time' ? 'dateNameTemp' : 'totalPlaceName'}`,
+              headerName: `${tableDisplayType === 'time' ? '시간대' : '장소'}`,
+              type: 'string'
+            },
+            ...defaultColumns,
+            { field: 'weather', headerName: '날씨', type: 'string', flex: weatherFlex },
+            { field: 'temperature', headerName: '기온', type: 'string', flex: weatherFlex },
+            { field: 'dust', headerName: '미세먼지', type: 'string' }
+          ],
+          customRenderers: {
+            toggle: (params: any) => {
+              const depth = checkDataListDepth(params.row)
+
+              if (tableDisplayType === 'time' && depth === 1) {
+                return <></>
+              }
+
+              return (
+                <ToggleButton
+                  depth={depth}
+                  isExpanded={expandedRows.includes(params.row.key)}
+                  onToggle={(e: React.MouseEvent) => {
+                    e.stopPropagation()
+                    toggleRow(params.row.key)
+                  }}
+                />
+              )
+            },
             dateName: (params: any) => {
               const depth = checkDataListDepth(params.row)
 
               return tableDisplayType === 'time' ? (
                 <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
-                  {depth === 2 && (
-                    <>
-                      <Box sx={{ position: 'absolute', left: 0 }}>
-                        <IconButton
-                          onClick={(e: React.MouseEvent) => {
-                            e.stopPropagation()
-                            toggleRow(params.row.key)
-                          }}
-                        >
-                          {depth === 2 && (
-                            <IconCustom
-                              isCommon
-                              path='table'
-                              icon={expandedRows.includes(params.row.key) ? 'unfolding' : 'folding'}
-                            />
-                          )}
-                        </IconButton>
-                      </Box>
-                      <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
-                    </>
-                  )}
+                  {depth === 2 && <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>}
                 </Box>
               ) : (
                 <Box sx={{ width: '100%', position: 'relative' }} display='flex' alignItems='center'>
-                  <Box sx={{ position: 'absolute', left: depth === 2 ? 0 : 30 }}>
-                    <IconButton
-                      onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation()
-                        toggleRow(params.row.key)
-                      }}
-                    >
-                      <IconCustom
-                        isCommon
-                        path='table'
-                        icon={expandedRows.includes(params.row.key) ? 'unfolding' : 'folding'}
-                      />
-                    </IconButton>
-                  </Box>
+                  <Box sx={{ position: 'absolute' }}></Box>
                   <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
                 </Box>
               )
@@ -203,6 +230,12 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
                   )}
                 </>
               )
+            },
+            weather: (params: any) => {
+              return <WeatherRenderer morning={params.row.morningWeather} after={params.row.afterWeather} />
+            },
+            temperature: (params: any) => {
+              return <WeatherRenderer morning={params.row.morningTemperature} after={params.row.afterTemperature} />
             }
           }
         })
@@ -228,29 +261,29 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
       case ETableType.HOURLY:
         return generateColumns({
           columns: [
-            { field: 'temp', headerName: '', type: 'string' },
+            { field: 'temp1', headerName: '', type: 'string', flex: toggleFlex, isEmpty: true },
+            { field: 'temp2', headerName: '', type: 'string', isEmpty: true },
             { field: 'placeName', headerName: '장소 이름', type: 'string' },
             ...defaultColumns
-          ],
-          customRenderers: {
-            temp: (params: any) => {
-              return <></>
-            }
-          }
+          ]
         })
       case ETableType.DAILY:
         return generateColumns({
           columns: [
-            { field: 'temp', headerName: '', type: 'string' },
+            { field: 'temp1', headerName: '', type: 'string', flex: toggleFlex, isEmpty: true },
+            { field: 'temp2', headerName: '', type: 'string', isEmpty: true },
             { field: 'placeName', headerName: '', type: 'string' },
             ...defaultColumns,
-            { field: 'morningWeather', headerName: '날씨', type: 'string' },
-            { field: 'morningTemperature', headerName: '기온', type: 'string' },
+            { field: 'weather', headerName: '날씨', type: 'string', flex: weatherFlex },
+            { field: 'temperature', headerName: '기온', type: 'string', flex: weatherFlex },
             { field: 'dust', headerName: '미세먼지', type: 'string' }
           ],
           customRenderers: {
-            temp: (params: any) => {
-              return <></>
+            weather: (params: any) => {
+              return <WeatherRenderer morning={params.row.morningWeather} after={params.row.afterWeather} />
+            },
+            temperature: (params: any) => {
+              return <WeatherRenderer morning={params.row.morningTemperature} after={params.row.afterTemperature} />
             }
           }
         })

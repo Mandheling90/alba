@@ -8,9 +8,10 @@ interface IIconCustom {
   isCommon?: boolean
   hoverIcon?: string
   usePng?: boolean
+  onClick?: (e: any) => void
 }
 
-const IconCustom = ({ path, icon, style, isCommon, hoverIcon, usePng }: IIconCustom) => {
+const IconCustom = ({ path, icon, style, isCommon, hoverIcon, usePng, onClick }: IIconCustom) => {
   const { settings } = useSettings()
   const [currentIcon, setCurrentIcon] = useState(icon)
 
@@ -24,6 +25,7 @@ const IconCustom = ({ path, icon, style, isCommon, hoverIcon, usePng }: IIconCus
 
   return (
     <img
+      onClick={onClick}
       src={src}
       alt={icon}
       style={style && { ...style }}

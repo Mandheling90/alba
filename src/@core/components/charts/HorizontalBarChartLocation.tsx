@@ -42,7 +42,7 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
           verticalAlign: 'top',
           useHTML: true,
           layout: 'horizontal',
-          maxHeight: 40,
+          maxHeight: 45,
           itemWidth: 110,
           itemStyle: {
             textOverflow: 'ellipsis',
