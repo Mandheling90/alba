@@ -13,12 +13,13 @@ const TimeInputs = styled.div`
   align-items: center;
 `
 
-const TimeInput = styled.div`
+const TimeInput = styled.div<{ isHidden?: boolean }>`
   border: 1px solid rgba(145, 85, 253, 1);
   cursor: pointer;
   border-radius: 4px;
   min-width: 30px;
   text-align: center;
+  visibility: ${props => (props.isHidden ? 'hidden' : 'visible')};
 `
 
 const modalStyle = {
@@ -45,6 +46,11 @@ const ListItemStyled = styled(ListItemButton)`
   color: rgba(0, 0, 0, 0.87);
   position: relative;
   z-index: 2;
+
+  &:hover {
+    color: rgba(0, 0, 0, 1);
+    font-weight: 600;
+  }
 `
 
 const ListContainer = styled(List)`
@@ -58,7 +64,7 @@ const ListContainer = styled(List)`
     left: 0;
     right: 0;
     height: 1px;
-    background: rgba(0, 0, 0, 0.12);
+    background: rgba(0, 0, 0, 0.3);
     transform: translateY(-50%);
     z-index: 1;
   }
@@ -176,11 +182,15 @@ const TimePicker: React.FC<ITimePicker> = ({ hour, minute, onChange, tooltipClea
           open={tooltipInfo?.openTooltip ?? false}
           arrowPosition={tooltipInfo?.arrowPosition ?? 'center'}
         >
-          <TimeInput onClick={handleHourClick}>{selectedHour.toString().padStart(2, '0')}</TimeInput>
+          <TimeInput onClick={handleHourClick} isHidden={openHourModal}>
+            {selectedHour.toString().padStart(2, '0')}
+          </TimeInput>
         </CustomTooltip>
         시{' '}
         {minute ? (
-          <TimeInput onClick={handleMinuteClick}>{selectedMinute.toString().padStart(2, '0')}</TimeInput>
+          <TimeInput onClick={handleMinuteClick} isHidden={openMinuteModal}>
+            {selectedMinute.toString().padStart(2, '0')}
+          </TimeInput>
         ) : (
           '00'
         )}

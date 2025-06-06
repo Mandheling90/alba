@@ -21,6 +21,8 @@ const TimePlaceDepthTable: FC<TimePlaceDepthTableProps> = ({ data, columns, colu
   }
 
   const renderDetailPanel = (row: any) => {
+    if (!row?.dataList) return null
+
     return (
       <>
         {row.dataList.map((row: any, index: number) => (
