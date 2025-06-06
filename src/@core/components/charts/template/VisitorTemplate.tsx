@@ -104,6 +104,7 @@ const VisitorTemplate: FC<{
                     명
                     {tableData?.totalOutCount && (
                       <>
+                        {' '}
                         | 전체 퇴장객 수
                         <Typography
                           component='span'

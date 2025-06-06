@@ -37,8 +37,8 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
   }
 
   const defaultColumns = [
-    { field: 'totalInCount', headerName: '입장객', type: 'number' as const },
-    { field: 'totalOutCount', headerName: '퇴장객', type: 'number' as const }
+    { field: 'inCount', headerName: '입장객', type: 'number' as const },
+    { field: 'outCount', headerName: '퇴장객', type: 'number' as const }
   ].filter(column => {
     if (Array.isArray(data.tableHeaders)) {
       return data.tableHeaders.some(header =>
