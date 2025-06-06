@@ -18,10 +18,6 @@ interface DepthTableProps {
 const WeatherRenderer = ({ morning, after }: { morning?: string; after?: string }) => {
   const theme = useTheme()
 
-  if (!morning || !after) {
-    return <></>
-  }
-
   return (
     <Box
       sx={{
@@ -33,30 +29,34 @@ const WeatherRenderer = ({ morning, after }: { morning?: string; after?: string 
         alignItems: 'center'
       }}
     >
-      <Typography
-        fontSize={12}
-        sx={{
-          whiteSpace: 'nowrap',
-          opacity: 0.9,
-          [`@media (min-width:${theme.breakpoints.values.xl}px)`]: {
-            fontSize: 14
-          }
-        }}
-      >
-        오전 : {morning}
-      </Typography>
-      <Typography
-        fontSize={12}
-        sx={{
-          whiteSpace: 'nowrap',
-          opacity: 0.9,
-          [`@media (min-width:${theme.breakpoints.values.xl}px)`]: {
-            fontSize: 14
-          }
-        }}
-      >
-        오후 : {after}
-      </Typography>
+      {morning && (
+        <Typography
+          fontSize={12}
+          sx={{
+            whiteSpace: 'nowrap',
+            opacity: 0.9,
+            [`@media (min-width:${theme.breakpoints.values.xl}px)`]: {
+              fontSize: 14
+            }
+          }}
+        >
+          오전 : {morning}
+        </Typography>
+      )}
+      {after && (
+        <Typography
+          fontSize={12}
+          sx={{
+            whiteSpace: 'nowrap',
+            opacity: 0.9,
+            [`@media (min-width:${theme.breakpoints.values.xl}px)`]: {
+              fontSize: 14
+            }
+          }}
+        >
+          오후 : {after}
+        </Typography>
+      )}
     </Box>
   )
 }
