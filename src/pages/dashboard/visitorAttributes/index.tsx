@@ -78,9 +78,7 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
             Icon={<IconCustom isCommon path='dashboard' icon='calendar' style={{ width: 23, height: 23 }} />}
             title={[
               lineChart?.data?.chartTitle ?? '',
-              `${lineChart?.data?.year}년 ${lineChart?.data?.month}월 ${lineChart?.data?.day}일 0시 ~ ${
-                timeStr ?? lineChart?.data?.endHour
-              }시`,
+              `${lineChart?.data?.chartSubTitle}`,
               `총 ${lineChart?.data?.totalPlaceCount} 곳`
             ]}
             marginBottom={-8}
@@ -107,9 +105,7 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
             Icon={<IconCustom isCommon path='dashboard' icon='calendar' style={{ width: 23, height: 23 }} />}
             title={[
               genderAgeChart?.data?.chartTitle ?? '',
-              `${lineChart?.data?.year}년 ${lineChart?.data?.month}월 ${lineChart?.data?.day}일 0시 ~ ${
-                timeStr ?? lineChart?.data?.endHour
-              }시`,
+              `${genderAgeChart?.data?.chartSubTitle}`,
               `총 ${lineChart?.data?.totalPlaceCount} 곳`
             ]}
           />
@@ -126,9 +122,7 @@ const VisitorAttributes: FC = ({}): React.ReactElement => {
             Icon={<IconCustom isCommon path='dashboard' icon='calendar' style={{ width: 23, height: 23 }} />}
             title={[
               barChart?.data?.chartTitle ?? '',
-              `${lineChart?.data?.year}년 ${lineChart?.data?.month}월 ${lineChart?.data?.day}일 0시 ~ ${
-                timeStr ?? lineChart?.data?.endHour
-              }시`,
+              `${barChart?.data?.chartSubTitle}`,
               `총 ${lineChart?.data?.totalPlaceCount} 곳`
             ]}
           />

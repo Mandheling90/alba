@@ -36,6 +36,19 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
     return checkDataListDepth(obj.dataList[0], depth + 1)
   }
 
+  const defaultColumns = [
+    { field: 'totalInCount', headerName: '입장객', type: 'number' as const },
+    { field: 'totalOutCount', headerName: '퇴장객', type: 'number' as const }
+  ].filter(column => {
+    if (Array.isArray(data.tableHeaders)) {
+      return data.tableHeaders.some(header =>
+        typeof header === 'string' ? header === column.headerName : header.headerName === column.headerName
+      )
+    }
+
+    return false
+  })
+
   const getColumns = () => {
     switch (tableType) {
       case ETableType.HOURLY:
@@ -51,8 +64,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
               headerName: `${tableDisplayType === 'time' ? '시간대' : '장소'}`,
               type: 'string'
             },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
+            ...defaultColumns
           ],
           customRenderers: {
             dateName: (params: any) => {
@@ -128,8 +140,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
               headerName: `${tableDisplayType === 'time' ? '시간대' : '장소'}`,
               type: 'string'
             },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' },
+            ...defaultColumns,
             { field: 'morningWeather', headerName: '날씨', type: 'string' },
             { field: 'morningTemperature', headerName: '기온', type: 'string' },
             { field: 'dust', headerName: '미세먼지', type: 'string' }
@@ -197,27 +208,15 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
         })
       case ETableType.WEEKDAY:
         return generateColumns({
-          columns: [
-            { field: 'weekDayName', headerName: '요일', type: 'string' },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
-          ]
+          columns: [{ field: 'weekDayName', headerName: '요일', type: 'string' }, ...defaultColumns]
         })
       case ETableType.WEEKLY:
         return generateColumns({
-          columns: [
-            { field: 'weekName', headerName: '주별기간', type: 'string' },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
-          ]
+          columns: [{ field: 'weekName', headerName: '주별기간', type: 'string' }, ...defaultColumns]
         })
       case ETableType.MONTHLY:
         return generateColumns({
-          columns: [
-            { field: 'dateName', headerName: '날짜', type: 'string' },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
-          ]
+          columns: [{ field: 'dateName', headerName: '날짜', type: 'string' }, ...defaultColumns]
         })
       default:
         return []
@@ -231,8 +230,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
           columns: [
             { field: 'temp', headerName: '', type: 'string' },
             { field: 'placeName', headerName: '장소 이름', type: 'string' },
-            { field: 'inCount', headerName: '입장객', type: 'number' },
-            { field: 'outCount', headerName: '퇴장객', type: 'number' }
+            ...defaultColumns
           ],
           customRenderers: {
             temp: (params: any) => {
@@ -245,8 +243,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
           columns: [
             { field: 'temp', headerName: '', type: 'string' },
             { field: 'placeName', headerName: '', type: 'string' },
-            { field: 'inCount', headerName: '입장객', type: 'number' },
-            { field: 'outCount', headerName: '퇴장객', type: 'number' },
+            ...defaultColumns,
             { field: 'morningWeather', headerName: '날씨', type: 'string' },
             { field: 'morningTemperature', headerName: '기온', type: 'string' },
             { field: 'dust', headerName: '미세먼지', type: 'string' }
@@ -260,11 +257,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
       case ETableType.WEEKLY:
       case ETableType.MONTHLY:
         return generateColumns({
-          columns: [
-            { field: 'dateName', headerName: '날짜', type: 'string' },
-            { field: 'totalInCount', headerName: '입장객', type: 'number' },
-            { field: 'totalOutCount', headerName: '퇴장객', type: 'number' }
-          ]
+          columns: [{ field: 'dateName', headerName: '날짜', type: 'string' }, ...defaultColumns]
         })
       default:
         return []
@@ -274,38 +267,14 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
   const columns = getColumns()
   const columns2 = getColumns2()
 
-  // data.tableHeaders에 "입장객" 또는 "퇴장객"이 없는 경우 해당 컬럼 제외
-  const filteredColumns = columns.filter(
-    column =>
-      (column.field !== 'totalInCount' && column.field !== 'totalOutCount') ||
-      (column.field === 'totalInCount' && data.tableHeaders?.includes('입장객')) ||
-      (column.field === 'totalOutCount' && data.tableHeaders?.includes('퇴장객'))
-  )
-  const filteredColumns2 = columns2.filter(
-    column =>
-      (column.field !== 'inCount' &&
-        column.field !== 'outCount' &&
-        column.field !== 'totalInCount' &&
-        column.field !== 'totalOutCount') ||
-      (column.field === 'inCount' && data.tableHeaders?.includes('입장객')) ||
-      (column.field === 'outCount' && data.tableHeaders?.includes('퇴장객')) ||
-      (column.field === 'totalInCount' && data.tableHeaders?.includes('입장객')) ||
-      (column.field === 'totalOutCount' && data.tableHeaders?.includes('퇴장객'))
-  )
-
   return (
     <>
       {tableType === ETableType.WEEKDAY || tableType === ETableType.WEEKLY ? (
-        <CustomTable columns={filteredColumns} rows={data.dataList} isAllView />
+        <CustomTable columns={columns} rows={data.dataList} isAllView />
       ) : tableDisplayType === ETableDisplayType.TIME_PLACE ? (
-        <TimePlaceDepthTable
-          data={data}
-          columns={filteredColumns}
-          columns2={filteredColumns2}
-          expandedRows={expandedRows}
-        />
+        <TimePlaceDepthTable data={data} columns={columns} columns2={columns2} expandedRows={expandedRows} />
       ) : (
-        <OneDepthTable data={data} columns={filteredColumns} expandedRows={expandedRows} />
+        <OneDepthTable data={data} columns={columns} expandedRows={expandedRows} />
       )}
     </>
   )

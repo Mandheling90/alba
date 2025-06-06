@@ -190,8 +190,16 @@ export interface IBaseChartResponse {
   endHour: string
   totalPlaceCount: number
   yname: string
-  tableHeaders?: string[]
-  tableTopHeaders?: string[]
+  tableHeaders?: ITableHeaders[] | string[]
+  tableTopHeaders?: ITableHeaders[]
+
+  chartTitle: string
+  chartSubTitle: string
+}
+
+export interface ITableHeaders {
+  field: string
+  headerName: string
 }
 
 export interface IBaseDashboardChartResponse {
@@ -202,18 +210,19 @@ export interface IBaseDashboardChartResponse {
   totalPlaceCount: number
   year: string
   yname: string
+
+  chartTitle: string
+  chartSubTitle: string
 }
 
 export interface ILineChartResponse extends IBaseDashboardChartResponse {
   lineDataList: ILineDataList[]
-  chartTitle: string
 }
 
 export interface IDashboardCountBarChart extends IBaseDashboardChartResponse {
   barDataList: IBarDataList[]
   exitCountList: IBarDataList[]
   xcategories: string[]
-  chartTitle: string
 }
 
 export interface IBarDataList {
@@ -225,7 +234,6 @@ export interface IPyramidPieChart extends IBaseChartResponse {
   categories: string[]
   pyramidChart: IPyramidChart[]
   pieChart: IPieChart
-  chartTitle: string
 }
 
 export interface IPyramidChart {

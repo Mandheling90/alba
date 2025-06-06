@@ -32,6 +32,10 @@ const VerticalNavItems = (props: Props) => {
   // ** Props
   const { verticalNavItems = [] } = props
 
+  if (!Array.isArray(verticalNavItems)) {
+    return null
+  }
+
   const RenderMenuItems = verticalNavItems.map((item: NavGroup | NavLink | NavSectionTitle, index: number) => {
     const TagName: any = resolveNavItemComponent(item)
 

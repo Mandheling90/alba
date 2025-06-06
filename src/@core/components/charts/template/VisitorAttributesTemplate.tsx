@@ -61,8 +61,8 @@ const VisitorAttributesTemplate: FC<{
               <PipelineTitle
                 Icon={<IconCustom isCommon path='dashboard' icon='calendar' style={{ width: 23, height: 23 }} />}
                 title={[
-                  '시간별 방문자수',
-                  `${barChartData?.startYear}년 ${barChartData?.startMonth}월 ${barChartData?.startDay}일 ${barChartData?.startHour}시 ~ ${barChartData?.endYear}년 ${barChartData?.endMonth}월 ${barChartData?.endDay}일 ${barChartData?.endHour}시`,
+                  barChartData?.chartTitle,
+                  barChartData?.chartSubTitle,
                   `총 ${barChartData?.totalPlaceCount} 곳`
                 ]}
               />
@@ -82,8 +82,8 @@ const VisitorAttributesTemplate: FC<{
               <PipelineTitle
                 Icon={<IconCustom isCommon path='dashboard' icon='calendar' style={{ width: 23, height: 23 }} />}
                 title={[
-                  '성별 및 연령별 방문자수',
-                  `${pyramidPieChartData?.startYear}년 ${pyramidPieChartData?.startMonth}월 ${pyramidPieChartData?.startDay}일 ${pyramidPieChartData?.startHour}시 ~ ${pyramidPieChartData?.endYear}년 ${pyramidPieChartData?.endMonth}월 ${pyramidPieChartData?.endDay}일 ${pyramidPieChartData?.endHour}시`,
+                  pyramidPieChartData?.chartTitle,
+                  pyramidPieChartData?.chartSubTitle,
                   `총 ${pyramidPieChartData?.totalPlaceCount} 곳`
                 ]}
               />
@@ -107,8 +107,8 @@ const VisitorAttributesTemplate: FC<{
               <PipelineTitle
                 Icon={<IconCustom isCommon path='dashboard' icon='calendar' style={{ width: 23, height: 23 }} />}
                 title={[
-                  '시간별, 성별 및 연령별 방문자수',
-                  `${heatmapChartData?.startYear}년 ${heatmapChartData?.startMonth}월 ${heatmapChartData?.startDay}일 ~ ${heatmapChartData?.endYear}년 ${heatmapChartData?.endMonth}월 ${heatmapChartData?.endDay}일`,
+                  heatmapChartData.chartTitle,
+                  heatmapChartData.chartSubTitle,
                   `총 ${heatmapChartData?.totalPlaceCount} 곳`
                 ]}
               />
@@ -128,11 +128,7 @@ const VisitorAttributesTemplate: FC<{
                 <Box sx={{ minWidth: 'fit-content' }}>
                   <PipelineTitle
                     Icon={<IconCustom isCommon path='dashboard' icon='calendar' style={{ width: 23, height: 23 }} />}
-                    title={[
-                      '장소별 방문자수',
-                      `${tableData?.startYear}년 ${tableData?.startMonth}월 ${tableData?.startDay}일 ${tableData?.startHour}시 ~ ${tableData?.endYear}년 ${tableData?.endMonth}월 ${tableData?.endDay}일 ${tableData?.endHour}시`,
-                      `총 ${tableData?.totalPlaceCount} 곳`
-                    ]}
+                    title={[tableData.chartTitle, tableData.chartSubTitle, `총 ${tableData?.totalPlaceCount} 곳`]}
                   />
                 </Box>
 

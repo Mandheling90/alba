@@ -44,14 +44,14 @@ const VisitantList: FC<IVisitantList> = ({ data, xcategories, selected = '', ref
     },
     {
       field: 'previousDayInOut',
-      headerName: `${visitantData[1]?.name || '이전'}(${getFormattedDate(yesterday)})`,
+      headerName: `${visitantData[1]?.name || '이전'}(${getFormattedDate(today)})`,
       headerAlign: 'center',
       type: 'number',
       flex: 1
     },
     {
       field: 'currentDayInOut',
-      headerName: `${visitantData[0]?.name || '현재'}(${getFormattedDate(today)})`,
+      headerName: `${visitantData[0]?.name || '현재'}(${getFormattedDate(yesterday)})`,
       headerAlign: 'center',
       type: 'number',
       flex: 1
@@ -84,8 +84,8 @@ const VisitantList: FC<IVisitantList> = ({ data, xcategories, selected = '', ref
 
               return {
                 location: item,
-                currentDayInOut: `${currentValue}`,
-                previousDayInOut: `${previousValue}`,
+                currentDayInOut: `${currentValue.toLocaleString()}`,
+                previousDayInOut: `${previousValue.toLocaleString()}`,
                 change: calculateChangeRate(currentValue, previousValue)
               }
             })}

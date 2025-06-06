@@ -42,11 +42,7 @@ const VisitorTemplate: FC<{
             <Grid item xs={12}>
               <PipelineTitle
                 Icon={<IconCustom isCommon path='dashboard' icon='calendar' style={{ width: 23, height: 23 }} />}
-                title={[
-                  '장소별 방문자수',
-                  `${barChartData?.startYear}년 ${barChartData?.startMonth}월 ${barChartData?.startDay}일 ${barChartData?.startHour}시 ~ ${barChartData?.endYear}년 ${barChartData?.endMonth}월 ${barChartData?.endDay}일 ${barChartData?.endHour}시`,
-                  `총 ${barChartData?.totalPlaceCount} 곳`
-                ]}
+                title={[barChartData.chartTitle, barChartData.chartSubTitle, `총 ${barChartData?.totalPlaceCount} 곳`]}
               />
             </Grid>
 
@@ -64,8 +60,8 @@ const VisitorTemplate: FC<{
               <PipelineTitle
                 Icon={<IconCustom isCommon path='dashboard' icon='calendar' style={{ width: 23, height: 23 }} />}
                 title={[
-                  '장소별 방문자수',
-                  `${barPieChartData?.startYear}년 ${barPieChartData?.startMonth}월 ${barPieChartData?.startDay}일 ${barPieChartData?.startHour}시 ~ ${barPieChartData?.endYear}년 ${barPieChartData?.endMonth}월 ${barPieChartData?.endDay}일 ${barPieChartData?.endHour}시`,
+                  barPieChartData.chartTitle,
+                  barPieChartData.chartSubTitle,
                   `총 ${barPieChartData?.totalPlaceCount} 곳`
                 ]}
               />
@@ -86,11 +82,7 @@ const VisitorTemplate: FC<{
                 <Box sx={{ minWidth: 'fit-content' }}>
                   <PipelineTitle
                     Icon={<IconCustom isCommon path='dashboard' icon='calendar' style={{ width: 23, height: 23 }} />}
-                    title={[
-                      '장소별 방문자수',
-                      `${tableData?.startYear}년 ${tableData?.startMonth}월 ${tableData?.startDay}일 ${tableData?.startHour}시 ~ ${tableData?.endYear}년 ${tableData?.endMonth}월 ${tableData?.endDay}일 ${tableData?.endHour}시`,
-                      `총 ${tableData?.totalPlaceCount} 곳`
-                    ]}
+                    title={[tableData.chartTitle, tableData.chartSubTitle, `총 ${tableData?.totalPlaceCount} 곳`]}
                   />
                 </Box>
 

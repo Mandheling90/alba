@@ -2,6 +2,7 @@ import { AppBar, Box, Toolbar, Typography } from '@mui/material'
 import React from 'react'
 import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
+import { AuthType } from 'src/model/commonModel'
 
 interface ILayoutControlPanel {
   menuName?: string
@@ -47,7 +48,11 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
               backgroundColor: isHovered ? '#9155FD' : 'transparent',
               transition: 'all 0.3s ease'
             }}
-            onClick={onClick}
+            onClick={() => {
+              if (layoutContext.layoutUserInfo?.userInfo?.authId === AuthType.ADMIN) {
+                onClick?.()
+              }
+            }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >

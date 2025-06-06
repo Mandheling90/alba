@@ -3,7 +3,7 @@ import { FC, useState } from 'react'
 
 import { ETableDisplayType, ETableType } from 'src/context/StatisticsContext'
 import IconCustom from 'src/layouts/components/IconCustom'
-import { IAgeGenderStatisticsTableResponse } from 'src/model/statistics/StatisticsModel'
+import { IAgeGenderStatisticsTableResponse, ITableHeaders } from 'src/model/statistics/StatisticsModel'
 import { generateColumns } from '../columns/columnGenerator'
 import CustomTable from '../CustomTable'
 import OneDepthTable from './OneDepthTable'
@@ -17,6 +17,17 @@ interface DepthTableProps {
 
 const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, data }) => {
   const [expandedRows, setExpandedRows] = useState<string[]>([])
+
+  const getTableTopHeaders = (headers: ITableHeaders[], defaultFlex = false, firstFlex = 0.7) => {
+    return (
+      headers?.map((header: ITableHeaders, index: number) => ({
+        field: header.field,
+        headerName: header.headerName,
+        type: 'string' as const,
+        flex: defaultFlex ? 1 : index === 0 ? firstFlex : index === 3 ? 0.6 : 1.5
+      })) || []
+    )
+  }
 
   const toggleRow = (key: string) => {
     setExpandedRows(prev => {
@@ -35,6 +46,13 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
 
     return checkDataListDepth(obj.dataList[0], depth + 1)
   }
+
+  const tableTopHeaders = getTableTopHeaders(
+    (data.tableHeaders || []).map(header =>
+      typeof header === 'string' ? { field: header, headerName: header } : header
+    ),
+    true
+  )
 
   const getColumns = () => {
     switch (tableType) {
@@ -57,24 +75,10 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
             {
               field: `${tableDisplayType === 'time' ? 'dateNameTemp' : 'totalPlaceName'}`,
               headerName: `${tableDisplayType === 'time' ? '시간대' : '장소'}`,
-              type: 'string'
+              type: 'string',
+              flex: 1.5
             },
-            { field: 'totalM0', headerName: '10대이하', type: 'number' },
-            { field: 'totalM10', headerName: '10대', type: 'number' },
-            { field: 'totalM20', headerName: '20대', type: 'number' },
-            { field: 'totalM30', headerName: '30대', type: 'number' },
-            { field: 'totalM40', headerName: '40대', type: 'number' },
-            { field: 'totalM50', headerName: '50대', type: 'number' },
-            { field: 'totalM60', headerName: '60대이상', type: 'number' },
-            { field: 'totalF0', headerName: '10대이하', type: 'number' },
-            { field: 'totalF10', headerName: '10대', type: 'number' },
-            { field: 'totalF20', headerName: '20대', type: 'number' },
-            { field: 'totalF30', headerName: '30대', type: 'number' },
-            { field: 'totalF40', headerName: '40대', type: 'number' },
-            { field: 'totalF50', headerName: '50대', type: 'number' },
-            { field: 'totalF60', headerName: '60대이상', type: 'number' },
-            { field: 'totalManCount', headerName: '남자', type: 'number' },
-            { field: 'totalWomanCount', headerName: '여자', type: 'number' },
+            ...tableTopHeaders,
             { field: 'totalCount', headerName: '계', type: 'number' }
           ],
           customRenderers: {
@@ -130,22 +134,7 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
         return generateColumns({
           columns: [
             { field: 'weekDayName', headerName: '요일', type: 'string' },
-            { field: 'totalM0', headerName: '10대이하', type: 'number' },
-            { field: 'totalM10', headerName: '10대', type: 'number' },
-            { field: 'totalM20', headerName: '20대', type: 'number' },
-            { field: 'totalM30', headerName: '30대', type: 'number' },
-            { field: 'totalM40', headerName: '40대', type: 'number' },
-            { field: 'totalM50', headerName: '50대', type: 'number' },
-            { field: 'totalM60', headerName: '60대이상', type: 'number' },
-            { field: 'totalF0', headerName: '10대이하', type: 'number' },
-            { field: 'totalF10', headerName: '10대', type: 'number' },
-            { field: 'totalF20', headerName: '20대', type: 'number' },
-            { field: 'totalF30', headerName: '30대', type: 'number' },
-            { field: 'totalF40', headerName: '40대', type: 'number' },
-            { field: 'totalF50', headerName: '50대', type: 'number' },
-            { field: 'totalF60', headerName: '60대이상', type: 'number' },
-            { field: 'totalManCount', headerName: '남자', type: 'number' },
-            { field: 'totalWomanCount', headerName: '여자', type: 'number' },
+            ...tableTopHeaders,
             { field: 'totalCount', headerName: '계', type: 'number' }
           ]
         })
@@ -153,22 +142,7 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
         return generateColumns({
           columns: [
             { field: 'weekName', headerName: '주별기간', type: 'string' },
-            { field: 'totalM0', headerName: '10대이하', type: 'number' },
-            { field: 'totalM10', headerName: '10대', type: 'number' },
-            { field: 'totalM20', headerName: '20대', type: 'number' },
-            { field: 'totalM30', headerName: '30대', type: 'number' },
-            { field: 'totalM40', headerName: '40대', type: 'number' },
-            { field: 'totalM50', headerName: '50대', type: 'number' },
-            { field: 'totalM60', headerName: '60대이상', type: 'number' },
-            { field: 'totalF0', headerName: '10대이하', type: 'number' },
-            { field: 'totalF10', headerName: '10대', type: 'number' },
-            { field: 'totalF20', headerName: '20대', type: 'number' },
-            { field: 'totalF30', headerName: '30대', type: 'number' },
-            { field: 'totalF40', headerName: '40대', type: 'number' },
-            { field: 'totalF50', headerName: '50대', type: 'number' },
-            { field: 'totalF60', headerName: '60대이상', type: 'number' },
-            { field: 'totalManCount', headerName: '남자', type: 'number' },
-            { field: 'totalWomanCount', headerName: '여자', type: 'number' },
+            ...tableTopHeaders,
             { field: 'totalCount', headerName: '계', type: 'number' }
           ]
         })
@@ -187,22 +161,7 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
             { field: 'temp1', headerName: '', type: 'string' },
             { field: 'temp2', headerName: '', type: 'string', flex: 1.5 },
             { field: 'placeName', headerName: '장소', type: 'string' },
-            { field: 'm0', headerName: '10대이하', type: 'number' },
-            { field: 'm10', headerName: '10대', type: 'number' },
-            { field: 'm20', headerName: '20대', type: 'number' },
-            { field: 'm30', headerName: '30대', type: 'number' },
-            { field: 'm40', headerName: '40대', type: 'number' },
-            { field: 'm50', headerName: '50대', type: 'number' },
-            { field: 'm60', headerName: '60대이상', type: 'number' },
-            { field: 'f0', headerName: '10대이하', type: 'number' },
-            { field: 'f10', headerName: '10대', type: 'number' },
-            { field: 'f20', headerName: '20대', type: 'number' },
-            { field: 'f30', headerName: '30대', type: 'number' },
-            { field: 'f40', headerName: '40대', type: 'number' },
-            { field: 'f50', headerName: '50대', type: 'number' },
-            { field: 'f60', headerName: '60대이상', type: 'number' },
-            { field: 'totalManCount', headerName: '남자', type: 'number' },
-            { field: 'totalWomanCount', headerName: '여자', type: 'number' },
+            ...tableTopHeaders,
             { field: 'totalCount', headerName: '계', type: 'number' }
           ],
           customRenderers: {
@@ -225,12 +184,7 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
       case ETableType.DAILY:
       case ETableType.MONTHLY:
         return generateColumns({
-          columns: [
-            { field: 'temp1', headerName: '통계날짜', type: 'string', flex: 0.7 },
-            { field: 'temp2', headerName: '남자', type: 'string', flex: 1.5 },
-            { field: 'temp3', headerName: '여자', type: 'string', flex: 1.5 },
-            { field: 'temp4', headerName: '합계', type: 'string', flex: 0.6 }
-          ],
+          columns: getTableTopHeaders(data.tableTopHeaders || [], false, 0.7),
           customRenderers: {
             temp1: (params: any) => {
               return <></>
@@ -249,12 +203,7 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
       case ETableType.WEEKDAY:
       case ETableType.WEEKLY:
         return generateColumns({
-          columns: [
-            { field: 'temp1', headerName: '통계날짜', type: 'string', flex: 0.2 },
-            { field: 'temp2', headerName: '남자', type: 'string', flex: 1.5 },
-            { field: 'temp3', headerName: '여자', type: 'string', flex: 1.5 },
-            { field: 'temp4', headerName: '합계', type: 'string', flex: 0.6 }
-          ],
+          columns: getTableTopHeaders(data.tableTopHeaders || [], false, 0.2),
           customRenderers: {
             temp1: (params: any) => {
               return <></>
@@ -279,59 +228,16 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
   const columns2 = getColumns2()
   const coverColumns = getColumns3()
 
-  const filteredCoverColumns = coverColumns.filter(
-    column =>
-      (column.field !== 'temp2' && column.field !== 'temp3') ||
-      (column.field === 'temp2' && data.tableTopHeaders?.includes('남자')) ||
-      (column.field === 'temp3' && data.tableTopHeaders?.includes('여자'))
-  )
-
-  const filteredColumns = columns.filter(
-    column =>
-      (column.field !== 'totalM0' &&
-        column.field !== 'totalM10' &&
-        column.field !== 'totalM20' &&
-        column.field !== 'totalM30' &&
-        column.field !== 'totalM40' &&
-        column.field !== 'totalM50' &&
-        column.field !== 'totalM60' &&
-        column.field !== 'totalF0' &&
-        column.field !== 'totalF10' &&
-        column.field !== 'totalF20' &&
-        column.field !== 'totalF30' &&
-        column.field !== 'totalF40' &&
-        column.field !== 'totalF50' &&
-        column.field !== 'totalF60' &&
-        column.field !== 'totalManCount' &&
-        column.field !== 'totalWomanCount') ||
-      (column.field === 'totalM0' && data.tableHeaders?.includes('10대이하')) ||
-      (column.field === 'totalM10' && data.tableHeaders?.includes('10대')) ||
-      (column.field === 'totalM20' && data.tableHeaders?.includes('20대')) ||
-      (column.field === 'totalM30' && data.tableHeaders?.includes('30대')) ||
-      (column.field === 'totalM40' && data.tableHeaders?.includes('40대')) ||
-      (column.field === 'totalM50' && data.tableHeaders?.includes('50대')) ||
-      (column.field === 'totalM60' && data.tableHeaders?.includes('60대이상')) ||
-      (column.field === 'totalF0' && data.tableHeaders?.includes('10대이하')) ||
-      (column.field === 'totalF10' && data.tableHeaders?.includes('10대')) ||
-      (column.field === 'totalF20' && data.tableHeaders?.includes('20대')) ||
-      (column.field === 'totalF30' && data.tableHeaders?.includes('30대')) ||
-      (column.field === 'totalF40' && data.tableHeaders?.includes('40대')) ||
-      (column.field === 'totalF50' && data.tableHeaders?.includes('50대')) ||
-      (column.field === 'totalF60' && data.tableHeaders?.includes('60대이상')) ||
-      (column.field === 'totalManCount' && data.tableHeaders?.includes('남자')) ||
-      (column.field === 'totalWomanCount' && data.tableHeaders?.includes('여자'))
-  )
-
   return (
     <>
-      <CustomTable columns={filteredCoverColumns} rows={[]} isAllView hideRows />
+      <CustomTable columns={coverColumns} rows={[]} isAllView hideRows />
 
       {tableType === ETableType.WEEKDAY || tableType === ETableType.WEEKLY ? (
-        <CustomTable columns={filteredColumns} rows={data.dataList} isAllView />
+        <CustomTable columns={columns} rows={data.dataList} isAllView />
       ) : tableDisplayType === ETableDisplayType.TIME_PLACE ? (
-        <TimePlaceDepthTable data={data} columns={filteredColumns} columns2={columns2} expandedRows={expandedRows} />
+        <TimePlaceDepthTable data={data} columns={columns} columns2={columns2} expandedRows={expandedRows} />
       ) : (
-        <OneDepthTable data={data} columns={filteredColumns} expandedRows={expandedRows} />
+        <OneDepthTable data={data} columns={columns} expandedRows={expandedRows} />
       )}
     </>
   )

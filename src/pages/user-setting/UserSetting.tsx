@@ -86,7 +86,7 @@ const UserSetting: FC = (): React.ReactElement => {
   const sideContent = <ClientListGrid />
 
   const mainContent = (
-    <Grid height={'100%'} xs={12} sx={{display:'grid', gridTemplateColumns: '100%', gridTemplateRows: '1fr 35vh'}}>
+    <Grid height={'100%'} xs={12} sx={{ display: 'grid', gridTemplateColumns: '100%', gridTemplateRows: '1fr 35vh' }}>
       <Grid item container xs={12} mb={5}>
         <PageHeader
           title={
@@ -96,19 +96,19 @@ const UserSetting: FC = (): React.ReactElement => {
           }
         />
 
-        <Card sx={{ width:'100%', minHeight: '39vh', overflow: 'auto' }}>
+        <Card sx={{ width: '100%', minHeight: '39vh', overflow: 'auto' }}>
           <UserList data={UserCompanyList?.data ?? []} refetch={refetch} />
         </Card>
       </Grid>
 
-      <Grid item container xs={12} sx={{ maxHeight: '100%'}}>
+      <Grid item container xs={12} sx={{ maxHeight: '100%' }}>
         <Grid item xs={5} sx={{ maxHeight: '100%', overflowY: 'auto' }}>
-          <Card sx={{ minHeight: '100%'}}>
+          <Card sx={{ minHeight: '100%' }}>
             <RoleList data={authList ?? []} refetch={refetch} />
           </Card>
         </Grid>
         <Grid item xs={7} pl={5} sx={{ height: '100%', overflowY: 'auto' }}>
-          <Card sx={{ minHeight: '100%'}}>
+          <Card sx={{ minHeight: '100%' }}>
             <RoleAdd data={authMenuListData} refetch={refetch} />
           </Card>
         </Grid>
