@@ -24,7 +24,8 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
         field: header.field,
         headerName: header.headerName,
         type: 'string' as const,
-        flex: defaultFlex ? 1 : index === 0 ? firstFlex : index === 3 ? 0.6 : 1.5
+        flex: defaultFlex ? 1 : index === 0 ? firstFlex : index === 3 ? 0.6 : 1.5,
+        isEmpty: true
       })) || []
     )
   }
@@ -53,6 +54,9 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
     ),
     true
   )
+
+  const toggleFlex = 0.4
+  const weatherFlex = 1.2
 
   const getColumns = () => {
     switch (tableType) {
@@ -150,20 +154,12 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
       case ETableType.MONTHLY:
         return generateColumns({
           columns: [
-            { field: 'temp1', headerName: '', type: 'string' },
-            { field: 'temp2', headerName: '', type: 'string', flex: 1.5 },
+            { field: 'temp1', headerName: '', type: 'string', isEmpty: true },
+            { field: 'temp2', headerName: '', type: 'string', flex: 1.5, isEmpty: true },
             { field: 'placeName', headerName: '장소', type: 'string' },
             ...tableTopHeaders,
             { field: 'totalCount', headerName: '계', type: 'number' }
-          ],
-          customRenderers: {
-            temp1: (params: any) => {
-              return <></>
-            },
-            temp2: (params: any) => {
-              return <></>
-            }
-          }
+          ]
         })
       default:
         return []
@@ -176,40 +172,12 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
       case ETableType.DAILY:
       case ETableType.MONTHLY:
         return generateColumns({
-          columns: getTableTopHeaders(data.tableTopHeaders || [], false, 0.7),
-          customRenderers: {
-            temp1: (params: any) => {
-              return <></>
-            },
-            temp2: (params: any) => {
-              return <></>
-            },
-            temp3: (params: any) => {
-              return <></>
-            },
-            temp4: (params: any) => {
-              return <></>
-            }
-          }
+          columns: getTableTopHeaders(data.tableTopHeaders || [], false, 0.7)
         })
       case ETableType.WEEKDAY:
       case ETableType.WEEKLY:
         return generateColumns({
-          columns: getTableTopHeaders(data.tableTopHeaders || [], false, 0.2),
-          customRenderers: {
-            temp1: (params: any) => {
-              return <></>
-            },
-            temp2: (params: any) => {
-              return <></>
-            },
-            temp3: (params: any) => {
-              return <></>
-            },
-            temp4: (params: any) => {
-              return <></>
-            }
-          }
+          columns: getTableTopHeaders(data.tableTopHeaders || [], false, 0.2)
         })
       default:
         return []

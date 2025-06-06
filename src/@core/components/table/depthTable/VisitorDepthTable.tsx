@@ -120,10 +120,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
               headerName: `${tableDisplayType === 'time' ? '시간대' : '장소'}`,
               type: 'string'
             },
-            ...defaultColumns,
-            { field: 'weather', headerName: '날씨', type: 'string', flex: weatherFlex },
-            { field: 'temperature', headerName: '기온', type: 'string', flex: weatherFlex },
-            { field: 'dust', headerName: '미세먼지', type: 'string' }
+            ...defaultColumns
           ],
           customRenderers: {
             toggle: (params: any) => {
@@ -149,17 +146,13 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
 
               return (
                 <>
-                  {tableDisplayType === 'time' && depth === 1 && (
+                  {tableDisplayType === 'time' && depth === 1 ? (
                     <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
+                  ) : (
+                    <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateLabel}</Box>
                   )}
                 </>
               )
-            },
-            weather: (params: any) => {
-              return <WeatherRenderer morning={params.row.morningWeather} after={params.row.afterWeather} />
-            },
-            temperature: (params: any) => {
-              return <WeatherRenderer morning={params.row.morningTemperature} after={params.row.afterTemperature} />
             }
           }
         })
