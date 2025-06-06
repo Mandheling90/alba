@@ -28,3 +28,22 @@ export const HorizontalScrollBox = styled(Box)`
     }
   }
 `
+
+export const BorderInput = styled(Box)<{
+  fontSize?: string
+  fontWeight?: string
+  padding?: string
+  minWidth?: string
+  backgroundColor?: string
+  color?: string
+}>`
+  border: 1px solid rgba(145, 85, 253, 1);
+  border-radius: 4px;
+  text-align: center;
+  font-size: ${props => props.fontSize || '5rem'};
+  font-weight: ${props => props.fontWeight || '500'};
+  padding: ${props => props.padding || '0px 3px'};
+  min-width: ${props => props.minWidth || 'auto'};
+  background-color: ${props => props.backgroundColor || 'transparent'};
+  color: ${props => props.color || 'inherit'};
+`

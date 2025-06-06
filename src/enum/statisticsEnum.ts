@@ -66,6 +66,8 @@ export const chartColorList: string[] = [
   'rgba(189, 183, 107, 1)'
 ]
 
+export const statusLevelColorList: string[] = ['#DEF6C1', '#9ECFFC', '#FFD9AE', '#FF3E3E']
+
 export const EPath = {
   STATS_GROUP: '/stats/group',
   STATS_COMMON_LIST: '/stats/common/list',
