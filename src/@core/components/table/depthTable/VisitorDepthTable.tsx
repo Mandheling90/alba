@@ -178,7 +178,24 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
             ...defaultColumns,
             { field: 'weather', headerName: '날씨', type: 'string', flex: weatherFlex },
             { field: 'temperature', headerName: '기온', type: 'string', flex: weatherFlex },
-            { field: 'dust', headerName: '미세먼지', type: 'string' }
+            {
+              field: 'dust',
+              headerName: '미세먼지(μg/m³)',
+              type: 'string',
+              flex: weatherFlex,
+              renderHeader: () => (
+                <span
+                  style={{
+                    fontFamily: 'Arial Unicode MS, sans-serif',
+                    fontWeight: '600',
+                    fontSize: '0.75rem',
+                    color: 'rgba(58, 53, 65, 0.87)'
+                  }}
+                >
+                  미세먼지(μg/m³)
+                </span>
+              )
+            }
           ],
           customRenderers: {
             toggle: (params: any) => {
@@ -229,6 +246,9 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
             },
             temperature: (params: any) => {
               return <WeatherRenderer morning={params.row.morningTemperature} after={params.row.afterTemperature} />
+            },
+            dust: (params: any) => {
+              return <WeatherRenderer morning={params.row.morningDust} after={params.row.afterDust} />
             }
           }
         })
@@ -269,7 +289,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
             ...defaultColumns,
             { field: 'weather', headerName: '날씨', type: 'string', flex: weatherFlex },
             { field: 'temperature', headerName: '기온', type: 'string', flex: weatherFlex },
-            { field: 'dust', headerName: '미세먼지', type: 'string' }
+            { field: 'dust', headerName: '미세먼지(μg/m³)', type: 'string', flex: weatherFlex }
           ],
           customRenderers: {
             weather: (params: any) => {
@@ -277,6 +297,9 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
             },
             temperature: (params: any) => {
               return <WeatherRenderer morning={params.row.morningTemperature} after={params.row.afterTemperature} />
+            },
+            dust: (params: any) => {
+              return <WeatherRenderer morning={params.row.morningDust} after={params.row.afterDust} />
             }
           }
         })

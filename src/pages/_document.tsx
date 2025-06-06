@@ -15,6 +15,7 @@ class CustomDocument extends Document {
     return (
       <Html lang='en'>
         <Head>
+          <meta charSet='utf-8' />
           <title>다인스-통합플랫폼</title>
           {/* <link rel='preconnect' href='https://fonts.googleapis.com' /> */}
           {/* <link rel='preconnect' href='https://fonts.gstatic.com' /> */}

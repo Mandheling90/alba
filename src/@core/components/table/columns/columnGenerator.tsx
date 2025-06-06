@@ -11,6 +11,7 @@ interface ColumnConfig {
   align?: 'left' | 'center' | 'right'
   headerAlign?: 'left' | 'center' | 'right'
   renderCell?: (params: any) => JSX.Element
+  renderHeader?: () => JSX.Element
   editable?: boolean
   sortable?: boolean
   filterable?: boolean
@@ -42,6 +43,11 @@ export const generateColumns = (props: ColumnGeneratorProps): GridColDef[] => {
       editable: column.editable || false,
       sortable: column.sortable !== false,
       filterable: column.filterable !== false
+    }
+
+    // 커스텀 헤더 렌더러가 있는 경우 적용
+    if (column.renderHeader) {
+      baseColumn.renderHeader = column.renderHeader
     }
 
     // 빈 컬럼인 경우 빈 렌더러 추가

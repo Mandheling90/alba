@@ -129,24 +129,26 @@ export const EComponentList = [
   {
     title: '혼잡도 분석 통계',
     icon: 'congestion-analysis-statistics',
-    children: [
-      {
-        title: '시간대별',
-        path: '/congestion-analysis-statistics/hourly'
-      },
-      {
-        title: '일별',
-        path: '/congestion-analysis-statistics/daily'
-      },
-      {
-        title: '요일별',
-        path: '/congestion-analysis-statistics/weekly'
-      },
-      {
-        title: '월별',
-        path: '/congestion-analysis-statistics/monthly'
-      }
-    ]
+    path: '/congestion-analysis-statistics'
+
+    // children: [
+    //   {
+    //     title: '시간대별',
+    //     path: '/congestion-analysis-statistics/hourly'
+    //   },
+    //   {
+    //     title: '일별',
+    //     path: '/congestion-analysis-statistics/daily'
+    //   },
+    //   {
+    //     title: '요일별',
+    //     path: '/congestion-analysis-statistics/weekly'
+    //   },
+    //   {
+    //     title: '월별',
+    //     path: '/congestion-analysis-statistics/monthly'
+    //   }
+    // ]
   },
   {
     title: '차량수 통계',
