@@ -102,7 +102,7 @@ const VisitorTemplate: FC<{
                       {tableData?.totalInCount.toLocaleString()}
                     </Typography>
                     명
-                    {tableData?.totalOutCount && (
+                    {(tableData?.tableHeaders as string[])?.includes('퇴장객') && (
                       <>
                         {' '}
                         | 전체 퇴장객 수
@@ -139,8 +139,13 @@ const VisitorTemplate: FC<{
                                 tableDisplayType: ETableDisplayType.TIME
                               })
                             }}
+                            sx={{ width: '120px' }}
                           >
-                            시간대별
+                            {statisticsReq.tableType === ETableType.HOURLY
+                              ? '시간대별'
+                              : statisticsReq.tableType === ETableType.DAILY
+                              ? '일별'
+                              : '월별'}
                           </Button>
                           <Button
                             variant={tableDisplayType === 'timePlace' ? 'contained' : 'outlined'}
@@ -152,8 +157,13 @@ const VisitorTemplate: FC<{
                                 tableDisplayType: ETableDisplayType.TIME_PLACE
                               })
                             }}
+                            sx={{ width: '120px' }}
                           >
-                            시간대 및 장소별
+                            {statisticsReq.tableType === ETableType.HOURLY
+                              ? '시간대 및 장소별'
+                              : statisticsReq.tableType === ETableType.DAILY
+                              ? '일별 및 장소별'
+                              : '월별 및 장소별'}
                           </Button>
                         </>
                       )}
