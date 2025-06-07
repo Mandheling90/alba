@@ -26,7 +26,13 @@ const CameraUserSetting: FC = (): React.ReactElement => {
 
   return (
     <StandardTemplate title={'사용자별 카메라설정'}>
-      <SlidingLayout isOpen={layoutDisplay} sideContent={sideContent} mainContent={mainContent} maxHeight='85vh' />
+      <SlidingLayout
+        isOpen={layoutDisplay}
+        sideContent={sideContent}
+        mainContent={mainContent}
+        maxHeight='85vh'
+        minHeight='85vh'
+      />
     </StandardTemplate>
   )
 }

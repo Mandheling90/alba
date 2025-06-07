@@ -8,7 +8,7 @@ interface IconAction {
 }
 
 interface WindowCardProps {
-  title: string
+  title: ReactNode
   iconActions?: IconAction[]
   children?: ReactNode
   titleAlign?: 'left' | 'center'

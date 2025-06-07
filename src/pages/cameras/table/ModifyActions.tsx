@@ -7,11 +7,11 @@ import IconCustom from 'src/layouts/components/IconCustom'
 import { MClientCameraList } from 'src/model/cameras/CamerasModel'
 
 interface ModifyActionsProps {
-  row: MClientCameraList
+  row?: Partial<MClientCameraList>
   isModify: boolean
   isGroupModify?: boolean
   isGroupModifyMode?: boolean
-  handleEditClick: (row: MClientCameraList) => void
+  handleEditClick: (row: Partial<MClientCameraList>) => void
   handleCancelClick: (cameraNo: number) => void
   handleSaveClick: (cameraNo: number) => void
 
@@ -34,8 +34,8 @@ const ModifyActions: React.FC<ModifyActionsProps> = ({
       {isModify ? (
         <Box sx={{ display: 'flex', gap: 2 }}>
           <CustomAddCancelButton
-            onCancelClick={() => handleCancelClick(row.cameraNo)}
-            onSaveClick={() => handleSaveClick(row.cameraNo)}
+            onCancelClick={() => handleCancelClick(row?.cameraNo ?? 0)}
+            onSaveClick={() => handleSaveClick(row?.cameraNo ?? 0)}
           />
         </Box>
       ) : (
@@ -43,7 +43,7 @@ const ModifyActions: React.FC<ModifyActionsProps> = ({
           sx={{ color: 'text.secondary', cursor: 'pointer' }}
           onClick={e => {
             e.stopPropagation()
-            handleEditClick(row)
+            handleEditClick(row ?? {})
           }}
         >
           <IconCustom isCommon path='camera' icon='mod-off' hoverIcon='mod-on' />
@@ -58,9 +58,11 @@ const ModifyActions: React.FC<ModifyActionsProps> = ({
               if (groupModifyId) {
                 e.stopPropagation()
                 if (isGroupModify) {
-                  deleteGroupCamera(groupModifyId, row.cameraNo)
+                  deleteGroupCamera(groupModifyId, row?.cameraNo ?? 0)
                 } else {
-                  addGroupCamera(groupModifyId, row)
+                  if (row?.cameraNo) {
+                    addGroupCamera(groupModifyId, row as MClientCameraList)
+                  }
                 }
               }
             }}

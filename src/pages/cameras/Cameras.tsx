@@ -16,7 +16,13 @@ const Cameras: FC = (): React.ReactElement => {
 
   return (
     <StandardTemplate title={'카메라 위치등록'}>
-      <SlidingLayout isOpen={layoutDisplay} sideContent={sideContent} mainContent={mainContent} maxHeight='85vh' />
+      <SlidingLayout
+        isOpen={layoutDisplay}
+        sideContent={sideContent}
+        mainContent={mainContent}
+        maxHeight='85vh'
+        minHeight='85vh'
+      />
     </StandardTemplate>
   )
 }

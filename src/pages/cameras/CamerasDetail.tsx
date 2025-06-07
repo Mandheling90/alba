@@ -23,16 +23,22 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
   }, [viewType.size])
 
   return (
-    <Grid container wrap='nowrap' direction={'column'} style={{height: '100%'}}>
-      <Collapse in={!isFullView} timeout={300} 
-        style={{ width: '100%', height: '100%'}} sx={{
+    <Grid container wrap='nowrap' direction={'column'} style={{ height: '100%' }}>
+      <Collapse
+        in={!isFullView}
+        timeout={300}
+        style={{ width: '100%', height: '100%' }}
+        sx={{
           '& .MuiCollapse-wrapper': {
             height: '100%'
           },
           '& .MuiCollapse-wrapperInner': {
-            display: 'grid', gridTemplateRows: 'auto 1fr', gridTemplateColumns: '100%'
+            display: 'grid',
+            gridTemplateRows: 'auto 1fr',
+            gridTemplateColumns: '100%'
           }
-        }}>
+        }}
+      >
         <PageHeader
           title={
             <Typography variant='h5' sx={{ fontSize: 24, fontWeight: 500, mb: 5 }}>
@@ -40,7 +46,7 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
             </Typography>
           }
         />
-        <Box height={'100%'} sx={{overflow: 'auto', borderRadius: '6px'}}>
+        <Box height={'100%'} sx={{ overflow: 'auto', borderRadius: '6px' }}>
           <Card>
             <CamerasClientList />
           </Card>

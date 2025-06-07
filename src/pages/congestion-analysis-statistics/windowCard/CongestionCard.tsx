@@ -1,7 +1,8 @@
-import { Box, Typography } from '@mui/material'
+import { Box, TextField, Typography } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
 import { statusLevelColorList } from 'src/enum/statisticsEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
+import ModifyActions from 'src/pages/cameras/table/ModifyActions'
 import AnimatedNumber from './AnimatedNumber'
 import WindowCard from './WindowCard'
 
@@ -11,7 +12,7 @@ interface CongestionCardProps {
   currentOccupancy: number
   occupancyRate: number
   onRefresh?: () => void
-  onEdit?: () => void
+  onEdit?: (newTitle: string) => void
   onDelete?: () => void
 }
 
@@ -30,6 +31,8 @@ const CongestionCard: FC<CongestionCardProps> = ({
   const [animatingRateDigits, setAnimatingRateDigits] = useState<boolean[]>([])
   const [isIncreasingDigits, setIsIncreasingDigits] = useState<boolean[]>([])
   const [isIncreasingRateDigits, setIsIncreasingRateDigits] = useState<boolean[]>([])
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedTitle, setEditedTitle] = useState(title)
 
   useEffect(() => {
     if (prevOccupancy !== currentOccupancy) {
@@ -75,9 +78,59 @@ const CongestionCard: FC<CongestionCardProps> = ({
     return num.toString().padStart(3, '0').split('')
   }
 
+  const handleEditClick = () => {
+    setIsEditing(true)
+  }
+
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEditedTitle(event.target.value)
+  }
+
+  const handleTitleBlur = () => {
+    setIsEditing(false)
+    if (editedTitle !== title && onEdit) {
+      onEdit(editedTitle)
+    }
+  }
+
+  const handleTitleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleTitleBlur()
+    }
+  }
+
   return (
     <WindowCard
-      title={title}
+      title={
+        isEditing ? (
+          <>
+            <TextField
+              value={editedTitle}
+              onChange={handleTitleChange}
+              onBlur={handleTitleBlur}
+              onKeyPress={handleTitleKeyPress}
+              autoFocus
+              size='small'
+              sx={{ width: '100%' }}
+            />
+
+            <ModifyActions
+              isModify={isEditing}
+              handleEditClick={() => {
+                // updateDataItem(params.row.id, { isEdit: true })
+              }}
+              handleCancelClick={() => {
+                // handleCancelClick(params.row.id)
+              }}
+              handleSaveClick={() => {
+                // handleSaveClick(params.row.id)
+              }}
+            />
+          </>
+        ) : (
+          title
+        )
+      }
       iconActions={[
         {
           icon: <IconCustom isCommon icon='reset' />,
@@ -90,11 +143,7 @@ const CongestionCard: FC<CongestionCardProps> = ({
         },
         {
           icon: <IconCustom isCommon icon='Edit' />,
-          onClick:
-            onEdit ||
-            (() => {
-              console.log('수정')
-            }),
+          onClick: handleEditClick,
           tooltip: '수정'
         },
         {

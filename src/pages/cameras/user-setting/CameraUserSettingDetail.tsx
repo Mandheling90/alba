@@ -23,16 +23,23 @@ const CameraUserSettingDetail: FC<IClientDetail> = ({ selectClient }) => {
   }, [viewType.size])
 
   return (
-    <Grid container wrap='nowrap' direction={'column'} style={{height: '100%'}}>
-      <Collapse in={!isFullView} timeout={300} sx={{
-          width: '100%', height: '100%',
+    <Grid container wrap='nowrap' direction={'column'} style={{ height: '100%' }}>
+      <Collapse
+        in={!isFullView}
+        timeout={300}
+        sx={{
+          width: '100%',
+          height: '100%',
           '& .MuiCollapse-wrapper': {
             height: '100%'
           },
           '& .MuiCollapse-wrapperInner': {
-            display: 'grid', gridTemplateRows: 'auto 1fr', gridTemplateColumns: '100%'
+            display: 'grid',
+            gridTemplateRows: 'auto 1fr',
+            gridTemplateColumns: '100%'
           }
-        }}>
+        }}
+      >
         <PageHeader
           title={
             <Typography variant='h5' sx={{ fontSize: 24, fontWeight: 500, mb: 5 }}>
@@ -40,7 +47,7 @@ const CameraUserSettingDetail: FC<IClientDetail> = ({ selectClient }) => {
             </Typography>
           }
         />
-        <Box height={'100%'} sx={{overflow: 'auto', borderRadius: '6px'}}>
+        <Box height={'100%'} sx={{ overflow: 'auto', borderRadius: '6px' }}>
           <Card>
             <CameraUserSettingList />
           </Card>
@@ -48,8 +55,7 @@ const CameraUserSettingDetail: FC<IClientDetail> = ({ selectClient }) => {
       </Collapse>
 
       <Grid item xs={12} style={{ height: isFullView ? '80vh' : '36vh', transition: 'height 0.3s ease' }}>
-        {/* <CamerasMap height={isFullView ? '80vh' : '36vh'} /> */}
-        <CamerasMap height={'100%'}/>
+        <CamerasMap height={'100%'} />
       </Grid>
     </Grid>
   )
