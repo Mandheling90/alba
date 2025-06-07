@@ -27,7 +27,7 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
       <Collapse
         in={!isFullView}
         timeout={300}
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '100%', minHeight: isFullView ? '0vh' : '40vh' }}
         sx={{
           '& .MuiCollapse-wrapper': {
             height: '100%'
@@ -54,7 +54,6 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
       </Collapse>
 
       <Grid item xs={12} style={{ height: isFullView ? '80vh' : '36vh', transition: 'height 0.3s ease' }}>
-        {/* <CamerasMap height={isFullView ? '80vh' : '36vh'} /> */}
         <CamerasMap height={'100%'} />
       </Grid>
     </Grid>
