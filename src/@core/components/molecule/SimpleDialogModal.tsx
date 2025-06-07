@@ -10,6 +10,8 @@ export interface IDialogProps {
   isConfirm?: boolean
   resolve?: (value: boolean) => void
   size?: 'small' | 'medium' | 'large'
+  confirmText?: string
+  cancelText?: string
 }
 
 export const INITIAL_DIALOG_PROPS: IDialogProps = {
@@ -17,7 +19,9 @@ export const INITIAL_DIALOG_PROPS: IDialogProps = {
   title: '',
   contents: '',
   isConfirm: false,
-  size: 'medium'
+  size: 'medium',
+  confirmText: '확인',
+  cancelText: '취소'
 }
 
 interface ModalProps {
@@ -32,6 +36,8 @@ interface ModalProps {
   contentsHtml?: React.ReactNode
   resolve?: (value: boolean) => void
   size?: 'small' | 'medium' | 'large'
+  confirmText?: string
+  cancelText?: string
 }
 
 const SimpleDialogModal: React.FC<ModalProps> = ({
@@ -45,7 +51,9 @@ const SimpleDialogModal: React.FC<ModalProps> = ({
   useClose = true,
   contentsHtml,
   resolve,
-  size = 'medium'
+  size = 'medium',
+  confirmText = '확인',
+  cancelText = '취소'
 }) => {
   const handleClose = () => {
     onClose()
@@ -100,16 +108,16 @@ const SimpleDialogModal: React.FC<ModalProps> = ({
           {isConfirm ? (
             <>
               <Button variant='contained' onClick={handleConfirm}>
-                확인
+                {confirmText}
               </Button>
 
               <Button variant='outlined' onClick={handleClose}>
-                취소
+                {cancelText}
               </Button>
             </>
           ) : (
             <Button variant='contained' onClick={handleConfirm}>
-              {buttonText ? buttonText : '확인'}
+              {buttonText ? buttonText : confirmText}
             </Button>
           )}
         </Box>

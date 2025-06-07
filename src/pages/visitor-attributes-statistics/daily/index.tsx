@@ -18,7 +18,7 @@ const VisitorAttributesStatisticsDaily: FC = (): React.ReactElement => {
     useGenderAgeDailyHeatmapChart()
   const { mutateAsync: genderAgeTable, isLoading: genderAgeTableLoading } = useGenderAgeDailyTable()
 
-  const page = EStatisticsPage.VISITOR_ATTRIBUTES_STATISTICS
+  const page = EStatisticsPage.DAILY_ATTRIBUTES
 
   const { currentStatistics, barChartData, pyramidPieChartData, heatmapChartData, tableData, fetchData, isLoading } =
     useVisitorAttributesReport({

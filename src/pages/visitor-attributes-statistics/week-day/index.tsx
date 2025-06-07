@@ -19,7 +19,7 @@ const VisitorAttributesStatisticsWeekDay: FC = (): React.ReactElement => {
     useGenderAgeWeekDayHeatmapChart()
   const { mutateAsync: genderAgeTable, isLoading: genderAgeTableLoading } = useGenderAgeWeekDayTable()
 
-  const page = EStatisticsPage.VISITOR_ATTRIBUTES_STATISTICS
+  const page = EStatisticsPage.WEEK_DAY_ATTRIBUTES
 
   const { startDate, endDate } = getCurrentWeekDates()
 

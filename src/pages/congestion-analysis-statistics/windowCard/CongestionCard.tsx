@@ -1,8 +1,7 @@
 import { Box, TextField, Typography } from '@mui/material'
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
-import { EPath, statusLevelColorList } from 'src/enum/statisticsEnum'
-import { useWebSocket } from 'src/hooks/useWebSocket'
+import { statusLevelColorList } from 'src/enum/statisticsEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
 import AnimatedNumber from './AnimatedNumber'
 import WindowCard from './WindowCard'
@@ -31,34 +30,6 @@ const CongestionCard: FC<CongestionCardProps> = ({
     currentOccupancy,
     occupancyRate
   })
-
-  const logErrorToServer = async (errorMessage: string) => {
-    try {
-      console.log(errorMessage)
-    } catch (error) {
-      console.error('에러 로그 전송 중 오류 발생:', error)
-    }
-  }
-
-  const timeOut = () => {
-    console.log('WebSocket 연결 시간 초과')
-  }
-
-  const { responseMessages } = useWebSocket(EPath.STATS_ZONE_STATUS, logErrorToServer, timeOut)
-
-  useEffect(() => {
-    if (responseMessages[0]) {
-      try {
-        const data = JSON.parse(responseMessages[0])
-        setCurrentData({
-          currentOccupancy: data.currentOccupancy,
-          occupancyRate: data.occupancyRate
-        })
-      } catch (error) {
-        console.error('WebSocket 데이터 파싱 오류:', error)
-      }
-    }
-  }, [responseMessages])
 
   const handleEditClick = () => {
     setIsEditing(true)

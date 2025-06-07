@@ -15,7 +15,7 @@ const VisitorReportMonthly: FC = (): React.ReactElement => {
   const { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading } = useCountMonthlyBarPieChart()
   const { mutateAsync: countTable, isLoading: countTableLoading } = useCountMonthlyTable()
 
-  const page = EStatisticsPage.VISITOR_REPORT
+  const page = EStatisticsPage.MONTHLY
   const { startDate, endDate } = getCurrentAndPreviousMonthDates()
 
   const { currentStatistics, barChartData, barPieChartData, barTableData, fetchData, isLoading } = useVisitorReport({

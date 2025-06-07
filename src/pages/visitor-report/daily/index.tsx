@@ -14,7 +14,7 @@ const VisitorReportDaily: FC = (): React.ReactElement => {
   const { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading } = useCountDailyBarPieChart()
   const { mutateAsync: countTable, isLoading: countTableLoading } = useCountDailyTable()
 
-  const page = EStatisticsPage.VISITOR_REPORT
+  const page = EStatisticsPage.DAILY
 
   const { currentStatistics, barChartData, barPieChartData, barTableData, fetchData, isLoading } = useVisitorReport({
     page,

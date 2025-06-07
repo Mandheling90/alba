@@ -10,7 +10,11 @@ export type ModalValuesType = {
 
 // ** Defaults
 const defaultProvider: ModalValuesType = {
-  simpleDialogModalProps: INITIAL_DIALOG_PROPS,
+  simpleDialogModalProps: {
+    ...INITIAL_DIALOG_PROPS,
+    confirmText: '확인',
+    cancelText: '취소'
+  },
   setSimpleDialogModalProps: () => INITIAL_DIALOG_PROPS,
   showModal: () => Promise.resolve(false),
   resetModal: () => {
@@ -67,6 +71,8 @@ const ModalProvider = ({ children }: Props) => {
         onConfirm={simpleDialogModalProps.confirmFn}
         resolve={simpleDialogModalProps.resolve}
         size={simpleDialogModalProps.size}
+        confirmText={simpleDialogModalProps.confirmText}
+        cancelText={simpleDialogModalProps.cancelText}
       />
       {children}
     </ModalContext.Provider>

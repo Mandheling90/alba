@@ -15,7 +15,7 @@ const VisitorReportWeekly: FC = (): React.ReactElement => {
   const { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading } = useCountWeeklyBarPieChart()
   const { mutateAsync: countTable, isLoading: countTableLoading } = useCountWeeklyTable()
 
-  const page = EStatisticsPage.VISITOR_REPORT
+  const page = EStatisticsPage.WEEKLY
 
   const { startDate, endDate } = getCurrentAndPreviousWeekDates()
 

@@ -19,7 +19,7 @@ const VisitorAttributesStatisticsMonthly: FC = (): React.ReactElement => {
     useGenderAgeMonthlyHeatmapChart()
   const { mutateAsync: genderAgeTable, isLoading: genderAgeTableLoading } = useGenderAgeMonthlyTable()
 
-  const page = EStatisticsPage.VISITOR_ATTRIBUTES_STATISTICS
+  const page = EStatisticsPage.MONTHLY_ATTRIBUTES
 
   const { startDate, endDate } = getCurrentAndPreviousMonthDates()
 

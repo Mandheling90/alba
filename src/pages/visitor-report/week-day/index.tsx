@@ -15,7 +15,7 @@ const VisitorReportWeekDay: FC = (): React.ReactElement => {
   const { mutateAsync: countBarPieChart, isLoading: countBarPieChartLoading } = useCountWeekDayBarPieChart()
   const { mutateAsync: countTable, isLoading: countTableLoading } = useCountWeekDayTable()
 
-  const page = EStatisticsPage.VISITOR_REPORT
+  const page = EStatisticsPage.WEEK_DAY
 
   const { startDate, endDate } = getCurrentWeekDates()
 
