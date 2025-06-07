@@ -22,8 +22,9 @@ const SoketComponent = (props: Props) => {
   const logErrorToServer = async (errorMessage: string) => {
     try {
       console.log(errorMessage)
-      saveLog(errorMessage)
-      console.log('에러 로그가 서버에 전송되었습니다.')
+
+      // saveLog(errorMessage)
+      // console.log('에러 로그가 서버에 전송되었습니다.')
     } catch (error) {
       console.error('에러 로그 전송 중 오류 발생:', error)
     }

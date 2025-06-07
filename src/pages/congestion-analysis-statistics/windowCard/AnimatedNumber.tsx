@@ -1,6 +1,6 @@
 import { keyframes } from '@emotion/react'
 import styled from '@emotion/styled'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { BorderInput } from 'src/@core/styles/StyledComponents'
 
 const slideUpAnimation = keyframes`
@@ -40,8 +40,6 @@ const NumberWrapper = styled.div<{ isAnimating: boolean; isIncreasing: boolean }
 
 interface AnimatedNumberProps {
   number: number
-  animatingDigits: boolean[]
-  isIncreasingDigits: boolean[]
   fontSize?: string
   padding?: string
   minWidth?: string
@@ -51,14 +49,36 @@ interface AnimatedNumberProps {
 
 const AnimatedNumber: FC<AnimatedNumberProps> = ({
   number,
-  animatingDigits,
-  isIncreasingDigits,
   fontSize = '1.5rem',
   padding = '0px',
   minWidth = 'auto',
   backgroundColor = 'transparent',
   color = 'inherit'
 }) => {
+  const [prevNumber, setPrevNumber] = useState(number)
+  const [animatingDigits, setAnimatingDigits] = useState<boolean[]>([])
+  const [isIncreasingDigits, setIsIncreasingDigits] = useState<boolean[]>([])
+
+  useEffect(() => {
+    if (prevNumber !== number) {
+      const prevDigits = formatNumber(prevNumber)
+      const currentDigits = formatNumber(number)
+
+      // 각 자릿수별로 변화 여부와 증가/감소 여부를 확인
+      const newAnimatingDigits = currentDigits.map((digit, index) => digit !== prevDigits[index])
+      const newIsIncreasingDigits = currentDigits.map((digit, index) => parseInt(digit) > parseInt(prevDigits[index]))
+
+      setAnimatingDigits(newAnimatingDigits)
+      setIsIncreasingDigits(newIsIncreasingDigits)
+      setPrevNumber(number)
+
+      // 애니메이션 상태 초기화
+      setTimeout(() => {
+        setAnimatingDigits(newAnimatingDigits.map(() => false))
+      }, 300)
+    }
+  }, [number])
+
   const formatNumber = (num: number): string[] => {
     return num.toString().padStart(3, '0').split('')
   }

@@ -153,5 +153,7 @@ export const EPath = {
 
   STATS_CONFIG: '/statistics/config/{companyNo}',
   STATS_CONFIG_MULTI: '/statistics/config/multi',
-  STATS_CONFIG_SINGLE: '/statistics/config/single'
+  STATS_CONFIG_SINGLE: '/statistics/config/single',
+
+  STATS_ZONE_STATUS: `${process.env.NEXT_PUBLIC_WEB_SOCKET}/ws/zone/status`
 } as const

@@ -141,6 +141,15 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
                 />
               )
             },
+            dateName: (params: any) => {
+              const depth = checkDataListDepth(params.row)
+
+              if (depth === 1 && tableDisplayType === 'time') {
+                return <></>
+              }
+
+              return <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
+            },
             dateNameTemp: (params: any) => {
               const depth = checkDataListDepth(params.row)
 
@@ -235,8 +244,10 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
 
               return (
                 <>
-                  {tableDisplayType === 'time' && depth === 1 && (
+                  {tableDisplayType === 'time' && depth === 1 ? (
                     <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
+                  ) : (
+                    <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateLabel}</Box>
                   )}
                 </>
               )

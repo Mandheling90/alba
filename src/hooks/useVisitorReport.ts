@@ -73,6 +73,11 @@ export const useVisitorReport = ({
           }))
       }
 
+      statistics = {
+        ...statistics,
+        tableType: tableType
+      }
+
       const res = await countBarChart.mutateAsync(statistics)
       setBarChartData(res.data)
 
