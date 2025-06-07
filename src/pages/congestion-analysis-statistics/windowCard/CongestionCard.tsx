@@ -1,8 +1,8 @@
 import { Box, TextField, Typography } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
+import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
 import { statusLevelColorList } from 'src/enum/statisticsEnum'
 import IconCustom from 'src/layouts/components/IconCustom'
-import ModifyActions from 'src/pages/cameras/table/ModifyActions'
 import AnimatedNumber from './AnimatedNumber'
 import WindowCard from './WindowCard'
 
@@ -103,7 +103,7 @@ const CongestionCard: FC<CongestionCardProps> = ({
     <WindowCard
       title={
         isEditing ? (
-          <>
+          <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={3}>
             <TextField
               value={editedTitle}
               onChange={handleTitleChange}
@@ -111,51 +111,54 @@ const CongestionCard: FC<CongestionCardProps> = ({
               onKeyPress={handleTitleKeyPress}
               autoFocus
               size='small'
-              sx={{ width: '100%' }}
+              sx={{ width: '75%' }}
             />
 
-            <ModifyActions
-              isModify={isEditing}
-              handleEditClick={() => {
-                // updateDataItem(params.row.id, { isEdit: true })
-              }}
-              handleCancelClick={() => {
-                // handleCancelClick(params.row.id)
-              }}
-              handleSaveClick={() => {
-                // handleSaveClick(params.row.id)
-              }}
-            />
-          </>
+            <Box display={'flex'} justifyContent={'center'} gap={2} sx={{ width: '25%' }}>
+              <CustomAddCancelButton
+                text={['적용', '취소']}
+                onCancelClick={() => {
+                  setIsEditing(false)
+                }}
+                onSaveClick={() => {
+                  console.log('1')
+                }}
+              />
+            </Box>
+          </Box>
         ) : (
           title
         )
       }
-      iconActions={[
-        {
-          icon: <IconCustom isCommon icon='reset' />,
-          onClick:
-            onRefresh ||
-            (() => {
-              console.log('새로고침')
-            }),
-          tooltip: '새로고침'
-        },
-        {
-          icon: <IconCustom isCommon icon='Edit' />,
-          onClick: handleEditClick,
-          tooltip: '수정'
-        },
-        {
-          icon: <IconCustom isCommon icon='DeleteOutline' />,
-          onClick:
-            onDelete ||
-            (() => {
-              console.log('삭제')
-            }),
-          tooltip: '삭제'
-        }
-      ]}
+      iconActions={
+        isEditing
+          ? []
+          : [
+              {
+                icon: <IconCustom isCommon icon='reset' />,
+                onClick:
+                  onRefresh ||
+                  (() => {
+                    console.log('새로고침')
+                  }),
+                tooltip: '새로고침'
+              },
+              {
+                icon: <IconCustom isCommon icon='Edit' />,
+                onClick: handleEditClick,
+                tooltip: '수정'
+              },
+              {
+                icon: <IconCustom isCommon icon='DeleteOutline' />,
+                onClick:
+                  onDelete ||
+                  (() => {
+                    console.log('삭제')
+                  }),
+                tooltip: '삭제'
+              }
+            ]
+      }
       titleAlign='center'
       headerColor='#F9FAFC'
     >
