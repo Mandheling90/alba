@@ -102,6 +102,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
   const getColumns = () => {
     switch (tableType) {
       case ETableType.HOURLY:
+      case ETableType.MONTHLY:
         return generateColumns({
           columns: [
             {
@@ -271,10 +272,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
         return generateColumns({
           columns: [{ field: 'weekName', headerName: '주별기간', type: 'string' }, ...defaultColumns]
         })
-      case ETableType.MONTHLY:
-        return generateColumns({
-          columns: [{ field: 'dateName', headerName: '날짜', type: 'string' }, ...defaultColumns]
-        })
+
       default:
         return []
     }
@@ -283,6 +281,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
   const getColumns2 = () => {
     switch (tableType) {
       case ETableType.HOURLY:
+      case ETableType.MONTHLY:
         return generateColumns({
           columns: [
             { field: 'temp1', headerName: '', type: 'string', flex: toggleFlex, isEmpty: true },
@@ -315,10 +314,7 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
           }
         })
       case ETableType.WEEKLY:
-      case ETableType.MONTHLY:
-        return generateColumns({
-          columns: [{ field: 'dateName', headerName: '날짜', type: 'string' }, ...defaultColumns]
-        })
+
       default:
         return []
     }
