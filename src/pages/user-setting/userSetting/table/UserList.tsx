@@ -35,6 +35,13 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
   useEffect(() => {
     if (data && Array.isArray(data)) {
       setUserData(data.map(obj => ({ ...obj, display: true })))
+
+      setTimeout(() => {
+        const selectedUser = data.find(item => item.userNo === user?.userInfo?.userNo)
+
+        setSelectedUser(selectedUser ?? undefined)
+        setSelectedUserList(selectedUser ? [selectedUser] : [])
+      }, 100)
     } else {
       setUserData([])
     }
@@ -147,6 +154,7 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
               selectRowEvent={e => {
                 setSelectedUser(e)
               }}
+              initialSelectedRow={userData.find(item => item.userNo === user?.userInfo?.userNo)?.userNo ?? undefined}
             />
             <DividerBar />
           </Box>
