@@ -137,8 +137,10 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
 
               return (
                 <>
-                  {tableDisplayType === 'time' && depth === 1 && (
+                  {tableDisplayType === 'time' && depth === 1 ? (
                     <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateName}</Box>
+                  ) : (
+                    <Box sx={{ width: '100%', textAlign: 'center' }}>{params.row.dateLabel}</Box>
                   )}
                 </>
               )
@@ -209,12 +211,6 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
   const columns = getColumns()
   const columns2 = getColumns2()
   const coverColumns = getColumns3()
-
-  console.log(columns)
-  console.log(columns2)
-  console.log(coverColumns)
-
-  console.log(tableTopHeaders)
 
   return (
     <>

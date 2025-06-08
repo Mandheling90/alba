@@ -1,7 +1,9 @@
 import { Box, TextField, Typography } from '@mui/material'
 import { FC, useState } from 'react'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
+import { StyledTextField } from 'src/@core/styles/StyledComponents'
 import { statusLevelColorList } from 'src/enum/statisticsEnum'
+import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
 import AnimatedNumber from './AnimatedNumber'
 import WindowCard from './WindowCard'
@@ -23,6 +25,8 @@ const CongestionCard: FC<CongestionCardProps> = ({
   onRefresh,
   onDelete
 }) => {
+  const { setSimpleDialogModalProps } = useModal()
+
   const [isEditing, setIsEditing] = useState(false)
   const [editedTitle, setEditedTitle] = useState(title)
   const [editedMaxCapacity, setEditedMaxCapacity] = useState(maxCapacity.toString())
@@ -57,10 +61,27 @@ const CongestionCard: FC<CongestionCardProps> = ({
               <CustomAddCancelButton
                 text={['적용', '취소']}
                 onCancelClick={() => {
-                  setIsEditing(false)
+                  setSimpleDialogModalProps({
+                    open: true,
+                    size: 'small',
+                    title: '취소확인',
+                    contents: `저장되지 않은 모든 정보가 삭제됩니다. \r\n 정말 취소하시겠습니까?`,
+                    isConfirm: true,
+                    confirmFn: () => {
+                      setIsEditing(false)
+                    }
+                  })
                 }}
                 onSaveClick={() => {
-                  console.log('1')
+                  if (editedTitle === '' || editedMaxCapacity === '' || Number(editedMaxCapacity) <= 0) {
+                    setSimpleDialogModalProps({
+                      open: true,
+                      title: '시설정보 저장 오류',
+                      contents: `필수 입력 항목인 '시설명' 입력 후 중복확인이 되어야 하고,  '최대수용인원수'가 입력되어야 하며, 최소 한개 이상의 영역이 추가되어야 시설정보가 저장될 수 있습니다.`
+                    })
+                  } else {
+                    setIsEditing(false)
+                  }
                 }}
               />
             </Box>
@@ -89,11 +110,26 @@ const CongestionCard: FC<CongestionCardProps> = ({
               },
               {
                 icon: <IconCustom isCommon icon='DeleteOutline' />,
-                onClick:
-                  onDelete ||
-                  (() => {
-                    console.log('삭제')
-                  }),
+                onClick: () => {
+                  setSimpleDialogModalProps({
+                    open: true,
+                    title: '시설정보 삭제 확인',
+                    contents: `선택하신 시설 정보를 정말 삭제하시겠습니까? \r\n 삭제 시 시설 정보 및 시설 관련 통계 데이터 모두 삭제됩니다.`,
+                    isConfirm: true,
+                    confirmFn: () => {
+                      if (onDelete) {
+                        onDelete()
+                      }
+                      setTimeout(() => {
+                        setSimpleDialogModalProps({
+                          open: true,
+                          title: '시설정보 삭제 확인',
+                          contents: `선택하신 시설 정보가 삭제되었습니다.`
+                        })
+                      }, 100)
+                    }
+                  })
+                },
                 tooltip: '삭제'
               }
             ]
@@ -117,20 +153,13 @@ const CongestionCard: FC<CongestionCardProps> = ({
         <Typography>
           최대 수용인원{' '}
           {isEditing ? (
-            <TextField
+            <StyledTextField
               value={editedMaxCapacity}
               onChange={handleMaxCapacityChange}
               size='small'
-              sx={{
-                width: '40px',
-                '& input': {
-                  textAlign: 'center',
-                  padding: '2px 4px',
-                  fontSize: 'inherit'
-                },
-                '& .MuiOutlinedInput-root': {
-                  height: '24px'
-                }
+              inputProps={{
+                inputMode: 'numeric',
+                pattern: '[0-9]*'
               }}
             />
           ) : (

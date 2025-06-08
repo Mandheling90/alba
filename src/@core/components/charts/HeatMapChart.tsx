@@ -83,7 +83,7 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
         style: {
           fontSize:
             data.xaxisCategories.length > 20
-              ? '8px'
+              ? '10px'
               : data.xaxisCategories.length > 15
               ? '10px'
               : data.xaxisCategories.length > 10
@@ -100,7 +100,7 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
         style: {
           fontSize:
             data.xaxisCategories.length > 20
-              ? '8px'
+              ? '10px'
               : data.xaxisCategories.length > 15
               ? '10px'
               : data.xaxisCategories.length > 10
@@ -161,7 +161,9 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
           allowOverlap: true,
           style: {
             fontSize:
-              data.xaxisCategories.length > 20
+              data.xaxisCategories.length > Number(process.env.NEXT_PUBLIC_CHART_SCROLL_COUNT)
+                ? '8px'
+                : data.xaxisCategories.length > 20
                 ? '8px'
                 : data.xaxisCategories.length > 15
                 ? '8px'

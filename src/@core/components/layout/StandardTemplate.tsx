@@ -11,9 +11,18 @@ const StandardTemplate: FC<{
   useBackButton?: boolean
   onBackButtonClick?: () => void
   rightButtonList?: React.ReactNode
-}> = ({ title, children, useBackButton, onBackButtonClick, rightButtonList }) => {
+  height?: string | number
+}> = ({ title, children, useBackButton, onBackButtonClick, rightButtonList, height }) => {
   return (
-    <Grid spacing={2} container>
+    <Grid
+      spacing={2}
+      container
+      sx={{
+        height: height || 'auto',
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
       <Grid
         item
         xs={12}
@@ -54,7 +63,7 @@ const StandardTemplate: FC<{
             }
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} sx={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
           {children}
         </Grid>
       </Grid>

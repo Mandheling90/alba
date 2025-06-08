@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, TextField } from '@mui/material'
 import styled from 'styled-components'
 
 export const HorizontalScrollBox = styled(Box)`
@@ -47,3 +47,14 @@ export const BorderInput = styled(Box)<{
   background-color: ${props => props.backgroundColor || 'transparent'};
   color: ${props => props.color || 'inherit'};
 `
+export const StyledTextField = styled(TextField)({
+  width: '50px',
+  '& input': {
+    textAlign: 'center',
+    padding: '2px 4px',
+    fontSize: 'inherit'
+  },
+  '& .MuiOutlinedInput-root': {
+    height: '24px'
+  }
+})

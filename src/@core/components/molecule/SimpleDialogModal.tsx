@@ -27,7 +27,7 @@ export const INITIAL_DIALOG_PROPS: IDialogProps = {
 interface ModalProps {
   open: boolean
   onClose: () => void
-  onConfirm?: () => void
+  onConfirm?: () => boolean | void
   title?: string
   contents?: string | React.ReactNode
   buttonText?: string
@@ -61,9 +61,11 @@ const SimpleDialogModal: React.FC<ModalProps> = ({
   }
 
   const handleConfirm = () => {
-    onConfirm?.()
-    onClose()
-    resolve?.(true)
+    const shouldClose = onConfirm?.()
+    if (shouldClose !== false) {
+      onClose()
+      resolve?.(true)
+    }
   }
 
   return (

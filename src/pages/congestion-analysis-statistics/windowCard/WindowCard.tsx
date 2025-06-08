@@ -1,4 +1,4 @@
-import { Box, Card, IconButton, Typography } from '@mui/material'
+import { Box, Card, IconButton, SxProps, Typography } from '@mui/material'
 import { ReactNode } from 'react'
 
 interface IconAction {
@@ -13,6 +13,7 @@ interface WindowCardProps {
   children?: ReactNode
   titleAlign?: 'left' | 'center'
   headerColor?: string
+  sx?: SxProps
 }
 
 const WindowCard: React.FC<WindowCardProps> = ({
@@ -20,10 +21,11 @@ const WindowCard: React.FC<WindowCardProps> = ({
   iconActions = [],
   children,
   titleAlign = 'left',
-  headerColor = 'primary.main'
+  headerColor = 'primary.main',
+  sx
 }) => {
   return (
-    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '350px' }}>
+    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '350px', ...sx }}>
       {/* 헤더 영역 */}
       <Box
         sx={{
