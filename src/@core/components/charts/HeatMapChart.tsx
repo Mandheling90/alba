@@ -78,12 +78,36 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
       // }
     },
     xAxis: {
-      categories: data.xaxisCategories
+      categories: data.xaxisCategories,
+      labels: {
+        style: {
+          fontSize:
+            data.xaxisCategories.length > 20
+              ? '8px'
+              : data.xaxisCategories.length > 15
+              ? '10px'
+              : data.xaxisCategories.length > 10
+              ? '12px'
+              : '14px'
+        }
+      }
     },
     yAxis: {
       categories: data.yaxisCategories,
       title: undefined,
-      reversed: true
+      reversed: true,
+      labels: {
+        style: {
+          fontSize:
+            data.xaxisCategories.length > 20
+              ? '8px'
+              : data.xaxisCategories.length > 15
+              ? '10px'
+              : data.xaxisCategories.length > 10
+              ? '12px'
+              : '14px'
+        }
+      }
     },
     accessibility: {
       point: {
@@ -134,6 +158,17 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
         dataLabels: {
           enabled: true,
           color: '#000000',
+          allowOverlap: true,
+          style: {
+            fontSize:
+              data.xaxisCategories.length > 20
+                ? '8px'
+                : data.xaxisCategories.length > 15
+                ? '8px'
+                : data.xaxisCategories.length > 10
+                ? '10px'
+                : '12px'
+          },
           formatter: function (this: any) {
             return `${(this.point.visitors || 0).toLocaleString()}<br>(${categoryPercentage(
               this.point.visitors,
@@ -144,20 +179,65 @@ const HeatMapChart: React.FC<{ data: IHeatMapChart }> = ({ data }) => {
       }
     ],
     responsive: {
-      rules: [
-        {
-          condition: {
-            maxWidth: 500
-          },
-          chartOptions: {
-            yAxis: {
-              labels: {
-                format: '{substr value 0 1}'
-              }
-            }
-          }
-        }
-      ]
+      // rules: [
+      //   {
+      //     condition: {
+      //       maxWidth: 500
+      //     },
+      //     chartOptions: {
+      //       series: [
+      //         {
+      //           type: 'heatmap',
+      //           dataLabels: {
+      //             style: {
+      //               fontSize: '8px'
+      //             }
+      //           }
+      //         }
+      //       ],
+      //       yAxis: {
+      //         labels: {
+      //           format: '{substr value 0 1}'
+      //         }
+      //       }
+      //     }
+      //   },
+      //   {
+      //     condition: {
+      //       minWidth: 501,
+      //       maxWidth: 800
+      //     },
+      //     chartOptions: {
+      //       series: [
+      //         {
+      //           type: 'heatmap',
+      //           dataLabels: {
+      //             style: {
+      //               fontSize: '8px'
+      //             }
+      //           }
+      //         }
+      //       ]
+      //     }
+      //   },
+      //   {
+      //     condition: {
+      //       minWidth: 801
+      //     },
+      //     chartOptions: {
+      //       series: [
+      //         {
+      //           type: 'heatmap',
+      //           dataLabels: {
+      //             style: {
+      //               fontSize: '8px'
+      //             }
+      //           }
+      //         }
+      //       ]
+      //     }
+      //   }
+      // ]
     }
   }
 

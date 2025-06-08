@@ -72,13 +72,33 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
             },
             {
               field: `dateName`,
-              headerName: `${tableDisplayType === 'time' ? '날짜' : '날짜 및 시간대'}`,
+              headerName: `${
+                tableDisplayType === 'time'
+                  ? tableType === ETableType.HOURLY
+                    ? '날짜'
+                    : tableType === ETableType.DAILY
+                    ? '년도 및 월'
+                    : '년도'
+                  : tableType === ETableType.HOURLY
+                  ? '날짜 및 시간대'
+                  : tableType === ETableType.DAILY
+                  ? '날짜'
+                  : '년도 및 월'
+              }`,
               type: 'string',
               flex: 1.5
             },
             {
               field: `${tableDisplayType === 'time' ? 'dateNameTemp' : 'totalPlaceName'}`,
-              headerName: `${tableDisplayType === 'time' ? '시간대' : '장소'}`,
+              headerName: `${
+                tableDisplayType === 'time'
+                  ? tableType === ETableType.HOURLY
+                    ? '시간대'
+                    : tableType === ETableType.DAILY
+                    ? '날짜'
+                    : '월'
+                  : '장소'
+              }`,
               type: 'string',
               flex: 1.5
             },

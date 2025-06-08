@@ -113,12 +113,22 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
             },
             {
               field: `dateName`,
-              headerName: `${tableDisplayType === 'time' ? '날짜' : '날짜 및 시간대'}`,
+              headerName: `${
+                tableDisplayType === 'time'
+                  ? tableType === ETableType.HOURLY
+                    ? '날짜'
+                    : '년도'
+                  : tableType === ETableType.HOURLY
+                  ? '날짜 및 시간대'
+                  : '년도 및 월'
+              }`,
               type: 'string'
             },
             {
               field: `${tableDisplayType === 'time' ? 'dateNameTemp' : 'totalPlaceName'}`,
-              headerName: `${tableDisplayType === 'time' ? '시간대' : '장소'}`,
+              headerName: `${
+                tableDisplayType === 'time' ? (tableType === ETableType.HOURLY ? '시간대' : '월') : '장소'
+              }`,
               type: 'string'
             },
             ...defaultColumns
@@ -177,12 +187,12 @@ const VisitorDepthTable: FC<DepthTableProps> = ({ tableType, tableDisplayType, d
             },
             {
               field: `dateName`,
-              headerName: `${tableDisplayType === 'time' ? '날짜' : '날짜 및 시간대'}`,
+              headerName: `${tableDisplayType === 'time' ? '년도 및 월' : '날짜'}`,
               type: 'string'
             },
             {
               field: `${tableDisplayType === 'time' ? 'dateNameTemp' : 'totalPlaceName'}`,
-              headerName: `${tableDisplayType === 'time' ? '시간대' : '장소'}`,
+              headerName: `${tableDisplayType === 'time' ? '날짜' : '장소'}`,
               type: 'string'
             },
             ...defaultColumns,
