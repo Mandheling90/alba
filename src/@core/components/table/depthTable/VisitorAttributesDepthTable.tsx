@@ -24,8 +24,7 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
         field: header.field,
         headerName: header.headerName,
         type: 'string' as const,
-        flex: defaultFlex ? 1 : index === 0 ? firstFlex : index === 3 ? 0.6 : 1.5,
-        isEmpty: true
+        flex: defaultFlex ? 1 : index === 0 ? firstFlex : index === 3 ? 0.6 : 1.5
       })) || []
     )
   }
@@ -55,8 +54,7 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
     true
   )
 
-  const toggleFlex = 0.4
-  const weatherFlex = 1.2
+  const toggleFlex = 1.5
 
   const getColumns = () => {
     switch (tableType) {
@@ -68,7 +66,8 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
             {
               field: `toggle`,
               headerName: ``,
-              type: 'string'
+              type: 'string',
+              flex: toggleFlex
             },
             {
               field: `dateName`,
@@ -157,7 +156,7 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
       case ETableType.WEEKLY:
         return generateColumns({
           columns: [
-            { field: 'weekName', headerName: '주별기간', type: 'string' },
+            { field: 'weekName', headerName: '주별기간', type: 'string', flex: 3 },
             ...tableTopHeaders,
             { field: 'totalCount', headerName: '계', type: 'number' }
           ]
@@ -174,9 +173,9 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
       case ETableType.MONTHLY:
         return generateColumns({
           columns: [
-            { field: 'temp1', headerName: '', type: 'string', isEmpty: true },
+            { field: 'temp1', headerName: '', type: 'string', flex: toggleFlex, isEmpty: true },
             { field: 'temp2', headerName: '', type: 'string', flex: 1.5, isEmpty: true },
-            { field: 'placeName', headerName: '장소', type: 'string' },
+            { field: 'placeName', headerName: '장소', flex: 1.5, type: 'string' },
             ...tableTopHeaders,
             { field: 'totalCount', headerName: '계', type: 'number' }
           ]
@@ -195,9 +194,12 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
           columns: getTableTopHeaders(data.tableTopHeaders || [], false, 0.7)
         })
       case ETableType.WEEKDAY:
-      case ETableType.WEEKLY:
         return generateColumns({
           columns: getTableTopHeaders(data.tableTopHeaders || [], false, 0.2)
+        })
+      case ETableType.WEEKLY:
+        return generateColumns({
+          columns: getTableTopHeaders(data.tableTopHeaders || [], false, 0.65)
         })
       default:
         return []
@@ -207,6 +209,12 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
   const columns = getColumns()
   const columns2 = getColumns2()
   const coverColumns = getColumns3()
+
+  console.log(columns)
+  console.log(columns2)
+  console.log(coverColumns)
+
+  console.log(tableTopHeaders)
 
   return (
     <>
