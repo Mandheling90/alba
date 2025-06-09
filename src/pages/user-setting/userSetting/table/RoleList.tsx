@@ -64,8 +64,8 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
   }, [selectedUser])
 
   useEffect(() => {
-    if (selectedAuthList?.authId) {
-      setSelectedRow(selectedAuthList.authId)
+    if (selectedAuthList?.authId > 0) {
+      // setSelectedRow(selectedAuthList.authId)
     }
   }, [selectedAuthList])
 

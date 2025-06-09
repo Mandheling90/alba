@@ -41,7 +41,7 @@ const UserList: FC<IUserList> = ({ data, refetch }) => {
 
         setSelectedUser(selectedUser ?? undefined)
         setSelectedUserList(selectedUser ? [selectedUser] : [])
-      }, 100)
+      }, 300)
     } else {
       setUserData([])
     }
