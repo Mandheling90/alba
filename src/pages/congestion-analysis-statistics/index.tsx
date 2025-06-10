@@ -1,13 +1,15 @@
 import { Grid } from '@mui/material'
+import axios from 'axios'
 import { FC, useEffect, useState } from 'react'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import { EPath } from 'src/enum/statisticsEnum'
 import { useWebSocket } from 'src/hooks/useWebSocket'
+import { IAreaStatsDto } from 'src/model/statistics/StatisticsModel'
 import HeaderButtons from './components/HeaderButtons'
 import CongestionCard from './windowCard/CongestionCard'
 
 const CongestionAnalysisStatistics: FC = (): React.ReactElement => {
-  const [currentData, setCurrentData] = useState()
+  const [currentData, setCurrentData] = useState<IAreaStatsDto>()
 
   const logErrorToServer = async (errorMessage: string) => {
     try {
@@ -34,28 +36,44 @@ const CongestionAnalysisStatistics: FC = (): React.ReactElement => {
     }
   }, [responseMessages])
 
-  const handleRefresh = () => {
-    console.log('새로고침')
+  const handleRefresh = async (areaId: number) => {
+    try {
+      const response = await axios.delete(`http://210.216.236.181:12708/area/${areaId}/data`)
+      if (response.status === 200) {
+        console.log('삭제 성공')
+
+        // 삭제 후 데이터 새로고침 로직 추가 가능
+      }
+    } catch (error) {
+      console.error('삭제 중 오류 발생:', error)
+    }
   }
 
-  const handleDelete = () => {
-    console.log('삭제')
+  const handleDelete = async (areaId: number) => {
+    // try {
+    //   const response = await axios.delete(`http://210.216.236.181/area/${areaId}/data`)
+    //   if (response.status === 200) {
+    //     console.log('삭제 성공')
+    //     // 삭제 후 데이터 새로고침 로직 추가 가능
+    //   }
+    // } catch (error) {
+    //   console.error('삭제 중 오류 발생:', error)
+    // }
   }
+
+  console.log(currentData)
 
   return (
     <StandardTemplate title={'아난티 레스토랑 좌석 점유률 현황'} rightButtonList={<HeaderButtons />}>
-      <Grid container spacing={3} sx={{ mb: 5 }}>
-        <Grid item xs={12}></Grid>
-        <Grid item xs={12} sm={6} md={6} lg={4} xl={3}>
+      <Grid container gap={5} sx={{ mb: 5 }}>
+        {currentData?.areaStatsDtoList.map((item, i: number) => (
           <CongestionCard
-            title='시설 A'
-            maxCapacity={10}
-            currentOccupancy={110}
-            occupancyRate={111}
+            key={item.areaId + i}
+            data={item}
             onRefresh={handleRefresh}
-            onDelete={handleDelete}
+            onDelete={() => handleDelete(item.areaId)}
           />
-        </Grid>
+        ))}
       </Grid>
     </StandardTemplate>
   )

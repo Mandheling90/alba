@@ -10,7 +10,7 @@ const LoginTemplate: React.FC<ILoginTemplate> = ({ children }) => {
   return (
     <CardContent sx={{ p: theme => `${theme.spacing(5, 9, 7)} !important` }}>
       <Box sx={{ mb: 6 }}>
-        <IconCustom isCommon path='login' icon='DSInsightHeader' />
+        <IconCustom isCommon path='login' icon='DSInsightHeader' style={{ height: '35px' }} />
       </Box>
       {children}
     </CardContent>

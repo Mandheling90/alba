@@ -1,39 +1,38 @@
 import { Box, TextField, Typography } from '@mui/material'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
 import { StyledTextField } from 'src/@core/styles/StyledComponents'
 import { statusLevelColorList } from 'src/enum/statisticsEnum'
 import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
+import { IAreaStatsDtoList } from 'src/model/statistics/StatisticsModel'
 import AnimatedNumber from './AnimatedNumber'
 import WindowCard from './WindowCard'
 
 interface CongestionCardProps {
-  title: string
-  maxCapacity: number
-  currentOccupancy: number
-  occupancyRate: number
-  onRefresh?: () => void
+  data: IAreaStatsDtoList
+  onRefresh?: (areaId: number) => void
   onDelete?: () => void
 }
 
-const CongestionCard: FC<CongestionCardProps> = ({
-  title,
-  maxCapacity,
-  currentOccupancy,
-  occupancyRate,
-  onRefresh,
-  onDelete
-}) => {
+const CongestionCard: FC<CongestionCardProps> = ({ data, onRefresh, onDelete }) => {
   const { setSimpleDialogModalProps } = useModal()
 
   const [isEditing, setIsEditing] = useState(false)
-  const [editedTitle, setEditedTitle] = useState(title)
-  const [editedMaxCapacity, setEditedMaxCapacity] = useState(maxCapacity.toString())
+  const [editedTitle, setEditedTitle] = useState(data.areaName)
+  const [editedMaxCapacity, setEditedMaxCapacity] = useState(data.maxCapacity.toString())
+
   const [currentData, setCurrentData] = useState({
-    currentOccupancy,
-    occupancyRate
+    currentOccupancy: data.areaCount,
+    occupancyRate: data.occupancyRate
   })
+
+  useEffect(() => {
+    setCurrentData({
+      currentOccupancy: data.areaCount,
+      occupancyRate: data.occupancyRate
+    })
+  }, [data])
 
   const handleEditClick = () => {
     setIsEditing(true)
@@ -87,7 +86,7 @@ const CongestionCard: FC<CongestionCardProps> = ({
             </Box>
           </Box>
         ) : (
-          title
+          data.areaId
         )
       }
       iconActions={
@@ -96,11 +95,9 @@ const CongestionCard: FC<CongestionCardProps> = ({
           : [
               {
                 icon: <IconCustom isCommon icon='reset' />,
-                onClick:
-                  onRefresh ||
-                  (() => {
-                    console.log('새로고침')
-                  }),
+                onClick: () => {
+                  onRefresh?.(data.areaId)
+                },
                 tooltip: '새로고침'
               },
               {
@@ -143,7 +140,7 @@ const CongestionCard: FC<CongestionCardProps> = ({
         alignItems={'center'}
         justifyContent={'center'}
         sx={{
-          background: `${statusLevelColorList[1]}80`,
+          background: `${statusLevelColorList[data.alarmLevel - 1]}80`,
           py: 10,
           '& > *': {
             py: 5
@@ -163,7 +160,7 @@ const CongestionCard: FC<CongestionCardProps> = ({
               }}
             />
           ) : (
-            <b>{maxCapacity}</b>
+            <b>{data.maxCapacity}</b>
           )}
           명 중
         </Typography>
@@ -183,7 +180,7 @@ const CongestionCard: FC<CongestionCardProps> = ({
               number={currentData.occupancyRate}
               fontSize={'1.5rem'}
               minWidth={'1.5rem'}
-              backgroundColor={statusLevelColorList[1]}
+              backgroundColor={statusLevelColorList[data.alarmLevel - 1]}
             />
           </Box>
           <Typography>%</Typography>

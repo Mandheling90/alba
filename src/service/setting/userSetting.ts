@@ -5,13 +5,13 @@ import { EPath } from 'src/enum/userSettingEnum'
 import MResult, { MAuthDuplicate } from 'src/model/commonModel'
 import {
   MAuthAdd,
+  MAuthcolumnList,
   MAuthList,
   MAuthMenu,
   MRoleList,
   MUserArrDelete,
   MUserCompanyList,
-  MUserGroup,
-  MAuthcolumnList
+  MUserGroup
 } from 'src/model/userSetting/userSettingModel'
 import API from 'src/module/api'
 import { createDelete, createGet, createPatch, createPost, createPut } from 'src/module/reactQuery'
@@ -80,8 +80,8 @@ export const useAuthMenuList = () => {
 }
 
 export const useUserAuthcolumnList = () => {
-  return useMutation(() => {
-    return createGet<MAuthcolumnList>([EPath.AUTH_MENU_LIST])
+  return useMutation((companyNo: number) => {
+    return createGet<MAuthcolumnList>([EPath.AUTH_MENU_LIST, { companyNo }])
   }, {})
 }
 

@@ -42,7 +42,7 @@ const UserSetting: FC = (): React.ReactElement => {
 
     if (filteredList.length > 0) {
       if (selectedAuthList.type == CRUD.C) {
-        const column = await authcolumnList()
+        const column = await authcolumnList(companyNo)
 
         const columnArray: MAuthcolumnList[] = Array.isArray(column.data) ? column.data : [column.data]
         const convertedData: MAuthMenu = {

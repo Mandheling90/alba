@@ -448,3 +448,16 @@ export interface IConfigSingle {
   id: number
   changeConfigValue: string
 }
+
+export interface IAreaStatsDtoList {
+  areaId: number
+  areaName: string
+  maxCapacity: number
+  areaCount: number
+  occupancyRate: number
+  alarmLevel: number
+}
+
+export interface IAreaStatsDto {
+  areaStatsDtoList: IAreaStatsDtoList[]
+}
