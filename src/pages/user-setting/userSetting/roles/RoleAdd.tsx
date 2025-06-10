@@ -5,7 +5,7 @@ import { GridRenderCellParams } from '@mui/x-data-grid'
 import DividerBar from 'src/@core/components/atom/DividerBar'
 import DuplicateText from 'src/@core/components/molecule/DuplicateText'
 import CustomTable from 'src/@core/components/table/CustomTable'
-import { EResultCode, YN } from 'src/enum/commonEnum'
+import { CRUD, EResultCode, YN } from 'src/enum/commonEnum'
 import { useAuth } from 'src/hooks/useAuth'
 import { useLayout } from 'src/hooks/useLayout'
 import { useModal } from 'src/hooks/useModal'
@@ -29,11 +29,13 @@ const RoleAdd: FC<IRoleAddModal> = ({ data, refetch }) => {
   const [selectedAuthListName, setSelectedAuthListName] = useState('')
   const [originalAuthListName, setOriginalAuthListName] = useState('')
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false)
-  const [isDisabled, setIsDisabled] = useState(user?.userInfo?.authId === selectedAuthList.authId)
+  const [isDisabled, setIsDisabled] = useState(
+    user?.userInfo?.authId === selectedAuthList.authId || selectedAuthList.type === CRUD.V
+  )
 
   useEffect(() => {
-    setIsDisabled(user?.userInfo?.authId === selectedAuthList.authId)
-  }, [user?.userInfo?.authId, selectedAuthList.authId])
+    setIsDisabled(user?.userInfo?.authId === selectedAuthList.authId || selectedAuthList.type === CRUD.V)
+  }, [user?.userInfo?.authId, selectedAuthList.authId, selectedAuthList.type, selectedAuthList])
 
   useEffect(() => {
     if (data) {

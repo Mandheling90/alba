@@ -4,6 +4,7 @@ import { FC, useEffect, useState } from 'react'
 import BarChart from 'src/@core/components/charts/BarChart'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import PipelineTitle from 'src/@core/components/molecule/PipelineTitle'
+import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
 import {
   useCountBarChart,
@@ -19,6 +20,8 @@ const LiveDataLineChart = dynamic(() => import('src/@core/components/charts/Live
 })
 
 const Visitors: FC = ({}): React.ReactElement => {
+  const { layoutDisplay, setLayoutDisplay, companyId, companyName } = useLayout()
+
   const [hoveredPoint, setHoveredPoint] = useState('')
   const [lastCheckDate, setLastCheckDate] = useState<string>('')
   const [timeStr, setTimeStr] = useState<string | undefined>(undefined)
@@ -70,6 +73,15 @@ const Visitors: FC = ({}): React.ReactElement => {
 
   return (
     <StandardTemplate title={'방문자수 통계'}>
+      {/* <LayoutControlPanel
+        menuName='고객사'
+        companyId={companyId}
+        companyName={companyName}
+        title={'방문자수 통계'}
+        onClick={() => {
+          setLayoutDisplay(!layoutDisplay)
+        }}
+      /> */}
       <Grid container spacing={5} alignItems={'flex-end'}>
         <Grid item xs={12}>
           <PipelineTitle

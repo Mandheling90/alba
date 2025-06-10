@@ -45,7 +45,8 @@ export enum CRUD {
   C = 'C',
   R = 'R',
   U = 'U',
-  D = 'D'
+  D = 'D',
+  V = 'V' // 조회상태
 }
 
 export enum SORT {

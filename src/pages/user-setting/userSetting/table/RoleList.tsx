@@ -26,7 +26,7 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
   const { setSimpleDialogModalProps } = useModal()
 
   useEffect(() => {
-    setUserData(data.map(obj => ({ ...obj, display: true })))
+    setUserData(data.map((obj, i) => ({ ...obj, display: true, tempId: String(obj.authId) + i })))
   }, [data])
 
   const authDeleteFn = async (id: number) => {
@@ -104,9 +104,11 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
         return (
           <>
             <IconButton
-              sx={{ color: 'text.secondary' }}
+              sx={{ color: 'text.secondary', opacity: row.authId === user?.userInfo?.authId ? 0.3 : 1 }}
               disabled={row.authId === user?.userInfo?.authId}
               onClick={e => {
+                e.stopPropagation()
+                setSelectedRow(row.authId)
                 setSelectedAuthList({
                   authId: row.authId,
                   name: row.name,
@@ -119,9 +121,10 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
               <Typography sx={{ textDecoration: 'none' }}></Typography>
             </IconButton>
             <IconButton
-              sx={{ color: 'text.secondary' }}
+              sx={{ color: 'text.secondary', opacity: row.authId === user?.userInfo?.authId ? 0.3 : 1 }}
               disabled={row.authId === user?.userInfo?.authId}
               onClick={e => {
+                e.stopPropagation()
                 authDeleteFn(row.authId)
               }}
             >
@@ -161,10 +164,16 @@ const RoleList: FC<IUserList> = ({ data, refetch }) => {
           columns={columns}
           isAllView
           requireSingleSelection
-          externalCheckboxControl
+          externalCheckboxControl={false}
           initialSelectedRow={selectedRow}
-          selectRowEvent={e => {
-            // console.log(e)
+          enablePointer
+          selectRowEvent={(e: MAuthList) => {
+            setSelectedAuthList({
+              authId: e.authId,
+              name: e.name,
+              userAuthCount: e.userAuthCount,
+              type: CRUD.V
+            })
           }}
         />
 

@@ -1,13 +1,33 @@
+import styled from '@emotion/styled'
 import { AppBar, Box, Toolbar, Typography } from '@mui/material'
 import React from 'react'
 import { useLayout } from 'src/hooks/useLayout'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { AuthType } from 'src/model/commonModel'
 
+const StyledBox = styled(Box)<{ isLast?: boolean }>`
+  border: 1px solid #bbbabd;
+  border-left: 0px solid;
+  border-right: 0px solid;
+  ${props =>
+    props.isLast
+      ? `
+    border-radius: 0px 8px 8px 0px;
+    border-right: 1px solid #bbbabd;
+  `
+      : ''}
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 15px;
+`
+
 interface ILayoutControlPanel {
   menuName?: string
   companyId?: string
   companyName?: string
+  title?: string
   onClick?: () => void
 }
 
@@ -15,6 +35,7 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
   menuName = '고객사',
   companyId = 'DAINS',
   companyName = '다인스',
+  title,
   onClick
 }) => {
   const [isHovered, setIsHovered] = React.useState(false)
@@ -92,35 +113,19 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
           </Box>
 
           {/* NA01 섹션 */}
-          <Box
-            sx={{
-              border: `1px solid #BBBABD`,
-              borderLeft: `0px solid`,
-              borderRight: '0px solid ',
-              display: 'flex',
-              alignContent: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: '0px 15px'
-            }}
-          >
+          <StyledBox>
             <Typography variant='body1'>{companyId}</Typography>
-          </Box>
+          </StyledBox>
 
-          <Box
-            sx={{
-              border: `1px solid #BBBABD`,
-              borderLeft: `0px solid`,
-              borderRadius: '0px 8px 8px 0px',
-              display: 'flex',
-              alignContent: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: '0px 15px'
-            }}
-          >
+          <StyledBox isLast={!title}>
             <Typography variant='body1'>{companyName}</Typography>
-          </Box>
+          </StyledBox>
+
+          {title && (
+            <StyledBox isLast={true}>
+              <Typography variant='body1'>{title}</Typography>
+            </StyledBox>
+          )}
         </Toolbar>
       </AppBar>
     </Box>
