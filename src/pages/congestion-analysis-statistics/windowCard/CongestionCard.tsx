@@ -86,7 +86,7 @@ const CongestionCard: FC<CongestionCardProps> = ({ data, onRefresh, onDelete }) 
             </Box>
           </Box>
         ) : (
-          data.areaId
+          data.areaName
         )
       }
       iconActions={
