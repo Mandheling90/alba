@@ -35,8 +35,7 @@ const WindowCard: React.FC<WindowCardProps> = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderBottom: '1px solid',
-          borderColor: 'divider'
+          height: '57px'
         }}
       >
         <Typography
@@ -44,7 +43,8 @@ const WindowCard: React.FC<WindowCardProps> = ({
           sx={{
             fontWeight: 'bold',
             flex: 1,
-            textAlign: titleAlign
+            textAlign: titleAlign,
+            padding: '4px 10px'
           }}
         >
           {title}

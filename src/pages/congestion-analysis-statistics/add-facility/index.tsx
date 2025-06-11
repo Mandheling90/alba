@@ -125,37 +125,44 @@ const AddFacility: FC = (): React.ReactElement => {
             title={'시설 정보'}
             titleAlign='left'
             headerColor='#F9FAFC'
-            sx={{ width: '100%', height: '100%' }}
+            sx={{
+              width: '100%',
+              height: '100%',
+              '&:focus-within': { border: '2px solid #9155FD' }
+            }}
           >
             <Box sx={{ p: 2 }}>
               <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <Grid container spacing={2} alignItems='center'>
-                    <Grid item xs={4}>
-                      <Typography variant='body1'>시설 명</Typography>
-                    </Grid>
-                    <Grid item xs={8}>
-                      <TextField
-                        fullWidth
-                        size='small'
-                        placeholder='시설명을 입력해주세요'
-                        sx={{
-                          '& .MuiInputBase-input::placeholder': {
-                            color: 'error.main',
-                            opacity: 0.8
-                          }
-                        }}
-                        {...register('facilityName', { required: '시설명을 입력해주세요' })}
-                        error={!!errors.facilityName}
-                        helperText={errors.facilityName?.message}
-                      />
-                    </Grid>
+                <Grid item xs={12} container spacing={2} alignItems='center'>
+                  <Grid item xs={4}>
+                    <Typography variant='body1' sx={{ padding: '0 0 0 8px', fontSize: '0.9em' }}>
+                      시설명
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={8}>
+                    <TextField
+                      fullWidth
+                      size='small'
+                      placeholder='시설명을 입력해주세요'
+                      sx={{
+                        '& .MuiInputBase-input::placeholder': {
+                          color: 'error.main',
+                          opacity: 0.8,
+                          fontSize: '0.8em'
+                        }
+                      }}
+                      {...register('facilityName', { required: '시설명을 입력해주세요' })}
+                      error={!!errors.facilityName}
+                      helperText={errors.facilityName?.message}
+                    />
                   </Grid>
                 </Grid>
                 <Grid item xs={12}>
                   <Grid container spacing={2} alignItems='center'>
                     <Grid item xs={4}>
-                      <Typography variant='body1'>최대 수용인원수</Typography>
+                      <Typography variant='body1' sx={{ padding: '0 0 0 8px', fontSize: '0.9em' }}>
+                        최대수용인원수
+                      </Typography>
                     </Grid>
                     <Grid item xs={8}>
                       <TextField
@@ -166,7 +173,8 @@ const AddFacility: FC = (): React.ReactElement => {
                         sx={{
                           '& .MuiInputBase-input::placeholder': {
                             color: 'error.main',
-                            opacity: 0.8
+                            opacity: 0.8,
+                            fontSize: '0.8em'
                           }
                         }}
                         {...register('maxCapacity', {
@@ -185,11 +193,11 @@ const AddFacility: FC = (): React.ReactElement => {
               </Grid>
             </Box>
 
-            <Box sx={{ mt: 2 }}>
+            <Grid>
               {selectedRows.length > 0 && (
                 <CustomTable rows={selectedRows} columns={columns2} isAllView showHeader={false} />
               )}
-            </Box>
+            </Grid>
           </WindowCard>
         </Grid>
 

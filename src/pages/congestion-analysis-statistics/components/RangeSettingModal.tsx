@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material'
+import { padding } from '@mui/system'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 import { StyledTextField } from 'src/@core/styles/StyledComponents'
 import { statusLevelColorList } from 'src/enum/statisticsEnum'
@@ -79,54 +80,68 @@ const RangeSettingModal = forwardRef<RangeSettingModalRef, RangeSettingModalProp
   }))
 
   return (
-    <Box display={'flex'} flexDirection={'column'} gap={2}>
-      {[0, 1, 2, 3].map(index => (
-        <Box key={index} display={'flex'} alignItems={'center'} gap={1}>
-          <Typography
-            sx={{
-              backgroundColor: statusLevelColorList[index],
-              borderRadius: '4px',
-              padding: '10px',
-              minWidth: '60px',
-              textAlign: 'center'
-            }}
-          >
-            {index + 1}단계
-          </Typography>
-          <StyledTextField
-            value={rangeValues[index].min.toString()}
-            onChange={e => handleRangeChange(index, 'min', e.target.value)}
-            size='small'
-            inputProps={{
-              inputMode: 'numeric',
-              pattern: '[0-9]*'
-            }}
-          />{' '}
-          %
-          {index === 3 ? (
-            <Typography>이상</Typography>
-          ) : (
-            <>
-              ~
+    <Box display={'flex'} justifyContent={'center'} sx={{ padding: '20px 0' }}>
+      <Box display={'flex'} flexDirection={'column'} gap={2}>
+        {[0, 1, 2, 3].map(index => (
+          <Box key={index} display={'flex'} alignItems={'center'} gap={3}>
+            <Typography
+              sx={{
+                backgroundColor: statusLevelColorList[index],
+                borderRadius: '4px',
+                padding: '10px',
+                minWidth: '60px',
+                textAlign: 'center'
+              }}
+            >
+              {index + 1}단계
+            </Typography>
+            <Box display={'flex'} alignItems={'center'} gap={2}>
               <StyledTextField
-                value={rangeValues[index].max.toString()}
-                onChange={e => handleRangeChange(index, 'max', e.target.value)}
+                value={rangeValues[index].min.toString()}
+                onChange={e => handleRangeChange(index, 'min', e.target.value)}
                 size='small'
                 inputProps={{
                   inputMode: 'numeric',
                   pattern: '[0-9]*'
                 }}
+                sx={{ '& .MuiOutlinedInput-root': { height: '44px!important' } }}
               />{' '}
               %
-            </>
-          )}
-        </Box>
-      ))}
-      {errorMessage && (
-        <Typography color='error' sx={{ mt: 1 }}>
-          {errorMessage}
-        </Typography>
-      )}
+            </Box>
+
+            {index === 3 ? (
+              <>
+                <div style={{ width: '10px' }}></div>
+                <Box display={'flex'} justifyContent={'center'} alignItems={'center'} gap={2} minWidth={50}>
+                  <Typography>이상</Typography>
+                </Box>
+              </>
+            ) : (
+              <>
+                ~
+                <Box display={'flex'} alignItems={'center'} gap={2}>
+                  <StyledTextField
+                    value={rangeValues[index].max.toString()}
+                    onChange={e => handleRangeChange(index, 'max', e.target.value)}
+                    size='small'
+                    inputProps={{
+                      inputMode: 'numeric',
+                      pattern: '[0-9]*'
+                    }}
+                    sx={{ '& .MuiOutlinedInput-root': { height: '44px!important' } }}
+                  />{' '}
+                  %
+                </Box>
+              </>
+            )}
+          </Box>
+        ))}
+        {errorMessage && (
+          <Typography color='error' sx={{ mt: 1 }}>
+            {errorMessage}
+          </Typography>
+        )}
+      </Box>
     </Box>
   )
 })

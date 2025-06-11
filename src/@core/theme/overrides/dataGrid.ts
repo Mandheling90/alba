@@ -40,7 +40,7 @@ const DataGrid = () => {
         },
         columnHeaderTitle: {
           fontWeight: 600,
-          fontSize: '0.75rem',
+          fontSize: '0.9rem',
           letterSpacing: '0.17px',
           textTransform: 'uppercase'
         },

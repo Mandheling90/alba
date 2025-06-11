@@ -2,6 +2,7 @@ import { Typography } from '@mui/material'
 import React from 'react'
 import IconCustom from 'src/layouts/components/IconCustom'
 import ButtonHover from '../atom/ButtonHover'
+import styled from 'styled-components'
 
 interface ICustomAddCancelButton {
   onSaveClick: () => void
@@ -13,7 +14,11 @@ const CustomAddCancelButton: React.FC<ICustomAddCancelButton> = ({ onSaveClick, 
   return (
     <>
       <ButtonHover
-        display={<IconCustom isCommon path='camera' icon='save' />}
+        display={
+          <IconButton>
+            <IconCustom isCommon path='camera' icon='save' />
+          </IconButton>
+        }
         hover={
           <Typography
             component='span'
@@ -30,7 +35,11 @@ const CustomAddCancelButton: React.FC<ICustomAddCancelButton> = ({ onSaveClick, 
       />
 
       <ButtonHover
-        display={<IconCustom isCommon path='camera' icon='cancel' />}
+        display={
+          <IconButton>
+            <IconCustom isCommon path='camera' icon='cancel' />
+          </IconButton>
+        }
         hover={
           <Typography
             component='span'
@@ -58,5 +67,11 @@ const buttonStyle = {
   padding: '2px 5px',
   borderRadius: '5px'
 }
+
+const IconButton = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 0px 6px;
+`
 
 export default CustomAddCancelButton
