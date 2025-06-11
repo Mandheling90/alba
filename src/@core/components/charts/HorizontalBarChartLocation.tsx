@@ -1,5 +1,5 @@
 import Highcharts, { Chart as ChartType } from 'highcharts'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IBarChart } from 'src/model/statistics/StatisticsModel'
 import styled from 'styled-components'
 import SwitchCustom from '../atom/SwitchCustom'
@@ -15,6 +15,7 @@ interface HorizontalBarChartLocationProps {
 
 const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) => {
   const chartRef = useRef<ChartType | null>(null)
+  const [legendItems, setLegendItems] = useState<{ name: string; color: string; visible: boolean }[]>([])
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -32,41 +33,20 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
             load: function (this: ChartType) {
               if (this.series && this.series.length > 0) {
                 this.series[0].onMouseOver()
+
+                // 범례 아이템 상태 업데이트
+                const items = this.series.map(series => ({
+                  name: series.name,
+                  color: series.color?.toString() || '#000000',
+                  visible: series.visible
+                }))
+                setLegendItems(items)
               }
             }
           }
         },
         legend: {
-          enabled: true,
-          align: 'right',
-          verticalAlign: 'top',
-          useHTML: true,
-          layout: 'horizontal',
-          maxHeight: 45,
-          itemWidth: 110,
-          itemStyle: {
-            textOverflow: 'ellipsis',
-            padding: '0px 0px 6px 0px'
-          },
-          navigation: {
-            activeColor: '#3E576F',
-            animation: true,
-            arrowSize: 12,
-            inactiveColor: '#CCC',
-            style: {
-              fontWeight: 'bold',
-              color: '#333',
-              fontSize: '12px',
-              position: 'absolute'
-            }
-          },
-
-          x: 40,
-
-          symbolWidth: 12,
-          symbolHeight: 12,
-          itemDistance: 10,
-          padding: 5
+          enabled: false // 기본 범례 비활성화
         },
         xAxis: {
           categories: data.xcategories,
@@ -120,12 +100,32 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
     }
   }, [data])
 
+  const handleLegendClick = (index: number) => {
+    if (chartRef.current) {
+      const series = chartRef.current.series[index]
+      series.setVisible(!series.visible, false)
+      chartRef.current.redraw()
+
+      // 범례 상태 업데이트
+      setLegendItems(prev => prev.map((item, i) => (i === index ? { ...item, visible: !item.visible } : item)))
+    }
+  }
+
   const handleSwitchChange = (selected: boolean) => {
     if (chartRef.current) {
+      // selected가 true면 전체 표시, false면 전체 숨김
       chartRef.current.series.forEach((s: Highcharts.Series) => {
         s.setVisible(selected, false)
       })
       chartRef.current.redraw()
+
+      // 범례 상태도 함께 업데이트
+      setLegendItems(prev =>
+        prev.map(item => ({
+          ...item,
+          visible: selected
+        }))
+      )
     }
   }
 
@@ -139,8 +139,9 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
           }
         `}
         </style>
-        <div id='location-chart-container' style={{ width: '100%', height: '100%' }} />
-        <div style={{ position: 'absolute', top: '10px', left: '20px' }}>
+        <div id='location-chart-container' style={{ width: '100%', height: 'calc(100% - 40px)' }} />
+
+        <TopControlsContainer>
           <SwitchCustom
             width={60}
             switchName={['전체', '개별']}
@@ -149,7 +150,22 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
             superSelected={false}
             onChange={selected => handleSwitchChange(selected)}
           />
-        </div>
+        </TopControlsContainer>
+
+        <LegendContainer>
+          <LegendWrapper>
+            {legendItems.map((item, index) => (
+              <LegendItem
+                key={index}
+                onClick={() => handleLegendClick(index)}
+                style={{ opacity: item.visible ? 1 : 0.3 }}
+              >
+                <LegendColor style={{ backgroundColor: item.color }} />
+                <LegendText>{item.name}</LegendText>
+              </LegendItem>
+            ))}
+          </LegendWrapper>
+        </LegendContainer>
       </div>
     </ChartWrapper>
   )
@@ -159,6 +175,72 @@ const ChartWrapper = styled.div`
   .highcharts-credits {
     display: none;
   }
+`
+
+const TopControlsContainer = styled.div`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 2;
+`
+
+const LegendContainer = styled.div`
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background-color: white;
+  z-index: 1;
+  padding-left: 100px; /* SwitchCustom을 위한 여백을 컨테이너 레벨에서 처리 */
+`
+
+const LegendWrapper = styled.div`
+  display: flex;
+  overflow-x: auto;
+  padding: 10px;
+  gap: 15px;
+  align-items: center;
+  justify-content: flex-start; /* 중앙 정렬 대신 왼쪽 정렬로 변경 */
+  width: 100%;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 2px;
+  }
+`
+
+const LegendItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+`
+
+const LegendColor = styled.div`
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+`
+
+const LegendText = styled.span`
+  font-size: 12px;
+  color: #333;
 `
 
 export default HorizontalBarChartLocation
