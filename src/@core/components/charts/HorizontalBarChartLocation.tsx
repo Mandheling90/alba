@@ -139,33 +139,34 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
           }
         `}
         </style>
+        <TopContainer>
+          <TopControlsContainer>
+            <SwitchCustom
+              width={60}
+              switchName={['전체', '개별']}
+              activeColor={['rgba(145, 85, 253, 1)', 'rgba(145, 85, 253, 1)']}
+              selected={true}
+              superSelected={false}
+              onChange={selected => handleSwitchChange(selected)}
+            />
+          </TopControlsContainer>
+          <LegendContainer>
+            <LegendWrapper>
+              {legendItems.map((item, index) => (
+                <LegendItem
+                  key={index}
+                  onClick={() => handleLegendClick(index)}
+                  style={{ opacity: item.visible ? 1 : 0.3 }}
+                >
+                  <LegendColor style={{ backgroundColor: item.color }} />
+                  <LegendText>{item.name}</LegendText>
+                </LegendItem>
+              ))}
+            </LegendWrapper>
+          </LegendContainer>
+        </TopContainer>
+
         <div id='location-chart-container' style={{ width: '100%', height: 'calc(100% - 40px)' }} />
-
-        <TopControlsContainer>
-          <SwitchCustom
-            width={60}
-            switchName={['전체', '개별']}
-            activeColor={['rgba(145, 85, 253, 1)', 'rgba(145, 85, 253, 1)']}
-            selected={true}
-            superSelected={false}
-            onChange={selected => handleSwitchChange(selected)}
-          />
-        </TopControlsContainer>
-
-        <LegendContainer>
-          <LegendWrapper>
-            {legendItems.map((item, index) => (
-              <LegendItem
-                key={index}
-                onClick={() => handleLegendClick(index)}
-                style={{ opacity: item.visible ? 1 : 0.3 }}
-              >
-                <LegendColor style={{ backgroundColor: item.color }} />
-                <LegendText>{item.name}</LegendText>
-              </LegendItem>
-            ))}
-          </LegendWrapper>
-        </LegendContainer>
       </div>
     </ChartWrapper>
   )
@@ -176,34 +177,22 @@ const ChartWrapper = styled.div`
     display: none;
   }
 `
+const TopContainer = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  column-gap: 14px;
+  margin-bottom: 4px;
+`
 
 const TopControlsContainer = styled.div`
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 2;
+  width: auto;
 `
 
 const LegendContainer = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 0;
-  right: 0;
-  height: 40px;
-  background-color: white;
-  z-index: 1;
-  padding-left: 100px; /* SwitchCustom을 위한 여백을 컨테이너 레벨에서 처리 */
-`
-
-const LegendWrapper = styled.div`
-  display: flex;
+  flex: 1;
   overflow-x: auto;
-  padding: 10px;
-  gap: 15px;
-  align-items: center;
-  justify-content: flex-start; /* 중앙 정렬 대신 왼쪽 정렬로 변경 */
-  width: 100%;
-
+  background-color: white;
   &::-webkit-scrollbar {
     height: 4px;
   }
@@ -218,14 +207,29 @@ const LegendWrapper = styled.div`
   }
 `
 
+const LegendWrapper = styled.div`
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+`
+
 const LegendItem = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
   cursor: pointer;
   white-space: nowrap;
-  padding: 4px 8px;
+  padding: 4px 0;
   border-radius: 4px;
+
+  &:first-child {
+    margin-left: auto;
+  }
+  &:last-child {
+    margin-right: auto;
+  }
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);

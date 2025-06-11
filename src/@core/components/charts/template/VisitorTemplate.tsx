@@ -29,7 +29,7 @@ const VisitorTemplate: FC<{
 
   return (
     <StandardTemplate title={'방문자수 통계'}>
-      <Grid container spacing={5} alignItems={'flex-end'}>
+      <Grid container spacing={5} alignItems={'strech'}>
         <Grid item sm={12} xs={12}>
           <Box sx={{ mb: 3 }}>
             <DashboardMenu statisticsReq={statisticsReq} refetch={refetch} />
@@ -70,7 +70,9 @@ const VisitorTemplate: FC<{
               <Card>{barPieChartData && <HorizontalBarChartLocation data={barPieChartData.barChart} />}</Card>
             </Grid>
             <Grid item xs={3}>
-              <Card> {barPieChartData && <PieChart data={barPieChartData.pieChart} />} </Card>
+              <Card sx={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center' }}>
+                {barPieChartData && <PieChart data={barPieChartData.pieChart} />}
+              </Card>
             </Grid>
           </>
         )}

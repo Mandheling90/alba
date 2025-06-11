@@ -65,6 +65,7 @@ const PieChart = memo(({ data }: { data: IPieChart }) => {
 PieChart.displayName = 'PieChart'
 
 const ChartWrapper = styled.div`
+  width: 100%;
   .highcharts-credits {
     display: none;
   }
