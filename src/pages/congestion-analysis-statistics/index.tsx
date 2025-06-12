@@ -38,14 +38,14 @@ const CongestionAnalysisStatistics: FC = (): React.ReactElement => {
 
   const handleRefresh = async (areaId: number) => {
     try {
-      const response = await axios.delete(`http://210.216.236.181:12708/area/${areaId}/data`)
+      const response = await axios.put(`http://210.216.236.181:12708/area/${areaId}/instance/status`)
       if (response.status === 200) {
-        console.log('삭제 성공')
+        console.log('리플래시 성공')
 
         // 삭제 후 데이터 새로고침 로직 추가 가능
       }
     } catch (error) {
-      console.error('삭제 중 오류 발생:', error)
+      console.error('리플래시 중 오류 발생:', error)
     }
   }
 
