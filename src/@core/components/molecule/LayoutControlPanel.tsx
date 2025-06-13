@@ -43,7 +43,7 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
 
   return (
     <Box>
-      <AppBar position='static' color='inherit' elevation={0}>
+      <AppBar position='static' sx={{ backgroundColor: 'transparent' }} elevation={0}>
         <Toolbar
           sx={{
             display: 'flex',
@@ -123,7 +123,9 @@ const LayoutControlPanel: React.FC<ILayoutControlPanel> = ({
 
           {title && (
             <StyledBox isLast={true}>
-              <Typography variant='body1'>{title}</Typography>
+              <Typography variant='body1' fontWeight={800}>
+                {title}
+              </Typography>
             </StyledBox>
           )}
         </Toolbar>

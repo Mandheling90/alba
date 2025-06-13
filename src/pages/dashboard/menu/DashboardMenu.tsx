@@ -63,7 +63,7 @@ const DashboardMenu: FC<IDashboardMenu> = ({ refetch, useAgeSelect = false, stat
 
   return (
     <HorizontalScrollBox>
-      <CameraGroupSelect value={selectedValues} onChange={handleCameraChange} />
+      <CameraGroupSelect value={selectedValues} onChange={handleCameraChange} companyNo={statisticsReq.companyNo} />
 
       <FlexBox>
         <Typography variant='h6' fontWeight={500}>

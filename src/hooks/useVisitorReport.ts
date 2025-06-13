@@ -4,6 +4,7 @@ import { ETableType, IStatisticsContextReq } from 'src/context/StatisticsContext
 import { EStatisticsPage } from 'src/enum/statisticsEnum'
 import { useStatistics } from 'src/hooks/useStatistics'
 import { ICountBarChart, ICountBarPieChart, ITableData } from 'src/model/statistics/StatisticsModel'
+import { useSearchCameraListMutation } from 'src/service/statistics/statisticsService'
 
 interface UseVisitorReportProps {
   page: EStatisticsPage
@@ -43,6 +44,8 @@ export const useVisitorReport = ({
   const [barTableData, setBarTableData] = useState<ITableData>()
   const [currentStatistics, setCurrentStatistics] = useState<IStatisticsContextReq>()
 
+  const { mutateAsync: searchCameraList } = useSearchCameraListMutation()
+
   const fetchData = useCallback(
     async (req?: IStatisticsContextReq) => {
       const today = new Date()
@@ -58,6 +61,23 @@ export const useVisitorReport = ({
 
       if (req) {
         statistics = req
+
+        // 기존 통계 요청에서 현재 페이지의 요청 찾기
+        const existingPage = statisticsReq.find(item => item.page === page)
+
+        // companyNo가 변경되었는지 확인
+        const isCompanyNoChanged = existingPage?.companyNo !== req.companyNo
+
+        if (isCompanyNoChanged) {
+          // companyNo가 변경된 경우 새로운 통계 요청 생성
+          const cameraListRes = await searchCameraList({ companyNo: req.companyNo ?? 0 })
+
+          statistics = {
+            ...req,
+            cameraNos: cameraListRes.data.cameraList.map(camera => camera.cameraNo)
+          }
+        }
+
         statisticsReqUpdate({
           ...req,
           page: page

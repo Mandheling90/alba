@@ -276,6 +276,7 @@ export interface IStatisticsReq {
   startTime?: string
   endTime?: string
   ageType?: string
+  companyNo?: number
 }
 
 export interface ICountBarChart extends IBaseChartResponse {

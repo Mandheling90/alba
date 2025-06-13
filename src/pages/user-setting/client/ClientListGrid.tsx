@@ -9,7 +9,11 @@ import { AuthType } from 'src/model/commonModel'
 import ClientSimpleList from 'src/pages/user-setting/client/table/ClientSimpleList'
 import { useCompanySearchList } from 'src/service/client/clientService'
 
-const ClientListGrid: FC = (): React.ReactElement => {
+interface ClientListGridProps {
+  onChange?: (any: any) => void
+}
+
+const ClientListGrid: FC<ClientListGridProps> = ({ onChange }): React.ReactElement => {
   const { user } = useAuth()
   const { setLayoutDisplay } = useLayout()
 
@@ -22,6 +26,8 @@ const ClientListGrid: FC = (): React.ReactElement => {
     setCompanyNo(row.companyNo)
     setCompanyId(row.companyId)
     setCompanyName(row.companyName)
+
+    onChange?.(row)
   }
 
   useEffect(() => {
@@ -30,12 +36,13 @@ const ClientListGrid: FC = (): React.ReactElement => {
     }
   }, [user?.userInfo?.authId])
 
-  const filteredData =
-    data?.data?.filter(
-      item =>
-        item.companyId?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        item.companyName?.toLowerCase().includes(searchKeyword.toLowerCase())
-    ) ?? []
+  const filteredData = Array.isArray(data?.data)
+    ? data.data.filter(
+        item =>
+          item.companyId?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+          item.companyName?.toLowerCase().includes(searchKeyword.toLowerCase())
+      )
+    : []
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>

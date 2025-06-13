@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useState } from 'react'
-import { useAuth } from 'src/hooks/useAuth'
+import { useLayout } from 'src/hooks/useLayout'
 import { IStatisticsReq } from 'src/model/statistics/StatisticsModel'
 import { useSearchCameraListMutation } from 'src/service/statistics/statisticsService'
 
@@ -43,38 +43,28 @@ type Props = {
 }
 
 const StatisticsProvider = ({ children }: Props) => {
-  const { user } = useAuth()
+  const { companyNo } = useLayout()
   const { mutateAsync: searchCameraList } = useSearchCameraListMutation()
 
   const [statisticsReq, setStatisticsReq] = useState<IStatisticsContextReq[]>(defaultProvider.statisticsReq)
 
   const statisticsDefultSet = async (newStatisticsReq: IStatisticsContextReq) => {
-    // 동일한 page가 이미 존재하는지 확인
-    // const existingPage = statisticsReq.find(req => req.page === newStatisticsReq.page)
-
-    // if (existingPage) {
-    //   return existingPage
-    // }
-
-    const req = await searchCameraList({ companyNo: user?.userInfo?.companyNo ?? 0 })
+    const req = await searchCameraList({ companyNo: companyNo })
 
     const newStatistics = {
       ...newStatisticsReq,
       startTime: '00',
       endTime: '24',
       cameraNos: req?.data?.cameraList ? req.data.cameraList.map(camera => camera.cameraNo) : [],
-      ageType: 'ALL'
+      ageType: 'ALL',
+      companyNo: companyNo
     }
-
-    // setStatisticsReq(prev => [...prev, newStatistics])
 
     return newStatistics
   }
 
   const statisticsReqUpdate = async (newStatisticsReq: IStatisticsContextReq) => {
     const existingPage = statisticsReq.find(req => req.page === newStatisticsReq.page)
-
-    console.log(existingPage)
 
     if (existingPage) {
       setStatisticsReq(prev =>

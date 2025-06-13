@@ -9,6 +9,7 @@ import {
   IHeatMapChart,
   IPyramidPieChart
 } from 'src/model/statistics/StatisticsModel'
+import { useSearchCameraListMutation } from 'src/service/statistics/statisticsService'
 
 interface UseVisitorAttributesReportProps {
   page: EStatisticsPage
@@ -54,6 +55,8 @@ export const useVisitorAttributesReport = ({
   const [tableData, setTableData] = useState<IAgeGenderStatisticsTableResponse>()
   const [currentStatistics, setCurrentStatistics] = useState<IStatisticsContextReq>()
 
+  const { mutateAsync: searchCameraList } = useSearchCameraListMutation()
+
   const fetchData = useCallback(
     async (req?: IStatisticsContextReq) => {
       const today = new Date()
@@ -69,8 +72,25 @@ export const useVisitorAttributesReport = ({
 
       if (req) {
         statistics = req
+
+        // 기존 통계 요청에서 현재 페이지의 요청 찾기
+        const existingPage = statisticsReq.find(item => item.page === page)
+
+        // companyNo가 변경되었는지 확인
+        const isCompanyNoChanged = existingPage?.companyNo !== req.companyNo
+
+        if (isCompanyNoChanged) {
+          // companyNo가 변경된 경우 새로운 통계 요청 생성
+          const cameraListRes = await searchCameraList({ companyNo: req.companyNo ?? 0 })
+
+          statistics = {
+            ...req,
+            cameraNos: cameraListRes.data.cameraList.map(camera => camera.cameraNo)
+          }
+        }
+
         statisticsReqUpdate({
-          ...req,
+          ...statistics,
           page: page
         })
       } else {
@@ -120,7 +140,8 @@ export const useVisitorAttributesReport = ({
       daysToSubtract,
       useSameDay,
       startDate,
-      endDate
+      endDate,
+      statisticsReq
     ]
   )
 

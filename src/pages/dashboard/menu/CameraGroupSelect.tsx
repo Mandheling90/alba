@@ -1,18 +1,17 @@
 import { Box, Typography } from '@mui/material'
 import { FC } from 'react'
 import CustomSelectCheckBox from 'src/@core/components/molecule/CustomSelectCheckBox'
-import { useAuth } from 'src/hooks/useAuth'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { useSearchCameraList } from 'src/service/statistics/statisticsService'
 
 interface ICameraGroupSelect {
   value: string[]
   onChange: (cameraNos: number[], cameraGroupIds: number[]) => void
+  companyNo?: number
 }
 
-const CameraGroupSelect: FC<ICameraGroupSelect> = ({ value, onChange }) => {
-  const { user } = useAuth()
-  const { data: cameraList } = useSearchCameraList({ companyNo: user?.userInfo?.companyNo ?? 0 })
+const CameraGroupSelect: FC<ICameraGroupSelect> = ({ value, onChange, companyNo }) => {
+  const { data: cameraList } = useSearchCameraList({ companyNo: companyNo ?? 0 })
 
   const handleChange = (event: any, newSelectedValues: string[]) => {
     const addedValue = newSelectedValues.find(v => !value.includes(v))

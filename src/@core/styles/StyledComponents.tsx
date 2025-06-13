@@ -9,7 +9,7 @@ export const HorizontalScrollBox = styled(Box)`
   max-height: 120px;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 16px 0;
+  padding: 6px 0px 0px 0px;
 
   &::-webkit-scrollbar {
     height: 8px;
