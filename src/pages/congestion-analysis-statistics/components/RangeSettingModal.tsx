@@ -1,8 +1,10 @@
 import { Box, Typography } from '@mui/material'
 import { padding } from '@mui/system'
+import { useModal } from 'src/hooks/useModal'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 import { StyledTextField } from 'src/@core/styles/StyledComponents'
 import { statusLevelColorList } from 'src/enum/statisticsEnum'
+import styled from 'styled-components'
 
 interface RangeValue {
   min: number
@@ -25,6 +27,7 @@ const RangeSettingModal = forwardRef<RangeSettingModalRef, RangeSettingModalProp
     { min: 31, max: 100 }
   ])
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const { setSimpleDialogModalProps } = useModal()
 
   const validateRanges = (ranges: RangeValue[]): boolean => {
     // min이 max보다 큰 경우 체크
@@ -71,6 +74,15 @@ const RangeSettingModal = forwardRef<RangeSettingModalRef, RangeSettingModalProp
 
       return true
     }
+
+    setSimpleDialogModalProps({
+      open: true,
+      isConfirm: false,
+      size: 'small',
+      title: <CustomModalTitle>점유율 단계 설정 오류</CustomModalTitle>,
+      contents: '각 단계의 시작값과 종료값이 다른 단계와 겹치지 않도록 설정해주세요',
+      confirmText: '확인'
+    })
 
     return false
   }
@@ -147,5 +159,16 @@ const RangeSettingModal = forwardRef<RangeSettingModalRef, RangeSettingModalProp
 })
 
 RangeSettingModal.displayName = 'RangeSettingModal'
+
+const CustomModalTitle = styled.span`
+  display: inline-block;
+  font-size: 20px;
+  color: #5e5b65;
+  margin: 0 auto;
+  font-weight: 600;
+  padding-left: 30px;
+  min-height: 24px;
+  background: center left / 24px url('/images/caution/ALM0000005.svg') no-repeat;
+`
 
 export default RangeSettingModal

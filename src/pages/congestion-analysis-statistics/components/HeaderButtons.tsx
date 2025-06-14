@@ -4,6 +4,7 @@ import { FC, useRef } from 'react'
 import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
 import RangeSettingModal, { RangeSettingModalRef } from './RangeSettingModal'
+import styled from 'styled-components'
 
 const HeaderButtons: FC = (): React.ReactElement => {
   const { setSimpleDialogModalProps } = useModal()
@@ -30,7 +31,7 @@ const HeaderButtons: FC = (): React.ReactElement => {
             open: true,
             isConfirm: true,
             size: 'small',
-            title: '점유율 단계 설정',
+            title: <CustomModalTitle>점유율 단계 설정</CustomModalTitle>,
             contents: <RangeSettingModal ref={modalRef} onConfirm={ranges => console.log('저장된 범위:', ranges)} />,
             confirmFn: () => {
               const isValid = modalRef.current?.handleConfirm()
@@ -46,5 +47,13 @@ const HeaderButtons: FC = (): React.ReactElement => {
     </Box>
   )
 }
+
+const CustomModalTitle = styled.span`
+  font-size: 20px;
+  color: #5e5b65;
+  max-width: 260px;
+  margin: 0 auto;
+  font-weight: 600;
+`
 
 export default HeaderButtons

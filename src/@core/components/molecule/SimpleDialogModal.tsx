@@ -4,7 +4,7 @@ import DialogCustomContent from './DialogCustomContent'
 
 export interface IDialogProps {
   open: boolean
-  title: string
+  title: string | React.ReactNode
   contents?: string | React.ReactNode
   confirmFn?: () => void
   isConfirm?: boolean
@@ -28,7 +28,7 @@ interface ModalProps {
   open: boolean
   onClose: () => void
   onConfirm?: () => boolean | void
-  title?: string
+  title?: string | React.ReactNode
   contents?: string | React.ReactNode
   buttonText?: string
   isConfirm?: boolean
@@ -81,7 +81,7 @@ const SimpleDialogModal: React.FC<ModalProps> = ({
           <Typography
             id='modal-title'
             variant='body1'
-            sx={{ color: 'rgba(58, 53, 65, 0.6)', fontSize: 20, fontWeight: 500 }}
+            sx={{ color: 'rgba(94,91,101,1)', fontSize: 20, fontWeight: 500 }}
           >
             {title}
           </Typography>
@@ -93,7 +93,7 @@ const SimpleDialogModal: React.FC<ModalProps> = ({
           (typeof contents === 'string' ? (
             <Typography
               id='modal-description'
-              sx={{ mt: 2, color: 'rgba(58, 53, 65, 0.6)', fontSize: 16, fontWeight: 400 }}
+              sx={{ mt: 2, color: 'rgba(94,91,101,1)', fontSize: 16, fontWeight: 400 }}
             >
               {contents.split('\n').map((line, index) => (
                 <React.Fragment key={index}>

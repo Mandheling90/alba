@@ -8,6 +8,7 @@ import IconCustom from 'src/layouts/components/IconCustom'
 import { IAreaStatsDtoList } from 'src/model/statistics/StatisticsModel'
 import AnimatedNumber from './AnimatedNumber'
 import WindowCard from './WindowCard'
+import styled from 'styled-components'
 
 interface CongestionCardProps {
   data: IAreaStatsDtoList
@@ -49,8 +50,6 @@ const CongestionCard: FC<CongestionCardProps> = ({ data, onRefresh, onDelete }) 
     }
   }
 
-  console.log(data)
-
   return (
     <WindowCard
       title={
@@ -77,7 +76,7 @@ const CongestionCard: FC<CongestionCardProps> = ({ data, onRefresh, onDelete }) 
                   if (editedTitle === '' || editedMaxCapacity === '' || Number(editedMaxCapacity) <= 0) {
                     setSimpleDialogModalProps({
                       open: true,
-                      title: '시설 정보 저장 오류',
+                      title: <CustomModalTitle>시설 정보 저장 오류</CustomModalTitle>,
                       contents: `필수 입력 항목인 '시설명' 입력 후 중복확인이 되어야 하고,  '최대수용인원수'가 입력되어야 하며, 최소 한개 이상의 영역이 추가되어야 시설정보가 저장될 수 있습니다.`
                     })
                   } else {
@@ -205,5 +204,16 @@ const CongestionCard: FC<CongestionCardProps> = ({ data, onRefresh, onDelete }) 
     </WindowCard>
   )
 }
+
+const CustomModalTitle = styled.span`
+  display: inline-block;
+  font-size: 20px;
+  color: #5e5b65;
+  margin: 0 auto;
+  font-weight: 600;
+  padding-left: 30px;
+  min-height: 24px;
+  background: center left / 24px url('/images/caution/ALM0000005.svg') no-repeat;
+`
 
 export default CongestionCard
