@@ -7,7 +7,7 @@ interface Option {
   value: string
   label: string
   children?: Option[]
-  disabled?: boolean
+  forceChecked?: boolean
 }
 
 interface ICustomSelectBox {
@@ -21,6 +21,8 @@ interface ICustomSelectBox {
   width?: string
   renderValue?: string
   renderIcone?: React.ReactNode
+  forceChecked?: boolean
+  onChangeAll?: (checked: boolean) => void
 }
 
 const CustomSelectCheckBox: FC<ICustomSelectBox> = ({
@@ -33,7 +35,8 @@ const CustomSelectCheckBox: FC<ICustomSelectBox> = ({
   border = true,
   width,
   renderValue,
-  renderIcone
+  renderIcone,
+  onChangeAll
 }) => {
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
 
@@ -62,16 +65,23 @@ const CustomSelectCheckBox: FC<ICustomSelectBox> = ({
           <Box display='flex' alignItems='center' sx={isChild ? { m: 2, ml: 5 } : {}}>
             {!isChild && (
               <Checkbox
-                checked={value.includes(option.value)}
-                disabled={option.disabled}
+                checked={option.key === 'all' ? option.forceChecked : value.includes(option.value)}
                 onChange={e => {
+                  if (option.key === 'all') {
+                    onChangeAll?.(e.target.checked)
+
+                    return
+                  }
+
                   const newValue = e.target.checked ? [...value, option.value] : value.filter(v => v !== option.value)
+
                   const event = {
                     target: {
                       value: newValue,
                       name: ''
                     }
                   } as unknown as SelectChangeEvent
+
                   onChange(event, newValue)
                 }}
               />

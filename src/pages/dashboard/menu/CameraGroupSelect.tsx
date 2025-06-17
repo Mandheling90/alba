@@ -55,6 +55,15 @@ const CameraGroupSelect: FC<ICameraGroupSelect> = ({ value, onChange, companyNo 
     onChange(cameraIds, groupIds)
   }
 
+  // 전체선택 상태 확인
+  const isAllSelected = () => {
+    const allCameraIds = (cameraList?.data?.cameraList || []).map(camera => camera.cameraNo.toString())
+    const allGroupIds = (cameraList?.data?.cameraGroupList || []).map(group => group.cameraGroupId.toString())
+    const allIds = [...allCameraIds, ...allGroupIds]
+
+    return allIds.length > 0 && allIds.every(id => value.includes(id))
+  }
+
   return (
     <Box display={'flex'} alignItems={'center'} gap={2}>
       <Typography variant='h6' fontWeight={500}>
@@ -64,7 +73,22 @@ const CameraGroupSelect: FC<ICameraGroupSelect> = ({ value, onChange, companyNo 
         width='185px'
         value={value}
         onChange={handleChange}
+        onChangeAll={(checked: boolean) => {
+          if (checked) {
+            const allCameraIds = (cameraList?.data?.cameraList || []).map(camera => camera.cameraNo.toString())
+            const allGroupIds = (cameraList?.data?.cameraGroupList || []).map(group => group.cameraGroupId.toString())
+            onChange(allCameraIds.map(Number), allGroupIds.map(Number))
+          } else {
+            onChange([], [])
+          }
+        }}
         options={[
+          {
+            key: 'all',
+            value: 'all',
+            label: '전체선택',
+            forceChecked: isAllSelected()
+          },
           ...(cameraList?.data?.cameraList || []).map(camera => ({
             key: camera.cameraNo.toString(),
             value: camera.cameraNo.toString(),
