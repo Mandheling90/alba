@@ -1,10 +1,8 @@
-import { Box, Card, IconButton, SxProps, Typography } from '@mui/material'
+import { Box, Card, SxProps, Typography } from '@mui/material'
 import { ReactNode } from 'react'
 
 interface IconAction {
   icon: ReactNode
-  onClick: () => void
-  tooltip?: string
 }
 
 interface WindowCardProps {
@@ -14,6 +12,8 @@ interface WindowCardProps {
   titleAlign?: 'left' | 'center'
   headerColor?: string
   sx?: SxProps
+  isRefreshOpen?: boolean
+  setIsRefreshOpen?: () => void
 }
 
 const WindowCard: React.FC<WindowCardProps> = ({
@@ -22,7 +22,9 @@ const WindowCard: React.FC<WindowCardProps> = ({
   children,
   titleAlign = 'left',
   headerColor = 'primary.main',
-  sx
+  sx,
+  isRefreshOpen,
+  setIsRefreshOpen
 }) => {
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', width: '350px', ...sx }}>
@@ -56,22 +58,7 @@ const WindowCard: React.FC<WindowCardProps> = ({
             ml: titleAlign === 'center' ? 'auto' : 0
           }}
         >
-          {iconActions.map((action, index) => (
-            <IconButton
-              key={index}
-              size='small'
-              onClick={action.onClick}
-              title={action.tooltip}
-              sx={{
-                color: 'white',
-                '&:hover': {
-                  bgcolor: 'rgba(255, 255, 255, 0.1)'
-                }
-              }}
-            >
-              {action.icon}
-            </IconButton>
-          ))}
+          {iconActions.map((action, index) => action.icon)}
         </Box>
       </Box>
 

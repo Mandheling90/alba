@@ -1,14 +1,15 @@
-import { Box, TextField, Typography } from '@mui/material'
+import { Box, IconButton, TextField, Typography } from '@mui/material'
 import { FC, useEffect, useState } from 'react'
+import CustomTooltip from 'src/@core/components/atom/CustomTooltip'
 import CustomAddCancelButton from 'src/@core/components/molecule/CustomAddCancelButton'
 import { StyledTextField } from 'src/@core/styles/StyledComponents'
 import { statusLevelColorList } from 'src/enum/statisticsEnum'
 import { useModal } from 'src/hooks/useModal'
 import IconCustom from 'src/layouts/components/IconCustom'
 import { IAreaStatsDtoList } from 'src/model/statistics/StatisticsModel'
+import styled from 'styled-components'
 import AnimatedNumber from './AnimatedNumber'
 import WindowCard from './WindowCard'
-import styled from 'styled-components'
 
 interface CongestionCardProps {
   data: IAreaStatsDtoList
@@ -50,6 +51,8 @@ const CongestionCard: FC<CongestionCardProps> = ({ data, onRefresh, onDelete }) 
     }
   }
 
+  const [isRefreshOpen, setIsRefreshOpen] = useState(false)
+
   return (
     <WindowCard
       title={
@@ -61,16 +64,18 @@ const CongestionCard: FC<CongestionCardProps> = ({ data, onRefresh, onDelete }) 
               <CustomAddCancelButton
                 text={['적용', '취소']}
                 onCancelClick={() => {
-                  setSimpleDialogModalProps({
-                    open: true,
-                    size: 'small',
-                    title: '취소 확인',
-                    contents: `저장되지 않은 모든 정보가 삭제됩니다. \r\n 정말 취소하시겠습니까?`,
-                    isConfirm: true,
-                    confirmFn: () => {
-                      setIsEditing(false)
-                    }
-                  })
+                  setIsEditing(false)
+
+                  // setSimpleDialogModalProps({
+                  //   open: true,
+                  //   size: 'small',
+                  //   title: '취소 확인',
+                  //   contents: `저장되지 않은 모든 정보가 삭제됩니다. \r\n 정말 취소하시겠습니까?`,
+                  //   isConfirm: true,
+                  //   confirmFn: () => {
+                  //     setIsEditing(false)
+                  //   }
+                  // })
                 }}
                 onSaveClick={() => {
                   if (editedTitle === '' || editedMaxCapacity === '' || Number(editedMaxCapacity) <= 0) {
@@ -95,46 +100,93 @@ const CongestionCard: FC<CongestionCardProps> = ({ data, onRefresh, onDelete }) 
           ? []
           : [
               {
-                icon: <IconCustom isCommon icon='reset' style={{ width: '20px' }} />,
-                onClick: () => {
-                  onRefresh?.(data.areaId)
-                },
-                tooltip: '새로고침'
+                icon: (
+                  <CustomTooltip
+                    title='카운터가 리셋되었습니다'
+                    open={isRefreshOpen}
+                    placement='bottom'
+                    isToast
+                    onClose={() => setIsRefreshOpen(false)}
+                  >
+                    <IconButton
+                      size='small'
+                      onClick={() => {
+                        onRefresh?.(data.areaId)
+                        setIsRefreshOpen(true)
+                      }}
+                      title='새로고침'
+                      sx={{
+                        color: 'white',
+                        '&:hover': {
+                          bgcolor: 'rgba(255, 255, 255, 0.1)'
+                        }
+                      }}
+                    >
+                      <IconCustom isCommon icon='reset' style={{ width: '20px' }} />
+                    </IconButton>
+                  </CustomTooltip>
+                )
               },
               {
-                icon: <IconCustom isCommon icon='Edit' style={{ width: '20px' }} />,
-                onClick: handleEditClick,
-                tooltip: '수정'
-              },
-              {
-                icon: <IconCustom isCommon icon='DeleteOutline' style={{ width: '20px' }} />,
-                onClick: () => {
-                  setSimpleDialogModalProps({
-                    open: true,
-                    title: '시설정보 삭제 확인',
-                    contents: `선택하신 시설 정보를 정말 삭제하시겠습니까? \r\n 삭제 시 시설 정보 및 시설 관련 통계 데이터 모두 삭제됩니다.`,
-                    isConfirm: true,
-                    confirmFn: () => {
-                      if (onDelete) {
-                        onDelete()
+                icon: (
+                  <IconButton
+                    size='small'
+                    onClick={handleEditClick}
+                    title='수정'
+                    sx={{
+                      color: 'white',
+                      '&:hover': {
+                        bgcolor: 'rgba(255, 255, 255, 0.1)'
                       }
-                      setTimeout(() => {
-                        setSimpleDialogModalProps({
-                          open: true,
-                          size: 'small',
-                          title: '시설정보 삭제 확인',
-                          contents: `선택하신 시설 정보가 삭제되었습니다.`
-                        })
-                      }, 100)
-                    }
-                  })
-                },
-                tooltip: '삭제'
+                    }}
+                  >
+                    <IconCustom isCommon icon='Edit' style={{ width: '20px' }} />
+                  </IconButton>
+                )
+              },
+              {
+                icon: (
+                  <IconButton
+                    size='small'
+                    onClick={() => {
+                      setSimpleDialogModalProps({
+                        open: true,
+                        title: '시설정보 삭제 확인',
+                        contents: `선택하신 시설 정보를 정말 삭제하시겠습니까? \r\n 삭제 시 시설 정보 및 시설 관련 통계 데이터 모두 삭제됩니다.`,
+                        isConfirm: true,
+                        confirmFn: () => {
+                          if (onDelete) {
+                            onDelete()
+                          }
+                          setTimeout(() => {
+                            setSimpleDialogModalProps({
+                              open: true,
+                              size: 'small',
+                              title: '시설정보 삭제 확인',
+                              contents: `선택하신 시설 정보가 삭제되었습니다.`
+                            })
+                          }, 100)
+                        }
+                      })
+                    }}
+                    title='삭제'
+                    sx={{
+                      color: 'white',
+                      '&:hover': {
+                        bgcolor: 'rgba(255, 255, 255, 0.1)'
+                      }
+                    }}
+                  >
+                    {' '}
+                    <IconCustom isCommon icon='DeleteOutline' style={{ width: '20px' }} />{' '}
+                  </IconButton>
+                )
               }
             ]
       }
       titleAlign='center'
       headerColor='#F9FAFC'
+      isRefreshOpen={isRefreshOpen}
     >
       <Box
         display={'flex'}

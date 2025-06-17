@@ -36,13 +36,14 @@ const ClientListGrid: FC<ClientListGridProps> = ({ onChange }): React.ReactEleme
     }
   }, [user?.userInfo?.authId])
 
-  const filteredData = Array.isArray(data?.data)
-    ? data.data.filter(
-        item =>
-          item.companyId?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-          item.companyName?.toLowerCase().includes(searchKeyword.toLowerCase())
-      )
-    : []
+  const filteredData =
+    data?.data && Array.isArray(data.data)
+      ? data.data.filter(
+          item =>
+            item.companyId?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+            item.companyName?.toLowerCase().includes(searchKeyword.toLowerCase())
+        )
+      : []
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>

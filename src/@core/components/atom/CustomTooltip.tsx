@@ -1,5 +1,6 @@
 import { Tooltip, tooltipClasses, TooltipProps } from '@mui/material'
 import { styled } from '@mui/material/styles'
+import { useEffect, useState } from 'react'
 
 interface CustomTooltipProps extends Omit<TooltipProps, 'classes'> {
   placement?: TooltipProps['placement']
@@ -9,6 +10,8 @@ interface CustomTooltipProps extends Omit<TooltipProps, 'classes'> {
   onClose?: () => void
   arrowPosition?: 'left' | 'center' | 'right'
   offset?: number
+  isToast?: boolean
+  toastDuration?: number
 }
 
 // Tooltip을 위한 독립적인 컴포넌트 정의
@@ -22,8 +25,27 @@ const CustomTooltip = styled(
     onClose,
     arrowPosition = 'center',
     offset = 70,
+    isToast = false,
+    toastDuration = 1000,
     ...props
   }: CustomTooltipProps) => {
+    const [isOpen, setIsOpen] = useState(open)
+
+    useEffect(() => {
+      setIsOpen(open)
+    }, [open])
+
+    useEffect(() => {
+      if (isToast && isOpen) {
+        const timer = setTimeout(() => {
+          setIsOpen(false)
+          onClose?.()
+        }, toastDuration)
+
+        return () => clearTimeout(timer)
+      }
+    }, [isToast, isOpen, toastDuration, onClose])
+
     const getPopperProps = () => {
       if (arrowPosition === 'center') return {}
 
@@ -47,11 +69,11 @@ const CustomTooltip = styled(
         placement={placement}
         classes={{ popper: className }}
         arrow
-        open={open}
+        open={isOpen}
         onClose={onClose}
-        disableFocusListener={!!open}
-        disableHoverListener={!!open}
-        disableTouchListener={!!open}
+        disableFocusListener={!!isOpen}
+        disableHoverListener={!!isOpen}
+        disableTouchListener={!!isOpen}
         PopperProps={getPopperProps()}
       />
     )
