@@ -61,6 +61,20 @@ const CongestionAnalysisStatistics: FC = (): React.ReactElement => {
     // }
   }
 
+  const handleEdit = async (areaId: number, areaName: string, maxCapacity: number) => {
+    try {
+      const response = await axios.patch(`http://210.216.236.181:12708/area/${areaId}`, {
+        areaName: areaName,
+        maxCapacity: maxCapacity
+      })
+      if (response.status === 200) {
+        console.log('수정 성공')
+      }
+    } catch (error) {
+      console.error('수정 중 오류 발생:', error)
+    }
+  }
+
   console.log(currentData)
 
   return (
@@ -72,6 +86,7 @@ const CongestionAnalysisStatistics: FC = (): React.ReactElement => {
             data={item}
             onRefresh={handleRefresh}
             onDelete={() => handleDelete(item.areaId)}
+            onEdit={handleEdit}
           />
         ))}
       </Grid>

@@ -15,9 +15,10 @@ interface CongestionCardProps {
   data: IAreaStatsDtoList
   onRefresh?: (areaId: number) => void
   onDelete?: () => void
+  onEdit?: (areaId: number, areaName: string, maxCapacity: number) => void
 }
 
-const CongestionCard: FC<CongestionCardProps> = ({ data, onRefresh, onDelete }) => {
+const CongestionCard: FC<CongestionCardProps> = ({ data, onRefresh, onDelete, onEdit }) => {
   const { setSimpleDialogModalProps } = useModal()
 
   const [isEditing, setIsEditing] = useState(false)
@@ -85,6 +86,7 @@ const CongestionCard: FC<CongestionCardProps> = ({ data, onRefresh, onDelete }) 
                       contents: `필수 입력 항목인 '시설명' 입력 후 중복확인이 되어야 하고,  '최대수용인원수'가 입력되어야 하며, 최소 한개 이상의 영역이 추가되어야 시설정보가 저장될 수 있습니다.`
                     })
                   } else {
+                    onEdit?.(data.areaId, editedTitle, Number(editedMaxCapacity))
                     setIsEditing(false)
                   }
                 }}
