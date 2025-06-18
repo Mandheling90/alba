@@ -26,7 +26,12 @@ const PieChart = memo(({ data }: { data: IPieChart }) => {
         dataLabels: [
           {
             enabled: true,
-            distance: 20
+            distance: 20,
+            formatter: function (this: any): string {
+              const text = this.point.name
+
+              return data.data.length >= 10 && text.length > 5 ? text.substring(0, 5) + '...' : text
+            }
           },
           {
             enabled: true,

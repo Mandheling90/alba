@@ -16,6 +16,12 @@ interface HorizontalBarChartLocationProps {
 const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) => {
   const chartRef = useRef<ChartType | null>(null)
   const [legendItems, setLegendItems] = useState<{ name: string; color: string; visible: boolean }[]>([])
+  const legendWrapperRef = useRef<HTMLDivElement>(null)
+  const [showFadeLeft, setShowFadeLeft] = useState(false)
+  const [showFadeRight, setShowFadeRight] = useState(true)
+  const [isDragging, setIsDragging] = useState(false)
+  const [startX, setStartX] = useState(0)
+  const [scrollLeft, setScrollLeft] = useState(0)
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -129,6 +135,56 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
     }
   }
 
+  const updateFadeVisibility = () => {
+    if (legendWrapperRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = legendWrapperRef.current
+      setShowFadeLeft(scrollLeft > 5)
+      setShowFadeRight(scrollLeft < scrollWidth - clientWidth - 5)
+    }
+  }
+
+  useEffect(() => {
+    updateFadeVisibility()
+    window.addEventListener('resize', updateFadeVisibility)
+
+    return () => window.removeEventListener('resize', updateFadeVisibility)
+  }, [])
+
+  const handleScroll = () => {
+    updateFadeVisibility()
+  }
+
+  const handleNavClick = (direction: 'left' | 'right') => {
+    if (legendWrapperRef.current) {
+      const itemWidth = 150 // 예상 아이템 너비
+      const scrollAmount = direction === 'left' ? -itemWidth : itemWidth
+      legendWrapperRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+    }
+  }
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!legendWrapperRef.current) return
+    setIsDragging(true)
+    setStartX(e.pageX - legendWrapperRef.current.offsetLeft)
+    setScrollLeft(legendWrapperRef.current.scrollLeft)
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !legendWrapperRef.current) return
+    e.preventDefault()
+    const x = e.pageX - legendWrapperRef.current.offsetLeft
+    const walk = (x - startX) * 2
+    legendWrapperRef.current.scrollLeft = scrollLeft - walk
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  const handleMouseLeave = () => {
+    setIsDragging(false)
+  }
+
   return (
     <ChartWrapper>
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -150,23 +206,42 @@ const HorizontalBarChartLocation = ({ data }: HorizontalBarChartLocationProps) =
               onChange={selected => handleSwitchChange(selected)}
             />
           </TopControlsContainer>
-          <LegendContainer>
-            <LegendWrapper>
+        </TopContainer>
+
+        <div id='location-chart-container' style={{ width: '100%', height: 'calc(100% - 100px)' }} />
+
+        <LegendWrapperContainer>
+          <NavButton onClick={() => handleNavClick('left')} style={{ left: '-35px' }}>
+            &#8249;
+          </NavButton>
+          <FadeOverlay className={showFadeLeft ? '' : 'hidden'} style={{ left: 0 }} />
+          <LegendContainerWrapper
+            ref={legendWrapperRef}
+            onScroll={handleScroll}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+          >
+            <LegendContainer>
               {legendItems.map((item, index) => (
                 <LegendItem
                   key={index}
                   onClick={() => handleLegendClick(index)}
-                  style={{ opacity: item.visible ? 1 : 0.3 }}
+                  className={item.visible ? 'active' : ''}
                 >
                   <LegendColor style={{ backgroundColor: item.color }} />
                   <LegendText>{item.name}</LegendText>
                 </LegendItem>
               ))}
-            </LegendWrapper>
-          </LegendContainer>
-        </TopContainer>
-
-        <div id='location-chart-container' style={{ width: '100%', height: 'calc(100% - 40px)' }} />
+            </LegendContainer>
+          </LegendContainerWrapper>
+          <FadeOverlay className={showFadeRight ? '' : 'hidden'} style={{ right: 0 }} />
+          <NavButton onClick={() => handleNavClick('right')} style={{ right: '-35px' }}>
+            &#8250;
+          </NavButton>
+        </LegendWrapperContainer>
       </div>
     </ChartWrapper>
   )
@@ -177,62 +252,66 @@ const ChartWrapper = styled.div`
     display: none;
   }
 `
+
 const TopContainer = styled.div`
   display: flex;
   align-items: center;
   padding: 14px 20px;
   column-gap: 14px;
-  margin-bottom: 4px;
 `
 
 const TopControlsContainer = styled.div`
   width: auto;
 `
 
-const LegendContainer = styled.div`
-  flex: 1;
+const LegendWrapperContainer = styled.div`
+  position: relative;
+  width: 80%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 10px 0;
+`
+
+const LegendContainerWrapper = styled.div`
   overflow-x: auto;
-  background-color: white;
-  &::-webkit-scrollbar {
-    height: 4px;
-  }
+  white-space: nowrap;
+  user-select: none;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  padding: 0 30px;
+  cursor: grab;
 
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 2px;
+  &:active {
+    cursor: grabbing;
   }
 `
 
-const LegendWrapper = styled.div`
+const LegendContainer = styled.div`
   display: flex;
-  gap: 15px;
-  align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   width: 100%;
 `
 
 const LegendItem = styled.div`
+  flex: 0 0 auto;
+  padding: 5px 10px;
+  margin: 0 5px;
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: pointer;
+  scroll-snap-align: center;
   display: flex;
   align-items: center;
   gap: 5px;
-  cursor: pointer;
-  white-space: nowrap;
-  padding: 4px 0;
-  border-radius: 4px;
 
-  &:first-child {
-    margin-left: auto;
-  }
-  &:last-child {
-    margin-right: auto;
+  &.active {
+    background: #e0e0e0;
+    font-weight: bold;
   }
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background: #e0e0e0;
   }
 `
 
@@ -245,6 +324,54 @@ const LegendColor = styled.div`
 const LegendText = styled.span`
   font-size: 12px;
   color: #333;
+`
+
+const FadeOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 30px;
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.3s;
+
+  &[style*='left'] {
+    background: linear-gradient(to right, white 0%, transparent 100%);
+  }
+
+  &[style*='right'] {
+    background: linear-gradient(to left, white 0%, transparent 100%);
+  }
+
+  &.hidden {
+    opacity: 0;
+  }
+`
+
+const NavButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  line-height: 28px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 3;
+  user-select: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #666;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
 `
 
 export default HorizontalBarChartLocation

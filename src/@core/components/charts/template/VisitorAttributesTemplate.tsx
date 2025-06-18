@@ -124,6 +124,7 @@ const VisitorAttributesTemplate: FC<{
           <Grid item xs={3}>
             <Card>
               <PieChart data={pyramidPieChartData.pieChart} />
+              {/* <PieChart data={pyramidPieChartData.pieChart} /> */}
             </Card>
           </Grid>
         </>
