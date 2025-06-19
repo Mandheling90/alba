@@ -1,192 +1,273 @@
-// ** React Imports
-import { ChangeEvent, ReactNode, useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import { ReactNode, useState } from 'react'
+import EmptyLayout from 'src/@core/layouts/EmptyLayout'
+import styled from 'styled-components'
+import ForgotPasswordForm from './forgot-password/ForgotPasswordForm'
+import LoginForm from './LoginForm'
+import ParticleBackground from './ParticleBackground'
 
-// ** Next Imports
-import Link from 'next/link'
-
-// ** MUI Components
-import { Checkbox } from '@mui/material'
-import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
-import MuiCard, { CardProps } from '@mui/material/Card'
-import FormControl from '@mui/material/FormControl'
-import MuiFormControlLabel, { FormControlLabelProps } from '@mui/material/FormControlLabel'
-import IconButton from '@mui/material/IconButton'
-import InputAdornment from '@mui/material/InputAdornment'
-import InputLabel from '@mui/material/InputLabel'
-import OutlinedInput from '@mui/material/OutlinedInput'
-import TextField from '@mui/material/TextField'
-import Typography from '@mui/material/Typography'
-import { styled, ThemeProvider, useTheme } from '@mui/material/styles'
-
-// ** Icon Imports
-import Icon from 'src/@core/components/icon'
-
-// ** Hooks
-import { useAuth } from 'src/hooks/useAuth'
-
-// ** Layout Import
-import BlankLayout from 'src/@core/layouts/BlankLayout'
-
-// ** Demo Imports
-import FileDownLoadForm from 'src/@core/components/molecule/FileDownLoadForm'
-import LoginTemplate from 'src/@core/components/molecule/LoginTemplate'
-import { ELocalStorageKey } from 'src/enum/commonEnum'
-
-const LinkStyled = styled(Link)(({ theme }) => ({
-  fontSize: '0.875rem',
-  textDecoration: 'none',
-  color: theme.palette.primary.main
-}))
-
-const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ theme }) => ({
-  '& .MuiFormControlLabel-label': {
-    fontSize: '0.875rem',
-    color: theme.palette.text.secondary
-  }
-}))
-
-const Card = styled(MuiCard)<CardProps>(({ theme }) => ({
-  [theme.breakpoints.up('sm')]: { width: '28rem' }
-}))
-
-interface State {
-  id: string
-  password: string
-  showPassword: boolean
-}
+type LoginStep = 'login' | 'forgot-password'
 
 const LoginPage = () => {
-  const [rememberMe, setRememberMe] = useState<boolean>(false)
-  const [values, setValues] = useState<State>({
-    id: process.env.NEXT_PUBLIC_ENV_MODE === 'development' ? 'test1234' : '',
-    password: process.env.NEXT_PUBLIC_ENV_MODE === 'development' ? 'Aa123456789!' : '',
-    showPassword: false
-  })
-  const [errorMessage, setErrorMessage] = useState('')
+  const [currentStep, setCurrentStep] = useState<LoginStep>('login')
 
-  // ** Hooks
-  const auth = useAuth()
-  const theme = useTheme()
-
-  useEffect(() => {
-    const savedLogin = localStorage.getItem(ELocalStorageKey.LGOIN_REMEMBER) ?? ''
-    setRememberMe(savedLogin !== '')
-    if (savedLogin !== '') {
-      setValues(prev => ({
-        ...prev,
-        id: savedLogin
-      }))
-    }
-  }, [])
-
-  const onSubmit = (event: React.FormEvent) => {
-    event.preventDefault()
-    const { id, password } = values
-
-    if (!id || !password) {
-      setErrorMessage('아이디와 비밀번호를 입력해주세요')
-    } else {
-      auth.login({ id: id, password: password, rememberMe: rememberMe }, errorCallback => {
-        setErrorMessage(errorCallback?.message)
-      })
-    }
-  }
-
-  const handleChange = (prop: keyof State) => (event: ChangeEvent<HTMLInputElement>) => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
-
-  const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
+  const handleStepChange = (step: LoginStep) => {
+    setCurrentStep(step)
   }
 
   return (
-    <Box className='content-center'>
-      <Card sx={{ zIndex: 1 }}>
-        <LoginTemplate>
-          <Box sx={{ mb: 6 }}>
-            <Typography variant='h5' sx={{ fontWeight: 600, mb: 1.5 }}>
-              로그인
-            </Typography>
-            <Typography variant='body2'>사용자 ID와 비밀번호를 입력하여 로그인해 주세요. </Typography>
-          </Box>
-          <form noValidate autoComplete='off' onSubmit={onSubmit}>
-            <TextField
-              value={values.id}
-              autoFocus
-              fullWidth
-              id='id'
-              label='ID'
-              sx={{ mb: 4 }}
-              onChange={handleChange('id')}
-            />
+    <PageContainer>
+      <ParticleBackground />
 
-            <FormControl fullWidth>
-              <InputLabel htmlFor='auth-login-password'>비밀번호</InputLabel>
-              <OutlinedInput
-                label='Password'
-                value={values.password}
-                id='auth-login-password'
-                onChange={handleChange('password')}
-                type={values.showPassword ? 'text' : 'password'}
-                endAdornment={
-                  <InputAdornment position='end'>
-                    <IconButton
-                      edge='end'
-                      onClick={handleClickShowPassword}
-                      onMouseDown={e => e.preventDefault()}
-                      aria-label='toggle password visibility'
-                    >
-                      <Icon icon={values.showPassword ? 'mdi:eye-outline' : 'mdi:eye-off-outline'} />
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-            {errorMessage !== '' && (
-              <Typography variant='inherit' sx={{ pt: 1, lineHeight: 1, color: 'red' }}>
-                {errorMessage}
-              </Typography>
+      <ContentContainer>
+        <FormSection>
+          <motion.div key={currentStep}>
+            {currentStep === 'login' ? (
+              <LoginForm onForgotPassword={() => handleStepChange('forgot-password')} />
+            ) : (
+              <ForgotPasswordForm onBackToLogin={() => handleStepChange('login')} />
             )}
-            <Box
-              sx={{
-                mb: 4,
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between'
-              }}
-            >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={rememberMe}
-                    onChange={() => {
-                      setRememberMe(!rememberMe)
-                    }}
-                  />
-                }
-                label='아이디 기억하기'
-              />
-              <LinkStyled href='/login/forgot-password/'>비밀번호를 잊었나요?</LinkStyled>
-            </Box>
+          </motion.div>
+        </FormSection>
 
-            <ThemeProvider theme={theme}>
-              <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
-                로그인
-              </Button>
-            </ThemeProvider>
-          </form>
-          <FileDownLoadForm label='시스템 사용 매뉴얼 다운로드' />
-        </LoginTemplate>
-      </Card>
-    </Box>
+        <WelcomeSection
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+        >
+          <ContentWrapper>
+            <TextSection>
+              <CompanyLogo>
+                <img src='/images/logo/DSInsight.svg' alt='Dains 주식회사' />
+              </CompanyLogo>
+
+              <WelcomeTitle>안녕하세요. 환영합니다.</WelcomeTitle>
+
+              <WelcomeText>
+                AI 영상분석 솔루션 전문기업, 다인스 주식회사의 웹뷰어 플랫폼에 오신 것을 환영합니다. 전문성과 신뢰를
+                기반으로 한 차원 높은 AI 서비스를 다인스에서 경험해보세요.
+              </WelcomeText>
+            </TextSection>
+
+            <LinksSection>
+              <PromotionLink
+                href='https://www.dains.co.kr'
+                target='_blank'
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                  <path
+                    d='M10 0C4.5 0 0 4.5 0 10C0 15.5 4.5 20 10 20C15.5 20 20 15.5 20 10C20 4.5 15.5 0 10 0ZM8.75 18.625C4.875 18.25 1.75 15.125 1.375 11.25C1.375 11.125 1.375 10.875 1.375 10.75H8.75V18.625ZM8.75 10H1.375C1.375 9.875 1.375 9.625 1.375 9.5C1.75 5.625 4.875 2.5 8.75 2.125V10ZM18.625 10H11.25V1.375C15.125 1.75 18.25 4.875 18.625 8.75C18.625 8.875 18.625 9.125 18.625 9.25V10ZM11.25 11.25H18.625C18.625 11.375 18.625 11.625 18.625 11.75C18.25 15.625 15.125 18.75 11.25 19.125V11.25Z'
+                    fill='white'
+                  />
+                </svg>
+                회사 홈페이지
+              </PromotionLink>
+
+              <PromotionLink href='#' whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                  <path
+                    d='M17.5 5.625V15.625C17.5 16.3125 16.9375 16.875 16.25 16.875H3.75C3.0625 16.875 2.5 16.3125 2.5 15.625V5.625C2.5 4.9375 3.0625 4.375 3.75 4.375H6.25V3.125C6.25 2.8125 6.5625 2.5 6.875 2.5H13.125C13.4375 2.5 13.75 2.8125 13.75 3.125V4.375H16.25C16.9375 4.375 17.5 4.9375 17.5 5.625ZM7.5 4.375H12.5V3.75H7.5V4.375ZM16.25 5.625H3.75V15.625H16.25V5.625ZM10.625 6.875V13.6C10.625 14.025 10.125 14.3 9.75 14.0625L6.875 12.1875V6.875H10.625ZM13.125 6.875V12.1875L10.25 14.0625C9.875 14.3 9.375 14.025 9.375 13.6V6.875H13.125Z'
+                    fill='white'
+                  />
+                </svg>
+                솔루션 소개
+              </PromotionLink>
+
+              <PromotionLink href='#' whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'>
+                  <path
+                    d='M10 1.25C5.125 1.25 1.25 5.125 1.25 10C1.25 14.875 5.125 18.75 10 18.75C14.875 18.75 18.75 14.875 18.75 10C18.75 5.125 14.875 1.25 10 1.25ZM10 16.875C6.25 16.875 3.125 13.75 3.125 10C3.125 6.25 6.25 3.125 10 3.125C13.75 3.125 16.875 6.25 16.875 10C16.875 13.75 13.75 16.875 10 16.875ZM10.9375 6.25C10.9375 6.75 10.5 7.1875 10 7.1875C9.5 7.1875 9.0625 6.75 9.0625 6.25C9.0625 5.75 9.5 5.3125 10 5.3125C10.5 5.3125 10.9375 5.75 10.9375 6.25ZM11.25 13.75H8.75V8.75H11.25V13.75Z'
+                    fill='white'
+                  />
+                </svg>
+                고객지원
+              </PromotionLink>
+            </LinksSection>
+          </ContentWrapper>
+        </WelcomeSection>
+      </ContentContainer>
+    </PageContainer>
   )
 }
 
-LoginPage.getLayout = (page: ReactNode) => <BlankLayout>{page}</BlankLayout>
+LoginPage.getLayout = (page: ReactNode) => <EmptyLayout>{page}</EmptyLayout>
 
 LoginPage.guestGuard = true
+
+const PageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  position: relative;
+`
+
+const ContentContainer = styled.div`
+  display: flex;
+  flex-direction: column-reverse; /* Reversed for mobile */
+  align-items: center;
+  width: 100%;
+  max-width: 1200px; /* Increased for wider welcome section */
+  z-index: 1;
+
+  @media (min-width: 992px) {
+    flex-direction: row; /* Horizontal on desktop */
+    justify-content: center;
+    align-items: stretch; /* Make both containers same height */
+    gap: 40px;
+  }
+`
+
+const FormSection = styled.div`
+  width: 100%;
+  max-width: 450px;
+`
+
+const WelcomeSection = styled(motion.div)`
+  color: white;
+  text-align: center;
+  margin-top: 40px;
+  width: 100%;
+  max-width: 900px; /* Doubled from 450px */
+  position: relative;
+  padding: 50px 70px; /* Increased horizontal padding */
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: 992px) {
+    text-align: left;
+    margin-top: 0;
+  }
+
+  /* Add glow effect behind the section */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    left: -20%;
+    width: 140%;
+    height: 160%;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(138, 94, 244, 0.15) 0%,
+      rgba(138, 94, 244, 0.05) 50%,
+      rgba(0, 0, 0, 0) 70%
+    );
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 100%;
+  }
+
+  /* Add a subtle purple background to the whole welcome section */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(138, 94, 244, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(138, 94, 244, 0.15);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    z-index: -1;
+  }
+`
+
+const ContentWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+`
+
+const TextSection = styled.div`
+  margin-bottom: auto;
+`
+
+const WelcomeTitle = styled.h1`
+  font-size: 44px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  position: relative;
+  display: inline-block;
+
+  /* Gradient text */
+  background: linear-gradient(90deg, #d6bcfa 0%, #a78bfa 50%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  /* Text shadow for better visibility */
+  text-shadow: 0 0 30px rgba(168, 139, 250, 0.5);
+
+  @media (min-width: 1200px) {
+    font-size: 48px;
+  }
+`
+
+const WelcomeText = styled.p`
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 40px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.2px;
+  max-width: 700px; /* Limit text width for readability */
+
+  @media (min-width: 1200px) {
+    font-size: 20px;
+    line-height: 1.8;
+  }
+`
+
+const CompanyLogo = styled.div`
+  margin-bottom: 40px;
+  img {
+    height: 50px;
+    filter: drop-shadow(0 0 10px rgba(138, 94, 244, 0.5));
+  }
+`
+
+const LinksSection = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: auto; /* Push to bottom to align with login button */
+`
+
+const PromotionLink = styled(motion.a)`
+  display: inline-flex;
+  align-items: center;
+  padding: 16px 24px;
+  background: rgba(138, 94, 244, 0.1);
+  border: 1px solid rgba(138, 94, 244, 0.3);
+  border-radius: 14px;
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  &:hover {
+    background: rgba(138, 94, 244, 0.2);
+    border-color: rgba(138, 94, 244, 0.5);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+  }
+
+  svg {
+    margin-right: 12px;
+    width: 20px;
+    height: 20px;
+    filter: drop-shadow(0 0 3px rgba(138, 94, 244, 0.5));
+  }
+`
 
 export default LoginPage

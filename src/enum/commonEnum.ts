@@ -1,7 +1,7 @@
 export const EPath = {
   COMMON_LOGIN: '/auth/login',
   COMPONENT_LIST: '/view',
-  GENERATE_CODE: '/mail/generate',
+  GENERATE_CODE: '/mail/auth/code/send',
   VERIFY_CODE: '/auth/verify/code',
   CHANGE_PASSWORD: '/auth/change/password',
   USER_DETAIL: '/user/detail',
