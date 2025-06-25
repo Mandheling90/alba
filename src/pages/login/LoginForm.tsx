@@ -162,7 +162,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
             <CheckboxLabel htmlFor='remember'>아이디 기억하기</CheckboxLabel>
           </CheckboxContainer>
 
-          <ForgotPasswordButton onClick={onForgotPassword}>비밀번호를 잊으셨나요?</ForgotPasswordButton>
+          <ForgotPasswordButton type='button' onClick={onForgotPassword}>
+            비밀번호를 잊으셨나요?
+          </ForgotPasswordButton>
         </div>
 
         <SubmitButton type='submit' whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
