@@ -168,7 +168,15 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
           </Box>
         </HorizontalScrollBox>
         <Box sx={{ display: 'flex', width: '100%', gap: 3 }}>
-          <Box sx={{ width: '50%' }}>
+          <Box
+            sx={{
+              width: '50%',
+              borderBottom: '1px solid #e0e0e0',
+              height: '100%'
+
+              // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+            }}
+          >
             <CustomTable
               id='userNo'
               rows={userData}
@@ -181,7 +189,15 @@ const CameraUserSettingList: FC<CamerasClientListProps> = ({ columnFilter, camer
             />
           </Box>
 
-          <Box sx={{ width: '50%' }}>
+          <Box
+            sx={{
+              width: '50%',
+              borderBottom: '1px solid #e0e0e0',
+              height: '100%'
+
+              // boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+            }}
+          >
             <CustomTable
               combineTableId={'camera'}
               id='cameraNo'
