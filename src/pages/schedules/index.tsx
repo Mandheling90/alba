@@ -6,8 +6,8 @@ import SlidingLayout from 'src/@core/components/layout/SlidingLayout'
 import StandardTemplate from 'src/@core/components/layout/StandardTemplate'
 import { useLayout } from 'src/hooks/useLayout'
 import styled from 'styled-components'
+import ClientListGrid from '../user-setting/client/ClientListGrid'
 import { ScheduleContextProvider } from './contexts/scheduleContext'
-import CustomerSearcher from './templates/CustomerSearcher'
 import GateSelect from './templates/GateSelect'
 import ScheduleBatchConfig from './templates/ScheduleBatchConfig'
 import ScheduleCalendar from './templates/ScheduleCalendar'
@@ -23,7 +23,7 @@ const Index: FC = ({}): React.ReactElement => {
       <StandardTemplate title={'스케쥴 설정'}>
         <SlidingLayout
           isOpen={layoutContext.layoutDisplay}
-          sideContent={<CustomerSearcher />}
+          sideContent={<ClientListGrid />}
           mainContent={
             <Section>
               <CalendarContainer>

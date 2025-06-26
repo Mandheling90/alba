@@ -47,7 +47,7 @@ const CamerasDetail: FC<IClientDetail> = ({ selectClient }) => {
           }
         />
         <Box height={'100%'} sx={{ overflow: 'auto', borderRadius: '6px' }}>
-          <Card>
+          <Card sx={{ height: '100%' }}>
             <CamerasClientList />
           </Card>
         </Box>

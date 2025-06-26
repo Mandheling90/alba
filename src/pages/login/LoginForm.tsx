@@ -172,7 +172,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
         </SubmitButton>
       </Form>
 
-      <DownloadButton
+      {/* <DownloadButton
         onClick={handleManualDownload}
         disabled={isDownloading}
         whileHover={{ scale: 1.03 }}
@@ -190,7 +190,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onForgotPassword }) => {
           </svg>
         )}
         {isDownloading ? '다운로드 중...' : '시스템 사용 매뉴얼 다운로드'}
-      </DownloadButton>
+      </DownloadButton> */}
     </LoginContainer>
   )
 }
