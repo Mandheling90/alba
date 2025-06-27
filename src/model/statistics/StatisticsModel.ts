@@ -200,6 +200,7 @@ export interface IBaseChartResponse {
 export interface ITableHeaders {
   field: string
   headerName: string
+  type?: 'string' | 'number' | 'boolean' | 'date'
 }
 
 export interface IBaseDashboardChartResponse {

@@ -45,6 +45,17 @@ export const generateColumns = (props: ColumnGeneratorProps): GridColDef[] => {
       filterable: column.filterable !== false
     }
 
+    // 숫자 타입 컬럼에 대해 1000단위 구분자 추가
+    if (column.type === 'number') {
+      baseColumn.valueFormatter = params => {
+        if (params.value != null && params.value !== '') {
+          return Number(params.value).toLocaleString()
+        }
+
+        return params.value
+      }
+    }
+
     // 커스텀 헤더 렌더러가 있는 경우 적용
     if (column.renderHeader) {
       baseColumn.renderHeader = column.renderHeader
