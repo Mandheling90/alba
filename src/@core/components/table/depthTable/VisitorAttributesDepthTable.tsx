@@ -21,19 +21,10 @@ const VisitorAttributesDepthTable: FC<DepthTableProps> = ({ tableType, tableDisp
   const getTableTopHeaders = (headers: ITableHeaders[], defaultFlex = false, firstFlex = 0.7) => {
     return (
       headers?.map((header: ITableHeaders, index: number) => {
-        // 필드명을 기반으로 숫자 컬럼인지 판단
-        const isNumberField =
-          header.field.toLowerCase().includes('count') ||
-          header.field.toLowerCase().includes('total') ||
-          header.field.toLowerCase().includes('m') ||
-          header.field.toLowerCase().includes('f') ||
-          header.field.toLowerCase().includes('man') ||
-          header.field.toLowerCase().includes('woman')
-
         return {
           field: header.field,
           headerName: header.headerName,
-          type: header.type || (isNumberField ? ('number' as const) : ('string' as const)),
+          type: header.type || 'number',
           flex: defaultFlex ? 1 : index === 0 ? firstFlex : index === 3 ? 0.6 : 1.5
         }
       }) || []
