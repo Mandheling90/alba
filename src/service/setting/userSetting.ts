@@ -74,8 +74,8 @@ export const useAuthList = (params: { companyNo: number }) => {
 }
 
 export const useAuthMenuList = () => {
-  return useMutation((params: { authId: number }) => {
-    return createGet<MAuthMenu>([EPath.AUTH + `/${params.authId}`])
+  return useMutation((params: { authId: number; companyNo: number }) => {
+    return createGet<MAuthMenu>([EPath.AUTH + `/${params.companyNo}/${params.authId}`, {}])
   }, {})
 }
 

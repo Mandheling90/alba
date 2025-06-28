@@ -55,7 +55,8 @@ const UserSetting: FC = (): React.ReactElement => {
         setAuthMenuListData(convertedData)
       } else {
         const res = await authMenuList({
-          authId: selectedAuthList.authId !== 0 ? selectedAuthList.authId : filteredList[0].authId
+          authId: selectedAuthList.authId !== 0 ? selectedAuthList.authId : filteredList[0].authId,
+          companyNo: companyNo
         })
 
         setAuthMenuListData(res.data)
